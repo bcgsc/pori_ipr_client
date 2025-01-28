@@ -70,50 +70,51 @@ const KbMatches = ({
         try {
           const baseUri = `/reports/${report.ident}/kb-matches/kb-matched-statements`;
           const apiCalls = new ApiCallSet([
-            api.get(`${baseUri}?approvedTherapy=false&category=therapeutic`, {}),
-            api.get(`${baseUri}?approvedTherapy=false&category=biological`, {}),
-            api.get(`${baseUri}?approvedTherapy=false&category=diagnostic`, {}),
-            api.get(`${baseUri}?approvedTherapy=false&category=prognostic`, {}),
-            api.get(`${baseUri}?category=unknown,novel`, {}),
-            api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=true&iprEvidenceLevel=IPR-A,IPR-B`, {}),
             api.get(`/reports/${report.ident}/probe-results`, {}),
-            api.get(`${baseUri}?category=pharmacogenomic`, {}),
-            api.get(`${baseUri}?category=cancer predisposition`, {}),
+            api.get(`${baseUri}`, {}),
           ]);
 
           const [
-            therapeuticResp,
-            biologicalResp,
-            diagnosticResp,
-            prognosticResp,
-            unknownResp,
-            highEvidenceResp,
             targetedSomaticGenesResp,
-            pharmacogenomicResp,
-            cancerPredisResp,
+            allKbMatchesResp,
           ] = await apiCalls.request() as [
-            KbMatchedStatementType[],
-            KbMatchedStatementType[],
-            KbMatchedStatementType[],
-            KbMatchedStatementType[],
-            KbMatchedStatementType[],
-            KbMatchedStatementType[],
             ProbeResultsType[],
-            KbMatchedStatementType[],
             KbMatchedStatementType[],
           ];
 
+          // TODO this is here for backwards compatibility; consider removing after datafix
+          const oldStmts = allKbMatchesResp.filter(stmt => !stmt.kbData?.kbmatchTag);
+          const oldHighEvidence = oldStmts.filter(item =>
+            item.category === 'therapeutic' &&
+            item.approvedTherapy &&
+            ['IPR-A', 'IPR-B'].includes(item?.iprEvidenceLevel)
+          );
+
+          // therapeutic but not best therapeutic. might be inconsistent with existing filtering -
+          // currently items that are therapeutic and approved but not with high evidence level are just
+          // not displayed (there may currently not be any such items). the difference will be
+          // that some items that were not previously displayed at all might now be displayed
+          // in this table
+          const oldTherapeutic = oldStmts.filter(item =>
+            item.category === 'therapeutic' &&
+            !oldHighEvidence.some(obj => obj.ident === item.ident)
+          );
+
+          const oldBiological = oldStmts.filter(item => item.category === 'biological')
+          const oldDiagnostic = oldStmts.filter(item => item.category === 'diagnostic')
+          const oldPrognostic = oldStmts.filter(item => item.category === 'prognostic')
+          const oldUnknown = oldStmts.filter(item => ['unknown', 'novel'].includes(item.category))
+          const oldPcp = oldStmts.filter(item => ['cancer-predisposition', 'pharmacogenomic'].includes(item.category))
+
+          const taggedKbMatches = allKbMatchesResp.filter((stmt) => stmt?.kbData?.kbmatchTag)
           setGroupedMatches({
-            highEvidence: coalesceEntries(highEvidenceResp),
-            therapeutic: coalesceEntries(therapeuticResp),
-            biological: coalesceEntries(biologicalResp),
-            diagnostic: coalesceEntries(diagnosticResp),
-            prognostic: coalesceEntries(prognosticResp),
-            unknown: coalesceEntries(unknownResp),
-            targetedGermlineGenes: coalesceEntries([
-              ...pharmacogenomicResp,
-              ...cancerPredisResp.filter(({ kbMatches }) => (kbMatches as any)?.variant?.germline),
-            ]),
+            highEvidence: coalesceEntries([...oldHighEvidence, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'bestTherapeutic')]),
+            therapeutic: coalesceEntries([...oldTherapeutic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'therapeutic')]),
+            biological: coalesceEntries([...oldBiological, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'biological')]),
+            diagnostic: coalesceEntries([...oldDiagnostic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'diagnostic')]),
+            prognostic: coalesceEntries([...oldPrognostic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'prognostic')]),
+            unknown: coalesceEntries([...oldUnknown, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'other')]),
+            targetedGermlineGenes: coalesceEntries([...oldPcp, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'pcp')]),
             targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => !/germline/.test(tg?.sample)),
           });
         } catch (err) {
@@ -176,59 +177,59 @@ const KbMatches = ({
   const kbMatchedTables = useMemo(() => Object.keys(TITLE_MAP).map((key) => (
     <React.Fragment key={key}>
       {
-          (
-            (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
-            || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
-          ) && (
-            <DataTable
-              canDelete={canEdit}
-              canToggleColumns
-              columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
-              filterText={debouncedFilterText}
-              isPrint={isPrint}
-              onDelete={handleDelete}
-              rowData={groupedMatches[key]}
-              titleText={TITLE_MAP[key]}
-            />
-          )
-        }
+        (
+          (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
+          || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
+        ) && (
+          <DataTable
+            canDelete={canEdit}
+            canToggleColumns
+            columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
+            filterText={debouncedFilterText}
+            isPrint={isPrint}
+            onDelete={handleDelete}
+            rowData={groupedMatches[key]}
+            titleText={TITLE_MAP[key]}
+          />
+        )
+      }
     </React.Fragment>
   )), [canEdit, debouncedFilterText, groupedMatches, handleDelete, isPrint, report?.template.name]);
 
   return (
     !isLoading && (
-    <div>
-      <DemoDescription>
-        Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
-        associations are identified using the knowledgebase GraphKB, which integrates information
-        from sources including cancer databases, drug databases, clinical tests, and the literature.
-        Associations are listed by the level of evidence for the use of that drug in the context of
-        the observed alteration, including those that are approved in this or other cancer types,
-        and those that have early clinical or preclinical evidence.
-      </DemoDescription>
-      {!isPrint && (
-      <div className="kb-matches__filter">
-        <TextField
-          label="Filter Table Text"
-          type="text"
-          variant="outlined"
-          value={filterText}
-          onChange={handleFilter}
-          fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <FilterList color="action" />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </div>
-      )}
       <div>
-        {kbMatchedTables}
+        <DemoDescription>
+          Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
+          associations are identified using the knowledgebase GraphKB, which integrates information
+          from sources including cancer databases, drug databases, clinical tests, and the literature.
+          Associations are listed by the level of evidence for the use of that drug in the context of
+          the observed alteration, including those that are approved in this or other cancer types,
+          and those that have early clinical or preclinical evidence.
+        </DemoDescription>
+        {!isPrint && (
+          <div className="kb-matches__filter">
+            <TextField
+              label="Filter Table Text"
+              type="text"
+              variant="outlined"
+              value={filterText}
+              onChange={handleFilter}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <FilterList color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </div>
+        )}
+        <div>
+          {kbMatchedTables}
+        </div>
       </div>
-    </div>
     )
   );
 };
