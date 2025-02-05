@@ -45,7 +45,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
       return true;
     }
     return false;
-  }, [data]);
+  }, [context, kbData?.recruitment_status, relevance]);
 
   const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType, selectedKbStatementId?: string) => async () => {
     const therapeuticResp = await api.get(`/reports/${reportId}/therapeutic-targets`, {}).request();
@@ -73,10 +73,10 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
       if (result) {
         const variant = result[0].conditions.find((r) => r['@class'].toLowerCase().includes('variant'));
         const therapy = result[0].conditions.find((r) => r['@class'].toLowerCase().includes('therapy'));
-        const context = result[0].relevance;
+        const resultContext = result[0].relevance;
 
-        if (!variant || !therapy || !context) {
-          throw new Error(`Required Graphkb fields not populated on GraphKB: ${!variant ? ' variant' : ''}${!therapy ? ' therapy' : ''}${!context ? ' context' : ''}`);
+        if (!variant || !therapy || !resultContext) {
+          throw new Error(`Required Graphkb fields not populated on GraphKB: ${!variant ? ' variant' : ''}${!therapy ? ' therapy' : ''}${!resultContext ? ' context' : ''}`);
         }
 
         // Add to targets regardless if it already exists, we don't know at this point without making another API call to search for all these params
@@ -91,7 +91,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           variantGraphkbId: variant['@rid'],
           therapy: therapy.displayName,
           therapyGraphkbId: therapy['@rid'],
-          context: context.displayName,
+          context: resultContext.displayName,
           contextGraphkbId: context['@rid'],
           evidenceLevel: null,
           evidenceLevelGraphkbId: null,
@@ -122,7 +122,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
       setIsLoading(false);
     }
     return null;
-  }, [iprEvidenceLevels, iprEvidenceLevel, kbStatementId, reportId]);
+  }, [iprEvidenceLevels, iprEvidenceLevel, kbStatementId, reportId, context]);
 
   const handleMultiTargets = useCallback((evt, type) => {
     setSubMenuAnchor(evt.currentTarget);
