@@ -4,6 +4,20 @@ import React, {
 import {
   TextField,
   InputAdornment,
+  MenuItem,
+  Menu,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  DialogTitle,
+  List,
+  ListItem,
+  Select,
+  SelectChangeEvent,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import {
   FilterList,
@@ -36,7 +50,118 @@ const TITLE_MAP = {
   targetedSomaticGenes: 'Detected Alterations From Somatic Targeted Gene Report',
 };
 
+const DESTINATION_TABLES = Object.entries(TITLE_MAP)
+  .filter(([key]) => key !== 'targetedSomaticGenes')
+  .map(([key, value]) => ({
+    label: value,
+    value: key,
+  }));
+
 const FILTER_DEBOUNCE_TIME = 500; // ms before input text for filter refreshes for tables
+
+type KbMatchesMoveDialogType = {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (updatedKbStatements?: KbMatchedStatementType[]) => void;
+  kbMatches: KbMatchedStatementType[]
+};
+
+const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
+  const {
+    isOpen,
+    kbMatches,
+    onClose,
+    onConfirm,
+  } = props;
+  const { report: { ident: reportIdent } } = useReport();
+  const [destinationTable, setDestinationTable] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleOnSave = useCallback(() => {
+    setIsUpdating(true);
+    const moveKbMatches = async () => {
+      try {
+        const kbStatementCalls = kbMatches
+          .map(({ ident }) => api.put(`/reports/${reportIdent}/kb-matches/kb-matched-statements/${ident}`, {
+            category: destinationTable,
+          }));
+        const apiCalls = new ApiCallSet(kbStatementCalls);
+        const updatedKbStatements = await apiCalls.request();
+
+        onConfirm(updatedKbStatements);
+      } catch (e) {
+        snackbar.error(`Unable to move Kb statements, ${e.message ?? e}`);
+      } finally {
+        setIsUpdating(false);
+      }
+    };
+    moveKbMatches();
+  }, [destinationTable, kbMatches, onConfirm, reportIdent]);
+
+  const handleDestinationChange = useCallback(({ target: { value } }: SelectChangeEvent<string>) => {
+    setDestinationTable(value);
+  }, [setDestinationTable]);
+
+  return (
+    <Dialog
+      open={isOpen}
+      fullWidth
+      maxWidth="lg"
+    >
+      <DialogTitle>
+        Move Selected KbMatches to another Table
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Currently Selected KbMatches to be moved:
+        </DialogContentText>
+        <List>
+          {
+            kbMatches?.map(({ disease, kbMatches: kbM }) => (
+              <ListItem>
+                <DialogContentText>
+                  {`${kbM[0].kbVariant}(${kbM[0].kbVariantId}) ${disease} `}
+                </DialogContentText>
+              </ListItem>
+            ))
+          }
+        </List>
+        <FormControl variant="outlined" fullWidth>
+          <InputLabel id="destination-table-select-label">Destination Table</InputLabel>
+          <Select
+            required
+            id="destination-table-select"
+            labelId="destination-table-select-label"
+            onChange={handleDestinationChange}
+            label="Destination Table" // MUI requires both labelId and label to properly display
+          >
+            {
+              DESTINATION_TABLES.map(({ label, value }) => (
+                <MenuItem
+                  value={value}
+                  key={value}
+                >
+                  {label}
+                </MenuItem>
+              ))
+            }
+          </Select>
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button
+          disabled={isUpdating || !destinationTable}
+          variant="contained"
+          color="primary"
+          onClick={handleOnSave}
+        >
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 type KbMatchesProps = {
   /* Should the print version be displayed? */
@@ -63,6 +188,9 @@ const KbMatches = ({
     targetedGermlineGenes: [],
     targetedSomaticGenes: [],
   });
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [selectedRows, setSelectedRows] = useState(null);
+  const [moveKbMatchesDialogOpen, setMoveKbMatchesDialogOpen] = useState(false);
 
   useEffect(() => {
     if (report) {
@@ -173,27 +301,62 @@ const KbMatches = ({
     }
   }, [report]);
 
+  const onCellContextMenu = useCallback((params) => {
+    const { event, node, api: gridApi } = params;
+    event.preventDefault(); // Disable browser's context menu for cells
+    setMenuAnchor({
+      mouseX: event.clientX + 2,
+      mouseY: event.clientY - 6,
+    });
+
+    const currentSelectedRows = gridApi.getSelectedRows();
+
+    if (currentSelectedRows.length < 1) {
+      setSelectedRows([node.data]); // Capture selected row data
+    } else {
+      setSelectedRows(currentSelectedRows);
+    }
+  }, []);
+
+  const handleMenuClose = useCallback(() => {
+    setMenuAnchor(null);
+  }, []);
+
+  const handleMoveToAnotherTable = useCallback(() => {
+    setMoveKbMatchesDialogOpen(true);
+    handleMenuClose();
+  }, [handleMenuClose]);
+
+  const handleGridContextMenu = useCallback((event) => {
+    // Disable right-click on empty grid areas (outside of cells)
+    if (event.target.closest('.ag-root')) {
+      event.preventDefault(); // Disable browser's context menu
+    }
+  }, []);
+
   const kbMatchedTables = useMemo(() => Object.keys(TITLE_MAP).map((key) => (
-    <React.Fragment key={key}>
+    <div onContextMenu={handleGridContextMenu} key={key}>
       {
-          (
-            (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
-            || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
-          ) && (
-            <DataTable
-              canDelete={canEdit}
-              canToggleColumns
-              columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
-              filterText={debouncedFilterText}
-              isPrint={isPrint}
-              onDelete={handleDelete}
-              rowData={groupedMatches[key]}
-              titleText={TITLE_MAP[key]}
-            />
-          )
-        }
-    </React.Fragment>
-  )), [canEdit, debouncedFilterText, groupedMatches, handleDelete, isPrint, report?.template.name]);
+        (
+          (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
+          || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
+        ) && (
+          <DataTable
+            canDelete={canEdit}
+            canToggleColumns
+            columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
+            filterText={debouncedFilterText}
+            isPrint={isPrint}
+            onDelete={handleDelete}
+            rowData={groupedMatches[key]}
+            titleText={TITLE_MAP[key]}
+            rowSelection="multiple"
+            onCellContextMenu={onCellContextMenu}
+          />
+        )
+      }
+    </div>
+  )), [canEdit, debouncedFilterText, groupedMatches, handleDelete, handleGridContextMenu, isPrint, onCellContextMenu, report?.template.name]);
 
   return (
     !isLoading && (
@@ -227,6 +390,31 @@ const KbMatches = ({
       )}
       <div>
         {kbMatchedTables}
+        {menuAnchor && (
+          <>
+            <Menu
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={handleMenuClose}
+              anchorReference="anchorPosition"
+              anchorPosition={
+                  menuAnchor
+                    ? { top: menuAnchor.mouseY, left: menuAnchor.mouseX }
+                    : undefined
+                }
+            >
+              <MenuItem onClick={handleMoveToAnotherTable}>Move to another Table</MenuItem>
+            </Menu>
+            <KbMatchesMoveDialog
+              isOpen={moveKbMatchesDialogOpen}
+              kbMatches={selectedRows}
+              onClose={() => setMoveKbMatchesDialogOpen(false)}
+              onConfirm={(updatedKbStatements) => {
+                setMoveKbMatchesDialogOpen(false);
+              }}
+            />
+          </>
+        )}
       </div>
     </div>
     )
