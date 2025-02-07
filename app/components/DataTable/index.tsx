@@ -2,7 +2,7 @@
 import React, {
   useRef, useState, useEffect, useCallback, useContext, useMemo,
 } from 'react';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, AgGridReactProps } from '@ag-grid-community/react';
 import { AgGridReact as AgGridReactType } from '@ag-grid-community/react/lib/agGridReact';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -121,96 +121,100 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
   return nextColDefs;
 };
 
-type DataTableProps = {
-  /* Data populating table */
-  rowData: Record<string, unknown>[];
-  /* Callback function when rowData is changed within the DataTable */
-  onRowDataChanged?: (rows: Record<string, unknown>[]) => void;
-  /* Column definitions for rowData */
-  columnDefs: ColDef[];
-  /* Table title */
-  titleText?: string;
-  /* String to filter rows by */
-  filterText?: string;
-  /* Can rows be edited? */
-  canEdit?: boolean;
-  /* Callback function when edit is started */
-  onEdit?: (row: Record<string, unknown>) => void;
-  /* Can rows be deleted? */
-  canDelete?: boolean;
-  /* Callback function when delete is called */
-  onDelete?: (row: Record<string, unknown>) => void;
-  /* Can rows be added to the table? */
-  canAdd?: boolean;
-  /* Callback function when add is called */
-  onAdd?: (row: Record<string, unknown>) => void;
+type DataTableCustomProps = {
   /* Text shown next to the add row button */
   addText?: string;
-  /* Needed for updating therapeutic tables
-     therapeutic or chemoresistance
-  */
-  tableType?: string;
-  /* List of column names that are visible */
-  visibleColumns?: string[];
-  /* Callback to sync multiple tables */
-  syncVisibleColumns?: (visible: string[]) => void;
+  /* Can rows be added to the table? */
+  canAdd?: boolean;
+  /* Can rows be deleted? */
+  canDelete?: boolean;
+  /* Can rows be edited? */
+  canEdit?: boolean;
+  /* Can the table rows be exported? */
+  canExport?: boolean;
   /* Can the visible columns be toggled? */
   canToggleColumns?: boolean;
   /* Can the row details be viewed? */
   canViewDetails?: boolean;
-  /* Should the table be paginated? */
-  isPaginated?: boolean;
-  /* Should the table span the whole container? */
-  isFullLength?: boolean;
   /* Can the rows be reordered? */
   canReorder?: boolean;
-  /* Callback when a row is reordered */
-  onReorder?: (newRow: Record<string, unknown>, newRank: number, tableType?: string) => void;
-  /* Can the table rows be exported? */
-  canExport?: boolean;
-  /* Is the table being rendered for printing? */
-  isPrint?: boolean;
-  /* Row index to highlight */
-  highlightRow?: number;
-  /* Custom header cell renderer */
-  Header?: ({ displayName }: { displayName: string }) => JSX.Element;
-  /* Text to render in an info bubble below the table header and above the table itself */
-  demoDescription?: string,
+  /* Column definitions for rowData */
+  columnDefs: ColDef[];
   /* Column fields to collapse, this will build the key that will combine these column values to be collapsed */
   collapseColumnFields?: string[];
+  /* Text to render in an info bubble below the table header and above the table itself */
+  demoDescription?: string;
+  /* Filter text for table rows */
+  filterText?: string;
+  /* Custom header cell renderer */
+  Header?: ({ displayName }: { displayName: string }) => JSX.Element;
+  /* Row index to highlight */
+  highlightRow?: number;
+  /* Is the table being rendered for printing? */
+  isPrint?: boolean;
+  /* Should the table span the whole container? */
+  isFullLength?: boolean;
+  /* Should the table be paginated? */
+  isPaginated?: boolean;
   /* Whether the data table is being used to display search results for reports by variant */
   isSearch?: boolean;
+  /* Callback function when add is called */
+  onAdd?: (row: Record<string, unknown>) => void;
+  /* Callback function when delete is called */
+  onDelete?: (row: Record<string, unknown>) => void;
+  /* Callback function when edit is started */
+  onEdit?: (row: Record<string, unknown>) => void;
+  /* Callback when a row is reordered */
+  onReorder?: (newRow: Record<string, unknown>, newRank: number, tableType?: string) => void;
+  /* Callback function when rowData is changed within the DataTable */
+  onRowDataChanged?: (rows: Record<string, unknown>[]) => void;
+  /* Allows multiple rows to be selected (Note either 'single' or 'multiple') */
+  rowSelection?: string;
+  /* Data populating table */
+  rowData: Record<string, unknown>[];
+  /* Callback to sync multiple tables */
+  syncVisibleColumns?: (visible: string[]) => void;
+  /* Needed for updating therapeutic tables (therapeutic or chemoresistance) */
+  tableType?: string;
+  /* Table title */
+  titleText?: string;
+  /* List of column names that are visible */
+  visibleColumns?: string[];
 };
 
+type DataTableProps = DataTableCustomProps & Omit<AgGridReactProps, keyof DataTableCustomProps>;
+
 const DataTable = ({
-  rowData = [],
-  onRowDataChanged,
-  columnDefs: colDefs,
-  titleText = '',
-  filterText,
-  canEdit,
-  onEdit,
-  canDelete,
-  onDelete,
-  canAdd,
-  onAdd,
   addText,
-  tableType,
-  visibleColumns = [],
-  syncVisibleColumns,
+  canAdd,
+  canDelete,
+  canEdit,
+  canExport = true,
+  canReorder,
   canToggleColumns = true,
   canViewDetails = true,
-  isPaginated = true,
-  isFullLength,
-  canReorder,
-  onReorder,
-  canExport = true,
-  isPrint,
-  highlightRow = null,
-  Header,
-  demoDescription = '',
   collapseColumnFields = null,
+  columnDefs: colDefs,
+  demoDescription = '',
+  filterText,
+  Header,
+  highlightRow = null,
+  isFullLength,
+  isPaginated = true,
+  isPrint,
   isSearch = false,
+  onAdd,
+  onDelete,
+  onEdit,
+  onReorder,
+  onRowDataChanged,
+  rowData = [],
+  rowSelection = undefined,
+  syncVisibleColumns,
+  tableType,
+  titleText = '',
+  visibleColumns = [],
+  ...rest
 }: DataTableProps): JSX.Element => {
   const domLayout = isPrint ? 'print' : 'autoHeight';
   const { gridApi, colApi, onGridReady } = useGrid();
@@ -610,6 +614,8 @@ const DataTable = ({
               disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
               onFirstDataRendered={onFirstDataRendered}
               onPaginationChanged={handlePaginationChanged}
+              rowSelection={rowSelection}
+              {...rest}
             />
           </div>
         </>
