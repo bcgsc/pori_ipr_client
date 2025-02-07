@@ -61,13 +61,20 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
     try {
       let evidenceLevelsResp;
       let iprEvidenceLevelRid = null;
-      if (!iprEvidenceLevels && iprEvidenceLevel) {
+
+      if (!iprEvidenceLevels) {
         evidenceLevelsResp = await api.get('/graphkb/evidence-levels', {}).request();
         setIprEvidenceLevels(evidenceLevelsResp.result ?? null);
-        iprEvidenceLevelRid = evidenceLevelsResp?.result.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
-      } else {
-        iprEvidenceLevelRid = iprEvidenceLevels.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
       }
+
+      if (!iprEvidenceLevels && iprEvidenceLevel) {
+        iprEvidenceLevelRid = evidenceLevelsResp?.result.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
+      } else if (iprEvidenceLevels && iprEvidenceLevel) {
+        iprEvidenceLevelRid = iprEvidenceLevels.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
+      } else {
+        throw new Error('No IPR Evidence Level provided in this row of data.');
+      }
+
       const { result } = await api.get(`/graphkb/statements/${(selectedKbStatementId ?? kbStatementId as string).replace('#', '')}`, {}).request();
 
       if (result) {
