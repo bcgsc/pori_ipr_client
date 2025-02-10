@@ -376,6 +376,7 @@ type ImmuneType = {
 type MicrobialType = {
   integrationSite: string | null;
   species: string | null;
+  microbialHidden: boolean;
 } & RecordDefaults;
 
 export {
