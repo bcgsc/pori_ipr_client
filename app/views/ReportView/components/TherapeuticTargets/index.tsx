@@ -225,9 +225,10 @@ const Therapeutic = ({
           fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
-          collapseableCols={['gene', 'variant']}
-          outerRowOrderByInternalCol={['evidenceLevel']}
-          innerRowOrderByInternalCol={['evidenceLevel', 'therapy']}
+          // DEVSU-2540 - turn off coalescing for now until more permanent solution
+          // collapseableCols={['gene', 'variant']}
+          // outerRowOrderByInternalCol={['evidenceLevel']}
+          // innerRowOrderByInternalCol={['evidenceLevel', 'therapy']}
         />
         <Typography
           className="therapeutic-print__title"
@@ -239,9 +240,10 @@ const Therapeutic = ({
           fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
-          collapseableCols={['gene', 'variant']}
-          outerRowOrderByInternalCol={['evidenceLevel']}
-          innerRowOrderByInternalCol={['evidenceLevel']}
+          // DEVSU-2540 - turn off coalescing for now until more permanent solution
+          // collapseableCols={['gene', 'variant']}
+          // outerRowOrderByInternalCol={['evidenceLevel']}
+          // innerRowOrderByInternalCol={['evidenceLevel']}
         />
       </div>
     );
@@ -262,9 +264,10 @@ const Therapeutic = ({
           fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
-          collapseableCols={['gene', 'variant']}
-          outerRowOrderByInternalCol={['evidenceLevel']}
-          innerRowOrderByInternalCol={['evidenceLevel', 'therapy']}
+          // DEVSU-2540 - turn off coalescing for now until more permanent solution
+          // collapseableCols={['gene', 'variant']}
+          // outerRowOrderByInternalCol={['evidenceLevel']}
+          // innerRowOrderByInternalCol={['evidenceLevel', 'therapy']}
         />
         <br />
         <Typography
@@ -279,9 +282,10 @@ const Therapeutic = ({
           fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
-          collapseableCols={['gene', 'variant']}
-          outerRowOrderByInternalCol={['evidenceLevel']}
-          innerRowOrderByInternalCol={['evidenceLevel']}
+          // DEVSU-2540 - turn off coalescing for now until more permanent solution
+          // collapseableCols={['gene', 'variant']}
+          // outerRowOrderByInternalCol={['evidenceLevel']}
+          // innerRowOrderByInternalCol={['evidenceLevel']}
         />
       </div>
     );

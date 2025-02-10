@@ -250,11 +250,11 @@ const RapidSummary = ({
           }
 
           if (signatureTypesResp.status === 'fulfilled') {
-            if (signatureTypesResp.value?.length === 0){
+            if (signatureTypesResp.value?.length === 0) {
               const defaultSigatureTypes = [
-                {signatureType: 'author'},
-                {signatureType: 'reviewer'},
-                {signatureType: 'creator'},
+                { signatureType: 'author' },
+                { signatureType: 'reviewer' },
+                { signatureType: 'creator' },
               ] as SignatureUserType[];
               setSignatureTypes(defaultSigatureTypes);
             } else {
@@ -263,7 +263,6 @@ const RapidSummary = ({
           } else if (!isPrint) {
             snackbar.error(signatureTypesResp.reason?.content?.error?.message);
           }
-
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
         } finally {
@@ -371,12 +370,21 @@ const RapidSummary = ({
           tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
       },
       {
+        term: 'Intersect TMB Score',
+        value:
+          report?.genomeTmb ?? null,
+      },
+      {
         term: 'MSI Status',
         value: msiStatus,
       },
     ]);
-  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
-    tCellCd8?.percentileHidden, tCellCd8, tCellCd8?.pedsScoreComment, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile]);
+  }, [
+    microbial, primaryBurden, tmburMutBur, tCellCd8,
+    report.m1m2Score, report.sampleInfo, report.tumourContent, report?.genomeTmb, report.captiv8Score,
+    tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
+    tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
+  ]);
 
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
@@ -414,7 +422,8 @@ const RapidSummary = ({
         <PrintTable
           data={therapeuticAssociationResults}
           columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
-          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
+          // DEVSU-2540 - turn off coalescing for now until more permanent solution
+          // collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
           fullWidth
         />
       );
@@ -477,7 +486,8 @@ const RapidSummary = ({
         <PrintTable
           data={cancerRelevanceResults}
           columnDefs={cancerRelevanceColDefs.filter((col) => col.headerName !== 'Actions')}
-          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
+          // DEVSU-2540 - turn off coalescing for now until more permanent solution
+          // collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
           fullWidth
         />
       );
