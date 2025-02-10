@@ -87,7 +87,8 @@ const KbMatches = ({
           const oldHighEvidence = oldStmts.filter(item =>
             item.category === 'therapeutic' &&
             item.approvedTherapy &&
-            ['IPR-A', 'IPR-B'].includes(item?.iprEvidenceLevel)
+            ['IPR-A', 'IPR-B'].includes(item?.iprEvidenceLevel) &&
+            item.matchedCancer
           );
 
           // therapeutic but not best therapeutic. might be inconsistent with existing filtering -
