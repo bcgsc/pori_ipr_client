@@ -370,7 +370,7 @@ const KbMatches = ({
     if (updatedKbStatements) {
       setFetchData('refetch');
     }
-    setMoveKbMatchesDialogOpen('');
+    setMoveKbMatchesDialogOpen(false);
   }, []);
 
   const kbMatchedTables = useMemo(() => Object.keys(TITLE_MAP).map((key) => (
