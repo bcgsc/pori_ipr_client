@@ -77,27 +77,11 @@ function VariantText(): JSX.Element {
     let cancelled = false;
     try {
       if (nextData) {
-        const sanitizedText = sanitizeHtml(nextData, {
-          allowedAttributes: {
-            a: ['href', 'target', 'rel'],
-          },
-          transformTags: {
-            a: (_tagName, attribs) => ({
-              tagName: 'a',
-              attribs: {
-                href: attribs.href,
-                target: '_blank',
-                rel: 'noopener noreferrer',
-              },
-            }),
-          },
-        });
-        const res = await api.put(`/variant-text/${editingData.ident}`, { text: sanitizedText }).request();
         if (!cancelled) {
           setVariantText((currVariantText) => {
             const index = currVariantText.findIndex((app) => app.ident === editingData.ident);
             const nextVariantText = [...currVariantText];
-            nextVariantText[index] = res;
+            nextVariantText[index] = nextData;
             return nextVariantText;
           });
           snackbar.success('Variant Text successfully updated.');

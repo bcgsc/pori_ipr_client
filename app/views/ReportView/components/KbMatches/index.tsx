@@ -210,50 +210,67 @@ const KbMatches = ({
         try {
           const baseUri = `/reports/${report.ident}/kb-matches/kb-matched-statements`;
           const apiCalls = new ApiCallSet([
-            api.get(`${baseUri}?approvedTherapy=false&category=therapeutic`, {}),
-            api.get(`${baseUri}?approvedTherapy=false&category=biological`, {}),
-            api.get(`${baseUri}?approvedTherapy=false&category=diagnostic`, {}),
-            api.get(`${baseUri}?approvedTherapy=false&category=prognostic`, {}),
-            api.get(`${baseUri}?category=unknown,novel`, {}),
-            api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=true&iprEvidenceLevel=IPR-A,IPR-B`, {}),
             api.get(`/reports/${report.ident}/probe-results`, {}),
-            api.get(`${baseUri}?category=pharmacogenomic`, {}),
-            api.get(`${baseUri}?category=cancer predisposition`, {}),
+            api.get(`${baseUri}`, {}),
           ]);
 
           const [
-            therapeuticResp,
-            biologicalResp,
-            diagnosticResp,
-            prognosticResp,
-            unknownResp,
-            highEvidenceResp,
             targetedSomaticGenesResp,
-            pharmacogenomicResp,
-            cancerPredisResp,
+            allKbMatchesResp,
           ] = await apiCalls.request() as [
-            KbMatchedStatementType[],
-            KbMatchedStatementType[],
-            KbMatchedStatementType[],
-            KbMatchedStatementType[],
-            KbMatchedStatementType[],
-            KbMatchedStatementType[],
             ProbeResultsType[],
-            KbMatchedStatementType[],
             KbMatchedStatementType[],
           ];
 
+          // TODO this is here for backwards compatibility; consider removing after datafix
+          const oldStmts = allKbMatchesResp.filter((stmt) => !stmt.kbData?.kbmatchTag);
+          const oldHighEvidence = oldStmts.filter((item) => item.category === 'therapeutic'
+            && item.approvedTherapy
+            && item.matchedCancer === true
+            && ['IPR-A', 'IPR-B'].includes(item?.iprEvidenceLevel));
+
+          // therapeutic but not best therapeutic. might be inconsistent with existing filtering -
+          // currently items that are therapeutic and approved but not with high evidence level are just
+          // not displayed (there may currently not be any such items). the difference will be
+          // that some items that were not previously displayed at all might now be displayed
+          // in this table
+          const oldTherapeutic = oldStmts.filter((item) => item.category === 'therapeutic'
+            && !oldHighEvidence.some((obj) => obj.ident === item.ident));
+
+          // might be inconsistent with existing filtering - currently items that have
+          // 'approvedTherapy' True but not category 'therapeutic' are not displayed.
+          // (there are no examples in the db currently). here, we ignore approvedTherapy
+          // except for therapeutic stmts, so it's possible for items that previously
+          // would never be displayed, to be displayed here
+          const oldBiological = oldStmts.filter((item) => item.category === 'biological');
+          const oldDiagnostic = oldStmts.filter((item) => item.category === 'diagnostic');
+          const oldPrognostic = oldStmts.filter((item) => item.category === 'prognostic');
+          const oldPcp = oldStmts.filter((item) => ['cancer-predisposition', 'pharmacogenomic'].includes(item.category));
+
+          const taggedKbMatches = allKbMatchesResp.filter((stmt) => stmt?.kbData?.kbmatchTag);
+
+          const highEvidenceStmts = [...oldHighEvidence, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'bestTherapeutic')];
+          const therapeuticStmts = [...oldTherapeutic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'therapeutic')];
+          const biologicalStmts = [...oldBiological, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'biological')];
+          const diagnosticStmts = [...oldDiagnostic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'diagnostic')];
+          const prognosticStmts = [...oldPrognostic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'prognostic')];
+          const targetedGermlineGenesStmts = [...oldPcp, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'pcp')];
+          const highEvidence = coalesceEntries(highEvidenceStmts);
+          const therapeutic = coalesceEntries(therapeuticStmts);
+          const biological = coalesceEntries(biologicalStmts);
+          const diagnostic = coalesceEntries(diagnosticStmts);
+          const prognostic = coalesceEntries(prognosticStmts);
+          const targetedGermlineGenes = coalesceEntries(targetedGermlineGenesStmts);
+          const unknown = coalesceEntries(allKbMatchesResp.filter((stmt) => ![...highEvidenceStmts, ...therapeuticStmts, ...biologicalStmts, ...diagnosticStmts, ...prognosticStmts, ...targetedGermlineGenesStmts].some((obj) => obj.ident === stmt.ident)));
+
           setGroupedMatches({
-            highEvidence: coalesceEntries(highEvidenceResp),
-            therapeutic: coalesceEntries(therapeuticResp),
-            biological: coalesceEntries(biologicalResp),
-            diagnostic: coalesceEntries(diagnosticResp),
-            prognostic: coalesceEntries(prognosticResp),
-            unknown: coalesceEntries(unknownResp),
-            targetedGermlineGenes: coalesceEntries([
-              ...pharmacogenomicResp,
-              ...cancerPredisResp.filter(({ kbMatches }) => (kbMatches as any)?.variant?.germline),
-            ]),
+            highEvidence,
+            therapeutic,
+            biological,
+            diagnostic,
+            prognostic,
+            targetedGermlineGenes,
+            unknown,
             targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => !/germline/.test(tg?.sample)),
           });
 
@@ -263,10 +280,8 @@ const KbMatches = ({
         } catch (err) {
           if (err.name === 'CoalesceEntriesError') {
             snackbar.error(err.message);
-            console.error(err);
           } else {
             snackbar.error(`Network error: ${err}`);
-            console.error(err);
           }
         } finally {
           setIsLoading(false);
@@ -384,63 +399,63 @@ const KbMatches = ({
 
   return (
     !isLoading && (
-    <div>
-      <DemoDescription>
-        Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
-        associations are identified using the knowledgebase GraphKB, which integrates information
-        from sources including cancer databases, drug databases, clinical tests, and the literature.
-        Associations are listed by the level of evidence for the use of that drug in the context of
-        the observed alteration, including those that are approved in this or other cancer types,
-        and those that have early clinical or preclinical evidence.
-      </DemoDescription>
-      {!isPrint && (
-      <div className="kb-matches__filter">
-        <TextField
-          label="Filter Table Text"
-          type="text"
-          variant="outlined"
-          value={filterText}
-          onChange={handleFilter}
-          fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <FilterList color="action" />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </div>
-      )}
       <div>
-        {kbMatchedTables}
-        {menuAnchor && (
-          <Menu
-            anchorEl={menuAnchor}
-            open={Boolean(menuAnchor)}
-            onClose={handleMenuClose}
-            anchorReference="anchorPosition"
-            anchorPosition={
-                  menuAnchor
-                    ? { top: menuAnchor.mouseY, left: menuAnchor.mouseX }
-                    : undefined
-                }
-          >
-            <MenuItem onClick={handleMoveToAnotherTable}>Move to another Table</MenuItem>
-          </Menu>
+        <DemoDescription>
+          Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
+          associations are identified using the knowledgebase GraphKB, which integrates information
+          from sources including cancer databases, drug databases, clinical tests, and the literature.
+          Associations are listed by the level of evidence for the use of that drug in the context of
+          the observed alteration, including those that are approved in this or other cancer types,
+          and those that have early clinical or preclinical evidence.
+        </DemoDescription>
+        {!isPrint && (
+          <div className="kb-matches__filter">
+            <TextField
+              label="Filter Table Text"
+              type="text"
+              variant="outlined"
+              value={filterText}
+              onChange={handleFilter}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <FilterList color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </div>
         )}
-        <KbMatchesMoveDialog
-          tableName={moveKbMatchesTableName}
-          isOpen={moveKbMatchesDialogOpen}
-          kbMatches={selectedRows}
-          onClose={() => {
-            setMoveKbMatchesDialogOpen(false);
-            setMoveKbMatchesTableName('');
-          }}
-          onConfirm={handleOnKbMatchesMoveConfirm}
-        />
+        <div>
+          {kbMatchedTables}
+          {menuAnchor && (
+            <Menu
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={handleMenuClose}
+              anchorReference="anchorPosition"
+              anchorPosition={
+                menuAnchor
+                  ? { top: menuAnchor.mouseY, left: menuAnchor.mouseX }
+                  : undefined
+              }
+            >
+              <MenuItem onClick={handleMoveToAnotherTable}>Move to another Table</MenuItem>
+            </Menu>
+          )}
+          <KbMatchesMoveDialog
+            tableName={moveKbMatchesTableName}
+            isOpen={moveKbMatchesDialogOpen}
+            kbMatches={selectedRows}
+            onClose={() => {
+              setMoveKbMatchesDialogOpen(false);
+              setMoveKbMatchesTableName('');
+            }}
+            onConfirm={handleOnKbMatchesMoveConfirm}
+          />
+        </div>
       </div>
-    </div>
     )
   );
 };
