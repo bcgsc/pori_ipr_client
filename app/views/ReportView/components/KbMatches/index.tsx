@@ -50,8 +50,8 @@ const TITLE_MAP = {
   targetedSomaticGenes: 'Detected Alterations From Somatic Targeted Gene Report',
 };
 
-const DESTINATION_TABLES = Object.entries(TITLE_MAP)
-  .filter(([key]) => key !== 'targetedSomaticGenes')
+const getDestinationTables = (currentTable) => Object.entries(TITLE_MAP)
+  .filter(([key]) => !['targetedSomaticGenes', 'highEvidence', currentTable].includes(key))
   .map(([key, value]) => ({
     label: value,
     value: key,
@@ -60,9 +60,10 @@ const DESTINATION_TABLES = Object.entries(TITLE_MAP)
 const FILTER_DEBOUNCE_TIME = 500; // ms before input text for filter refreshes for tables
 
 type KbMatchesMoveDialogType = {
+  tableName: Omit<keyof typeof TITLE_MAP, 'highEvidence' | 'targetedSomaticGenes'>
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (updatedKbStatements?: KbMatchedStatementType[]) => void;
+  onConfirm: (updatedKbStatements: boolean) => void;
   kbMatches: KbMatchedStatementType[]
 };
 
@@ -70,6 +71,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
   const {
     isOpen,
     kbMatches,
+    tableName,
     onClose,
     onConfirm,
   } = props;
@@ -86,9 +88,9 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
             category: destinationTable,
           }));
         const apiCalls = new ApiCallSet(kbStatementCalls);
-        const updatedKbStatements = await apiCalls.request();
-
-        onConfirm(updatedKbStatements);
+        await apiCalls.request();
+        snackbar.success('Moved Kb Statements, refetching ...');
+        onConfirm(true);
       } catch (e) {
         snackbar.error(`Unable to move Kb statements, ${e.message ?? e}`);
       } finally {
@@ -102,11 +104,18 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
     setDestinationTable(value);
   }, [setDestinationTable]);
 
+  const handleOnClose = useCallback((_evt, reason) => {
+    if (reason === 'backdropClick') {
+      onClose();
+    }
+  }, [onClose]);
+
   return (
     <Dialog
       open={isOpen}
       fullWidth
       maxWidth="lg"
+      onClose={handleOnClose}
     >
       <DialogTitle>
         Move Selected KbMatches to another Table
@@ -136,7 +145,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
             label="Destination Table" // MUI requires both labelId and label to properly display
           >
             {
-              DESTINATION_TABLES.map(({ label, value }) => (
+              getDestinationTables(tableName).map(({ label, value }) => (
                 <MenuItem
                   value={value}
                   key={value}
@@ -191,10 +200,13 @@ const KbMatches = ({
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedRows, setSelectedRows] = useState(null);
   const [moveKbMatchesDialogOpen, setMoveKbMatchesDialogOpen] = useState(false);
+  const [moveKbMatchesTableName, setMoveKbMatchesTableName] = useState('');
+  const [fetchData, setFetchData] = useState('initial');
 
   useEffect(() => {
-    if (report) {
+    if (report && fetchData) {
       const getData = async () => {
+        setIsLoading(true);
         try {
           const baseUri = `/reports/${report.ident}/kb-matches/kb-matched-statements`;
           const apiCalls = new ApiCallSet([
@@ -244,6 +256,10 @@ const KbMatches = ({
             ]),
             targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => !/germline/.test(tg?.sample)),
           });
+
+          if (fetchData === 'refetch') {
+            snackbar.success('Successfully refetched KbMatches.');
+          }
         } catch (err) {
           if (err.name === 'CoalesceEntriesError') {
             snackbar.error(err.message);
@@ -254,12 +270,13 @@ const KbMatches = ({
           }
         } finally {
           setIsLoading(false);
+          setFetchData('');
         }
       };
 
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [fetchData, report, setIsLoading]);
 
   const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => (
     setFilterText(event.target.value)
@@ -301,14 +318,14 @@ const KbMatches = ({
     }
   }, [report]);
 
-  const onCellContextMenu = useCallback((params) => {
+  const onCellContextMenu = useCallback((tableName) => (params) => {
     const { event, node, api: gridApi } = params;
     event.preventDefault(); // Disable browser's context menu for cells
     setMenuAnchor({
       mouseX: event.clientX + 2,
       mouseY: event.clientY - 6,
     });
-
+    setMoveKbMatchesTableName(tableName);
     const currentSelectedRows = gridApi.getSelectedRows();
 
     if (currentSelectedRows.length < 1) {
@@ -334,6 +351,13 @@ const KbMatches = ({
     }
   }, []);
 
+  const handleOnKbMatchesMoveConfirm = useCallback((updatedKbStatements) => {
+    if (updatedKbStatements) {
+      setFetchData('refetch');
+    }
+    setMoveKbMatchesDialogOpen('');
+  }, []);
+
   const kbMatchedTables = useMemo(() => Object.keys(TITLE_MAP).map((key) => (
     <div onContextMenu={handleGridContextMenu} key={key}>
       {
@@ -351,7 +375,7 @@ const KbMatches = ({
             rowData={groupedMatches[key]}
             titleText={TITLE_MAP[key]}
             rowSelection="multiple"
-            onCellContextMenu={onCellContextMenu}
+            onCellContextMenu={onCellContextMenu(key)}
           />
         )
       }
@@ -391,30 +415,30 @@ const KbMatches = ({
       <div>
         {kbMatchedTables}
         {menuAnchor && (
-          <>
-            <Menu
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClose={handleMenuClose}
-              anchorReference="anchorPosition"
-              anchorPosition={
+          <Menu
+            anchorEl={menuAnchor}
+            open={Boolean(menuAnchor)}
+            onClose={handleMenuClose}
+            anchorReference="anchorPosition"
+            anchorPosition={
                   menuAnchor
                     ? { top: menuAnchor.mouseY, left: menuAnchor.mouseX }
                     : undefined
                 }
-            >
-              <MenuItem onClick={handleMoveToAnotherTable}>Move to another Table</MenuItem>
-            </Menu>
-            <KbMatchesMoveDialog
-              isOpen={moveKbMatchesDialogOpen}
-              kbMatches={selectedRows}
-              onClose={() => setMoveKbMatchesDialogOpen(false)}
-              onConfirm={(updatedKbStatements) => {
-                setMoveKbMatchesDialogOpen(false);
-              }}
-            />
-          </>
+          >
+            <MenuItem onClick={handleMoveToAnotherTable}>Move to another Table</MenuItem>
+          </Menu>
         )}
+        <KbMatchesMoveDialog
+          tableName={moveKbMatchesTableName}
+          isOpen={moveKbMatchesDialogOpen}
+          kbMatches={selectedRows}
+          onClose={() => {
+            setMoveKbMatchesDialogOpen(false);
+            setMoveKbMatchesTableName('');
+          }}
+          onConfirm={handleOnKbMatchesMoveConfirm}
+        />
       </div>
     </div>
     )
