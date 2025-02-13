@@ -241,7 +241,7 @@ const TumourSummaryEdit = ({
         const newMicbrobialEntries = newMicrobialData.filter((micbData) => !micbData.ident);
         const editedMicrobialEntries = newMicrobialData.filter(({ ident }) => Boolean(ident)).filter((micbData) => {
           const entry = microbial.find(({ ident }) => ident === micbData.ident);
-          return Boolean(entry) && entry.integrationSite !== micbData.integrationSite;
+          return Boolean(entry) && (entry.integrationSite !== micbData.integrationSite || entry.microbialHidden !== micbData.microbialHidden);
         });
 
         microbialIdsToDelete?.forEach((id) => {
@@ -250,8 +250,8 @@ const TumourSummaryEdit = ({
         newMicbrobialEntries?.forEach((entry) => {
           apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, entry, {}));
         });
-        editedMicrobialEntries?.forEach(({ ident, integrationSite, species }) => {
-          apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${ident}`, { integrationSite, species }, {}));
+        editedMicrobialEntries?.forEach(({ ident, integrationSite, species, microbialHidden }) => {
+          apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${ident}`, { integrationSite, species, microbialHidden }, {}));
         });
       }
 
@@ -376,6 +376,15 @@ const TumourSummaryEdit = ({
     }
   }, []);
 
+  const handleMicrobialVisibilityToggle = useCallback((idx) => {
+    setNewMicrobialData((currData) => {
+      const nextData = [...currData];
+      nextData[idx].microbialHidden = !nextData[idx].microbialHidden;
+      return nextData;
+    });
+    setMicrobialDirty(true);
+  }, []);
+
   const handleClicked = useCallback((idx) => {
     setNewMicrobialData((currData) => {
       const nextData = [...currData];
@@ -467,14 +476,46 @@ const TumourSummaryEdit = ({
           freeSolo
           value={newMicrobialData}
           disableClearable
-          renderTags={(value) => value.map(({ species, integrationSite }, idx) => (
+          renderTags={(value) => value.map(({ species, integrationSite, microbialHidden }, idx) => (
             <Chip
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${species}-${idx}`}
-              tabIndex={-1}
-              label={`${getMicbSiteIntegrationStatusLabel(species, integrationSite)}`}
-              onClick={() => handleClicked(idx)}
-              onDelete={() => handleDelete(idx)}
+              variant="filled"
+              label={  
+                <Chip
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${species}-${idx}`}
+                  tabIndex={-1}
+                  label={`${getMicbSiteIntegrationStatusLabel(species, integrationSite)}`}
+                  onClick={() => handleClicked(idx)}
+                  onDelete={() => handleDelete(idx)}
+                  sx={{
+                    "& .MuiChip-deleteIcon": {
+                      marginLeft: 0.5
+                    },
+                    borderTopLeftRadius: 1,
+                    borderBottomLeftRadius: 1,
+                  }}
+                />
+              }
+              icon={              
+                <Checkbox
+                  size="small"
+                  icon={<Visibility />}
+                  checkedIcon={<VisibilityOff />}
+                  checked={microbialHidden}
+                  onClick={() => handleMicrobialVisibilityToggle(idx)}
+                  sx={{
+                    '&.Mui-checked': {
+                      color: pink[800],
+                    },
+                    backgroundColor: 'transparent !important',
+                  }}
+                />
+              }
+              sx={{
+                "& .MuiChip-label": {
+                  paddingRight: 0,
+                },
+              }}
             />
           ))}
           renderInput={(params) => (
@@ -482,7 +523,7 @@ const TumourSummaryEdit = ({
               {...params}
               label="Microbial Species"
               name="species"
-              helperText="Press enter to confirm new entry, click chip to toggle integration status"
+              helperText="Press enter to confirm new entry. Click chip to toggle integration status. Click visibility toggle to hide individual entries."
               onKeyDown={handleKeyDown}
             />
           )}
@@ -525,7 +566,6 @@ const TumourSummaryEdit = ({
             name="percentileHidden"
             onChange={handleTCellCd8PercentileVisibleChange}
             sx={{
-              color: 'default',
               '&.Mui-checked': {
                 color: pink[800],
               },
@@ -605,7 +645,6 @@ const TumourSummaryEdit = ({
             name="svBurdenHidden"
             onChange={handleSVBurdenVisibility}
             sx={{
-              color: 'default',
               '&.Mui-checked': {
                 color: pink[800],
               },
@@ -673,7 +712,6 @@ const TumourSummaryEdit = ({
             name="tmbHidden"
             onChange={handleAdjustedTmbVisibleChange}
             sx={{
-              color: 'default',
               '&.Mui-checked': {
                 color: pink[800],
               },
