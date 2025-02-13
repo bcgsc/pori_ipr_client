@@ -7,7 +7,7 @@ import { AgGridReact as AgGridReactType } from '@ag-grid-community/react/lib/agG
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
-  ColDef, Column, RowNode, RowSpanParams,
+  ColDef, Column, GridApi, RowNode, RowSpanParams,
 } from '@ag-grid-community/core';
 import cloneDeep from 'lodash/cloneDeep';
 import useGrid from '@/hooks/useGrid';
@@ -124,6 +124,7 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
 type DataTableCustomProps = {
   /* Text shown next to the add row button */
   addText?: string;
+  additionalTableMenuItems?: (gridApi: GridApi) => JSX.Element;
   /* Can rows be added to the table? */
   canAdd?: boolean;
   /* Can rows be deleted? */
@@ -186,6 +187,7 @@ type DataTableProps = DataTableCustomProps & Omit<AgGridReactProps, keyof DataTa
 
 const DataTable = ({
   addText,
+  additionalTableMenuItems = null,
   canAdd,
   canDelete,
   canEdit,
@@ -542,6 +544,7 @@ const DataTable = ({
                     Reorder Rows
                   </MenuItem>
                   )}
+                  {additionalTableMenuItems(gridApi)}
                 </Menu>
               </span>
               )}
