@@ -52,7 +52,7 @@ const TITLE_MAP = {
 };
 
 const getDestinationTables = (currentTable) => Object.entries(TITLE_MAP)
-  .filter(([key]) => !['targetedSomaticGenes', 'highEvidence', currentTable].includes(key))
+  .filter(([key]) => !['targetedSomaticGenes', currentTable].includes(key))
   .map(([key, value]) => ({
     label: value,
     value: key,
@@ -84,10 +84,23 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
     setIsUpdating(true);
     const moveKbMatches = async () => {
       try {
-        const kbStatementCalls = kbMatches
-          .map(({ ident }) => api.put(`/reports/${reportIdent}/kb-matches/kb-matched-statements/${ident}`, {
-            category: destinationTable,
-          }));
+        // Check if the table is highEvidence or not
+        const payloadOptions = destinationTable === 'highEvidence' 
+        ? {
+          category: 'therapeutic',
+          kbData: { kbmatchTag: 'bestTherapeutic' },
+        } 
+        : {
+          category: destinationTable,
+          kbData: { kbmatchTag: destinationTable },
+        };
+
+        // Check if a row is coalesced by checking if the ident property of the statement is an array or not. If it is an array, deconstruct and call the api with each ident
+        const kbStatementCalls = kbMatches.flatMap(({ ident }) => 
+          (Array.isArray(ident) ? ident : [ident]).map((id) => 
+            api.put(`/reports/${reportIdent}/kb-matches/kb-matched-statements/${id}`, payloadOptions)
+          )
+        );
         const apiCalls = new ApiCallSet(kbStatementCalls);
         await apiCalls.request();
         snackbar.success('Moved Kb Statements, refetching ...');
