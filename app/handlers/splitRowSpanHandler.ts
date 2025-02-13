@@ -1,5 +1,8 @@
 import { Handler } from 'pagedjs';
-
+/**
+ * Handles when a RowSpanned column is split between two pages in print
+ * It copies over values from original table to empty cells that are supposed to have values in it
+ */
 class SplitRowSpanHandler extends Handler {
   // eslint-disable-next-line class-methods-use-this
   afterRendered(pages) {
@@ -7,7 +10,7 @@ class SplitRowSpanHandler extends Handler {
     pages.forEach((page) => {
       const originTables = page.element.querySelectorAll('table[data-split-to]:not([data-split-from])');
       originTables.forEach((t) => {
-        const rowSpanTds = [...t.querySelectorAll('td[rowspan]')];
+        const rowSpanTds = [...t.querySelectorAll('td[rowspan]')].filter((td) => td.rowSpan > 1);
 
         rowSpanTds
           .filter((td) => td.innerHTML.trim())
@@ -27,7 +30,7 @@ class SplitRowSpanHandler extends Handler {
           .forEach((td) => {
             const refId = td.getAttribute('data-ref');
             const temp = document.createElement('td');
-            temp.innerHTML = rowSpanMap[refId];
+            temp.innerHTML = rowSpanMap[refId] ?? '';
             td.innerHTML = '';
             td.appendChild(temp.cloneNode(true));
           });
