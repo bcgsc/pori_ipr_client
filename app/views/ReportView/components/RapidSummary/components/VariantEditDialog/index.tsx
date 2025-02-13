@@ -33,8 +33,12 @@ const KbMatchesTable = ({ kbMatches, onDelete }: {
 
   const kbMatchesTable = useMemo(() => {
     if (!kbMatches) { return null; }
+    console.log('here at 36');
     const sorted = getVariantRelevanceDict(kbMatches);
+    console.log('here at 38');
 
+    console.dir(sorted);
+    console.log('here at 38');
     return Object.entries(sorted)
       .sort(([relevance1], [relevance2]) => (relevance1 > relevance2 ? 1 : -1))
       .map(([relevance, matches]) => (

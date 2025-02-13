@@ -63,8 +63,9 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
 
 const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
+    console.log('here at 66')
     const iprEvidenceDict = splitIprEvidenceLevels(kbMatches);
-
+    console.log('here at 68');
     if (!iprEvidenceDict['IPR-A']) {
       iprEvidenceDict['IPR-A'] = new Set();
     }
@@ -82,6 +83,7 @@ const processPotentialClinicalAssociation = (variant: RapidVariantType) => Objec
         [(cont) => cont[0].toLowerCase()],
       ).map((drugName) => `${drugName} (IPR-A)`);
     }
+    console.log('here at 87');
 
     let iprBlist = [];
     if (iprBArr.length > 0) {
@@ -96,6 +98,7 @@ const processPotentialClinicalAssociation = (variant: RapidVariantType) => Objec
       ...iprBlist,
     ].join(', ');
 
+    console.log('here at 101');
     return ({
       ...variant,
       ident: `${variant.ident}-${relevanceKey}`,
