@@ -20,7 +20,6 @@ import {
   InputLabel,
 } from '@mui/material';
 import {
-  Category,
   FilterList,
 } from '@mui/icons-material';
 
