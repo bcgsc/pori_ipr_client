@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Link, useLocation } from 'react-router-dom';
 import {
   IconButton,
@@ -10,7 +9,22 @@ import ReportContext from '@/context/ReportContext';
 
 import './index.scss';
 
-const ReportSidebar = (props) => {
+type SectionType = {
+  name: string;
+  uri: string;
+  meta: boolean;
+  showChildren: boolean;
+  clinician: boolean;
+  children: SectionType[];
+};
+
+type ReportSidebarProps = {
+  allSections: SectionType[]; // Array of objects
+  visibleSections: string[]; // Array of strings
+  isSidebarVisible: boolean;
+};
+
+const ReportSidebar = (props: ReportSidebarProps) => {
   const {
     allSections,
     visibleSections,
@@ -32,39 +46,6 @@ const ReportSidebar = (props) => {
     return null;
   }
 
-  const standardPrintOption = () => (
-    <MenuItem>
-      <Link
-        to={{ pathname: `/print/${report.ident}` }}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="report-sidebar__list-link"
-      >
-        <Typography>Standard Layout</Typography>
-      </Link>
-    </MenuItem>
-  );
-
-  const condensedPrintOption = () => (
-    <MenuItem>
-      <Link
-        to={{ pathname: `/condensedLayoutPrint/${report.ident}` }}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="report-sidebar__list-link"
-      >
-        <Typography>Condensed Layout</Typography>
-      </Link>
-    </MenuItem>
-  );
-
-  const printOptions = () => (
-    <>
-      {standardPrintOption()}
-      {condensedPrintOption()}
-    </>
-  );
-
   return (
     <div className="report-sidebar">
       <List dense classes={{ root: 'report-sidebar__list' }}>
@@ -81,12 +62,31 @@ const ReportSidebar = (props) => {
             open={Boolean(anchorEl)}
             onClose={handlePrintMenuClose}
           >
-            {printOptions()}
+            <MenuItem>
+              <Link
+                to={{ pathname: `/print/${report.ident}` }}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="report-sidebar__list-link"
+              >
+                <Typography>Standard Layout</Typography>
+              </Link>
+            </MenuItem>
+            <MenuItem>
+              <Link
+                to={{ pathname: `/condensedLayoutPrint/${report.ident}` }}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="report-sidebar__list-link"
+              >
+                <Typography>Condensed Layout</Typography>
+              </Link>
+            </MenuItem>
           </Menu>
         </ListItem>
         {allSections.map((section) => (
           <React.Fragment key={section.name}>
-            {((section.uri && visibleSections.includes(section.uri)) || (section.uri === 'summary' && visibleSections.some(element => element.startsWith('summary')))) && (
+            {((section.uri && visibleSections.includes(section.uri)) || (section.uri === 'summary' && visibleSections.some((element) => element.startsWith('summary')))) && (
               <Link to={({ pathname: pn }) => `${pn.replace(/\/[^/]*$/, '')}/${section.uri}`} className="report-sidebar__list-link">
                 <ListItem classes={{
                   root: `
@@ -151,12 +151,6 @@ const ReportSidebar = (props) => {
       </List>
     </div>
   );
-};
-
-ReportSidebar.propTypes = {
-  allSections: PropTypes.arrayOf(PropTypes.object).isRequired,
-  visibleSections: PropTypes.arrayOf(PropTypes.string).isRequired,
-  isSidebarVisible: PropTypes.bool.isRequired,
 };
 
 export default ReportSidebar;

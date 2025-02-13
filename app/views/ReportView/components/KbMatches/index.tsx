@@ -33,6 +33,7 @@ import DataTable from '@/components/DataTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import ReportContext from '@/context/ReportContext';
 import { KbMatchedStatementType } from '@/common';
+import { GridApi } from '@ag-grid-community/core';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import coalesceEntries from './coalesce';
 
@@ -373,29 +374,46 @@ const KbMatches = ({
     setMoveKbMatchesDialogOpen(false);
   }, []);
 
-  const kbMatchedTables = useMemo(() => Object.keys(TITLE_MAP).map((key) => (
-    <div onContextMenu={handleGridContextMenu} key={key}>
-      {
-        (
-          (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
-          || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
-        ) && (
-          <DataTable
-            canDelete={canEdit}
-            canToggleColumns
-            columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
-            filterText={debouncedFilterText}
-            isPrint={isPrint}
-            onDelete={handleDelete}
-            rowData={groupedMatches[key]}
-            titleText={TITLE_MAP[key]}
-            rowSelection="multiple"
-            onCellContextMenu={onCellContextMenu(key)}
-          />
-        )
-      }
-    </div>
-  )), [canEdit, debouncedFilterText, groupedMatches, handleDelete, handleGridContextMenu, isPrint, onCellContextMenu, report?.template.name]);
+  const kbMatchedTables = useMemo(() => Object.keys(TITLE_MAP).map((key) => {
+    const additionalTableMenuItems = (gridApi: GridApi) => {
+      const currentSelectedRows = gridApi?.getSelectedRows();
+      return (
+        <MenuItem
+          onClick={() => {
+            setSelectedRows(currentSelectedRows);
+            setMoveKbMatchesTableName(key);
+            setMoveKbMatchesDialogOpen(true);
+          }}
+        >
+          Move Selected KbMatches
+        </MenuItem>
+      );
+    };
+    return (
+      <div onContextMenu={handleGridContextMenu} key={key}>
+        {
+          (
+            (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
+            || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
+          ) && (
+            <DataTable
+              canDelete={canEdit}
+              canToggleColumns
+              columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
+              filterText={debouncedFilterText}
+              isPrint={isPrint}
+              onDelete={handleDelete}
+              rowData={groupedMatches[key]}
+              titleText={TITLE_MAP[key]}
+              rowSelection="multiple"
+              onCellContextMenu={onCellContextMenu(key)}
+              additionalTableMenuItems={additionalTableMenuItems}
+            />
+          )
+        }
+      </div>
+    );
+  }), [canEdit, debouncedFilterText, groupedMatches, handleDelete, handleGridContextMenu, isPrint, onCellContextMenu, report?.template.name]);
 
   return (
     !isLoading && (
