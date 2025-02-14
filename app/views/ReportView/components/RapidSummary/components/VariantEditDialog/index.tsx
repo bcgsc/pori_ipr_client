@@ -33,7 +33,6 @@ const KbMatchesTable = ({ kbMatches, onDelete }: {
 
   const kbMatchesTable = useMemo(() => {
     if (!kbMatches) { return null; }
-    console.log('here at 36');
     const sorted = getVariantRelevanceDict(kbMatches);
     const sortedStatements = {};
     Object.entries(sorted).forEach(([relevance, matches]) => {
@@ -45,12 +44,11 @@ const KbMatchesTable = ({ kbMatches, onDelete }: {
             sortedStatements[relevance].push(statement);
           }
         }
-        console.log(sortedStatements)}
-      )
+      });
     });
     return Object.entries(sortedStatements)
       .sort(([relevance1], [relevance2]) => (relevance1 > relevance2 ? 1 : -1))
-      .map(([relevance, matches]) => (
+      .map(([relevance, matches]: any) => (
         <TableRow key={relevance + matches.toString()}>
           <TableCell>{relevance}</TableCell>
           <TableCell>
@@ -133,13 +131,13 @@ const VariantEditDialog = ({
   }, [editDataDirty]);
 
   const handleKbMatchDelete = useCallback((kbMatchStatementId) => {
-    console.log('hello from 136');
-    console.dir(data.kbMatches);
-    const updatedStatements = data.kbMatches[0].kbMatchedStatements.filter(({ ident }) => kbMatchStatementId !== ident);
-    const updatedKbMatch = { ...data.kbMatches[0], kbMatchedStatements: updatedStatements };
+    const updatedKbMatches = data.kbMatches.map((kbMatch) => {
+      const updatedStatements = kbMatch.kbMatchedStatements.filter(({ ident }) => kbMatchStatementId !== ident);
+      return { ...kbMatch, kbMatchedStatements: updatedStatements };
+    });
     handleDataChange({
       target: {
-        value: [updatedKbMatch],
+        value: updatedKbMatches,
         name: 'kbMatches',
       },
     });

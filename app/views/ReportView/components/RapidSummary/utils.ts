@@ -13,7 +13,6 @@ const getVariantRelevanceDict = (kbMatches: KbMatchType[]) => {
       }
     }
   });
-  console.log('here at 16');
   return relevanceDict;
 };
 
