@@ -16,7 +16,7 @@ import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import api, { ApiCallSet } from '@/services/api';
-import { KbMatchType } from '@/common';
+import { KbMatchedStatementType, KbMatchType } from '@/common';
 import { Box } from '@mui/system';
 import { RapidVariantType } from '../../types';
 import { getVariantRelevanceDict } from '../../utils';
@@ -40,7 +40,7 @@ const KbMatchesTable = ({ kbMatches, onDelete }: {
         for (const statement of match.kbMatchedStatements) {
           if (!sortedStatements[relevance]) {
             sortedStatements[relevance] = [statement];
-          } else if (!sortedStatements[relevance].some(item => item.ident === statement.ident)) {
+          } else if (!sortedStatements[relevance].some((item: KbMatchedStatementType) => item.ident === statement.ident)) {
             sortedStatements[relevance].push(statement);
           }
         }
@@ -48,7 +48,7 @@ const KbMatchesTable = ({ kbMatches, onDelete }: {
     });
     return Object.entries(sortedStatements)
       .sort(([relevance1], [relevance2]) => (relevance1 > relevance2 ? 1 : -1))
-      .map(([relevance, matches]: any) => (
+      .map(([relevance, matches]: [relevance: string, matches: KbMatchedStatementType[]]) => (
         <TableRow key={relevance + matches.toString()}>
           <TableCell>{relevance}</TableCell>
           <TableCell>
@@ -131,7 +131,7 @@ const VariantEditDialog = ({
   }, [editDataDirty]);
 
   const handleKbMatchDelete = useCallback((kbMatchStatementId) => {
-    const updatedKbMatches = data.kbMatches.map((kbMatch) => {
+    const updatedKbMatches = data?.kbMatches.map((kbMatch) => {
       const updatedStatements = kbMatch.kbMatchedStatements.filter(({ ident }) => kbMatchStatementId !== ident);
       return { ...kbMatch, kbMatchedStatements: updatedStatements };
     });
@@ -162,11 +162,13 @@ const VariantEditDialog = ({
         ));
       }
 
-      if (fields.includes(FIELDS.kbMatches) && data?.kbMatches) {
-        const existingIds = editData.kbMatches.map(({ ident }) => ident);
-        const remainingIds = new Set(data.kbMatches.map(({ ident }) => ident));
-        existingIds.filter((id) => !remainingIds.has(id)).forEach((kbMatchId) => {
-          calls.push(api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${kbMatchId}`, {}));
+      if (fields.includes(FIELDS.kbMatches) && data?.kbMatches && editData?.kbMatches) {
+        const existingIds = [].concat(...editData.kbMatches.map((match) => match.kbMatchedStatements.map(({ ident }) => ident)));
+        data?.kbMatches.forEach((kbMatch) => {
+          const remainingIds = new Set(kbMatch.kbMatchedStatements.map(({ ident }) => ident));
+          existingIds.filter((id) => !remainingIds.has(id)).forEach((stmtId) => {
+            calls.push(api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${stmtId}`, {}));
+          });
         });
       }
 
@@ -181,7 +183,7 @@ const VariantEditDialog = ({
     } else {
       onClose(null);
     }
-  }, [editDataDirty, data, fields, isSigned, report.ident, editData, showConfirmDialog, onClose]);
+  }, [editDataDirty, data, fields, isSigned, report.ident, editData?.kbMatches, showConfirmDialog, onClose]);
 
   const handleDialogClose = useCallback(() => onClose(null), [onClose]);
 
