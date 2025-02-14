@@ -244,7 +244,7 @@ function PrintTable({
 
   useLayoutEffect(() => {
     if (!data.length || !tableId) { return; }
-    class MyHandler extends Handler {
+    class PrintTableColSpanHandler extends Handler {
       // eslint-disable-next-line class-methods-use-this
       afterRendered() {
         const targetTables: NodeListOf<HTMLTableElement> = document.querySelectorAll(`[data-table-id='${tableId}']`);
@@ -276,7 +276,7 @@ function PrintTable({
         }
       }
     }
-    registerHandlers(MyHandler);
+    registerHandlers(PrintTableColSpanHandler);
   }, [data, tableId]);
 
   return (
