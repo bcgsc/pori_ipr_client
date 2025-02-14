@@ -35,11 +35,20 @@ const KbMatchesTable = ({ kbMatches, onDelete }: {
     if (!kbMatches) { return null; }
     console.log('here at 36');
     const sorted = getVariantRelevanceDict(kbMatches);
-    console.log('here at 38');
-
-    console.dir(sorted);
-    console.log('here at 38');
-    return Object.entries(sorted)
+    const sortedStatements = {};
+    Object.entries(sorted).forEach(([relevance, matches]) => {
+      matches.forEach((match) => {
+        for (const statement of match.kbMatchedStatements) {
+          if (!sortedStatements[relevance]) {
+            sortedStatements[relevance] = [statement];
+          } else if (!sortedStatements[relevance].some(item => item.ident === statement.ident)) {
+            sortedStatements[relevance].push(statement);
+          }
+        }
+        console.log(sortedStatements)}
+      )
+    });
+    return Object.entries(sortedStatements)
       .sort(([relevance1], [relevance2]) => (relevance1 > relevance2 ? 1 : -1))
       .map(([relevance, matches]) => (
         <TableRow key={relevance + matches.toString()}>
@@ -123,10 +132,14 @@ const VariantEditDialog = ({
     }
   }, [editDataDirty]);
 
-  const handleKbMatchDelete = useCallback((kbMatchId) => {
+  const handleKbMatchDelete = useCallback((kbMatchStatementId) => {
+    console.log('hello from 136');
+    console.dir(data.kbMatches);
+    const updatedStatements = data.kbMatches[0].kbMatchedStatements.filter(({ ident }) => kbMatchStatementId !== ident);
+    const updatedKbMatch = { ...data.kbMatches[0], kbMatchedStatements: updatedStatements };
     handleDataChange({
       target: {
-        value: data.kbMatches.filter(({ ident }) => kbMatchId !== ident),
+        value: [updatedKbMatch],
         name: 'kbMatches',
       },
     });
@@ -155,7 +168,7 @@ const VariantEditDialog = ({
         const existingIds = editData.kbMatches.map(({ ident }) => ident);
         const remainingIds = new Set(data.kbMatches.map(({ ident }) => ident));
         existingIds.filter((id) => !remainingIds.has(id)).forEach((kbMatchId) => {
-          calls.push(api.del(`/reports/${report.ident}/kb-matches/${kbMatchId}`, {}));
+          calls.push(api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${kbMatchId}`, {}));
         });
       }
 

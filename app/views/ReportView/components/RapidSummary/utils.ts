@@ -1,21 +1,19 @@
 import {
-  KbMatchType, KbMatchedStatementType
+  KbMatchType,
 } from '@/common';
 
 const getVariantRelevanceDict = (kbMatches: KbMatchType[]) => {
-  const relevanceDict: Record<string, KbMatchedStatementType[]> = {};
+  const relevanceDict: Record<string, KbMatchType[]> = {};
   kbMatches.forEach((match) => {
-    console.log('here at 8');
     for (const statement of match.kbMatchedStatements) {
-      console.log('here at 10');
       if (!relevanceDict[statement.relevance]) {
-        relevanceDict[statement.relevance] = [statement];
+        relevanceDict[statement.relevance] = [match];
       } else {
-        relevanceDict[statement.relevance].push(statement);
+        relevanceDict[statement.relevance].push(match);
       }
     }
   });
-  console.dir(relevanceDict);
+  console.log('here at 16');
   return relevanceDict;
 };
 
