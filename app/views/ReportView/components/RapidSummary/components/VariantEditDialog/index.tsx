@@ -11,6 +11,8 @@ import {
   Button,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip,
 } from '@mui/material';
+import AsyncButton from '@/components/AsyncButton';
+import snackbar from '@/services/SnackbarUtils';
 import DeleteIcon from '@mui/icons-material/HighlightOff';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
@@ -114,6 +116,7 @@ const VariantEditDialog = ({
   const { showConfirmDialog } = useConfirmDialog();
   const [data, setData] = useState(editData);
   const [editDataDirty, setEditDataDirty] = useState<boolean>(false);
+  const [isApiCalling, setIsApiCalling] = useState(false);
 
   useEffect(() => {
     if (editData) {
@@ -144,41 +147,47 @@ const VariantEditDialog = ({
   }, [data?.kbMatches, handleDataChange]);
 
   const handleSave = useCallback(async () => {
+    setIsApiCalling(true);
     if (editDataDirty) {
-      let variantId = data?.ident;
-      // The relevance was appeneded to Id due to row concatenation, needs to be removed here to call API
-      if ((data).potentialClinicalAssociation) {
-        variantId = variantId.substr(0, variantId.lastIndexOf('-'));
-      }
+      try {
+        let variantId = data?.ident;
+        // The relevance was appeneded to Id due to row concatenation, needs to be removed here to call API
+        if ((data).potentialClinicalAssociation) {
+          variantId = variantId.substr(0, variantId.lastIndexOf('-'));
+        }
 
-      const calls = [];
+        const calls = [];
 
-      if (fields.includes(FIELDS.comments) && data?.comments) {
-        calls.push(api.put(
-          `/reports/${report.ident}/${VARIANT_TYPE_TO_API_MAP[data.variantType]}/${variantId}`,
-          {
-            comments: data.comments,
-          },
-        ));
-      }
+        if (fields.includes(FIELDS.comments) && data?.comments) {
+          calls.push(api.put(
+            `/reports/${report.ident}/${VARIANT_TYPE_TO_API_MAP[data.variantType]}/${variantId}`,
+            {
+              comments: data.comments,
+            },
+          ));
+        }
 
-      if (fields.includes(FIELDS.kbMatches) && data?.kbMatches && editData?.kbMatches) {
-        const existingIds = [].concat(...editData.kbMatches.map((match) => match.kbMatchedStatements.map(({ ident }) => ident)));
-        data?.kbMatches.forEach((kbMatch) => {
-          const remainingIds = new Set(kbMatch.kbMatchedStatements.map(({ ident }) => ident));
-          existingIds.filter((id) => !remainingIds.has(id)).forEach((stmtId) => {
-            calls.push(api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${stmtId}`, {}));
+        if (fields.includes(FIELDS.kbMatches) && data?.kbMatches && editData?.kbMatches) {
+          const existingIds = [].concat(...editData.kbMatches.map((match) => match.kbMatchedStatements.map(({ ident }) => ident)));
+          data?.kbMatches.forEach((kbMatch) => {
+            const remainingIds = new Set(kbMatch.kbMatchedStatements.map(({ ident }) => ident));
+            existingIds.filter((id) => !remainingIds.has(id)).forEach((stmtId) => {
+              calls.push(api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${stmtId}`, {}));
+            });
           });
-        });
-      }
+        }
 
-      const callSet = new ApiCallSet(calls);
+        const callSet = new ApiCallSet(calls);
 
-      if (isSigned) {
-        showConfirmDialog(callSet);
-      } else {
-        await callSet.request();
-        onClose(true);
+        if (isSigned) {
+          showConfirmDialog(callSet);
+        } else {
+          await callSet.request();
+          onClose(true);
+        }
+        setIsApiCalling(false);
+      } catch (e) {
+        snackbar.error(`Error editing variant: ${e.message}`);
       }
     } else {
       onClose(null);
@@ -219,9 +228,9 @@ const VariantEditDialog = ({
         <Button onClick={handleDialogClose}>
           Close
         </Button>
-        <Button color="secondary" onClick={handleSave}>
+        <AsyncButton isLoading={isApiCalling} color="secondary" onClick={handleSave}>
           Save Changes
-        </Button>
+        </AsyncButton>
       </DialogActions>
     </Dialog>
   );
