@@ -122,7 +122,10 @@ const VariantEditDialog = ({
     if (editData) {
       setData(editData);
     }
-  }, [editData]);
+    if (!open) {
+      setIsApiCalling(false);
+    }
+  }, [editData, open]);
 
   const handleDataChange = useCallback((
     { target: { value, name } },
@@ -134,7 +137,7 @@ const VariantEditDialog = ({
   }, [editDataDirty]);
 
   const handleKbMatchDelete = useCallback((kbMatchStatementId) => {
-    const updatedKbMatches = data?.kbMatches.map((kbMatch) => {
+    const updatedKbMatches = data?.kbMatches.map((kbMatch: KbMatchType) => {
       const updatedStatements = kbMatch.kbMatchedStatements.filter(({ ident }) => kbMatchStatementId !== ident);
       return { ...kbMatch, kbMatchedStatements: updatedStatements };
     });
@@ -147,8 +150,8 @@ const VariantEditDialog = ({
   }, [data?.kbMatches, handleDataChange]);
 
   const handleSave = useCallback(async () => {
-    setIsApiCalling(true);
     if (editDataDirty) {
+      setIsApiCalling(true);
       try {
         let variantId = data?.ident;
         // The relevance was appeneded to Id due to row concatenation, needs to be removed here to call API
@@ -185,9 +188,9 @@ const VariantEditDialog = ({
           await callSet.request();
           onClose(true);
         }
-        setIsApiCalling(false);
       } catch (e) {
         snackbar.error(`Error editing variant: ${e.message}`);
+        onClose(true);
       }
     } else {
       onClose(null);
