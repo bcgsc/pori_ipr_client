@@ -421,8 +421,7 @@ const RapidSummary = ({
         <PrintTable
           data={therapeuticAssociationResults}
           columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
-          // DEVSU-2540 - turn off coalescing for now until more permanent solution
-          // collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
+          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
           fullWidth
         />
       );
@@ -485,8 +484,7 @@ const RapidSummary = ({
         <PrintTable
           data={cancerRelevanceResults}
           columnDefs={cancerRelevanceColDefs.filter((col) => col.headerName !== 'Actions')}
-          // DEVSU-2540 - turn off coalescing for now until more permanent solution
-          // collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
+          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
           fullWidth
         />
       );
