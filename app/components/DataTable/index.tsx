@@ -544,7 +544,7 @@ const DataTable = ({
                     Reorder Rows
                   </MenuItem>
                   )}
-                  {additionalTableMenuItems(gridApi)}
+                  {additionalTableMenuItems && additionalTableMenuItems(gridApi)}
                 </Menu>
               </span>
               )}
