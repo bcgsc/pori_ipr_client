@@ -18,6 +18,9 @@ import {
   SelectChangeEvent,
   FormControl,
   InputLabel,
+  FormControlLabel,
+  Checkbox,
+  LinearProgress,
 } from '@mui/material';
 import {
   FilterList,
@@ -34,8 +37,9 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import ReportContext from '@/context/ReportContext';
 import { KbMatchedStatementType } from '@/common';
 import { GridApi } from '@ag-grid-community/core';
+import { KbMatchesMoveDialogContext, useKbMatches } from '@/context/KbMatchesMoveDialogContext/KbmatchesMoveDialogContext';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
-import coalesceEntries from './coalesce';
+import { coalesceEntries, getBucketKey } from './coalesce';
 
 import './index.scss';
 import ProbeResultsType from '../ProbeSummary/types';
@@ -61,46 +65,52 @@ const getDestinationTables = (currentTable) => Object.entries(TITLE_MAP)
 const FILTER_DEBOUNCE_TIME = 500; // ms before input text for filter refreshes for tables
 
 type KbMatchesMoveDialogType = {
-  tableName: Omit<keyof typeof TITLE_MAP, 'highEvidence' | 'targetedSomaticGenes'>
-  isOpen: boolean;
   onClose: () => void;
   onConfirm: (updatedKbStatements: boolean) => void;
-  kbMatches: KbMatchedStatementType[]
 };
 
 const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
   const {
-    isOpen,
-    kbMatches,
-    tableName,
     onClose,
     onConfirm,
   } = props;
   const { report: { ident: reportIdent } } = useReport();
+  const {
+    moveKbMatchesTableName,
+    moveKbMatchesDialogOpen,
+    selectedRows,
+    selectedKbIdToIprMapping,
+  } = useKbMatches();
   const [destinationTable, setDestinationTable] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [selectedKbStatementIds, setSelectedKbStatementIds] = useState<string[]>(null);
+
+  useEffect(() => {
+    if (selectedRows) {
+      setSelectedKbStatementIds(
+        Array.from(new Set(selectedRows.flatMap(({ kbStatementId }) => kbStatementId))),
+      );
+    }
+  }, [selectedRows]);
 
   const handleOnSave = useCallback(() => {
     setIsUpdating(true);
     const moveKbMatches = async () => {
       try {
         // Check if the table is highEvidence or not
-        const payloadOptions = destinationTable === 'highEvidence' 
-        ? {
-          category: 'therapeutic',
-          kbData: { kbmatchTag: 'bestTherapeutic' },
-        } 
-        : {
-          category: destinationTable,
-          kbData: { kbmatchTag: destinationTable },
-        };
+        const payloadOptions = destinationTable === 'highEvidence'
+          ? {
+            category: 'therapeutic',
+            kbData: { kbmatchTag: 'bestTherapeutic' },
+          }
+          : {
+            category: destinationTable,
+            kbData: { kbmatchTag: destinationTable },
+          };
 
         // Check if a row is coalesced by checking if the ident property of the statement is an array or not. If it is an array, deconstruct and call the api with each ident
-        const kbStatementCalls = kbMatches.flatMap(({ ident }) => 
-          (Array.isArray(ident) ? ident : [ident]).map((id) => 
-            api.put(`/reports/${reportIdent}/kb-matches/kb-matched-statements/${id}`, payloadOptions)
-          )
-        );
+        const kbStatementCalls = selectedKbStatementIds
+          .map((id) => api.put(`/reports/${reportIdent}/kb-matches/kb-matched-statements/${selectedKbIdToIprMapping[id]}`, payloadOptions));
         const apiCalls = new ApiCallSet(kbStatementCalls);
         await apiCalls.request();
         snackbar.success('Moved Kb Statements, refetching ...');
@@ -112,7 +122,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       }
     };
     moveKbMatches();
-  }, [destinationTable, kbMatches, onConfirm, reportIdent]);
+  }, [destinationTable, onConfirm, reportIdent, selectedKbIdToIprMapping, selectedKbStatementIds]);
 
   const handleDestinationChange = useCallback(({ target: { value } }: SelectChangeEvent<string>) => {
     setDestinationTable(value);
@@ -124,9 +134,22 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
     }
   }, [onClose]);
 
+  const handleOnCheck = useCallback(({ target: { checked, value } }) => {
+    setSelectedKbStatementIds((selected) => {
+      const nextSelected = [...selected];
+      if (checked) {
+        nextSelected.push(value);
+      } else {
+        const idx = nextSelected.indexOf(value);
+        nextSelected.splice(idx, 1);
+      }
+      return nextSelected;
+    });
+  }, []);
+
   return (
     <Dialog
-      open={isOpen}
+      open={moveKbMatchesDialogOpen}
       fullWidth
       maxWidth="lg"
       onClose={handleOnClose}
@@ -140,13 +163,38 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
         </DialogContentText>
         <List>
           {
-            kbMatches?.map(({ disease, kbMatches: kbM }) => (
-              <ListItem>
-                <DialogContentText>
-                  {`${kbM[0].kbVariant}(${kbM[0].kbVariantId}) ${disease} `}
-                </DialogContentText>
-              </ListItem>
-            ))
+            selectedRows?.map((kbM: KbMatchedStatementType) => {
+              let statementIds: string[];
+              if (!Array.isArray(kbM.kbStatementId)) {
+                statementIds = [kbM.kbStatementId];
+              } else {
+                statementIds = kbM.kbStatementId;
+              }
+              return (
+                <ListItem>
+                  <DialogContentText>
+                    {getBucketKey(kbM).replace(/\|\|/g, ' ')}
+                    <List disablePadding>
+                      {statementIds.map((id) => (
+                        <ListItem sx={{ py: 0 }}>
+                          <FormControlLabel
+                            control={(
+                              <Checkbox
+                                value={id}
+                                checked={selectedKbStatementIds?.includes(id)}
+                                onChange={handleOnCheck}
+                              />
+                              )}
+                            label={id}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </DialogContentText>
+
+                </ListItem>
+              );
+            })
           }
         </List>
         <FormControl variant="outlined" fullWidth>
@@ -159,13 +207,8 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
             label="Destination Table" // MUI requires both labelId and label to properly display
           >
             {
-              getDestinationTables(tableName).map(({ label, value }) => (
-                <MenuItem
-                  value={value}
-                  key={value}
-                >
-                  {label}
-                </MenuItem>
+              getDestinationTables(moveKbMatchesTableName).map(({ label, value }) => (
+                <MenuItem value={value} key={value}>{label}</MenuItem>
               ))
             }
           </Select>
@@ -174,7 +217,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button
-          disabled={isUpdating || !destinationTable}
+          disabled={isUpdating || !destinationTable || !selectedKbStatementIds}
           variant="contained"
           color="primary"
           onClick={handleOnSave}
@@ -182,6 +225,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
           Save
         </Button>
       </DialogActions>
+      { isUpdating && <LinearProgress />}
     </Dialog>
   );
 };
@@ -217,6 +261,9 @@ const KbMatches = ({
   const [moveKbMatchesTableName, setMoveKbMatchesTableName] = useState('');
   const [fetchData, setFetchData] = useState('initial');
 
+  // TODO: find a better way
+  const [allKbMatches, setAllKbMatches] = useState(null);
+
   useEffect(() => {
     if (report && fetchData) {
       const getData = async () => {
@@ -235,6 +282,8 @@ const KbMatches = ({
             ProbeResultsType[],
             KbMatchedStatementType[],
           ];
+
+          setAllKbMatches(allKbMatchesResp);
 
           // TODO this is here for backwards compatibility; consider removing after datafix
           const oldStmts = allKbMatchesResp.filter((stmt) => !stmt.kbData?.kbmatchTag);
@@ -426,20 +475,53 @@ const KbMatches = ({
         }
       </div>
     );
-  }), [canEdit, debouncedFilterText, groupedMatches, handleDelete, handleGridContextMenu, isPrint, onCellContextMenu, report?.template.name]);
+  }), [
+    canEdit,
+    debouncedFilterText,
+    groupedMatches,
+    handleDelete,
+    handleGridContextMenu,
+    isPrint,
+    onCellContextMenu,
+    report?.template.name,
+  ]);
+
+  const moveKbMatchesContextValue = useMemo(() => {
+    const kbMatchesToFind = Array.from(new Set(selectedRows?.map(({ kbStatementId }) => kbStatementId))).flat();
+    let foundMapping: Record<string, string> | null = null;
+    if (kbMatchesToFind) {
+      foundMapping = {};
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < kbMatchesToFind.length; i++) {
+        const found = allKbMatches?.find(({ kbStatementId }) => kbMatchesToFind[i] === kbStatementId);
+        foundMapping[kbMatchesToFind[i] as string] = found.ident;
+      }
+    }
+
+    return ({
+      selectedKbIdToIprMapping: foundMapping,
+      moveKbMatchesDialogOpen,
+      setMoveKbMatchesDialogOpen,
+      moveKbMatchesTableName,
+      setMoveKbMatchesTableName,
+      selectedRows,
+      setSelectedRows,
+    });
+  }, [allKbMatches, moveKbMatchesDialogOpen, moveKbMatchesTableName, selectedRows]);
 
   return (
-    !isLoading && (
-      <div>
-        <DemoDescription>
-          Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
-          associations are identified using the knowledgebase GraphKB, which integrates information
-          from sources including cancer databases, drug databases, clinical tests, and the literature.
-          Associations are listed by the level of evidence for the use of that drug in the context of
-          the observed alteration, including those that are approved in this or other cancer types,
-          and those that have early clinical or preclinical evidence.
-        </DemoDescription>
-        {!isPrint && (
+    <KbMatchesMoveDialogContext.Provider value={moveKbMatchesContextValue}>
+      {!isLoading && (
+        <div>
+          <DemoDescription>
+            Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
+            associations are identified using the knowledgebase GraphKB, which integrates information
+            from sources including cancer databases, drug databases, clinical tests, and the literature.
+            Associations are listed by the level of evidence for the use of that drug in the context of
+            the observed alteration, including those that are approved in this or other cancer types,
+            and those that have early clinical or preclinical evidence.
+          </DemoDescription>
+          {!isPrint && (
           <div className="kb-matches__filter">
             <TextField
               label="Filter Table Text"
@@ -457,10 +539,10 @@ const KbMatches = ({
               }}
             />
           </div>
-        )}
-        <div>
-          {kbMatchedTables}
-          {menuAnchor && (
+          )}
+          <div>
+            {kbMatchedTables}
+            {menuAnchor && (
             <Menu
               anchorEl={menuAnchor}
               open={Boolean(menuAnchor)}
@@ -472,22 +554,20 @@ const KbMatches = ({
                   : undefined
               }
             >
-              <MenuItem onClick={handleMoveToAnotherTable}>Move to another Table</MenuItem>
+              <MenuItem onClick={handleMoveToAnotherTable}>Move to another table</MenuItem>
             </Menu>
-          )}
-          <KbMatchesMoveDialog
-            tableName={moveKbMatchesTableName}
-            isOpen={moveKbMatchesDialogOpen}
-            kbMatches={selectedRows}
-            onClose={() => {
-              setMoveKbMatchesDialogOpen(false);
-              setMoveKbMatchesTableName('');
-            }}
-            onConfirm={handleOnKbMatchesMoveConfirm}
-          />
+            )}
+            <KbMatchesMoveDialog
+              onClose={() => {
+                setMoveKbMatchesDialogOpen(false);
+                setMoveKbMatchesTableName('');
+              }}
+              onConfirm={handleOnKbMatchesMoveConfirm}
+            />
+          </div>
         </div>
-      </div>
-    )
+      )}
+    </KbMatchesMoveDialogContext.Provider>
   );
 };
 

@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import TherapeuticType from '@/views/ReportView/components/TherapeuticTargets/types';
+import { useKbMatches } from '@/context/KbMatchesMoveDialogContext/KbmatchesMoveDialogContext';
 import {
   ActionCellRendererProps,
   ActionCellRenderer,
@@ -22,10 +23,17 @@ type TherapeuticTargetType = 'therapeutic' | 'chemoresistance';
 
 const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const { ident: reportId } = useParams<{ ident: string }>();
+  const {
+    setMoveKbMatchesDialogOpen,
+    setMoveKbMatchesTableName,
+    setSelectedRows,
+  } = useKbMatches();
+
   const { report: { template: { name: reportType } } } = useContext(ReportContext);
   const { data } = props;
 
   const {
+    category,
     kbStatementId,
     context,
     kbData,
@@ -137,6 +145,12 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
     return null;
   }, []);
 
+  const handleMoveKbMatch = useCallback(() => {
+    setMoveKbMatchesDialogOpen(true);
+    setMoveKbMatchesTableName(category);
+    setSelectedRows([data]);
+  }, [category, data, setMoveKbMatchesDialogOpen, setMoveKbMatchesTableName, setSelectedRows]);
+
   if (!REPORT_TYPES_TO_SHOW_EXTRA_MENU.includes(reportType)) {
     return <ActionCellRenderer {...props} />;
   }
@@ -191,6 +205,9 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           </Menu>
           )
         }
+        <MenuItem onClick={handleMoveKbMatch}>
+          Move to another table
+        </MenuItem>
         <ActionCellRenderer displayMode="menu" {...props} />
       </Menu>
     </>
