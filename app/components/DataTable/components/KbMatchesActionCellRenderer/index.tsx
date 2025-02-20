@@ -33,12 +33,14 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const { data } = props;
 
   const {
+    approvedTherapy,
     category,
     kbStatementId,
     context,
     kbData,
     relevance,
     iprEvidenceLevel,
+    matchedCancer,
   } = data as KbMatchedStatementType;
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
   const [subMenuAnchor, setSubMenuAnchor] = useState<HTMLElement>();
@@ -147,9 +149,23 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
 
   const handleMoveKbMatch = useCallback(() => {
     setMoveKbMatchesDialogOpen(true);
-    setMoveKbMatchesTableName(category);
+    setMoveKbMatchesTableName(() => {
+      // New Schema for table name
+      if (kbData.kbmatchTag) {
+        return kbData.kbmatchTag;
+      }
+      // Old way checking for highEvidence
+      if (category === 'therapeutic'
+        && approvedTherapy
+        && matchedCancer === true
+        && ['IPR-A', 'IPR-B'].includes(data.iprEvidenceLevel)
+      ) {
+        return 'highEvidence';
+      }
+      return category;
+    });
     setSelectedRows([data]);
-  }, [category, data, setMoveKbMatchesDialogOpen, setMoveKbMatchesTableName, setSelectedRows]);
+  }, [category, data, approvedTherapy, matchedCancer, kbData.kbmatchTag, setMoveKbMatchesDialogOpen, setMoveKbMatchesTableName, setSelectedRows]);
 
   if (!REPORT_TYPES_TO_SHOW_EXTRA_MENU.includes(reportType)) {
     return <ActionCellRenderer {...props} />;

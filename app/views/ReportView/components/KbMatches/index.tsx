@@ -171,12 +171,12 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
                 statementIds = kbM.kbStatementId;
               }
               return (
-                <ListItem>
+                <ListItem key={statementIds.toString()}>
                   <DialogContentText>
                     {getBucketKey(kbM).replace(/\|\|/g, ' ')}
                     <List disablePadding>
                       {statementIds.map((id) => (
-                        <ListItem sx={{ py: 0 }}>
+                        <ListItem key={id} sx={{ py: 0 }}>
                           <FormControlLabel
                             control={(
                               <Checkbox
@@ -191,7 +191,6 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
                       ))}
                     </List>
                   </DialogContentText>
-
                 </ListItem>
               );
             })
@@ -441,6 +440,7 @@ const KbMatches = ({
       const currentSelectedRows = gridApi?.getSelectedRows();
       return (
         <MenuItem
+          key={key}
           onClick={() => {
             setSelectedRows(currentSelectedRows);
             setMoveKbMatchesTableName(key);
