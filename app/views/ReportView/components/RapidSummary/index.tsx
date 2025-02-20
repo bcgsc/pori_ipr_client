@@ -64,7 +64,6 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
 const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
     const iprEvidenceDict = splitIprEvidenceLevels(kbMatches);
-
     if (!iprEvidenceDict['IPR-A']) {
       iprEvidenceDict['IPR-A'] = new Set();
     }
