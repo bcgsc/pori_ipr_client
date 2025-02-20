@@ -16,8 +16,14 @@ import {
   ActionCellRendererProps,
   ActionCellRenderer,
 } from '../ActionCellRenderer';
-
-const REPORT_TYPES_TO_SHOW_EXTRA_MENU = ['genomic'];
+/**
+ * Tables to show KbMatches specific options
+ */
+const REPORT_TYPES_TO_SHOW_EXTRA_MENU = ['probe', 'rapid', 'genomic'];
+/**
+ * Tables that allows Add to Potential Therapeutic Targets tables
+ */
+const REPORT_TYPES_TO_SHOW_TO_TABLES = ['genomic'];
 
 type TherapeuticTargetType = 'therapeutic' | 'chemoresistance';
 
@@ -184,22 +190,26 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         open={Boolean(menuAnchor)}
         onClose={() => setMenuAnchor(null)}
       >
-        <MenuItem
-          disabled={isLoading || isClinicalTrial}
-          onClick={isMult
-            ? (evt) => handleMultiTargets(evt, 'therapeutic')
-            : handleUpdateTherapeuticTargets('therapeutic')}
-        >
-          Add to Potential Therapeutic Targets
-        </MenuItem>
-        <MenuItem
-          disabled={isLoading || isClinicalTrial}
-          onClick={isMult
-            ? (evt) => handleMultiTargets(evt, 'chemoresistance')
-            : handleUpdateTherapeuticTargets('chemoresistance')}
-        >
-          Add to Potential Resistance and Toxicity
-        </MenuItem>
+        {REPORT_TYPES_TO_SHOW_TO_TABLES.includes(reportType) && (
+          <>
+            <MenuItem
+              disabled={isLoading || isClinicalTrial}
+              onClick={isMult
+                ? (evt) => handleMultiTargets(evt, 'therapeutic')
+                : handleUpdateTherapeuticTargets('therapeutic')}
+            >
+              Add to Potential Therapeutic Targets
+            </MenuItem>
+            <MenuItem
+              disabled={isLoading || isClinicalTrial}
+              onClick={isMult
+                ? (evt) => handleMultiTargets(evt, 'chemoresistance')
+                : handleUpdateTherapeuticTargets('chemoresistance')}
+            >
+              Add to Potential Resistance and Toxicity
+            </MenuItem>
+          </>
+        )}
         {
           isMult && (
           <Menu
