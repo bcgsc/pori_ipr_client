@@ -19,6 +19,7 @@ import {
 import getImageDataURI from '@/utils/getImageDataURI';
 import { SummaryProps } from '@/commonComponents';
 
+import SplitRowSpanHandler from '@/handlers/splitRowSpanHandler';
 import Summary from '../ReportView/components/Summary';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
@@ -34,6 +35,8 @@ const Appendices = lazy(() => import('../ReportView/components/Appendices'));
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'summary':
+      return { ...state, summary: true };
     case 'summary-genomic':
       return { ...state, summary: true };
     case 'summary-tgr':
@@ -176,45 +179,6 @@ const Print = ({
     }
   }, [params.ident, report]);
 
-  useEffect(() => {
-    if (reportSectionsLoaded
-      && template?.sections.length
-      && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section))
-      && !isPrintDialogShown) {
-      const showPrint = async () => {
-        const paged = new Previewer();
-        await paged.preview(document.getElementById('root'), ['index.css'], document.body);
-        const templateName = report.template.name === 'probe' ? 'targeted_gene' : report.template.name;
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-        const day = currentDate.getDate().toString().padStart(2, '0');
-        const hours = currentDate.getHours().toString().padStart(2, '0');
-        const minutes = currentDate.getMinutes().toString().padStart(2, '0');
-        const seconds = currentDate.getSeconds().toString().padStart(2, '0');
-        let serverName;
-        switch (process.env.NODE_ENV) {
-          case 'development':
-            serverName = '_iprdev';
-            break;
-          case 'staging':
-            serverName = '_iprstaging';
-            break;
-          default:
-            serverName = '';
-            break;
-        }
-        const formattedDate = `${year}-${month}-${day}_${hours}h${minutes}m${seconds}s`;
-
-        document.title = `${report.patientId}${serverName}_${templateName}_report_${formattedDate}`;
-
-        window.print();
-        setIsPrintDialogShown(true);
-      };
-      showPrint();
-    }
-  }, [isPrintDialogShown, report, reportSectionsLoaded, template]);
-
   const renderSections = useMemo(() => {
     if (report && template) { // TODO remove checks on 'summary' and template name once data updated in prod
       return (
@@ -266,6 +230,48 @@ const Print = ({
     report,
     setReport,
   }), [report, setReport]);
+
+  useEffect(() => {
+    if (
+      reportSectionsLoaded
+      && template?.sections.length
+      && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section))
+      && !isPrintDialogShown
+    ) {
+      const showPrint = async () => {
+        const paged = new Previewer();
+        paged.registerHandlers(SplitRowSpanHandler);
+        await paged.preview(document.getElementById('root'), ['index.css'], document.body);
+        const templateName = report.template.name === 'probe' ? 'targeted_gene' : report.template.name;
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const hours = currentDate.getHours().toString().padStart(2, '0');
+        const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+        const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+        let serverName;
+        switch (process.env.NODE_ENV) {
+          case 'development':
+            serverName = '_iprdev';
+            break;
+          case 'staging':
+            serverName = '_iprstaging';
+            break;
+          default:
+            serverName = '';
+            break;
+        }
+        const formattedDate = `${year}-${month}-${day}_${hours}h${minutes}m${seconds}s`;
+
+        document.title = `${report.patientId}${serverName}_${templateName}_report_${formattedDate}`;
+
+        window.print();
+        setIsPrintDialogShown(true);
+      };
+      showPrint();
+    }
+  }, [isPrintDialogShown, report, reportSectionsLoaded, template]);
 
   return (
     <ReportContext.Provider value={reportContextValue}>

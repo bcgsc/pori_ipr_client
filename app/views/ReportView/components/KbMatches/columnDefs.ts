@@ -14,7 +14,7 @@ const columnDefs: ColDef[] = [
       if (kbMatches) {
         const kbMatchesNonNull = kbMatches?.filter((match) => !Array.isArray(match));
         if (kbMatchesNonNull.length > 1) {
-          let geneName = [];
+          const geneName = [];
           for (const kbMatch of kbMatchesNonNull) {
             if (kbMatch?.variantType === 'msi') {
               geneName.push('msi');
@@ -261,23 +261,23 @@ const columnDefs: ColDef[] = [
     suppressMenu: true,
   }];
 
-  const targetedColumnDefs = [{
-    headerName: 'Gene',
-    field: 'gene.name',
-    cellRenderer: 'GeneCellRenderer',
-    hide: false,
-    sort: 'asc',
-  },
-  {
-    headerName: 'Variant',
-    field: 'variant',
-    hide: false,
-  },
-  {
-    headerName: 'Source',
-    field: 'sample',
-    hide: false,
-  },
+const targetedColumnDefs = [{
+  headerName: 'Gene',
+  field: 'gene.name',
+  cellRenderer: 'GeneCellRenderer',
+  hide: false,
+  sort: 'asc',
+},
+{
+  headerName: 'Variant',
+  field: 'variant',
+  hide: false,
+},
+{
+  headerName: 'Source',
+  field: 'sample',
+  hide: false,
+},
 ];
 
 export {

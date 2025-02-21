@@ -19,7 +19,8 @@ const getMicbSiteSummary = (microbial) => {
     return 'Not detected';
   }
 
-  return microbial.filter(({ species }) => species.toLowerCase() !== 'none').map(({ species, integrationSite }) => getMicbSiteIntegrationStatusLabel(species, integrationSite)).join(', ');
+  const visibleMicrobials = microbial.filter((m) => m.microbialHidden === false);
+  return visibleMicrobials.filter(({ species }) => species.toLowerCase() !== 'none').map(({ species, integrationSite }) => getMicbSiteIntegrationStatusLabel(species, integrationSite)).join(', ');
 };
 
 export {

@@ -17,6 +17,7 @@ const columnDefs: ColDef[] = [{
   hide: false,
 }, {
   headerName: 'Location',
+  field: 'location',
   valueGetter: ({ data }) => data.chromosome && `${data.chromosome}:${data.startPosition}${data.endPosition && data.startPosition !== data.endPosition
     ? `-${data.endPosition}`
     : ''
@@ -28,6 +29,7 @@ const columnDefs: ColDef[] = [{
   hide: false,
 }, {
   headerName: 'Ref/Alt',
+  field: 'refAlt',
   valueGetter: ({ data }) => `${data.refSeq}>${data.altSeq}`,
   hide: false,
 }, {
@@ -41,6 +43,7 @@ const columnDefs: ColDef[] = [{
 },
 {
   headerName: 'Alt/Total count DNA',
+  field: 'altTotalCountDna',
   valueGetter: ({ data }) => (
     data.tumourDepth !== null && data.tumourAltCount !== null
       ? `${data.tumourAltCount} / ${data.tumourDepth}`
@@ -50,11 +53,31 @@ const columnDefs: ColDef[] = [{
 },
 {
   headerName: 'Alt/Total copies DNA',
+  field: 'altTotalCopiesDna',
   valueGetter: ({ data }) => (
     data.tumourAltCopies !== null && data.tumourRefCopies !== null
       ? `${data.tumourAltCopies} / ${data.tumourRefCopies + data.tumourAltCopies}`
       : ''
   ),
+  hide: false,
+},
+{
+  headerName: 'VAF %',
+  colId: 'tumourAltCount/tumourDepth',
+  field: 'tumourAltCount/tumourDepth',
+  valueGetter: ({
+    data: {
+      tumourAltCount, tumourDepth, rnaAltCount, rnaDepth,
+    },
+  }) => {
+    if ((tumourAltCount && tumourDepth) || (tumourAltCount === 0 || tumourDepth === 0)) {
+      return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
+    }
+    if ((rnaAltCount && rnaDepth) || (rnaAltCount === 0 || rnaDepth === 0)) {
+      return 'N/A (RNA)';
+    }
+    return '';
+  },
   hide: false,
 },
 {
