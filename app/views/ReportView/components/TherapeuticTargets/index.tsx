@@ -304,31 +304,33 @@ const Therapeutic = ({
           <DataTable
             titleText="Potential Therapeutic Targets"
             columnDefs={columnDefs}
-            rowData={therapeuticData}
-            canEdit={canEdit}
-            onEdit={handleEditStart}
             canAdd={canEdit}
-            onAdd={handleEditStart}
-            tableType="therapeutic"
-            isPaginated={false}
-            canReorder={canEdit}
-            onReorder={handleReorder}
+            canDelete={canEdit}
+            canEdit={canEdit}
             canExport
+            canReorder={canEdit}
             Header={EvidenceHeader}
+            isPaginated={false}
+            onAdd={handleEditStart}
+            onEdit={handleEditStart}
+            onReorder={handleReorder}
+            rowData={therapeuticData}
+            tableType="therapeutic"
           />
           <DataTable
             titleText="Potential Resistance and Toxicity"
             columnDefs={columnDefs}
-            rowData={chemoresistanceData}
-            canEdit={canEdit}
-            onEdit={handleEditStart}
             canAdd={canEdit}
-            onAdd={handleEditStart}
-            tableType="chemoresistance"
-            isPaginated={false}
-            canReorder={canEdit}
+            canDelete={canEdit}
+            canEdit={canEdit}
             canExport
+            canReorder={canEdit}
             Header={EvidenceHeader}
+            isPaginated={false}
+            onAdd={handleEditStart}
+            onEdit={handleEditStart}
+            rowData={chemoresistanceData}
+            tableType="chemoresistance"
           />
           {showDialog && (
             <EditDialog
