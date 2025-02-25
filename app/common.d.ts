@@ -201,7 +201,6 @@ type CopyNumberType = {
   gene: GeneType | null;
   kbCategory: string | null;
   kbMatches?: KbMatchType<'cnv'>[];
-  log2Cna: string | null;
   lohState: string | null;
   selected: boolean;
   size: number | null;
