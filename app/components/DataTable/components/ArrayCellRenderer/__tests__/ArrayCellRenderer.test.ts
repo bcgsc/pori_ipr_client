@@ -1,6 +1,6 @@
 import { screen, render } from '@testing-library/react';
 
-import ArrayCellRenderer from '..';
+import ArrayCellRenderer, { NCBI_API_LINK } from '..';
 
 const mockData = {
   test: 'this is not an array',
@@ -49,7 +49,7 @@ describe('ArrayCellRenderer', () => {
     const unexpectedPMID = mockPMIDArrayData.test[0].replace('pmid:', '');
     const elem = await screen.findByText(expectedPMID);
 
-    expect(elem).toHaveAttribute('href', `https://ncbi.nlm.nih.gov/pubmed/${expectedPMID}`);
+    expect(elem).toHaveAttribute('href', `${NCBI_API_LINK}/${expectedPMID}`);
     expect(screen.queryByText(unexpectedPMID)).toBeNull();
   });
 

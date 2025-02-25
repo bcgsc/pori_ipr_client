@@ -5,6 +5,7 @@ import { ICellRendererParams } from '@ag-grid-community/core';
 import './index.scss';
 
 const urlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/[\w\-\.\/]*)*$/i;
+const NCBI_API_LINK = 'https://pubmed.ncbi.nlm.nih.gov';
 
 const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRendererParams) => JSX.Element => {
   if (isLink) {
@@ -19,7 +20,7 @@ const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRend
 
         // firstVal might be non-link
         if (firstVal.match(/^\d+$/)) {
-          link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
+          link = `${NCBI_API_LINK}/${firstVal}`;
           validLink = true;
         } else if (urlRegex.test(firstVal)) {
           validLink = true;
@@ -88,3 +89,7 @@ const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRend
 };
 
 export default RenderArrayCell;
+export {
+  RenderArrayCell,
+  NCBI_API_LINK,
+};
