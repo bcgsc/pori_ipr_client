@@ -279,7 +279,7 @@ const Sidebar = (): JSX.Element => {
               </Link>
             </ListItem>
             <ListItem
-              className={`sidebar__collapse-item ${pathname.includes('search')&&!pathname.includes('kb') ? 'sidebar__collapse-item--active' : ''}`}
+              className={`sidebar__collapse-item ${pathname.includes('search') && !pathname.includes('kb') ? 'sidebar__collapse-item--active' : ''}`}
               disableGutters
             >
               {sidebarMaximized && (
@@ -292,25 +292,7 @@ const Sidebar = (): JSX.Element => {
                   className={`sidebar__subtext ${sidebarMaximized ? 'sidebar__subtext--visible' : 'sidebar__subtext--hidden'}`}
                   variant="subtitle1"
                 >
-                  Search by Variant
-                </Typography>
-              </Link>
-            </ListItem>
-            <ListItem
-              className={`sidebar__collapse-item ${pathname.includes('kbmatches') ? 'sidebar__collapse-item--active' : ''}`}
-              disableGutters
-            >
-              {sidebarMaximized && (
-              <Box sx={{ width: '8px' }} />
-              )}
-              <Link className="sidebar__link" to="/search-by-kbmatches">
-                <ContentPasteSearchIcon color="action" />
-                <Typography
-                  display="inline"
-                  className={`sidebar__subtext ${sidebarMaximized ? 'sidebar__subtext--visible' : 'sidebar__subtext--hidden'}`}
-                  variant="subtitle1"
-                >
-                  Search by KB Matches
+                  Search Report
                 </Typography>
               </Link>
             </ListItem>
