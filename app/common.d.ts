@@ -144,7 +144,7 @@ type GeneType = {
   tumourSuppressor: boolean;
 };
 
-type AnyVariantType = 'cnv' | 'mut' | 'sv' | 'exp' | 'msi' | 'tmb';
+type AnyVariantType = 'cnv' | 'mut' | 'sv' | 'exp' | 'msi' | 'tmb' | 'sigv';
 
 type VariantTypeMap<T extends AnyVariantType> = {
   'cnv': CopyNumberType;
@@ -153,6 +153,7 @@ type VariantTypeMap<T extends AnyVariantType> = {
   'exp': ExpOutliersType;
   'msi': MsiType;
   'tmb': TmburType;
+  'sigv': SignatureVariantType;
 }[T];
 
 type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
@@ -331,6 +332,13 @@ type MsiType = {
   variantType: 'msi';
 } & RecordDefaults;
 
+type SignatureVariantType = {
+  displayName: string | null;
+  signatureName: string | null;
+  variantTypeName: string | null;
+  variantType: 'sigv';
+} & RecordDefaults;
+
 type TemplateType = {
   name: string;
   headerImage: ImageType;
@@ -402,6 +410,7 @@ export {
   TumourSummaryType,
   TmburType,
   MsiType,
+  SignatureVariantType,
   MutationBurdenType,
   ImmuneType,
   MicrobialType,

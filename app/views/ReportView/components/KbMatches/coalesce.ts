@@ -1,12 +1,11 @@
 import {
   KbMatchedStatementType, AnyVariantType, KbMatchType,
 } from '@/common';
-import { isArray } from 'lodash';
 
 function getVariantName<V extends AnyVariantType>(variant: KbMatchType<V>['variant'], variantType: V) {
   if (variantType === 'cnv') {
-    const { gene: { name }, cnvState } = variant as KbMatchType<'cnv'>['variant'];
-    return `${name} ${cnvState}`;
+    const { gene: { name: geneName }, cnvState } = variant as KbMatchType<'cnv'>['variant'];
+    return `${geneName} ${cnvState}`;
   }
 
   if (variantType === 'sv') {
@@ -24,16 +23,21 @@ function getVariantName<V extends AnyVariantType>(variant: KbMatchType<V>['varia
   }
 
   if (variantType === 'mut') {
-    const { gene: { name }, proteinChange } = variant as KbMatchType<'mut'>['variant'];
-    return `${name}:${proteinChange}`;
+    const { gene: { name: geneName }, proteinChange } = variant as KbMatchType<'mut'>['variant'];
+    return `${geneName}:${proteinChange}`;
   }
 
   if (variantType === 'msi' || variantType === 'tmb') {
     return (variant as KbMatchType<'tmb' | 'msi'>['variant']).kbCategory;
   }
 
-  const { gene: { name }, expressionState } = variant as KbMatchType<'exp'>['variant'];
-  return `${name} ${expressionState}`;
+  if (variantType === 'sigv') {
+    const { displayName } = variant as KbMatchType<'sigv'>['variant'];
+    return `${displayName}`;
+  }
+
+  const { gene: { name: geneName }, expressionState } = variant as KbMatchType<'exp'>['variant'];
+  return `${geneName} ${expressionState}`;
 }
 
 function getBucketKey(entry: KbMatchedStatementType, delimiter = '||') {
@@ -46,24 +50,22 @@ function getBucketKey(entry: KbMatchedStatementType, delimiter = '||') {
   if (kbMatches.length > 1) {
     let bucketKey = '';
     for (const kbMatch of kbMatches) {
-      if (!isArray(kbMatch)) {
-        const variantName = getVariantName(kbMatch?.variant, kbMatch?.variantType);
-        const { relevance, disease } = entry;
-        const commonSuffix = `${context}${delimiter}${variantName}${delimiter}${relevance}${delimiter}${disease}`;
-        if (kbMatch?.variantType === 'sv') {
-          const {
-            variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } },
-          } = kbMatch as KbMatchType<'sv'>;
-          bucketKey += `${gene1Name}${delimiter}${gene2Name}${delimiter}${commonSuffix}`;
-        } else if (kbMatch?.variantType === 'msi' || kbMatch?.variantType === 'tmb') {
-          const { kbCategory } = kbMatch.variant as KbMatchType<'tmb' | 'msi'>['variant'];
-          bucketKey += `${kbCategory}${delimiter}${commonSuffix}`;
-        } else {
-          const {
-            variant: { gene: { name: geneName } },
-          } = kbMatch as KbMatchType<'cnv' | 'exp' | 'mut'>;
-          bucketKey += `${geneName}${delimiter}${commonSuffix}`;
-        }
+      const variantName = getVariantName(kbMatch?.variant, kbMatch?.variantType);
+      const { relevance, disease } = entry;
+      const commonSuffix = `${context}${delimiter}${variantName}${delimiter}${relevance}${delimiter}${disease}`;
+      if (kbMatch?.variantType === 'sv') {
+        const {
+          variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } },
+        } = kbMatch as KbMatchType<'sv'>;
+        bucketKey += `${gene1Name || '?'}${delimiter}${gene2Name || '?'}${delimiter}${commonSuffix}`;
+      } else if (kbMatch?.variantType === 'msi' || kbMatch?.variantType === 'tmb') {
+        const { kbCategory } = kbMatch.variant as KbMatchType<'tmb' | 'msi'>['variant'];
+        bucketKey += `${kbCategory}${delimiter}${commonSuffix}`;
+      } else {
+        const {
+          variant: { gene: { name: geneName } },
+        } = kbMatch as KbMatchType<'cnv' | 'exp' | 'mut'>;
+        bucketKey += `${geneName}${delimiter}${commonSuffix}`;
       }
     }
     return bucketKey;
@@ -74,22 +76,7 @@ function getBucketKey(entry: KbMatchedStatementType, delimiter = '||') {
     const variantName = getVariantName(kbMatch?.variant, kbMatch?.variantType);
     const { relevance, disease } = entry;
     const commonSuffix = `${context}${delimiter}${variantName}${delimiter}${relevance}${delimiter}${disease}`;
-    if (kbMatch?.variantType === 'sv') {
-      const {
-        variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } },
-      } = kbMatch as KbMatchType<'sv'>;
-      return `${gene1Name}${delimiter}${gene2Name}${delimiter}${commonSuffix}`;
-    }
-
-    if (kbMatch?.variantType === 'msi' || kbMatch?.variantType === 'tmb') {
-      const { kbCategory } = kbMatch.variant as KbMatchType<'tmb' | 'msi'>['variant'];
-      return `${kbCategory}${delimiter}${commonSuffix}`;
-    }
-
-    const {
-      variant: { gene: { name: geneName } },
-    } = kbMatch as KbMatchType<'cnv' | 'exp' | 'mut'>;
-    return `${geneName}${delimiter}${commonSuffix}`;
+    return commonSuffix;
   }
 
   return null;
