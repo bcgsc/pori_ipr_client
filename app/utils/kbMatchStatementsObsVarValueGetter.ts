@@ -17,16 +17,19 @@ const kbMatchStatementsObsVarValueGetter = (params) => {
           })`);
           break;
         case ('mut'):
-          variantArr.push(`${kbMatch?.variant.gene.name}:${kbMatch?.variant.proteinChange}`);
+          variantArr.push(`${kbMatch?.variant?.gene?.name}:${kbMatch?.variant?.proteinChange}`);
           break;
         case ('tmb'):
-          variantArr.push(kbMatch?.variant.kbCategory);
+          variantArr.push(kbMatch?.variant?.kbCategory);
           break;
         case ('msi'):
-          variantArr.push(kbMatch?.variant.kbCategory);
+          variantArr.push(kbMatch?.variant?.kbCategory);
+          break;
+        case ('sigv'):
+          variantArr.push(kbMatch?.variant?.displayName);
           break;
         default:
-          variantArr.push(`${kbMatch?.variant.gene.name} ${kbMatch?.variant.expressionState}`);
+          variantArr.push(`${kbMatch?.variant?.gene?.name} ${kbMatch?.variant?.expressionState}`);
           break;
       }
     }
