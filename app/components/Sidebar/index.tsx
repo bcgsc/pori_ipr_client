@@ -292,7 +292,7 @@ const Sidebar = (): JSX.Element => {
                   className={`sidebar__subtext ${sidebarMaximized ? 'sidebar__subtext--visible' : 'sidebar__subtext--hidden'}`}
                   variant="subtitle1"
                 >
-                  Search Report
+                  Search for Reports
                 </Typography>
               </Link>
             </ListItem>
