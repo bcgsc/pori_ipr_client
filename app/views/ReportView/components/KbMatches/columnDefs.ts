@@ -18,32 +18,26 @@ const columnDefs: ColDef[] = [
           for (const kbMatch of kbMatchesNonNull) {
             if (kbMatch?.variantType === 'msi') {
               geneName.push('msi');
-              continue;
             }
             if (kbMatch?.variantType === 'tmb') {
               geneName.push('tmb');
-              continue;
             }
             if (kbMatch?.variant?.gene) {
               geneName.push(kbMatch?.variant?.gene.name);
-              continue;
             }
             if (kbMatch?.variant?.gene1 && kbMatch?.variant?.gene2) {
               geneName.push(`${kbMatch?.variant?.gene1.name}, ${kbMatch?.variant?.gene2.name}`);
-              continue;
             }
             if (kbMatch?.variant?.gene1) {
               geneName.push(kbMatch?.variant?.gene1.name);
-              continue;
             }
             if (kbMatch?.variant?.gene2) {
               geneName.push(kbMatch?.variant?.gene2.name);
-              continue;
             }
           }
           return geneName.join(', ');
         }
-        const kbMatch = kbMatchesNonNull[0];
+        const [kbMatch] = kbMatchesNonNull;
         // msi and tmb doesn't have gene field
         if (kbMatch?.variantType === 'msi') {
           return 'msi';
@@ -51,12 +45,15 @@ const columnDefs: ColDef[] = [
         if (kbMatch?.variantType === 'tmb') {
           return 'tmb';
         }
-        if (kbMatch?.variant?.gene) {
-          return kbMatch?.variant?.gene.name;
+        if (kbMatch?.variantType === 'sigv') {
+          return kbMatch?.variant?.displayName;
         }
-        return kbMatch?.variant?.gene1.name && kbMatch?.variant?.gene2.name
-          ? `${kbMatch?.variant?.gene1.name}, ${kbMatch?.variant?.gene2.name}`
-          : kbMatch?.variant?.gene1.name || kbMatch?.variant?.gene2.name;
+        if (kbMatch?.variant?.gene) {
+          return kbMatch?.variant?.gene?.name;
+        }
+        return kbMatch?.variant?.gene1?.name && kbMatch?.variant?.gene2?.name
+          ? `${kbMatch?.variant?.gene1?.name}, ${kbMatch?.variant?.gene2?.name}`
+          : kbMatch?.variant?.gene1?.name || kbMatch?.variant?.gene2?.name;
       }
       return null;
     },
@@ -104,16 +101,19 @@ const columnDefs: ColDef[] = [
               })`);
               break;
             case ('mut'):
-              variantArr.push(`${kbMatch?.variant.gene.name}:${kbMatch?.variant.proteinChange}`);
+              variantArr.push(`${kbMatch?.variant?.gene?.name}:${kbMatch?.variant?.proteinChange}`);
               break;
             case ('tmb'):
-              variantArr.push(kbMatch?.variant.kbCategory);
+              variantArr.push(kbMatch?.variant?.kbCategory);
               break;
             case ('msi'):
-              variantArr.push(kbMatch?.variant.kbCategory);
+              variantArr.push(kbMatch?.variant?.kbCategory);
+              break;
+            case ('sigv'):
+              variantArr.push(kbMatch?.variant?.displayName);
               break;
             default:
-              variantArr.push(`${kbMatch?.variant.gene.name} ${kbMatch?.variant.expressionState}`);
+              variantArr.push(`${kbMatch?.variant?.gene?.name} ${kbMatch?.variant?.expressionState}`);
               break;
           }
         }
