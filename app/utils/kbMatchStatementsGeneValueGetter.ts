@@ -12,6 +12,9 @@ const kbMStatementGeneValueGetter = (params) => {
         if (kbMatch?.variantType === 'tmb') {
           geneName.push('tmb');
         }
+        if (kbMatch?.variantType === 'sigv') {
+          geneName.push(kbMatch?.variant?.displayName);
+        }
         if (kbMatch?.variant?.gene) {
           geneName.push(kbMatch?.variant?.gene.name);
         }
