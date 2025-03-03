@@ -11,12 +11,14 @@ import {
   Button,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip,
 } from '@mui/material';
+import AsyncButton from '@/components/AsyncButton';
+import snackbar from '@/services/SnackbarUtils';
 import DeleteIcon from '@mui/icons-material/HighlightOff';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import api, { ApiCallSet } from '@/services/api';
-import { KbMatchType } from '@/common';
+import { KbMatchedStatementType, KbMatchType } from '@/common';
 import { Box } from '@mui/system';
 import { RapidVariantType } from '../../types';
 import { getVariantRelevanceDict } from '../../utils';
@@ -34,10 +36,21 @@ const KbMatchesTable = ({ kbMatches, onDelete }: {
   const kbMatchesTable = useMemo(() => {
     if (!kbMatches) { return null; }
     const sorted = getVariantRelevanceDict(kbMatches);
-
-    return Object.entries(sorted)
+    const sortedStatements = {};
+    Object.entries(sorted).forEach(([relevance, matches]) => {
+      matches.forEach((match) => {
+        for (const statement of match.kbMatchedStatements) {
+          if (!sortedStatements[relevance]) {
+            sortedStatements[relevance] = [statement];
+          } else if (!sortedStatements[relevance].some((item: KbMatchedStatementType) => item.ident === statement.ident)) {
+            sortedStatements[relevance].push(statement);
+          }
+        }
+      });
+    });
+    return Object.entries(sortedStatements)
       .sort(([relevance1], [relevance2]) => (relevance1 > relevance2 ? 1 : -1))
-      .map(([relevance, matches]) => (
+      .map(([relevance, matches]: [relevance: string, matches: KbMatchedStatementType[]]) => (
         <TableRow key={relevance + matches.toString()}>
           <TableCell>{relevance}</TableCell>
           <TableCell>
@@ -103,12 +116,16 @@ const VariantEditDialog = ({
   const { showConfirmDialog } = useConfirmDialog();
   const [data, setData] = useState(editData);
   const [editDataDirty, setEditDataDirty] = useState<boolean>(false);
+  const [isApiCalling, setIsApiCalling] = useState(false);
 
   useEffect(() => {
     if (editData) {
       setData(editData);
     }
-  }, [editData]);
+    if (!open) {
+      setIsApiCalling(false);
+    }
+  }, [editData, open]);
 
   const handleDataChange = useCallback((
     { target: { value, name } },
@@ -119,10 +136,14 @@ const VariantEditDialog = ({
     }
   }, [editDataDirty]);
 
-  const handleKbMatchDelete = useCallback((kbMatchId) => {
+  const handleKbMatchDelete = useCallback((kbMatchStatementId) => {
+    const updatedKbMatches = data?.kbMatches.map((kbMatch: KbMatchType) => {
+      const updatedStatements = kbMatch.kbMatchedStatements.filter(({ ident }) => kbMatchStatementId !== ident);
+      return { ...kbMatch, kbMatchedStatements: updatedStatements };
+    });
     handleDataChange({
       target: {
-        value: data.kbMatches.filter(({ ident }) => kbMatchId !== ident),
+        value: updatedKbMatches,
         name: 'kbMatches',
       },
     });
@@ -130,43 +151,51 @@ const VariantEditDialog = ({
 
   const handleSave = useCallback(async () => {
     if (editDataDirty) {
-      let variantId = data?.ident;
-      // The relevance was appeneded to Id due to row concatenation, needs to be removed here to call API
-      if ((data).potentialClinicalAssociation) {
-        variantId = variantId.substr(0, variantId.lastIndexOf('-'));
-      }
+      setIsApiCalling(true);
+      try {
+        let variantId = data?.ident;
+        // The relevance was appeneded to Id due to row concatenation, needs to be removed here to call API
+        if ((data).potentialClinicalAssociation) {
+          variantId = variantId.substr(0, variantId.lastIndexOf('-'));
+        }
 
-      const calls = [];
+        const calls = [];
 
-      if (fields.includes(FIELDS.comments) && data?.comments) {
-        calls.push(api.put(
-          `/reports/${report.ident}/${VARIANT_TYPE_TO_API_MAP[data.variantType]}/${variantId}`,
-          {
-            comments: data.comments,
-          },
-        ));
-      }
+        if (fields.includes(FIELDS.comments) && data?.comments) {
+          calls.push(api.put(
+            `/reports/${report.ident}/${VARIANT_TYPE_TO_API_MAP[data.variantType]}/${variantId}`,
+            {
+              comments: data.comments,
+            },
+          ));
+        }
 
-      if (fields.includes(FIELDS.kbMatches) && data?.kbMatches) {
-        const existingIds = editData.kbMatches.map(({ ident }) => ident);
-        const remainingIds = new Set(data.kbMatches.map(({ ident }) => ident));
-        existingIds.filter((id) => !remainingIds.has(id)).forEach((kbMatchId) => {
-          calls.push(api.del(`/reports/${report.ident}/kb-matches/${kbMatchId}`, {}));
-        });
-      }
+        if (fields.includes(FIELDS.kbMatches) && data?.kbMatches && editData?.kbMatches) {
+          const existingIds = [].concat(...editData.kbMatches.map((match) => match.kbMatchedStatements.map(({ ident }) => ident)));
+          data?.kbMatches.forEach((kbMatch) => {
+            const remainingIds = new Set(kbMatch.kbMatchedStatements.map(({ ident }) => ident));
+            existingIds.filter((id) => !remainingIds.has(id)).forEach((stmtId) => {
+              calls.push(api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${stmtId}`, {}));
+            });
+          });
+        }
 
-      const callSet = new ApiCallSet(calls);
+        const callSet = new ApiCallSet(calls);
 
-      if (isSigned) {
-        showConfirmDialog(callSet);
-      } else {
-        await callSet.request();
+        if (isSigned) {
+          showConfirmDialog(callSet);
+        } else {
+          await callSet.request();
+          onClose(true);
+        }
+      } catch (e) {
+        snackbar.error(`Error editing variant: ${e.message}`);
         onClose(true);
       }
     } else {
       onClose(null);
     }
-  }, [editDataDirty, data, fields, isSigned, report.ident, editData, showConfirmDialog, onClose]);
+  }, [editDataDirty, data, fields, isSigned, report.ident, editData?.kbMatches, showConfirmDialog, onClose]);
 
   const handleDialogClose = useCallback(() => onClose(null), [onClose]);
 
@@ -202,9 +231,9 @@ const VariantEditDialog = ({
         <Button onClick={handleDialogClose}>
           Close
         </Button>
-        <Button color="secondary" onClick={handleSave}>
+        <AsyncButton isLoading={isApiCalling} color="secondary" onClick={handleSave}>
           Save Changes
-        </Button>
+        </AsyncButton>
       </DialogActions>
     </Dialog>
   );

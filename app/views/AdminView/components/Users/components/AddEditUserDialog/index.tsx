@@ -17,6 +17,7 @@ import {
   Checkbox,
   InputLabel,
   Typography,
+  FormControlLabel,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import api, { ApiCallSet } from '@/services/api';
@@ -91,6 +92,7 @@ const AddEditUserDialog = ({
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [isApiCalling, setIsApiCalling] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
+  const [gkbAdd, setGkbAdd] = useState(false);
   const { userDetails } = useSecurity();
   const { adminAccess, allProjectsAccess } = useResource();
 
@@ -125,6 +127,7 @@ const AddEditUserDialog = ({
         }
       } catch (projectGroupErr) {
         snackbar.error('Failed to retrieve list of project and groups for current user.');
+        // eslint-disable-next-line no-console
         console.error(projectGroupErr);
       } finally {
         setIsDataLoading(false);
@@ -170,6 +173,10 @@ const AddEditUserDialog = ({
     });
   }, [setValue]);
 
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setGkbAdd(event.target.checked);
+  };
+
   const handleClose = useCallback(async (formData: UserForm) => {
     setIsApiCalling(true);
     const {
@@ -196,9 +203,9 @@ const AddEditUserDialog = ({
         try {
           addEditResp = editData
             ? await api.put(`/user/${editData.ident}`, userReq).request()
-            : await api.post('/user', userReq).request();
+            : await api.post(`/user?gkb=${gkbAdd}`, userReq).request();
         } catch (e) {
-          throw { ...e, errorType: 'user detail' };
+          snackbar.error(`Error adding new user: ${e}`);
         }
 
         // Project Section
@@ -261,7 +268,7 @@ const AddEditUserDialog = ({
     }
 
     onClose(null);
-  }, [dirtyFields, editData, onClose, projectOptions, groupOptions]);
+  }, [dirtyFields, editData, onClose, projectOptions, groupOptions, gkbAdd]);
 
   // Email error text
   let emailErrorText = '';
@@ -360,6 +367,14 @@ const AddEditUserDialog = ({
       className="edit-dialog"
     >
       <DialogTitle>{dialogTitle}</DialogTitle>
+      <Typography
+        className="edit-dialog__new-user-notice"
+        color="red" 
+        variant="caption"
+      >
+        User must also be added to Keycloak with the roles IPR and GraphKB. 
+        If you are at the BCGSC, make a Systems ticket to request that this user be added, specifying their email address.
+      </Typography>
       <Divider><Typography variant="caption">User Information</Typography></Divider>
       <DialogContent>
         <FormControl fullWidth variant="outlined">
@@ -442,7 +457,15 @@ const AddEditUserDialog = ({
           </div>
         )}
       </DialogContent>
-      <DialogActions className="edit-dialog__actions">
+      <DialogActions className="add-user__actions">
+        <FormControlLabel
+          className="add-user__checkbox"
+          label="Also create user on GraphKB"
+          control={
+            <Checkbox checked={gkbAdd} onChange={handleCheckboxChange} />
+          }
+          disabled={Boolean(editData)}
+        />
         <AsyncButton isLoading={isApiCalling} color="inherit" onClick={() => onClose(null)}>
           Cancel
         </AsyncButton>

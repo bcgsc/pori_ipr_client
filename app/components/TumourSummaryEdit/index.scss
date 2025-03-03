@@ -7,6 +7,15 @@
     margin: 12px 0;
   }
 
+  &__number-field {
+    margin: 12px 0;
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
   &__check-box {
     color: gray;
     margin-top: -12px;

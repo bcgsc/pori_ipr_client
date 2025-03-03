@@ -15,4 +15,22 @@
     display: flex;
     justify-content: center;
   }
+
+  &__actions {
+    padding: 8px;
+    padding-bottom: 18px;
+  }
+
+  &__checkbox {
+    position: absolute;
+    left: 0;
+    margin: 8px;
+    padding-left: 6px;
+  }
+}
+
+.edit-dialog {
+  &__new-user-notice {
+    padding: 0 8px 24px 24px;
+  }
 }

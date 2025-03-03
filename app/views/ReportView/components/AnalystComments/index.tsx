@@ -42,15 +42,17 @@ const AnalystComments = ({
 
   const [comments, setComments] = useState('');
   const [signatures, setSignatures] = useState<SignatureType>();
+  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>([]);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
         try {
-          const [commentsResp, signaturesResp] = await Promise.all([
+          const [commentsResp, signaturesResp, signatureTypesResp] = await Promise.all([
             api.get(`/reports/${report.ident}/summary/analyst-comments`).request(),
             api.get(`/reports/${report.ident}/signatures`).request(),
+            api.get(`/templates/${report.template.ident}/signature-types`).request(),
           ]);
 
           if (commentsResp?.comments) {
@@ -62,6 +64,16 @@ const AnalystComments = ({
             }));
           }
           setSignatures(signaturesResp);
+          if (signatureTypesResp?.length === 0){
+            const defaultSigatureTypes = [
+              {signatureType: 'author'},
+              {signatureType: 'reviewer'},
+              {signatureType: 'creator'},
+            ] as SignatureUserType[];
+            setSignatureTypes(defaultSigatureTypes);
+          } else if (signatureTypesResp?.length > 0) {
+            setSignatureTypes(signatureTypesResp);
+          }
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
@@ -78,7 +90,7 @@ const AnalystComments = ({
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
     setSignatures(updatedSignature);
-  }, [report, setIsSigned]);
+  }, [setIsSigned]);
 
   const handleEditorStart = () => {
     setIsEditorOpen(true);
@@ -86,7 +98,7 @@ const AnalystComments = ({
 
   const handleEditorClose = useCallback(async (editedComments?: string) => {
     try {
-      if (editedComments) {
+      if (editedComments !== null) {
         const sanitizedText = sanitizeHtml(editedComments, {
           allowedAttributes: {
             a: ['href', 'target', 'rel'],
@@ -128,28 +140,23 @@ const AnalystComments = ({
   }, [report, isSigned, showConfirmDialog]);
 
   const signatureSection = useMemo(() => {
-    if (!comments) return null;
-    let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
-    if (isPrint) {
-      order = ['creator', 'author', 'reviewer'];
-    }
-    return order.map((sigType) => {
-      let title: string = sigType;
-      if (sigType === 'author' && isPrint) {
+    return signatureTypes.map((sigType) => {
+      let title = sigType.signatureType;
+      if (sigType.signatureType === 'author' && isPrint) {
         title = 'Author Review';
       }
       return (
         <SignatureCard
-          key={sigType}
+          key={sigType.signatureType}
           onClick={handleSign}
           signatures={signatures}
           title={capitalize(title)}
-          type={sigType}
+          type={sigType.signatureType}
           isPrint={isPrint}
         />
       );
     });
-  }, [isPrint, handleSign, comments, signatures]);
+  }, [isPrint, handleSign, signatures, signatureTypes]);
 
   return (
     <div className={isPrint ? 'analyst-comments--print' : 'analyst-comments'}>
@@ -190,14 +197,12 @@ const AnalystComments = ({
           ) : (
             <Typography align="center" variant="h5">No comments yet</Typography>
           )}
-          {comments && (
-            <div className="analyst-comments__signatures">
-              {!isPrint && (
-                <Typography variant="h5">Signed By</Typography>
-              )}
-              {signatureSection}
-            </div>
-          )}
+          <div className="analyst-comments__signatures">
+            {!isPrint && (
+              <Typography variant="h5">Signed By</Typography>
+            )}
+            {signatureSection}
+          </div>
         </>
       )}
     </div>

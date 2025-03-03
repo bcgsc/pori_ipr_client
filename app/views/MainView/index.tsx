@@ -224,7 +224,7 @@ const Main = (): JSX.Element => {
                   </Route>
                   <AuthenticatedRoute component={TermsView} path="/terms" />
                   <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
-                  <AuthenticatedRoute exact component={ReportsByVariantView} path="/search/result" />
+                  <AuthenticatedRoute exact component={ReportsByVariantView} path="/(search-by-key-variant|search-by-kbmatches)/result" />
                   <AuthenticatedRoute component={ReportsView} path="/reports" />
                   <AuthenticatedRoute component={MyReportsView} path="/my-reports" />
                   <AuthenticatedRoute component={SearchView} path="/search" />

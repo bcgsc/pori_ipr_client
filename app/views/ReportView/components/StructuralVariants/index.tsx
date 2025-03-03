@@ -135,17 +135,17 @@ const StructuralVariants = ({
       svs.forEach((row) => {
         let isUnknown = true;
 
-        if (row.kbMatches.some((m) => m.category === 'therapeutic')) {
+        if (row.kbMatches.some((m) => m.kbMatchedStatements.some((statement) => statement.category === 'therapeutic'))) {
           variants.therapeutic.push(row);
           isUnknown = false;
         }
 
-        if (row.kbMatches.some((m) => (m.category === 'diagnostic' || m.category === 'prognostic'))) {
+        if (row.kbMatches.some((m) => m.kbMatchedStatements.some((statement) => statement.category === 'diagnostic' || statement.category === 'prognostic'))) {
           variants.nostic.push(row);
           isUnknown = false;
         }
 
-        if (row.kbMatches.some((m) => m.category === 'biological')) {
+        if (row.kbMatches.some((m) => m.kbMatchedStatements.some((statement) => statement.category === 'biological'))) {
           variants.biological.push(row);
           isUnknown = false;
         }

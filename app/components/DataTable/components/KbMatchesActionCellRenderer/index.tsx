@@ -6,29 +6,48 @@ import React, {
   useState, useCallback, useContext, useMemo,
 } from 'react';
 import api from '@/services/api';
-import { KbMatchType } from '@/common';
+import { KbMatchedStatementType } from '@/common';
 import { useParams } from 'react-router-dom';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import TherapeuticType from '@/views/ReportView/components/TherapeuticTargets/types';
+import { useKbMatches } from '@/context/KbMatchesMoveDialogContext/KbmatchesMoveDialogContext';
 import {
   ActionCellRendererProps,
   ActionCellRenderer,
 } from '../ActionCellRenderer';
-
-const REPORT_TYPES_TO_SHOW_EXTRA_MENU = ['genomic'];
+/**
+ * Tables to show KbMatches specific options
+ */
+const REPORT_TYPES_TO_SHOW_EXTRA_MENU = ['probe', 'rapid', 'genomic'];
+/**
+ * Tables that allows Add to Potential Therapeutic Targets tables
+ */
+const REPORT_TYPES_TO_SHOW_TO_TABLES = ['genomic'];
 
 type TherapeuticTargetType = 'therapeutic' | 'chemoresistance';
 
 const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const { ident: reportId } = useParams<{ ident: string }>();
+  const {
+    setMoveKbMatchesDialogOpen,
+    setMoveKbMatchesTableName,
+    setSelectedRows,
+  } = useKbMatches();
+
   const { report: { template: { name: reportType } } } = useContext(ReportContext);
   const { data } = props;
 
   const {
+    approvedTherapy,
+    category,
     kbStatementId,
+    context,
+    kbData,
+    relevance,
     iprEvidenceLevel,
-  } = data as KbMatchType;
+    matchedCancer,
+  } = data as KbMatchedStatementType;
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
   const [subMenuAnchor, setSubMenuAnchor] = useState<HTMLElement>();
   const [therapeuticTargetType, setTherapeuticTargetType] = useState<TherapeuticTargetType>(null);
@@ -38,11 +57,11 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const isMult = Array.isArray(kbStatementId);
 
   const isClinicalTrial = useMemo(() => {
-    if (data.context.includes('Phase') || data.context.includes('Trial') || data.relevance === 'eligibility' || data.kbData?.recruitment_status) {
+    if (context?.includes('Phase') || context?.includes('Trial') || relevance === 'eligibility' || kbData?.recruitment_status) {
       return true;
     }
     return false;
-  }, [data]);
+  }, [context, kbData?.recruitment_status, relevance]);
 
   const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType, selectedKbStatementId?: string) => async () => {
     const therapeuticResp = await api.get(`/reports/${reportId}/therapeutic-targets`, {}).request();
@@ -58,22 +77,29 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
     try {
       let evidenceLevelsResp;
       let iprEvidenceLevelRid = null;
-      if (!iprEvidenceLevels && iprEvidenceLevel) {
+
+      if (!iprEvidenceLevels) {
         evidenceLevelsResp = await api.get('/graphkb/evidence-levels', {}).request();
         setIprEvidenceLevels(evidenceLevelsResp.result ?? null);
-        iprEvidenceLevelRid = evidenceLevelsResp?.result.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
-      } else {
-        iprEvidenceLevelRid = iprEvidenceLevels.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
       }
+
+      if (!iprEvidenceLevels && iprEvidenceLevel) {
+        iprEvidenceLevelRid = evidenceLevelsResp?.result.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
+      } else if (iprEvidenceLevels && iprEvidenceLevel) {
+        iprEvidenceLevelRid = iprEvidenceLevels.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
+      } else {
+        throw new Error('No IPR Evidence Level provided in this row of data.');
+      }
+
       const { result } = await api.get(`/graphkb/statements/${(selectedKbStatementId ?? kbStatementId as string).replace('#', '')}`, {}).request();
 
       if (result) {
         const variant = result[0].conditions.find((r) => r['@class'].toLowerCase().includes('variant'));
         const therapy = result[0].conditions.find((r) => r['@class'].toLowerCase().includes('therapy'));
-        const context = result[0].relevance;
+        const resultContext = result[0].relevance;
 
-        if (!variant || !therapy || !context) {
-          throw new Error(`Required Graphkb fields not populated on GraphKB: ${!variant ? ' variant' : ''}${!therapy ? ' therapy' : ''}${!context ? ' context' : ''}`);
+        if (!variant || !therapy || !resultContext) {
+          throw new Error(`Required Graphkb fields not populated on GraphKB: ${!variant ? ' variant' : ''}${!therapy ? ' therapy' : ''}${!resultContext ? ' context' : ''}`);
         }
 
         // Add to targets regardless if it already exists, we don't know at this point without making another API call to search for all these params
@@ -88,7 +114,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           variantGraphkbId: variant['@rid'],
           therapy: therapy.displayName,
           therapyGraphkbId: therapy['@rid'],
-          context: context.displayName,
+          context: resultContext.displayName,
           contextGraphkbId: context['@rid'],
           evidenceLevel: null,
           evidenceLevelGraphkbId: null,
@@ -119,13 +145,33 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
       setIsLoading(false);
     }
     return null;
-  }, [iprEvidenceLevels, iprEvidenceLevel, kbStatementId, reportId]);
+  }, [iprEvidenceLevels, iprEvidenceLevel, kbStatementId, reportId, context]);
 
   const handleMultiTargets = useCallback((evt, type) => {
     setSubMenuAnchor(evt.currentTarget);
     setTherapeuticTargetType(type);
     return null;
   }, []);
+
+  const handleMoveKbMatch = useCallback(() => {
+    setMoveKbMatchesDialogOpen(true);
+    setMoveKbMatchesTableName(() => {
+      // New Schema for table name
+      if (kbData.kbmatchTag) {
+        return kbData.kbmatchTag;
+      }
+      // Old way checking for highEvidence
+      if (category === 'therapeutic'
+        && approvedTherapy
+        && matchedCancer === true
+        && ['IPR-A', 'IPR-B'].includes(data.iprEvidenceLevel)
+      ) {
+        return 'highEvidence';
+      }
+      return category;
+    });
+    setSelectedRows([data]);
+  }, [category, data, approvedTherapy, matchedCancer, kbData.kbmatchTag, setMoveKbMatchesDialogOpen, setMoveKbMatchesTableName, setSelectedRows]);
 
   if (!REPORT_TYPES_TO_SHOW_EXTRA_MENU.includes(reportType)) {
     return <ActionCellRenderer {...props} />;
@@ -144,22 +190,26 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         open={Boolean(menuAnchor)}
         onClose={() => setMenuAnchor(null)}
       >
-        <MenuItem
-          disabled={isLoading || isClinicalTrial}
-          onClick={isMult
-            ? (evt) => handleMultiTargets(evt, 'therapeutic')
-            : handleUpdateTherapeuticTargets('therapeutic')}
-        >
-          Add to Potential Therapeutic Targets
-        </MenuItem>
-        <MenuItem
-          disabled={isLoading || isClinicalTrial}
-          onClick={isMult
-            ? (evt) => handleMultiTargets(evt, 'chemoresistance')
-            : handleUpdateTherapeuticTargets('chemoresistance')}
-        >
-          Add to Potential Resistance and Toxicity
-        </MenuItem>
+        {REPORT_TYPES_TO_SHOW_TO_TABLES.includes(reportType) && (
+          <>
+            <MenuItem
+              disabled={isLoading || isClinicalTrial}
+              onClick={isMult
+                ? (evt) => handleMultiTargets(evt, 'therapeutic')
+                : handleUpdateTherapeuticTargets('therapeutic')}
+            >
+              Add to Potential Therapeutic Targets
+            </MenuItem>
+            <MenuItem
+              disabled={isLoading || isClinicalTrial}
+              onClick={isMult
+                ? (evt) => handleMultiTargets(evt, 'chemoresistance')
+                : handleUpdateTherapeuticTargets('chemoresistance')}
+            >
+              Add to Potential Resistance and Toxicity
+            </MenuItem>
+          </>
+        )}
         {
           isMult && (
           <Menu
@@ -181,6 +231,9 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           </Menu>
           )
         }
+        <MenuItem onClick={handleMoveKbMatch}>
+          Move to another table
+        </MenuItem>
         <ActionCellRenderer displayMode="menu" {...props} />
       </Menu>
     </>

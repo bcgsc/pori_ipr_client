@@ -92,6 +92,7 @@ const TumourSummaryEdit = ({
         tumourContent: report.tumourContent,
         subtyping: report.subtyping,
         captiv8Score: report.captiv8Score,
+        genomeTmb: report.genomeTmb,
       });
     }
   }, [report]);
@@ -115,6 +116,7 @@ const TumourSummaryEdit = ({
         role: mutationBurden.role,
         qualitySvCount: mutationBurden.qualitySvCount,
         qualitySvPercentile: mutationBurden.qualitySvPercentile,
+        svBurdenHidden: mutationBurden.svBurdenHidden,
       });
     }
   }, [mutationBurden]);
@@ -170,6 +172,12 @@ const TumourSummaryEdit = ({
   const handleMutationBurdenChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewMutationBurdenData((prevVal) => ({ ...prevVal, [name]: value }));
+    setMutationBurdenDirty(true);
+  }, []);
+
+  const handleSVBurdenVisibility = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target: { checked, name } } = event;
+    setNewMutationBurdenData((prevVal) => ({ ...prevVal, [name]: checked }));
     setMutationBurdenDirty(true);
   }, []);
 
@@ -233,7 +241,7 @@ const TumourSummaryEdit = ({
         const newMicbrobialEntries = newMicrobialData.filter((micbData) => !micbData.ident);
         const editedMicrobialEntries = newMicrobialData.filter(({ ident }) => Boolean(ident)).filter((micbData) => {
           const entry = microbial.find(({ ident }) => ident === micbData.ident);
-          return Boolean(entry) && entry.integrationSite !== micbData.integrationSite;
+          return Boolean(entry) && (entry.integrationSite !== micbData.integrationSite || entry.microbialHidden !== micbData.microbialHidden);
         });
 
         microbialIdsToDelete?.forEach((id) => {
@@ -242,8 +250,8 @@ const TumourSummaryEdit = ({
         newMicbrobialEntries?.forEach((entry) => {
           apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, entry, {}));
         });
-        editedMicrobialEntries?.forEach(({ ident, integrationSite, species }) => {
-          apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${ident}`, { integrationSite, species }, {}));
+        editedMicrobialEntries?.forEach(({ ident, integrationSite, species, microbialHidden }) => {
+          apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${ident}`, { integrationSite, species, microbialHidden }, {}));
         });
       }
 
@@ -368,6 +376,15 @@ const TumourSummaryEdit = ({
     }
   }, []);
 
+  const handleMicrobialVisibilityToggle = useCallback((idx) => {
+    setNewMicrobialData((currData) => {
+      const nextData = [...currData];
+      nextData[idx].microbialHidden = !nextData[idx].microbialHidden;
+      return nextData;
+    });
+    setMicrobialDirty(true);
+  }, []);
+
   const handleClicked = useCallback((idx) => {
     setNewMicrobialData((currData) => {
       const nextData = [...currData];
@@ -391,7 +408,7 @@ const TumourSummaryEdit = ({
     if (newReportData) {
       const captiv8Section = (
         <TextField
-          className="tumour-dialog__text-field"
+          className="tumour-dialog__number-field"
           label={`${reportType === 'rapid' ? 'Preliminary ' : ''}CAPTIV-8 Score`}
           value={newReportData.captiv8Score}
           name="captiv8Score"
@@ -429,7 +446,21 @@ const TumourSummaryEdit = ({
         );
       }
       if (reportType === 'rapid') {
-        return captiv8Section;
+        return (
+          <>
+            <TextField
+              className="tumour-dialog__number-field"
+              label="Intersect TMB Score"
+              value={newReportData?.genomeTmb ?? ''}
+              name="genomeTmb"
+              onChange={handleReportChange}
+              variant="outlined"
+              fullWidth
+              type="number"
+            />
+            {captiv8Section}
+          </>
+        );
       }
     }
     return null;
@@ -445,14 +476,46 @@ const TumourSummaryEdit = ({
           freeSolo
           value={newMicrobialData}
           disableClearable
-          renderTags={(value) => value.map(({ species, integrationSite }, idx) => (
+          renderTags={(value) => value.map(({ species, integrationSite, microbialHidden }, idx) => (
             <Chip
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${species}-${idx}`}
-              tabIndex={-1}
-              label={`${getMicbSiteIntegrationStatusLabel(species, integrationSite)}`}
-              onClick={() => handleClicked(idx)}
-              onDelete={() => handleDelete(idx)}
+              variant="filled"
+              label={  
+                <Chip
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${species}-${idx}`}
+                  tabIndex={-1}
+                  label={`${getMicbSiteIntegrationStatusLabel(species, integrationSite)}`}
+                  onClick={() => handleClicked(idx)}
+                  onDelete={() => handleDelete(idx)}
+                  sx={{
+                    "& .MuiChip-deleteIcon": {
+                      marginLeft: 0.5
+                    },
+                    borderTopLeftRadius: 1,
+                    borderBottomLeftRadius: 1,
+                  }}
+                />
+              }
+              icon={              
+                <Checkbox
+                  size="small"
+                  icon={<Visibility />}
+                  checkedIcon={<VisibilityOff />}
+                  checked={microbialHidden}
+                  onClick={() => handleMicrobialVisibilityToggle(idx)}
+                  sx={{
+                    '&.Mui-checked': {
+                      color: pink[800],
+                    },
+                    backgroundColor: 'transparent !important',
+                  }}
+                />
+              }
+              sx={{
+                "& .MuiChip-label": {
+                  paddingRight: 0,
+                },
+              }}
             />
           ))}
           renderInput={(params) => (
@@ -460,7 +523,7 @@ const TumourSummaryEdit = ({
               {...params}
               label="Microbial Species"
               name="species"
-              helperText="Press enter to confirm new entry, click chip to toggle integration status"
+              helperText="Press enter to confirm new entry. Click chip to toggle integration status. Click visibility toggle to hide individual entries."
               onKeyDown={handleKeyDown}
             />
           )}
@@ -473,7 +536,7 @@ const TumourSummaryEdit = ({
   const tCellCd8DataSection = useMemo(() => (
     <>
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="CD8+ T Cell Score"
         value={newTCellCd8Data?.score ?? null}
         name="score"
@@ -483,7 +546,7 @@ const TumourSummaryEdit = ({
         type="number"
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="CD8+ T Cell Percentile"
         value={newTCellCd8Data?.percentile ?? null}
         name="percentile"
@@ -503,7 +566,6 @@ const TumourSummaryEdit = ({
             name="percentileHidden"
             onChange={handleTCellCd8PercentileVisibleChange}
             sx={{
-              color: 'default',
               '&.Mui-checked': {
                 color: pink[800],
               },
@@ -514,7 +576,7 @@ const TumourSummaryEdit = ({
         label={<div className="checkbox-label">Show/Hide CD8+ Percentile</div>}
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="Pediatric CD8+ T Cell Score"
         value={newTCellCd8Data?.pedsScore ?? null}
         name="pedsScore"
@@ -525,7 +587,7 @@ const TumourSummaryEdit = ({
         type="number"
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="Pediatric CD8+ T Cell Percentile"
         value={newTCellCd8Data?.pedsPercentile ?? null}
         name="pedsPercentile"
@@ -553,8 +615,8 @@ const TumourSummaryEdit = ({
   const mutBurDataSection = useMemo(() => (
     <>
       <TextField
-        className="tumour-dialog__text-field"
-        label="SV Burden (POG average)"
+        className="tumour-dialog__number-field"
+        label="SV Burden (Count)"
         value={newMutationBurdenData?.qualitySvCount ?? null}
         name="qualitySvCount"
         onChange={handleMutationBurdenChange}
@@ -563,7 +625,7 @@ const TumourSummaryEdit = ({
         type="number"
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="SV Burden (Percentile)"
         value={newMutationBurdenData?.qualitySvPercentile ?? null}
         name="qualitySvPercentile"
@@ -572,13 +634,33 @@ const TumourSummaryEdit = ({
         fullWidth
         type="number"
       />
+      <FormControlLabel
+        className="tumour-dialog__check-box"
+        control={(
+          <Checkbox
+            size="small"
+            icon={<Visibility />}
+            checkedIcon={<VisibilityOff />}
+            checked={newMutationBurdenData?.svBurdenHidden}
+            name="svBurdenHidden"
+            onChange={handleSVBurdenVisibility}
+            sx={{
+              '&.Mui-checked': {
+                color: pink[800],
+              },
+              marginLeft: 1,
+            }}
+          />
+        )}
+        label={<div className="checkbox-label">Show/Hide SV Burden</div>}
+      />
     </>
-  ), [newMutationBurdenData, handleMutationBurdenChange]);
+  ), [newMutationBurdenData?.qualitySvCount, newMutationBurdenData?.qualitySvPercentile, newMutationBurdenData?.svBurdenHidden, handleMutationBurdenChange, handleSVBurdenVisibility]);
 
   const tmburMutBurSection = useMemo(() => (
     <>
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="genomeSnvTmb"
         value={newTmburMutData?.genomeSnvTmb ?? null}
         name="genomeSnvTmb"
@@ -588,7 +670,7 @@ const TumourSummaryEdit = ({
         type="number"
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="genomeIndelTmb"
         value={newTmburMutData?.genomeIndelTmb ?? null}
         name="genomeIndelTmb"
@@ -598,7 +680,7 @@ const TumourSummaryEdit = ({
         type="number"
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="Adjusted TMB"
         value={newTmburMutData?.adjustedTmb ?? null}
         name="adjustedTmb"
@@ -630,7 +712,6 @@ const TumourSummaryEdit = ({
             name="tmbHidden"
             onChange={handleAdjustedTmbVisibleChange}
             sx={{
-              color: 'default',
               '&.Mui-checked': {
                 color: pink[800],
               },
@@ -641,7 +722,16 @@ const TumourSummaryEdit = ({
         label={<div className="checkbox-label">Show/Hide TMB Information</div>}
       />
     </>
-  ), [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, newTmburMutData?.adjustedTmb, newTmburMutData?.adjustedTmbComment, newTmburMutData?.tmbHidden, handleTmburChange, handleAdjustedTmbCommentChange, handleAdjustedTmbVisibleChange]);
+  ), [
+    newTmburMutData?.genomeSnvTmb,
+    newTmburMutData?.genomeIndelTmb,
+    newTmburMutData?.adjustedTmb,
+    newTmburMutData?.adjustedTmbComment,
+    newTmburMutData?.tmbHidden,
+    handleTmburChange,
+    handleAdjustedTmbCommentChange,
+    handleAdjustedTmbVisibleChange,
+  ]);
 
   return (
     <Dialog open={isOpen}>

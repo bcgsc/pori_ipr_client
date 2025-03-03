@@ -17,7 +17,7 @@ import useReport from '@/hooks/useReport';
 import useResource from '@/hooks/useResource';
 import useSecurity from '@/hooks/useSecurity';
 import { formatDate } from '@/utils/date';
-import { SignatureType, SignatureUserType } from './types';
+import { SignatureType } from './types';
 
 import './index.scss';
 
@@ -29,7 +29,7 @@ export type SignatureCardProps = {
   title: string;
   signatures: SignatureType;
   onClick: (isSigned: boolean, updatedSignature: SignatureType) => void;
-  type: SignatureUserType;
+  type: string;
   isPrint?: boolean;
 };
 
@@ -149,7 +149,11 @@ const SignatureCard = ({
     return null;
   }, [signatures, type, isPrint]);
 
-  if (isPrint) {
+  if (isPrint && !userSignature) {
+    return null
+  }
+
+  if (isPrint && userSignature) {
     return (
       <span className="signatures-print__group">
         <div className="signatures-print__value">

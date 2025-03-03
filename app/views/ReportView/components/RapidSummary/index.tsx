@@ -20,7 +20,7 @@ import orderBy from 'lodash/orderBy';
 
 import './index.scss';
 import {
-  KbMatchType, TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType,
+  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, KbMatchType,
 } from '@/common';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
@@ -38,19 +38,23 @@ import TumourSummary from '../TumourSummary';
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
 
-  kbMatches.forEach(({ iprEvidenceLevel }) => {
-    if (!iprRelevanceDict[iprEvidenceLevel]) {
-      iprRelevanceDict[iprEvidenceLevel] = new Set();
+  kbMatches.forEach(({ kbMatchedStatements }) => {
+    for (const statement of kbMatchedStatements) {
+      if (!iprRelevanceDict[statement.iprEvidenceLevel]) {
+        iprRelevanceDict[statement.iprEvidenceLevel] = new Set();
+      }
     }
   });
 
   orderBy(
     kbMatches,
     ['iprEvidenceLevel', 'context'],
-  ).forEach(({ iprEvidenceLevel, context }: KbMatchType) => {
+  ).forEach(({ kbMatchedStatements }: KbMatchType) => {
     // Remove square brackets and add to dictionary
-    if (iprEvidenceLevel && context) {
-      iprRelevanceDict[iprEvidenceLevel].add(context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+    for (const statement of kbMatchedStatements) {
+      if (statement.iprEvidenceLevel && statement.context) {
+        iprRelevanceDict[statement.iprEvidenceLevel].add(statement.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+      }
     }
   });
 
@@ -60,7 +64,6 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
 const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
     const iprEvidenceDict = splitIprEvidenceLevels(kbMatches);
-
     if (!iprEvidenceDict['IPR-A']) {
       iprEvidenceDict['IPR-A'] = new Set();
     }
@@ -149,6 +152,7 @@ const RapidSummary = ({
   const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [editData, setEditData] = useState();
 
+  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>([]);
   const [showMatchedTumourEditDialog, setShowMatchedTumourEditDialog] = useState(false);
   const [showCancerRelevanceEventsDialog, setShowCancerRelevanceEventsDialog] = useState(false);
 
@@ -165,6 +169,7 @@ const RapidSummary = ({
             api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
             api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(`/reports/${report.ident}/summary/microbial`),
+            api.get(`/templates/${report.template.ident}/signature-types`),
           ]);
           const [
             signaturesResp,
@@ -174,6 +179,7 @@ const RapidSummary = ({
             tmBurdenResp,
             immuneResp,
             microbialResp,
+            signatureTypesResp,
           ] = await apiCalls.request(true) as [
             PromiseSettledResult<SignatureType>,
             PromiseSettledResult<RapidVariantType[]>,
@@ -182,6 +188,7 @@ const RapidSummary = ({
             PromiseSettledResult<TmburType>,
             PromiseSettledResult<ImmuneType[]>,
             PromiseSettledResult<MicrobialType[]>,
+            PromiseSettledResult<SignatureUserType[]>,
           ];
 
           try {
@@ -240,6 +247,21 @@ const RapidSummary = ({
           } else if (!isPrint) {
             snackbar.error(microbialResp.reason?.content?.error?.message);
           }
+
+          if (signatureTypesResp.status === 'fulfilled') {
+            if (signatureTypesResp.value?.length === 0) {
+              const defaultSigatureTypes = [
+                { signatureType: 'author' },
+                { signatureType: 'reviewer' },
+                { signatureType: 'creator' },
+              ] as SignatureUserType[];
+              setSignatureTypes(defaultSigatureTypes);
+            } else {
+              setSignatureTypes(signatureTypesResp.value);
+            }
+          } else if (!isPrint) {
+            snackbar.error(signatureTypesResp.reason?.content?.error?.message);
+          }
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
         } finally {
@@ -275,11 +297,14 @@ const RapidSummary = ({
       msiStatus = null;
     }
 
-    let svBurden: null | string;
-    if (primaryBurden && primaryBurden.qualitySvCount !== null) {
-      svBurden = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
-    } else {
-      svBurden = null;
+    let svBurden: null | string = null;
+    if (primaryBurden) {
+      const { qualitySvCount, svBurdenHidden, qualitySvPercentile } = primaryBurden;
+      if (qualitySvCount !== null && !svBurdenHidden) {
+        svBurden = `${qualitySvCount} ${qualitySvPercentile ? `(${qualitySvPercentile}%)` : ''}`;
+      } else {
+        svBurden = null;
+      }
     }
 
     let tCell: null | string;
@@ -344,12 +369,21 @@ const RapidSummary = ({
           tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
       },
       {
+        term: 'Intersect TMB Score',
+        value:
+          report?.genomeTmb ?? null,
+      },
+      {
         term: 'MSI Status',
         value: msiStatus,
       },
     ]);
-  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
-    tCellCd8?.percentileHidden, tCellCd8, tCellCd8?.pedsScoreComment, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile]);
+  }, [
+    microbial, primaryBurden, tmburMutBur, tCellCd8,
+    report.m1m2Score, report.sampleInfo, report.tumourContent, report?.genomeTmb, report.captiv8Score,
+    tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
+    tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
+  ]);
 
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
@@ -520,10 +554,6 @@ const RapidSummary = ({
 
   const reviewSignaturesSection = useMemo(() => {
     if (!report) return null;
-    let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
-    if (isPrint) {
-      order = ['creator', 'author', 'reviewer'];
-    }
     const component = (
       <div className="rapid-summary__reviews">
         {!isPrint && (
@@ -533,18 +563,18 @@ const RapidSummary = ({
         )}
         <div className="rapid-summary__signatures">
           {
-            order.map((sigType) => {
-              let title: string = sigType;
-              if (sigType === 'author') {
+            signatureTypes.map((sigType) => {
+              let title = sigType.signatureType;
+              if (sigType.signatureType === 'author') {
                 title = isPrint ? 'Manual Review' : 'Ready';
               }
               return (
                 <SignatureCard
-                  key={sigType}
+                  key={sigType.signatureType}
                   onClick={handleSign}
                   signatures={signatures}
                   title={capitalize(title)}
-                  type={sigType}
+                  type={sigType.signatureType}
                   isPrint={isPrint}
                 />
               );
@@ -554,7 +584,7 @@ const RapidSummary = ({
       </div>
     );
     return component;
-  }, [report, handleSign, isPrint, signatures]);
+  }, [report, handleSign, isPrint, signatures, signatureTypes]);
 
   const sampleInfoSection = useMemo(() => {
     if (!report || !report.sampleInfo) { return null; }

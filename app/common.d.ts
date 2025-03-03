@@ -135,6 +135,7 @@ type ImageType = {
 type GeneType = {
   kbStatementRelated: boolean;
   drugTargetable: boolean;
+  expressionVariants?: ExpOutliersType;
   knownFusionPartner: boolean;
   knownSmallMutation: boolean;
   name: string;
@@ -143,7 +144,7 @@ type GeneType = {
   tumourSuppressor: boolean;
 };
 
-type AnyVariantType = 'cnv' | 'mut' | 'sv' | 'exp' | 'msi' | 'tmb';
+type AnyVariantType = 'cnv' | 'mut' | 'sv' | 'exp' | 'msi' | 'tmb' | 'sigv';
 
 type VariantTypeMap<T extends AnyVariantType> = {
   'cnv': CopyNumberType;
@@ -152,9 +153,19 @@ type VariantTypeMap<T extends AnyVariantType> = {
   'exp': ExpOutliersType;
   'msi': MsiType;
   'tmb': TmburType;
+  'sigv': SignatureVariantType;
 }[T];
 
 type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
+  kbMatchedStatements: KbMatchedStatementType[];
+  kbStatementId: string;
+  kbVariant: string;
+  kbVariantId: string;
+  variant?: VariantTypeMap<T>;
+  variantType: T;
+} & RecordDefaults;
+
+type KbMatchedStatementType<T extends KbMatchType = KbMatchType> = {
   approvedTherapy: boolean;
   category: string;
   context: string;
@@ -167,10 +178,10 @@ type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
   kbData: {
     inferred: boolean;
     recruitment_status: string;
+    kbmatchTag: string | null;
   } | null;
+  kbMatches: T[];
   kbStatementId: string;
-  kbVariant: string;
-  kbVariantId: string;
   matchedCancer: boolean;
   pmidRef: string;
   reference: string;
@@ -178,8 +189,6 @@ type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
   reviewStatus: string;
   sample: string | null;
   status: string | null;
-  variant?: VariantTypeMap<T>;
-  variantType: T;
 } & RecordDefaults;
 
 type CopyNumberType = {
@@ -276,6 +285,7 @@ type ExpOutliersType = {
   expressionState: string | null;
   gene: GeneType;
   kbCategory: string | null;
+  kbMatches?: KbMatchType<'exp'>[];
   location: number | null;
   primarySiteFoldChange: number | null;
   primarySitePercentile: number | null;
@@ -300,7 +310,6 @@ type TmburType = {
   comments: string;
   genomeSnvTmb: number;
   genomeIndelTmb: number;
-  tmbHidden: boolean;
   kbCategory: string | null;
   kbMatches: KbMatchType[];
   msiScore: number;
@@ -310,6 +319,7 @@ type TmburType = {
   proteinIndelTmb: number;
   proteinSnvs: number;
   proteinSnvTmb: number;
+  tmbHidden: boolean;
   totalGenomeIndels: number;
   totalGenomeSnvs: number;
   tumour: string;
@@ -320,6 +330,13 @@ type MsiType = {
   score: number | null;
   kbCategory: string | null;
   variantType: 'msi';
+} & RecordDefaults;
+
+type SignatureVariantType = {
+  displayName: string | null;
+  signatureName: string | null;
+  variantTypeName: string | null;
+  variantType: 'sigv';
 } & RecordDefaults;
 
 type TemplateType = {
@@ -346,6 +363,7 @@ type MutationBurdenType = {
   qualitySvExpressedCount: number | null;
   qualitySvPercentile: number | null;
   role: string;
+  svBurdenHidden: boolean | null;
   totalIndelCount: number | null;
   totalMutationsPerMb: number | null;
   totalSnvCount: number | null;
@@ -366,6 +384,7 @@ type ImmuneType = {
 type MicrobialType = {
   integrationSite: string | null;
   species: string | null;
+  microbialHidden: boolean;
 } & RecordDefaults;
 
 export {
@@ -383,6 +402,7 @@ export {
   ImageType,
   GeneType,
   KbMatchType,
+  KbMatchedStatementType,
   CopyNumberType,
   StructuralVariantType,
   SmallMutationType,
@@ -390,6 +410,7 @@ export {
   TumourSummaryType,
   TmburType,
   MsiType,
+  SignatureVariantType,
   MutationBurdenType,
   ImmuneType,
   MicrobialType,

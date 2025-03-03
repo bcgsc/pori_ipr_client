@@ -35,14 +35,20 @@ type UserRoleType = {
 
 type ReportType = {
   alternateIdentifier?: string;
-  pediatricIds?: string;
   analysisStartedAt: string | null;
+  appendix?: string;
   biopsyName?: string;
+  captiv8Score: number;
   createdBy?: UserType;
   expression_matrix: string;
+  genomeTmb?: number;
+  kbDiseaseMatch: string;
   kbVersion: string;
+  m1m2Score: number;
+  oncotreeTumourType: string;
   patientId: string;
-  patientInformation: PatientInformationType,
+  patientInformation: PatientInformationType;
+  pediatricIds?: string;
   ploidy: string;
   projects?: ProjectType[];
   reportVersion: string;
@@ -53,11 +59,6 @@ type ReportType = {
   tumourContent?: number;
   type: string;
   users: UserRoleType[];
-  oncotreeTumourType: string;
-  kbDiseaseMatch: string;
-  m1m2Score: number;
-  captiv8Score: number;
-  appendix?: string;
 } & RecordDefaults;
 
 type ReportContextType = {

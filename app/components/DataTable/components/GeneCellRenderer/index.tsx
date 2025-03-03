@@ -12,7 +12,11 @@ type GeneCellRendererProps = {
 const GeneCellRenderer = ({
   value,
   link = false,
-}: GeneCellRendererProps) => (
+}: GeneCellRendererProps) => {
+  if (!value) {
+    return null;
+  }
+  return (
   value && value.split(/\s*::\s*|,\s?/).map((val, index) => (
     // eslint-disable-next-line react/no-array-index-key
     <React.Fragment key={`${val}_${index}`}>
@@ -28,6 +32,6 @@ const GeneCellRenderer = ({
     </React.Fragment>
   ))
 
-);
+)};
 
 export default GeneCellRenderer;
