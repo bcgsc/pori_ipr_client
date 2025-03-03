@@ -33,7 +33,6 @@ const ReportsView = lazy(() => import('../ReportsView'));
 const MyReportsView = lazy(() => import('../MyReportsView'));
 const PatientsView = lazy(() => import('../PatientsView'));
 const SearchView = lazy(() => import('../SearchView'));
-const SearchByKbmatchView = lazy(() => import('../SearchByKbmatchView'));
 const ReportsByVariantView = lazy(() => import('../ReportsByVariantView'));
 const ReportView = lazy(() => import('../ReportView'));
 const PrintView = lazy(() => import('../PrintView'));
@@ -225,11 +224,10 @@ const Main = (): JSX.Element => {
                   </Route>
                   <AuthenticatedRoute component={TermsView} path="/terms" />
                   <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
-                  <AuthenticatedRoute exact component={ReportsByVariantView} path="/(search|search-by-kbmatches)/result" />
+                  <AuthenticatedRoute exact component={ReportsByVariantView} path="/(search-by-key-variant|search-by-kbmatches)/result" />
                   <AuthenticatedRoute component={ReportsView} path="/reports" />
                   <AuthenticatedRoute component={MyReportsView} path="/my-reports" />
                   <AuthenticatedRoute component={SearchView} path="/search" />
-                  <AuthenticatedRoute component={SearchByKbmatchView} path="/search-by-kbmatches" />
                   <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
                   <AuthenticatedRoute component={ReportView} path="/report/:ident" />
                   <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />

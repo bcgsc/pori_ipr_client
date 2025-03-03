@@ -73,16 +73,19 @@ html body {
   }
 }
 
-// Shared between SearchView and SearchByKbmatchView
 .search-view {
   margin: auto;
   left: 16px;
   max-width: 800px;
   min-width: 800px;
-  padding-bottom: 32px;
   position: relative;
   right: 16px;
-  top: 35vh;
+  top: 30vh;
+
+  &__component {
+    margin-top: 32px;
+    width: fit-content;
+  }
 
   &__bar {
     box-sizing: border-box;
@@ -123,4 +126,4 @@ html body {
     padding-right: 32px;
   }
 }
-// Shared between SearchView and SearchByKbmatchView
+
