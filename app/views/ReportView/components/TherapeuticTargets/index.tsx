@@ -60,6 +60,8 @@ type TherapeuticProps = {
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
+type TherapeuticDataTableType = TherapeuticType[] | Partial<TherapeuticType>[];
+
 const Therapeutic = ({
   isLoading,
   isPrint = false,
@@ -69,11 +71,11 @@ const Therapeutic = ({
   const [
     therapeuticData,
     setTherapeuticData,
-  ] = useState<TherapeuticType[] | Partial<TherapeuticType>[]>([]);
+  ] = useState<TherapeuticDataTableType>([]);
   const [
     chemoresistanceData,
     setChemoresistanceData,
-  ] = useState<TherapeuticType[] | Partial<TherapeuticType>[]>([]);
+  ] = useState<TherapeuticDataTableType>([]);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<TherapeuticType>({
@@ -105,6 +107,7 @@ const Therapeutic = ({
   const getData = useCallback(async () => {
     if (report) {
       try {
+        setIsLoading(true);
         const therapeuticResp = await api.get(
           `/reports/${report.ident}/therapeutic-targets`,
         ).request();
@@ -212,6 +215,17 @@ const Therapeutic = ({
     }
   }, [chemoresistanceData, therapeuticData, report]);
 
+  const handleDeleteTherapeuticTarget = useCallback(async (rowNodeData: TherapeuticDataTableType[number]) => {
+    const { ident: therapeuticIdent } = rowNodeData;
+    try {
+      await api.del(`/reports/${report.ident}/therapeutic-targets/${therapeuticIdent}`, {}).request();
+      snackbar.success(`Successfully deleted ${therapeuticIdent}`);
+      getData();
+    } catch (e) {
+      snackbar.error('Failed to delete therapeutic option: ', e);
+    }
+  }, [report.ident, getData]);
+
   if (isPrint && printVersion === 'standardLayout') {
     return (
       <div className="therapeutic-print">
@@ -312,6 +326,7 @@ const Therapeutic = ({
             Header={EvidenceHeader}
             isPaginated={false}
             onAdd={handleEditStart}
+            onDelete={handleDeleteTherapeuticTarget}
             onEdit={handleEditStart}
             onReorder={handleReorder}
             rowData={therapeuticData}
@@ -328,6 +343,7 @@ const Therapeutic = ({
             Header={EvidenceHeader}
             isPaginated={false}
             onAdd={handleEditStart}
+            onDelete={handleDeleteTherapeuticTarget}
             onEdit={handleEditStart}
             rowData={chemoresistanceData}
             tableType="chemoresistance"
