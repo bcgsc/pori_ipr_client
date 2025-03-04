@@ -6,18 +6,26 @@ import './index.scss';
 
 const urlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/[\w\-\.\/]*)*$/i;
 
-const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRendererParams) => JSX.Element => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getNestedValue = (obj: any, path: string): any[] => path.split('.').reduce((acc, key) => {
+  if (Array.isArray(acc)) {
+    return acc.flatMap((item) => (item && item[key] !== undefined ? item[key] : []));
+  }
+  return acc && acc[key] !== undefined ? acc[key] : [];
+}, obj);
+
+const RenderArrayCell = (fieldPath: string, isLink: boolean): (cellParams: ICellRendererParams) => JSX.Element => {
   if (isLink) {
     return function ArrayCell({ data }: ICellRendererParams) {
-      if (Array.isArray(data[field])) {
-        const cellData = [...data[field]].sort();
+      const fieldData = getNestedValue(data, fieldPath) || [];
 
+      if (fieldData.length > 0) {
+        const cellData = [...fieldData].sort();
         const firstVal = cellData[0]?.replace(/(pmid:)|(#)/, '');
 
         let link = firstVal;
         let validLink = false;
 
-        // firstVal might be non-link
         if (firstVal.match(/^\d+$/)) {
           link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
           validLink = true;
@@ -43,45 +51,30 @@ const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRend
         return (
           <div>
             {linkComponent}
-            {cellData.length > 1 && (
-              <>
-                …
-              </>
-            )}
+            {cellData.length > 1 && <>…</>}
           </div>
         );
       }
+
       return (
         <div>
-          {data[field]}
+          {fieldData}
         </div>
       );
     };
   }
 
   return function ArrayCell({ data }: ICellRendererParams) {
-    if (Array.isArray(data[field])) {
-      const cellData = [...data[field]].sort();
-      const [firstVal] = cellData;
+    const fieldData = getNestedValue(data, fieldPath);
 
-      if (typeof firstVal === 'string') {
-        cellData[0].replace(/#$/, '');
-      }
+    // Ensure fieldData is always treated as an array
+    const cellData = Array.isArray(fieldData) ? [...fieldData].sort() : [fieldData];
+    const [firstVal] = cellData;
 
-      return (
-        <div>
-          {`${firstVal === null ? '' : firstVal}`}
-          {cellData.length > 1 && (
-            <>
-              …
-            </>
-          )}
-        </div>
-      );
-    }
     return (
       <div>
-        {`${data[field] === null ? '' : data[field]}`}
+        {firstVal ?? ''}
+        {cellData.length > 1 && <>…</>}
       </div>
     );
   };

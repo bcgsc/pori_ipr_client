@@ -76,7 +76,7 @@ const COMMON_COL_DEFS = [
     colId: 'relevance',
     field: 'relevance',
     minWidth: 90,
-    cellRendererFramework: PharmacoGenomicAssociationRenderer,
+    cellRendererFramework: ArrayCell('kbMatchedStatements.relevance', false),
   },
 ];
 
