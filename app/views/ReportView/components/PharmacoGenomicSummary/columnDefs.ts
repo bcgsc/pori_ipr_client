@@ -1,6 +1,7 @@
 import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
 import getGeneProp from '@/utils/getGeneProp';
 import { sampleColumnDefs } from '../../common';
+import PharmacoGenomicAssociationRenderer from './components/PharmacoGenomicAssociationRenderer';
 
 const COMMON_COL_DEFS = [
   {
@@ -75,7 +76,7 @@ const COMMON_COL_DEFS = [
     colId: 'relevance',
     field: 'relevance',
     minWidth: 90,
-    cellRendererFramework: ArrayCell('relevance', false),
+    cellRendererFramework: PharmacoGenomicAssociationRenderer,
   },
 ];
 
