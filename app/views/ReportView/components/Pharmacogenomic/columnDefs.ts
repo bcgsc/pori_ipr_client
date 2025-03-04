@@ -1,6 +1,9 @@
 import { ColDef, ValueGetterParams } from '@ag-grid-community/core';
 import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
 import getGeneProp from '@/utils/getGeneProp';
+import kbMStatementsGeneValueGetter from '@/utils/kbMatchStatementsGeneValueGetter';
+import kbMatchStatementsKnownVarValueGetter from '@/utils/kbMatchStatementsKnownVarValueGetter';
+import kbMatchStatementsObsVarValueGetter from '@/utils/kbMatchStatementsObsVarValueGetter';
 
 const columnDefs: ColDef[] = [{
   headerName: 'Gene',
@@ -8,22 +11,13 @@ const columnDefs: ColDef[] = [{
   cellRendererParams: { link: true },
   colId: 'gene',
   hide: false,
-  valueGetter: (params: ValueGetterParams): string => {
-    const { data: { variant } } = params;
-
-    if (variant.gene) {
-      return variant.gene.name;
-    }
-    return variant.gene1.name && variant.gene2.name
-      ? `${variant.gene1.name}, ${variant.gene2.name}`
-      : variant.gene1.name || variant.gene2.name;
-  },
+  valueGetter: kbMStatementsGeneValueGetter,
 },
 {
   headerName: 'Known Variant',
   colId: 'kbVariant',
   field: 'kbVariant',
-  cellRendererFramework: ArrayCell('kbVariant', false),
+  valueGetter: kbMatchStatementsKnownVarValueGetter,
   hide: false,
   maxWidth: 300,
 },
@@ -32,24 +26,7 @@ const columnDefs: ColDef[] = [{
   colId: 'variant',
   hide: false,
   maxWidth: 300,
-  valueGetter: (params: ValueGetterParams): string => {
-    const { data: { variant, variantType } } = params;
-
-    if (variantType === 'cnv') {
-      return `${variant.gene.name} ${variant.cnvState}`;
-    }
-    if (variantType === 'sv') {
-      return `(${variant.gene1.name || '?'
-      },${variant.gene2.name || '?'
-      }):fusion(e.${variant.exon1 || '?'
-      },e.${variant.exon2 || '?'
-      })`;
-    }
-    if (variantType === 'mut') {
-      return `${variant.gene.name}:${variant.proteinChange}`;
-    }
-    return `${variant.gene.name} ${variant.expressionState}`;
-  },
+  valueGetter: kbMatchStatementsObsVarValueGetter,
 },
 {
   headerName: 'Cancer Type',
