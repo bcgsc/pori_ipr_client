@@ -110,7 +110,7 @@ const EditDialog = ({
     } else {
       setErrors(null);
     }
-  }, [isDirty, newData, requiredGeneFields, requiredSignatureFields]);
+  }, [isDirty, newData, requiredGeneFields, requiredSignatureFields, variantType]);
 
   const handleSubmit = useCallback(async () => {
     setIsSubmitting(true);
@@ -255,28 +255,30 @@ const EditDialog = ({
           </RadioGroup>
         </FormControl>
         {variantType === 'gene' && (
-        <FormControl fullWidth>
-          <AutocompleteHandler
-            defaultValue={defaultVariantValue}
-            type="variant"
-            label="Gene and Variant"
-            onChange={handleAutocompleteValueSelected}
-            required
-            error={errors && isDirty && errors.variant}
-          />
-        </FormControl>
+          <FormControl fullWidth>
+            <AutocompleteHandler
+              defaultValue={defaultVariantValue}
+              type="variant"
+              label="Gene and Variant"
+              onChange={handleAutocompleteValueSelected}
+              required
+              minCharacters={3}
+              error={errors && isDirty && errors.variant}
+            />
+          </FormControl>
         )}
         {variantType === 'signature' && (
-        <FormControl fullWidth>
-          <AutocompleteHandler
-            defaultValue={defaultSignatureVariantValue}
-            type="signature"
-            label="Signature"
-            onChange={handleAutocompleteValueSelected}
-            required
-            error={errors && isDirty && errors.signature}
-          />
-        </FormControl>
+          <FormControl fullWidth>
+            <AutocompleteHandler
+              defaultValue={defaultSignatureVariantValue}
+              type="signature"
+              label="Signature"
+              onChange={handleAutocompleteValueSelected}
+              required
+              minCharacters={3}
+              error={errors && isDirty && errors.signature}
+            />
+          </FormControl>
         )}
         <FormControl fullWidth>
           <AutocompleteHandler
@@ -285,6 +287,7 @@ const EditDialog = ({
             label="Therapy"
             onChange={handleAutocompleteValueSelected}
             required
+            minCharacters={3}
             error={errors && isDirty && errors.therapy}
           />
         </FormControl>
@@ -295,6 +298,7 @@ const EditDialog = ({
             label="Context"
             onChange={handleAutocompleteValueSelected}
             required
+            minCharacters={3}
             error={errors && isDirty && errors.context}
           />
         </FormControl>
