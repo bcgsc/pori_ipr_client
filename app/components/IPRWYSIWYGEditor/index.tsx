@@ -202,7 +202,7 @@ const IPRWYSIWYGEditor = ({
         <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose()}>Close</Button>
+        <Button onClick={() => onClose(null)}>Close</Button>
         <Button color="secondary" onClick={handleOnSave}>Save</Button>
       </DialogActions>
     </Dialog>
