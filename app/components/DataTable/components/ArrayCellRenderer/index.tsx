@@ -14,57 +14,49 @@ const getNestedValue = (obj: any, path: string): any[] => path.split('.').reduce
   return acc && acc[key] !== undefined ? acc[key] : [];
 }, obj);
 
-const RenderArrayCell = (fieldPath: string, isLink: boolean): (cellParams: ICellRendererParams) => JSX.Element => {
+const RenderArrayCell = (fieldPath: string, isLink: boolean): (cellParams: Partial<ICellRendererParams>) => JSX.Element => {
   if (isLink) {
     return function ArrayCell({ data }: ICellRendererParams) {
       const fieldData = getNestedValue(data, fieldPath) || [];
+      const cellData = Array.isArray(fieldData) ? [...fieldData].sort() : [fieldData];
 
-      if (fieldData.length > 0) {
-        const cellData = [...fieldData].sort();
-        const firstVal = cellData[0]?.replace(/(pmid:)|(#)/, '');
+      const firstVal = cellData[0]?.replace(/(pmid:)|(#)/, '');
 
-        let link = firstVal;
-        let validLink = false;
+      let link = firstVal;
+      let validLink = false;
 
-        if (firstVal.match(/^\d+$/)) {
-          link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
-          validLink = true;
-        } else if (urlRegex.test(firstVal)) {
-          validLink = true;
-        }
+      if (firstVal.match(/^\d+$/)) {
+        link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
+        validLink = true;
+      } else if (urlRegex.test(firstVal)) {
+        validLink = true;
+      }
 
-        let linkComponent = firstVal;
+      let linkComponent = firstVal;
 
-        if (validLink) {
-          linkComponent = (
-            <a
-              className="array-cell__link"
-              href={link}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {firstVal}
-            </a>
-          );
-        }
-
-        return (
-          <div>
-            {linkComponent}
-            {cellData.length > 1 && <>…</>}
-          </div>
+      if (validLink) {
+        linkComponent = (
+          <a
+            className="array-cell__link"
+            href={link}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {firstVal}
+          </a>
         );
       }
 
       return (
         <div>
-          {fieldData}
+          {linkComponent}
+          {cellData.length > 1 && <>…</>}
         </div>
       );
     };
   }
 
-  return function ArrayCell({ data }: ICellRendererParams) {
+  return function ArrayCell({ data }: Partial<ICellRendererParams>) {
     const fieldData = getNestedValue(data, fieldPath);
 
     // Ensure fieldData is always treated as an array
