@@ -1,6 +1,7 @@
 import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
 import getGeneProp from '@/utils/getGeneProp';
 import { sampleColumnDefs } from '../../common';
+// import PharmacoGenomicAssociationRenderer from './components/PharmacoGenomicAssociationRenderer'; DEVSU-2587 WIP @kttkjl
 
 const COMMON_COL_DEFS = [
   {
@@ -75,7 +76,7 @@ const COMMON_COL_DEFS = [
     colId: 'relevance',
     field: 'relevance',
     minWidth: 90,
-    cellRendererFramework: ArrayCell('relevance', false),
+    cellRendererFramework: ArrayCell('kbMatchedStatements.relevance', false),
   },
 ];
 
@@ -102,17 +103,20 @@ const pharmacoGenomicPrintColumnDefs = [
     headerName: 'Therapy',
     colId: 'context',
     field: 'context',
+    cellRendererFramework: ArrayCell('kbMatchedStatements.context', false),
   },
   {
     headerName: 'Evidence',
     colId: 'evidenceLevel',
     field: 'evidenceLevel',
     valueGetter: PHARMACOGEN_EVIDENCE_VAL_GETTER,
+    cellRendererFramework: ArrayCell('kbMatchedStatements.evidenceLevel', false),
   },
   {
     headerName: 'External Source',
     colId: 'externalSource',
     field: 'externalSource',
+    cellRendererFramework: ArrayCell('kbMatchedStatements.externalSource', false),
   },
 ];
 
@@ -121,6 +125,7 @@ const pharmacoGenomicColumnDefs = [
   {
     headerName: 'Therapy',
     field: 'context',
+    cellRendererFramework: ArrayCell('kbMatchedStatements.context', false),
     minWidth: 90,
   },
   {
@@ -129,9 +134,11 @@ const pharmacoGenomicColumnDefs = [
     field: 'evidenceLevel',
     minWidth: 90,
     valueGetter: PHARMACOGEN_EVIDENCE_VAL_GETTER,
+    cellRendererFramework: ArrayCell('kbMatchedStatements.evidenceLevel', false),
   },
   {
     field: 'externalSource',
+    cellRendererFramework: ArrayCell('kbMatchedStatements.externalSource', false),
     minWidth: 110,
   },
   {

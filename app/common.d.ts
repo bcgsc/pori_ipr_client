@@ -200,6 +200,7 @@ type CopyNumberType = {
   displayName: string | null;
   end: number | null;
   gene: GeneType | null;
+  germline?: string | null;
   kbCategory: string | null;
   kbMatches?: KbMatchType<'cnv'>[];
   lohState: string | null;
@@ -223,6 +224,7 @@ type StructuralVariantType = {
   frame: string | null;
   gene1: GeneType | null;
   gene2: GeneType | null;
+  germline?: string | null;
   highQuality: boolean;
   kbMatches?: KbMatchType<'sv'>[];
   mavis_product_id: number | null;
@@ -243,7 +245,7 @@ type SmallMutationType = {
   displayName: string | null;
   endPosition: number | null;
   gene: GeneType;
-  germline: string | null;
+  germline?: string | null;
   hgvsCds: string | null;
   hgvsGenomic: string | null;
   hgvsProtein: string | null;
@@ -283,6 +285,7 @@ type ExpOutliersType = {
   diseasekIQR: number | null;
   expressionState: string | null;
   gene: GeneType;
+  germline?: string | null;
   kbCategory: string | null;
   kbMatches?: KbMatchType<'exp'>[];
   location: number | null;
@@ -309,6 +312,7 @@ type TmburType = {
   comments: string;
   genomeSnvTmb: number;
   genomeIndelTmb: number;
+  germline?: string | null;
   kbCategory: string | null;
   kbMatches: KbMatchType[];
   msiScore: number;
@@ -328,11 +332,13 @@ type TmburType = {
 type MsiType = {
   score: number | null;
   kbCategory: string | null;
+  germline?: string | null;
   variantType: 'msi';
 } & RecordDefaults;
 
 type SignatureVariantType = {
   displayName: string | null;
+  germline?: string | null;
   signatureName: string | null;
   variantTypeName: string | null;
   variantType: 'sigv';
