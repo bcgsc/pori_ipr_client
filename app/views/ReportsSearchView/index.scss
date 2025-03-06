@@ -1,4 +1,6 @@
-.reports-table {
+@import '../../styles/variables';
+
+.variant-reports-table {
   height: 73.5%;
 
   &__variant-chips {
@@ -15,4 +17,8 @@
   &__typography {
     padding: 8px;
   }
+}
+
+.reports-table {
+  height: calc(100% - #{$navbar-size});
 }
