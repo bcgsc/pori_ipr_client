@@ -1,6 +1,7 @@
 /**
  * @module /App
  */
+import { QueryClientProvider, QueryClient } from 'react-query';
 import { SnackbarProvider } from 'notistack';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
@@ -23,6 +24,16 @@ import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import '@fontsource/roboto';
 import './styles/ag-grid.scss';
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 15 * 60 * 1000, // 15m
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    },
+  },
+});
+
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   CsvExportModule,
@@ -42,15 +53,17 @@ function App() {
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-          <SnackbarUtilsConfigurator />
-          <CssBaseline />
-          <BrowserRouter basename={basename}>
-            <CacheBuster>
-              <MainView />
-            </CacheBuster>
-          </BrowserRouter>
-        </SnackbarProvider>
+        <QueryClientProvider client={queryClient}>
+          <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+            <SnackbarUtilsConfigurator />
+            <CssBaseline />
+            <BrowserRouter basename={basename}>
+              <CacheBuster>
+                <MainView />
+              </CacheBuster>
+            </BrowserRouter>
+          </SnackbarProvider>
+        </QueryClientProvider>
       </ThemeProvider>
     </StyledEngineProvider>
   );
