@@ -133,6 +133,7 @@
     "react-hook-form": "^7.40.0",
     "react-inlinesvg": "^4.0.5",
     "react-jss": "~10.6.0",
+    "react-query": "^3.39.3",
     "react-router-dom": "~5.1.2",
     "react-svg-pan-zoom": "~3.8.1",
     "react-virtualized-auto-sizer": "~1.0.20",

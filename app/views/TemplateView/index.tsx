@@ -1,25 +1,40 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSnackbar } from 'notistack';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 import DataTable from '@/components/DataTable';
 import api from '@/services/api';
 import AddEditTemplate from './components/AddEditTemplate';
 import columnDefs from './columnDefs';
 
+const fetchTemplates = async () => api.get('/templates', {}).request();
+
+const deleteTemplate = async (ident: string) => {
+  await api.del(`/templates/${ident}/signature-types`, {}, {}).request();
+  return api.del(`/templates/${ident}`, {}, {}).request();
+};
+
 const TemplateView = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState(false);
-  const [templates, setTemplates] = useState([]);
   const [selectedRow, setSelectedRow] = useState();
-
   const snackbar = useSnackbar();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const getData = async () => {
-      const templatesResp = await api.get('/templates', {}).request();
-      setTemplates(templatesResp);
-    };
-    getData();
-  }, []);
+  const { data: templates = [] } = useQuery({
+    queryKey: ['templates'],
+    queryFn: fetchTemplates,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteTemplate,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['templates'] });
+      snackbar.enqueueSnackbar('Template deleted');
+    },
+    onError: (err) => {
+      snackbar.enqueueSnackbar(`Error deleting template: ${err}`);
+    },
+  });
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -31,28 +46,19 @@ const TemplateView = (): JSX.Element => {
   const handleDialogClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      const templateIndex = templates.findIndex((template) => template.ident === newData.ident);
-      if (templateIndex !== -1) {
-        const newTemplates = [...templates];
-        newTemplates[templateIndex] = newData;
-        setTemplates(newTemplates);
-      } else {
-        setTemplates((prevVal) => [...prevVal, newData]);
-      }
+      queryClient.invalidateQueries({ queryKey: ['templates'] });
     }
     setSelectedRow(null);
-  }, [templates]);
+  }, [queryClient]);
 
   const handleDelete = useCallback(async (rowData) => {
     try {
-      await api.del(`/templates/${rowData.ident}/signature-types`, {}, {}).request();
-      await api.del(`/templates/${rowData.ident}`, {}, {}).request();
-      setTemplates((prevVal) => prevVal.filter((template) => template.ident !== rowData.ident));
+      deleteMutation.mutate(rowData.ident);
       snackbar.enqueueSnackbar('Template deleted');
     } catch (err) {
       snackbar.enqueueSnackbar(`Error deleting template: ${err}`);
     }
-  }, [snackbar]);
+  }, [deleteMutation]);
 
   return (
     <div>
