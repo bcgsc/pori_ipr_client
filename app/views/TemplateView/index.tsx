@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { useSnackbar } from 'notistack';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
+import snackbar from '@/services/SnackbarUtils';
 
 import DataTable from '@/components/DataTable';
 import api from '@/services/api';
@@ -17,7 +17,6 @@ const deleteTemplate = async (ident: string) => {
 const TemplateView = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
-  const snackbar = useSnackbar();
   const queryClient = useQueryClient();
 
   const { data: templates = [] } = useQuery({
@@ -29,10 +28,10 @@ const TemplateView = (): JSX.Element => {
     mutationFn: deleteTemplate,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['templates'] });
-      snackbar.enqueueSnackbar('Template deleted');
+      snackbar.success('Template deleted');
     },
     onError: (err) => {
-      snackbar.enqueueSnackbar(`Error deleting template: ${err}`);
+      snackbar.error(`Error deleting template: ${err}`);
     },
   });
 
@@ -54,9 +53,9 @@ const TemplateView = (): JSX.Element => {
   const handleDelete = useCallback(async (rowData) => {
     try {
       deleteMutation.mutate(rowData.ident);
-      snackbar.enqueueSnackbar('Template deleted');
+      snackbar.success('Template deleted');
     } catch (err) {
-      snackbar.enqueueSnackbar(`Error deleting template: ${err}`);
+      snackbar.error(`Error deleting template: ${err}`);
     }
   }, [deleteMutation]);
 
