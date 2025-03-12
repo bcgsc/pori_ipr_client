@@ -80,7 +80,7 @@ html body {
   min-width: 1100px;
   position: relative;
   right: 16px;
-  top: 30vh;
+  top: 35vh;
 
   &__component {
     margin-top: 32px;
@@ -92,24 +92,27 @@ html body {
     display: flex;
     padding-left: 32px;
     padding-right: 32px;
-    height: 100%;
+    height: inherit;
     width: 100%;
   }
 
   &__keyword-input {
     -webkit-tap-highlight-color: transparent;
-    height: 100%;
-    width: 80%;
+    height: inherit;
+    width: 850px;
+    display: flex;
   }
 
   &__category-input {
-    height: 100%;
-    width: 12%;
+    height: inherit;
+    width: 150px;
+    display: flex;
   }
 
   &__threshold-input {
-    height: 100%;
-    width: 8%;
+    height: inherit;
+    width: 100px;
+    display: flex;
 
     // Removes arrows in number input
     input::-webkit-outer-spin-button,
@@ -122,13 +125,22 @@ html body {
     }
   }
 
+  .error-dialog {
+    max-width: 1100px;
+    min-width: 1100px;
+    margin-top: 8px;
+    height: auto;
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
   .help-dialog {
     max-width: 1100px;
     min-width: 1100px;
     height: auto;
     margin-top: 16px;
-    padding-left: 32px;
-    padding-right: 32px;
+    padding-left: 48px;
+    padding-right: 48px;
   }
 }
 

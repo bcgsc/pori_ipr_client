@@ -88,6 +88,7 @@ const searchColumnDefs: ColDef[] = [{
 },
 {
   headerName: 'Open',
+  colId: 'Open',
   pinned: 'right',
   cellRenderer: 'Launch',
   cellRendererParams: {

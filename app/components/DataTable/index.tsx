@@ -343,6 +343,7 @@ const DataTable = ({
           return typeof value !== 'undefined' && value !== null;
         });
         colApi.setColumnVisible(column.getColId(), !isColumnEmpty);
+        colApi.setColumnVisible('Open', true);
       });
     }
   }, [colApi, columnDefs, gridApi, isSearch]);

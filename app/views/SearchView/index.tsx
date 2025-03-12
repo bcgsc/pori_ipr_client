@@ -127,12 +127,21 @@ const SearchView = () => {
     <div className="search-view">
       <div className="search-view__bar">
         <div className="search-view__category-select">
-          <FormControl classes={{ root: customCss.categoryBorder }} sx={{ width: '150px' }}>
+          <FormControl classes={{ root: customCss.categoryBorder }} style={{ height: '100%' }}>
             <Select
               value={searchCategory}
               onChange={handleCategoryChange}
               displayEmpty
-              inputProps={{ sx: { textAlign: 'center' } }}
+              style={{
+                height: '100%',
+                width: '100%',
+                minWidth: '150px',
+              }}
+              inputProps={{
+                sx: {
+                  textAlign: 'center',
+                },
+              }}
             >
               <MenuItem value="patientId">Patient ID</MenuItem>
               <MenuItem value="projectName">Project Name</MenuItem>
@@ -146,19 +155,26 @@ const SearchView = () => {
           <TextField
             InputLabelProps={{ shrink: true }}
             variant="outlined"
-            helperText={thresholdErrorMessage}
             error={Boolean(thresholdErrorMessage)}
             onChange={handleThresholdChange}
             value={searchThreshold}
             defaultValue={DEFAULT_THRESHOLD}
             placeholder="0.8"
             onKeyDown={handleKeyDown}
-            inputProps={{ sx: { textAlign: 'center' } }}
+            inputProps={{
+              sx: {
+                textAlign: 'center',
+                height: 'inherit',
+                width: '100%',
+              },
+            }}
             // eslint-disable-next-line react/jsx-no-duplicate-props
             InputProps={{
               type: 'number',
               sx: {
                 borderRadius: '0px',
+                height: '100%',
+                minWidth: '100px',
               },
             }}
           />
@@ -167,7 +183,6 @@ const SearchView = () => {
           <Autocomplete
             multiple
             options={[]}
-            defaultValue={[]}
             freeSolo
             value={searchKey}
             disableClearable
@@ -178,6 +193,8 @@ const SearchView = () => {
                 borderTopRightRadius: '25px',
                 borderBottomRightRadius: '25px',
               },
+              height: 'inherit',
+              width: '100%',
             }}
             limitTags={4}
             renderTags={(value) => value.map(({ category, keyword, threshold }: SearchKeyType, index: number) => (
@@ -195,10 +212,9 @@ const SearchView = () => {
                 name="keyword"
                 variant="outlined"
                 error={Boolean(searchErrorMessage)}
-                helperText={searchErrorMessage}
                 onChange={handleKeywordChange}
                 onKeyDown={handleKeyDown}
-                placeholder={searchKey.length < 1 ? 'Press enter to add search key. Press backspace to delete.' : ''}
+                placeholder={searchKey.length < 1 ? 'Press enter to add search keyword. Press backspace to delete.' : ''}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -231,10 +247,20 @@ const SearchView = () => {
           />
         </div>
       </div>
+      <div className="error-dialog">
+        <Typography variant="subtitle2" color="error">
+          {searchErrorMessage}
+        </Typography>
+      </div>
+      <div className="error-dialog">
+        <Typography variant="subtitle2" color="error">
+          {thresholdErrorMessage}
+        </Typography>
+      </div>
       <div className="help-dialog">
         <Typography variant="subtitle2" color="primary">
-          The matching threshold determines the cutoff of similarity between the search key and its matches.
-          A value of 1 means exact matches or exact substring matches. The default value is 0.8 if not specified.
+          The matching threshold scales from 0 to 1 and determines the cutoff of similarity between the search keyword and a match value.
+          A threshold of 1 means the entire match value or a substring of it is identical to the search keyword. The default value is 0.8 if not specified.
         </Typography>
       </div>
     </div>
