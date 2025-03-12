@@ -1,8 +1,9 @@
 import startCase from '@/utils/startCase';
 
-function searchReportsColumns(report, analyst, reviewer, bioinformatician, searchCategory) {
+function searchReportsColumns(report, analyst, reviewer, bioinformatician) {
   return {
-    matchedVariant: searchCategory === 'kbVariant' ? report?.kbMatches[0]?.kbVariant : report?.genomicAlterationsIdentified[0]?.geneVariant,
+    matchedKeyVariant: report?.genomicAlterationsIdentified ? report?.genomicAlterationsIdentified[0]?.geneVariant : null,
+    matchedKbVariant: report?.kbMatches ? report?.kbMatches[0]?.kbVariant : null,
     patientID: report.patientId,
     analysisBiopsy: report.biopsyName,
     reportType: report.template.name === 'probe' ? 'Targeted Gene' : startCase(report.template.name),

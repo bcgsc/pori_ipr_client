@@ -28,6 +28,7 @@ const REPORT_TYPE_TO_SUFFIX = {
 const MIN_KEYWORD_LENGTH = 2;
 const DEFAULT_THRESHOLD = '0.8';
 const ENTER_KEY = 'Enter';
+const BACKSPACE_KEY = 'Backspace';
 
 export {
   REPORT_TYPE_TO_TITLE,
@@ -37,4 +38,5 @@ export {
   MIN_KEYWORD_LENGTH,
   DEFAULT_THRESHOLD,
   ENTER_KEY,
+  BACKSPACE_KEY,
 };

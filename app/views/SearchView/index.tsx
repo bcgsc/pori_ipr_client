@@ -1,29 +1,53 @@
 import {
   TextField,
   Typography,
+  Button,
+  Chip,
+  Autocomplete,
+  FormControl,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   InputAdornment,
-  IconButton,
-  Box,
-  Tab,
-  Tabs,
 } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
-import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   MIN_KEYWORD_LENGTH,
   DEFAULT_THRESHOLD,
   ENTER_KEY,
+  BACKSPACE_KEY,
 } from '@/constants';
 
+type SearchKeyType = {
+  category: string;
+  keyword: string;
+  threshold: number;
+};
+
+// Custom css to alter select dropdown border radius
+const useStyles = makeStyles({
+  categoryBorder: {
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderTopLeftRadius: '25px',
+      borderBottomLeftRadius: '25px',
+      borderTopRightRadius: '0px',
+      borderBottomRightRadius: '0px',
+    },
+  },
+});
+
 const SearchView = () => {
-  const [searchKey, setSearchKey] = useState('');
-  const [threshold, setThreshold] = useState('');
-  const [searchCategory, setSearchCategory] = React.useState('patientId');
+  const [searchKey, setSearchKey] = useState<SearchKeyType[]>([]);
+  const [searchThreshold, setSearchThreshold] = useState(DEFAULT_THRESHOLD);
+  const [searchCategory, setSearchCategory] = useState('patientId');
+  const [searchKeyword, setSearchKeyword] = useState('');
   const history = useHistory();
   const [searchErrorMessage, setSearchErrorMessage] = useState('');
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
+  const customCss = useStyles();
 
   // Calls submit function
   const handleSubmit = useCallback(() => {
@@ -31,64 +55,20 @@ const SearchView = () => {
       setSearchErrorMessage('Please enter a search keyword');
       return;
     }
-    switch (searchCategory) {
-      case 'patientId':
-        history.push({
-          pathname: '/search/result',
-          search: `?patientId=${searchKey}&matchingThreshold=${threshold || DEFAULT_THRESHOLD}`,
-        });
-        break;
-      case 'projectName':
-        history.push({
-          pathname: '/search/result',
-          search: `?projectName=${searchKey}&matchingThreshold=${threshold || DEFAULT_THRESHOLD}`,
-        });
-        break;
-      case 'diagnosis':
-        history.push({
-          pathname: '/search/result',
-          search: `?diagnosis=${searchKey}&matchingThreshold=${threshold || DEFAULT_THRESHOLD}`,
-        });
-        break;
-      case 'keyVariant':
-        history.push({
-          pathname: '/search/result',
-          search: `?keyVariant=${searchKey}&matchingThreshold=${threshold || DEFAULT_THRESHOLD}`,
-        });
-        break;
-      case 'kbVariant':
-        history.push({
-          pathname: '/search/result',
-          search: `?kbVariant=${searchKey}&matchingThreshold=${threshold || DEFAULT_THRESHOLD}`,
-        });
-        break;
-      default:
-        break;
-    }
-  }, [searchKey, searchCategory, history, threshold]);
+    const searchUrl: string[] = [];
+    searchKey.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
+    history.push({
+      pathname: '/search/result',
+      search: `?searchParams=${searchUrl.join('')}`,
+    });
+  }, [searchKey, history]);
 
-  // Validate search key and threshold values
+  // Validate threshold value
   useEffect(() => {
-    if (!searchKey) {
-      setSearchErrorMessage('');
+    if (!searchThreshold) {
+      setThresholdErrorMessage('Threshold must not be empty');
     } else {
-      const trimmed = String(searchKey)
-        .trim()
-        .toLowerCase()
-        .split(/\s+/)
-        .filter((word) => word.length >= MIN_KEYWORD_LENGTH);
-
-      if (!trimmed.length) {
-        setSearchErrorMessage(`Must have 1 or more terms of at least ${MIN_KEYWORD_LENGTH} characters`);
-      } else {
-        setSearchErrorMessage('');
-      }
-    }
-
-    if (!threshold) {
-      setThresholdErrorMessage('');
-    } else {
-      const numThreshold = parseFloat(threshold);
+      const numThreshold = parseFloat(searchThreshold);
       if (!Number.isNaN(numThreshold)) {
         if (numThreshold < 0 || numThreshold > 1) {
           setThresholdErrorMessage('Threshold must be between 0 and 1');
@@ -99,100 +79,162 @@ const SearchView = () => {
         setThresholdErrorMessage('Threshold must be a number');
       }
     }
-  }, [threshold, searchKey, searchCategory]);
+  }, [searchThreshold]);
 
-  const handleSearchKeyChange = useCallback((event) => {
-    const newSearchKey = event.target.value;
-
-    if (newSearchKey !== searchKey) {
-      setSearchKey(newSearchKey);
-    }
-  }, [searchKey]);
-
-  const handleCategoryChange = (event: React.SyntheticEvent, searchCat: string) => {
-    setSearchCategory(searchCat);
+  const handleCategoryChange = (event: SelectChangeEvent) => {
+    setSearchCategory(event.target.value);
   };
 
   const handleThresholdChange = useCallback((event) => {
     const newThreshold = event.target.value;
 
-    if (newThreshold !== threshold) {
-      setThreshold(newThreshold);
+    if (newThreshold !== searchThreshold) {
+      setSearchThreshold(newThreshold);
     }
-  }, [threshold]);
+  }, [searchThreshold]);
+
+  const handleKeywordChange = useCallback((event) => {
+    const newKeyword = event.target.value;
+
+    if (newKeyword !== searchKeyword) {
+      setSearchKeyword(newKeyword);
+    }
+  }, [searchKeyword]);
+
+  const handleKeyDown = useCallback(({ code, target }) => {
+    setSearchErrorMessage('');
+    if (code === BACKSPACE_KEY && !target.value) {
+      // Delete the last entry
+      setSearchKey((currData) => currData.slice(0, -1));
+    }
+    if (code === ENTER_KEY) {
+      // Validate value
+      if (!target.value) {
+        setSearchErrorMessage(`Must have 1 or more terms of at least ${MIN_KEYWORD_LENGTH} characters`);
+      } else {
+        setSearchErrorMessage('');
+        // Add new entry
+        setSearchKey((currData) => [...currData, {
+          category: searchCategory,
+          keyword: searchKeyword,
+          threshold: searchThreshold,
+        } as SearchKeyType]);
+      }
+    }
+  }, [searchCategory, searchKeyword, searchThreshold]);
 
   return (
     <div className="search-view">
-      <Box paddingBottom={1}>
-        <Tabs
-          value={searchCategory}
-          onChange={handleCategoryChange}
-          centered
-          indicatorColor="primary"
-          textColor="primary"
-        >
-          <Tab label="Patient ID" value="patientId" />
-          <Tab label="Project Name" value="projectName" />
-          <Tab label="Diagnosis" value="diagnosis" />
-          <Tab label="Key Variant" value="keyVariant" />
-          <Tab label="KB Matched Variant" value="kbVariant" />
-        </Tabs>
-      </Box>
       <div className="search-view__bar">
-        <div
-          className="search-view__main"
-          onKeyUp={(event) => event.key === ENTER_KEY && handleSubmit()}
-          role="textbox"
-          tabIndex={0}
-        >
-          <TextField
-            variant="outlined"
-            error={Boolean(searchErrorMessage)}
-            fullWidth
-            helperText={searchErrorMessage}
-            onChange={handleSearchKeyChange}
-            placeholder="Enter search keyword"
-            value={searchKey}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton color="primary" onClick={handleSubmit} disabled={!!searchErrorMessage || !!thresholdErrorMessage} type="submit">
-                    <ArrowCircleRightIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-              sx: { borderRadius: '20px' },
-            }}
-          />
+        <div className="search-view__category-select">
+          <FormControl classes={{ root: customCss.categoryBorder }} sx={{ width: '150px' }}>
+            <Select
+              value={searchCategory}
+              onChange={handleCategoryChange}
+              displayEmpty
+              inputProps={{ sx: { textAlign: 'center' } }}
+            >
+              <MenuItem value="patientId">Patient ID</MenuItem>
+              <MenuItem value="projectName">Project Name</MenuItem>
+              <MenuItem value="diagnosis">Diagnosis</MenuItem>
+              <MenuItem value="keyVariant">Key Variant</MenuItem>
+              <MenuItem value="kbVariant">KB Variant</MenuItem>
+            </Select>
+          </FormControl>
         </div>
         <div className="search-view__threshold-input">
           <TextField
-            label="Threshold"
             InputLabelProps={{ shrink: true }}
-            size="medium"
             variant="outlined"
             helperText={thresholdErrorMessage}
             error={Boolean(thresholdErrorMessage)}
             onChange={handleThresholdChange}
-            value={threshold}
-            placeholder={DEFAULT_THRESHOLD}
-            inputProps={{
+            value={searchThreshold}
+            defaultValue={DEFAULT_THRESHOLD}
+            placeholder="0.8"
+            onKeyDown={handleKeyDown}
+            inputProps={{ sx: { textAlign: 'center' } }}
+            // eslint-disable-next-line react/jsx-no-duplicate-props
+            InputProps={{
               type: 'number',
-              sx: { textAlign: 'center' },
-              onKeyUp: (event) => event.key === ENTER_KEY && handleSubmit(),
+              sx: {
+                borderRadius: '0px',
+              },
             }}
+          />
+        </div>
+        <div className="search-view__keyword-input">
+          <Autocomplete
+            multiple
+            options={[]}
+            defaultValue={[]}
+            freeSolo
+            value={searchKey}
+            disableClearable
+            sx={{
+              '& fieldset': {
+                borderTopLeftRadius: '0px',
+                borderBottomLeftRadius: '0px',
+                borderTopRightRadius: '25px',
+                borderBottomRightRadius: '25px',
+              },
+            }}
+            limitTags={4}
+            renderTags={(value) => value.map(({ category, keyword, threshold }: SearchKeyType, index: number) => (
+              <Chip
+                variant="outlined"
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${keyword}-${index}`}
+                label={`${category} | ${keyword} | ${threshold}`}
+                sx={{ marginRight: '5px' }}
+              />
+            ))}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name="keyword"
+                variant="outlined"
+                error={Boolean(searchErrorMessage)}
+                helperText={searchErrorMessage}
+                onChange={handleKeywordChange}
+                onKeyDown={handleKeyDown}
+                placeholder={searchKey.length < 1 ? 'Press enter to add search key. Press backspace to delete.' : ''}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      <InputAdornment position="end">
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="large"
+                          onClick={handleSubmit}
+                          disabled={searchKey.length < 1 || !!searchErrorMessage || !!thresholdErrorMessage}
+                          type="submit"
+                          sx={{
+                            display: 'flex',
+                            padding: '8px',
+                            minHeight: 0,
+                            minWidth: 0,
+                            borderRadius: '25px',
+                          }}
+                        >
+                          <SearchIcon />
+                        </Button>
+                      </InputAdornment>
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
           />
         </div>
       </div>
       <div className="help-dialog">
         <Typography variant="subtitle2" color="primary">
-          The matching threshold determines the cutoff of similarity between the keyword and its matched results.
-          A value of 1 means a 100% match. The default value is 0.8 if not specified.
+          The matching threshold determines the cutoff of similarity between the search key and its matches.
+          A value of 1 means exact matches or exact substring matches. The default value is 0.8 if not specified.
         </Typography>
       </div>
     </div>

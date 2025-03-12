@@ -330,6 +330,23 @@ const DataTable = ({
     }
   }, [colApi]);
 
+  /**
+   * Auto hide empty columns. Currently only used in searchReportsView
+   */
+  useEffect(() => {
+    if (colApi && isSearch) {
+      const columns = colApi.getAllColumns();
+      const rowsNodes = gridApi.getRenderedNodes();
+      columns.forEach((column) => {
+        const isColumnEmpty = !rowsNodes.some((rowNode) => {
+          const value = gridApi.getValue(column, rowNode);
+          return typeof value !== 'undefined' && value !== null;
+        });
+        colApi.setColumnVisible(column.getColId(), !isColumnEmpty);
+      });
+    }
+  }, [colApi, columnDefs, gridApi, isSearch]);
+
   const onFirstDataRendered = useCallback(() => {
     if (syncVisibleColumns) {
       const hiddenColumns = colApi.getAllColumns()

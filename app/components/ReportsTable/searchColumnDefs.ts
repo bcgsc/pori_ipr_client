@@ -16,8 +16,12 @@ const dateCellRenderer = (params) => {
 };
 
 const searchColumnDefs: ColDef[] = [{
-  headerName: 'Matched Variant',
-  field: 'matchedVariant',
+  headerName: 'Matched Key Variant',
+  field: 'matchedKeyVariant',
+},
+{
+  headerName: 'Matched KB Variant',
+  field: 'matchedKbVariant',
 },
 {
   headerName: 'Patient ID',
