@@ -7,14 +7,14 @@ import './index.scss';
 const urlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/[\w\-\.\/]*)*$/i;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getNestedValue = (obj: any, path: string): any[] => path.split('.').reduce((acc, key) => {
+const getNestedValue = (obj: ICellRendererParams['data'], path: string): any[] => path.split('.').reduce((acc, key) => {
   if (Array.isArray(acc)) {
     return acc.flatMap((item) => (item && item[key] !== undefined ? item[key] : []));
   }
   return acc && acc[key] !== undefined ? acc[key] : [];
 }, obj);
 
-const RenderArrayCell = (fieldPath: string, isLink: boolean): (cellParams: Partial<ICellRendererParams>) => JSX.Element => {
+const RenderArrayCell = (fieldPath: string, isLink: boolean = false): (cellParams: Partial<ICellRendererParams>) => JSX.Element => {
   if (isLink) {
     return function ArrayCell({ data }: ICellRendererParams) {
       const fieldData = getNestedValue(data, fieldPath) || [];
@@ -62,14 +62,21 @@ const RenderArrayCell = (fieldPath: string, isLink: boolean): (cellParams: Parti
     // Ensure fieldData is always treated as an array
     const cellData = Array.isArray(fieldData) ? [...fieldData].sort() : [fieldData];
     const [firstVal] = cellData;
+    // AgGrid doesn't like false to show in table
+    const firstValString = `${firstVal}`;
 
     return (
       <div>
-        {firstVal ?? ''}
+        {(firstVal !== null && firstVal !== undefined) ? firstValString : null}
         {cellData.length > 1 && <>…</>}
       </div>
     );
   };
+};
+
+export {
+  getNestedValue,
+  RenderArrayCell,
 };
 
 export default RenderArrayCell;

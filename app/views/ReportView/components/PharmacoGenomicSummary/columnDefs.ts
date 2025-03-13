@@ -1,7 +1,6 @@
-import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
+import ArrayCell, { getNestedValue } from '@/components/DataTable/components/ArrayCellRenderer';
 import getGeneProp from '@/utils/getGeneProp';
 import { sampleColumnDefs } from '../../common';
-// import PharmacoGenomicAssociationRenderer from './components/PharmacoGenomicAssociationRenderer'; DEVSU-2587 WIP @kttkjl
 
 const COMMON_COL_DEFS = [
   {
@@ -73,10 +72,11 @@ const COMMON_COL_DEFS = [
   },
   {
     headerName: 'Association',
-    colId: 'relevance',
-    field: 'relevance',
+    colId: 'kbMatchedStatements.relevance',
     minWidth: 90,
-    cellRendererFramework: ArrayCell('kbMatchedStatements.relevance', false),
+    // ValueGetter is for mostly PrintTable, as ArrayCell has a different way of obtaining value
+    valueGetter: ({ data }) => getNestedValue(data, 'kbMatchedStatements.relevance'),
+    cellRendererFramework: ArrayCell('kbMatchedStatements.relevance'),
   },
 ];
 
@@ -90,75 +90,74 @@ const ACTIONS_COL_DEF = {
   suppressMenu: true,
 };
 
-const PHARMACOGEN_EVIDENCE_VAL_GETTER = ({ data: { evidenceLevel, reference } }) => {
-  if (reference && !evidenceLevel) {
-    return reference;
-  }
-  return evidenceLevel;
-};
-
 const pharmacoGenomicPrintColumnDefs = [
   ...COMMON_COL_DEFS,
   {
     headerName: 'Therapy',
     colId: 'context',
     field: 'context',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.context', false),
+    valueGetter: ({ data }) => getNestedValue(data, 'kbMatchedStatements.context'),
   },
   {
     headerName: 'Evidence',
     colId: 'evidenceLevel',
     field: 'evidenceLevel',
-    valueGetter: PHARMACOGEN_EVIDENCE_VAL_GETTER,
-    cellRendererFramework: ArrayCell('kbMatchedStatements.evidenceLevel', false),
+    valueGetter: ({ data }) => getNestedValue(data, 'kbMatchedStatements.evidenceLevel'),
   },
   {
     headerName: 'External Source',
     colId: 'externalSource',
     field: 'externalSource',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.externalSource', false),
+    valueGetter: ({ data }) => getNestedValue(data, 'kbMatchedStatements.externalSource'),
   },
 ];
 
 const pharmacoGenomicColumnDefs = [
   ...COMMON_COL_DEFS,
   {
-    headerName: 'Therapy',
-    field: 'context',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.context', false),
     minWidth: 90,
+    headerName: 'Therapy',
+    colId: 'context',
+    field: 'context',
+    cellRendererFramework: ArrayCell('kbMatchedStatements.context'),
   },
   {
     headerName: 'Evidence',
     colId: 'evidenceLevel',
     field: 'evidenceLevel',
     minWidth: 90,
-    valueGetter: PHARMACOGEN_EVIDENCE_VAL_GETTER,
-    cellRendererFramework: ArrayCell('kbMatchedStatements.evidenceLevel', false),
+    valueGetter: ({ data }) => getNestedValue(data, 'kbMatchedStatements.evidenceLevel'),
   },
   {
-    field: 'externalSource',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.externalSource', false),
+    headerName: 'External Source',
+    colId: 'externalSource',
+    cellRendererFramework: ArrayCell('kbMatchedStatements.externalSource'),
     minWidth: 110,
+  },
+  {
+    headerName: 'External Statement ID',
+    field: 'externalStatementId',
+    cellRendererFramework: ArrayCell('kbMatchedStatements.externalStatementId'),
+    hide: true,
   },
   {
     headerName: 'Context',
     colId: 'context',
     field: 'context',
-    cellRendererFramework: ArrayCell('context', false),
+    cellRendererFramework: ArrayCell('kbMatchedStatements.context'),
     hide: true,
   },
   {
     headerName: 'Category',
     colId: 'category',
     field: 'category',
-    cellRendererFramework: ArrayCell('category', false),
+    cellRendererFramework: ArrayCell('kbMatchedStatements.category'),
     hide: true,
   },
   {
     headerName: 'Matched Cancer',
     field: 'matchedCancer',
-    cellRendererFramework: ArrayCell('matchedCancer', false),
+    cellRendererFramework: ArrayCell('kbMatchedStatements.matchedCancer'),
     hide: true,
   },
   {
@@ -170,16 +169,14 @@ const pharmacoGenomicColumnDefs = [
   {
     headerName: 'Review Status',
     field: 'reviewStatus',
+    cellRendererFramework: ArrayCell('kbMatchedStatements.reviewStatus'),
     hide: true,
   },
   {
     headerName: 'Zygosity',
     colId: 'zygosity',
     hide: true,
-    valueGetter: (params) => {
-      const { data: { variant } } = params;
-      return variant.zygosity;
-    },
+    valueGetter: ({ data }) => getNestedValue(data, 'kbMatches.variant.zygosity'),
   },
   {
     headerName: 'Oncogene',
@@ -225,17 +222,6 @@ const pharmacoGenomicColumnDefs = [
   {
     headerName: 'Protein Change',
     field: 'variant.proteinChange',
-    hide: true,
-  },
-  {
-    headerName: 'External Source',
-    colId: 'externalSource',
-    cellRenderer: 'CivicCellRenderer',
-    hide: true,
-  },
-  {
-    headerName: 'External Statement ID',
-    field: 'externalStatementId',
     hide: true,
   },
   ACTIONS_COL_DEF,
