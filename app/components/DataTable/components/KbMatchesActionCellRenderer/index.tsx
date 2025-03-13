@@ -171,7 +171,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
       return category;
     });
     setSelectedRows([data]);
-  }, [category, data, approvedTherapy, matchedCancer, kbData.kbmatchTag, setMoveKbMatchesDialogOpen, setMoveKbMatchesTableName, setSelectedRows]);
+  }, [category, data, approvedTherapy, matchedCancer, kbData?.kbmatchTag, setMoveKbMatchesDialogOpen, setMoveKbMatchesTableName, setSelectedRows]);
 
   if (!REPORT_TYPES_TO_SHOW_EXTRA_MENU.includes(reportType)) {
     return <ActionCellRenderer {...props} />;
