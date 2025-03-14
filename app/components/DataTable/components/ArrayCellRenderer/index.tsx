@@ -6,85 +6,77 @@ import './index.scss';
 
 const urlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/[\w\-\.\/]*)*$/i;
 
-const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRendererParams) => JSX.Element => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getNestedValue = (obj: ICellRendererParams['data'], path: string): any[] => path.split('.').reduce((acc, key) => {
+  if (Array.isArray(acc)) {
+    return acc.flatMap((item) => (item && item[key] !== undefined ? item[key] : []));
+  }
+  return acc && acc[key] !== undefined ? acc[key] : [];
+}, obj);
+
+const RenderArrayCell = (fieldPath: string, isLink: boolean = false): (cellParams: Partial<ICellRendererParams>) => JSX.Element => {
   if (isLink) {
     return function ArrayCell({ data }: ICellRendererParams) {
-      if (Array.isArray(data[field])) {
-        const cellData = [...data[field]].sort();
+      const fieldData = getNestedValue(data, fieldPath) || [];
+      const cellData = Array.isArray(fieldData) ? [...fieldData].sort() : [fieldData];
 
-        const firstVal = cellData[0]?.replace(/(pmid:)|(#)/, '');
+      const firstVal = cellData[0]?.replace(/(pmid:)|(#)/, '');
 
-        let link = firstVal;
-        let validLink = false;
+      let link = firstVal;
+      let validLink = false;
 
-        // firstVal might be non-link
-        if (firstVal.match(/^\d+$/)) {
-          link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
-          validLink = true;
-        } else if (urlRegex.test(firstVal)) {
-          validLink = true;
-        }
+      if (firstVal.match(/^\d+$/)) {
+        link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
+        validLink = true;
+      } else if (urlRegex.test(firstVal)) {
+        validLink = true;
+      }
 
-        let linkComponent = firstVal;
+      let linkComponent = firstVal;
 
-        if (validLink) {
-          linkComponent = (
-            <a
-              className="array-cell__link"
-              href={link}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {firstVal}
-            </a>
-          );
-        }
-
-        return (
-          <div>
-            {linkComponent}
-            {cellData.length > 1 && (
-              <>
-                …
-              </>
-            )}
-          </div>
+      if (validLink) {
+        linkComponent = (
+          <a
+            className="array-cell__link"
+            href={link}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {firstVal}
+          </a>
         );
       }
+
       return (
         <div>
-          {data[field]}
+          {linkComponent}
+          {cellData.length > 1 && <>…</>}
         </div>
       );
     };
   }
 
-  return function ArrayCell({ data }: ICellRendererParams) {
-    if (Array.isArray(data[field])) {
-      const cellData = [...data[field]].sort();
-      const [firstVal] = cellData;
+  return function ArrayCell({ data }: Partial<ICellRendererParams>) {
+    const fieldData = getNestedValue(data, fieldPath);
 
-      if (typeof firstVal === 'string') {
-        cellData[0].replace(/#$/, '');
-      }
+    // Ensure fieldData is always treated as an array
+    const cellData = Array.isArray(fieldData) ? [...fieldData].sort() : [fieldData];
+    const [firstVal] = cellData;
+    // AgGrid doesn't like false to show in table
+    const firstValString = `${firstVal}`;
 
-      return (
-        <div>
-          {`${firstVal === null ? '' : firstVal}`}
-          {cellData.length > 1 && (
-            <>
-              …
-            </>
-          )}
-        </div>
-      );
-    }
     return (
       <div>
-        {`${data[field] === null ? '' : data[field]}`}
+        {(firstVal !== null && firstVal !== undefined) ? firstValString : null}
+        {cellData.length > 1 && <>…</>}
       </div>
     );
   };
+};
+
+export {
+  getNestedValue,
+  RenderArrayCell,
 };
 
 export default RenderArrayCell;

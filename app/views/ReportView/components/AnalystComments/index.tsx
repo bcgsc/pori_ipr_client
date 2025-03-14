@@ -64,11 +64,11 @@ const AnalystComments = ({
             }));
           }
           setSignatures(signaturesResp);
-          if (signatureTypesResp?.length === 0){
+          if (signatureTypesResp?.length === 0) {
             const defaultSigatureTypes = [
-              {signatureType: 'author'},
-              {signatureType: 'reviewer'},
-              {signatureType: 'creator'},
+              { signatureType: 'author' },
+              { signatureType: 'reviewer' },
+              { signatureType: 'creator' },
             ] as SignatureUserType[];
             setSignatureTypes(defaultSigatureTypes);
           } else if (signatureTypesResp?.length > 0) {
@@ -98,7 +98,7 @@ const AnalystComments = ({
 
   const handleEditorClose = useCallback(async (editedComments?: string) => {
     try {
-      if (editedComments !== null) {
+      if (editedComments !== null && editedComments !== undefined) {
         const sanitizedText = sanitizeHtml(editedComments, {
           allowedAttributes: {
             a: ['href', 'target', 'rel'],
@@ -139,24 +139,22 @@ const AnalystComments = ({
     }
   }, [report, isSigned, showConfirmDialog]);
 
-  const signatureSection = useMemo(() => {
-    return signatureTypes.map((sigType) => {
-      let title = sigType.signatureType;
-      if (sigType.signatureType === 'author' && isPrint) {
-        title = 'Author Review';
-      }
-      return (
-        <SignatureCard
-          key={sigType.signatureType}
-          onClick={handleSign}
-          signatures={signatures}
-          title={capitalize(title)}
-          type={sigType.signatureType}
-          isPrint={isPrint}
-        />
-      );
-    });
-  }, [isPrint, handleSign, signatures, signatureTypes]);
+  const signatureSection = useMemo(() => signatureTypes.map((sigType) => {
+    let title = sigType.signatureType;
+    if (sigType.signatureType === 'author' && isPrint) {
+      title = 'Author Review';
+    }
+    return (
+      <SignatureCard
+        key={sigType.signatureType}
+        onClick={handleSign}
+        signatures={signatures}
+        title={capitalize(title)}
+        type={sigType.signatureType}
+        isPrint={isPrint}
+      />
+    );
+  }), [isPrint, handleSign, signatures, signatureTypes]);
 
   return (
     <div className={isPrint ? 'analyst-comments--print' : 'analyst-comments'}>

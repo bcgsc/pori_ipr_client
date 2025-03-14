@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 
 import api from '@/services/api';
+import { debounce as debounceFn } from 'lodash';
 
 type AutocompleteHandlerProps = {
   defaultValue: unknown;
@@ -15,6 +16,10 @@ type AutocompleteHandlerProps = {
   onChange: (selectedValue: unknown, typeName: string) => void;
   error?: string;
   minCharacters?: number;
+  /**
+   * MS to wait before sending API request
+   */
+  debounce?: number;
 };
 
 const AutocompleteHandler = (props: AutocompleteHandlerProps) => {
@@ -26,11 +31,14 @@ const AutocompleteHandler = (props: AutocompleteHandlerProps) => {
     onChange = () => { },
     error = '',
     minCharacters = 1,
+    debounce = 300,
   } = props;
 
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(null);
+  const [inputText, setInputText] = useState('');
+  const debouncedSave = debounceFn((nextValue) => setInputText(nextValue), debounce);
 
   useEffect(() => {
     if (defaultValue) {
@@ -38,22 +46,31 @@ const AutocompleteHandler = (props: AutocompleteHandlerProps) => {
     }
   }, [defaultValue]);
 
-  const handleInputChange = async (event) => {
-    let queryString = event.target.value;
+  useEffect(() => () => {
+    debouncedSave.cancel();
+  }, [debouncedSave]);
 
-    if (queryString.length >= minCharacters) {
-      setOptions([]);
-      setLoading(true);
+  const handleInputChange = useCallback((event) => {
+    const queryString = event.target.value;
+    debouncedSave(queryString);
+  }, [debouncedSave]);
 
+  useEffect(() => {
+    const getAutoCompleteOptions = async () => {
       // Find all query strings that are 3 characters or longer.
       // Needed for KB API to process multiple words
-      queryString = queryString.split(' ').filter((str) => str.length >= minCharacters).join(' ');
-      const { result } = await api.get(`/graphkb/${type}?search=${queryString}`).request();
+      const nextQueryString = inputText.split(' ').filter((str) => str.length >= minCharacters).join(' ');
+      const { result } = await api.get(`/graphkb/${type}?search=${nextQueryString}`).request();
 
       setOptions(result ?? []);
       setLoading(false);
+    };
+    if (inputText.length >= minCharacters) {
+      setOptions([]);
+      setLoading(true);
+      getAutoCompleteOptions();
     }
-  };
+  }, [inputText, minCharacters, type]);
 
   const handleAutocompleteChange = useCallback((_event, val) => {
     setValue(val);
