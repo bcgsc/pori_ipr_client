@@ -194,15 +194,21 @@ const IPRWYSIWYGEditor = ({
     }
   }, [editor, onClose]);
 
+  const handleOnClose = useCallback(() => {
+    onClose(null);
+    // Reset the editor text, since we don't deal with the state in React
+    editor.commands.setContent(text);
+  }, [onClose, editor, text]);
+
   return (
-    <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={() => onClose(null)}>
+    <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={handleOnClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
         <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(null)}>Close</Button>
+        <Button onClick={handleOnClose}>Close</Button>
         <Button color="secondary" onClick={handleOnSave}>Save</Button>
       </DialogActions>
     </Dialog>
