@@ -1,8 +1,9 @@
 import React, {
-  useState, useEffect, useCallback, lazy,
+  useState, useCallback, lazy,
 } from 'react';
 import { CircularProgress } from '@mui/material';
-import { useSnackbar } from 'notistack';
+import snackbar from '@/services/SnackbarUtils';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
@@ -15,37 +16,40 @@ import { ProjectType } from '../AdminView/types';
 
 const AddEditProjectDialog = lazy(() => import('./components/AddEditProjectDialog'));
 
+const fetchProjects = async (adminAccess: boolean): Promise<ProjectType[]> => {
+      if (adminAccess) {
+        return await api.get(`/project?admin=${adminAccess}`).request();
+      } else {
+        return await api.get('/project?admin=False').request();
+      }
+};
+
+const deleteProject = async (ident: string) => {
+  return await api.del(`/project/${ident}`, {}).request();
+};
+
 const Projects = (): JSX.Element => {
   const { userDetails } = useSecurity();
-  const [projects, setProjects] = useState<ProjectType[]>([]);
-  const [editableProjects, setEditableProjects] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<ProjectType | null>();
-
   const { adminAccess, managerAccess } = useResource();
+  const queryClient = useQueryClient();
 
-  const snackbar = useSnackbar();
+  const { data: projects = [], isLoading, error } = useQuery<ProjectType[]>({
+    queryKey: ['projects', adminAccess],
+    queryFn: () => fetchProjects(adminAccess)
+  })
 
-  useEffect(() => {
-    const getData = async () => {
-      let projectsResp;
-      if (adminAccess) {
-        projectsResp = await api.get(`/project?admin=${adminAccess}`).request();
-      } else {
-        projectsResp = await api.get('/project?admin=False').request();
-      }
-      setProjects(projectsResp);
-      if (adminAccess) {
-        setEditableProjects(projectsResp.map((elem) => elem.ident));
-      } else {
-        setEditableProjects(userDetails.projects.map((elem) => elem.ident));
-      }
-      setLoading(false);
-    };
-
-    getData();
-  }, [adminAccess, userDetails]);
+  const deleteMutation = useMutation({
+    mutationFn: deleteProject,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      snackbar.success('Project deleted');
+    },
+    onError: (err) => {
+      snackbar.error(`Failed to delete project ${err}`);
+    }
+  })
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -55,31 +59,26 @@ const Projects = (): JSX.Element => {
   const handleDelete = useCallback(async ({ ident }) => {
     // eslint-disable-next-line no-restricted-globals, no-alert
     if (confirm('Are you sure you want to remove this project?')) {
-      await api.del(`/project/${ident}`, {}).request();
-      const newProjects = projects.filter((project) => project.ident !== ident);
-      setProjects(newProjects);
-      snackbar.enqueueSnackbar('Project deleted');
-    } else {
-      snackbar.enqueueSnackbar('Project not deleted');
+      deleteMutation.mutate(ident);
     }
-  }, [snackbar, projects]);
+  }, [deleteMutation]);
 
   const handleEditClose = useCallback((newData, isNew) => {
     setShowDialog(false);
     if (newData) {
-      setProjects(newData);
-      if (isNew) {
-        snackbar.enqueueSnackbar('Project added');
-      } else {
-        snackbar.enqueueSnackbar('Project edited');
-      }
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      snackbar.success(isNew ? 'Project added' : 'Project edited');
     }
     setEditData(null);
-  }, [snackbar]);
+  }, [queryClient]);
+
+  const editableProjects = adminAccess
+    ? projects.map((elem) => elem.ident)
+    : userDetails.projects.map((elem) => elem.ident);
 
   return (
     <div className="admin-table__container">
-      {!loading && (
+      {!isLoading && (
         <>
           <DataTable
             rowData={projects.filter((elem) => editableProjects.includes(elem.ident))}
@@ -105,7 +104,7 @@ const Projects = (): JSX.Element => {
           )}
         </>
       )}
-      {loading && (
+      {isLoading && (
         <CircularProgress />
       )}
     </div>
