@@ -129,7 +129,7 @@ const columnDefs: ColDef[] = [{
   hide: true,
   valueGetter: (params: ValueGetterParams): string => {
     const { data: { variant } } = params;
-    return variant.zygosity;
+    return variant?.zygosity;
   },
 }, {
   headerName: 'Oncogene',
