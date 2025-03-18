@@ -1,5 +1,8 @@
 import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
 import getGeneProp from '@/utils/getGeneProp';
+import kbMStatementsGeneValueGetter from '@/utils/kbMatchStatementsGeneValueGetter';
+import kbMatchStatementsKnownVarValueGetter from '@/utils/kbMatchStatementsKnownVarValueGetter';
+import kbMatchStatementsObsVarValueGetter from '@/utils/kbMatchStatementsObsVarValueGetter';
 import { ColDef } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
@@ -9,118 +12,20 @@ const columnDefs: ColDef[] = [
     cellRendererParams: { link: true },
     colId: 'gene',
     hide: false,
-    valueGetter: (params) => {
-      const { data: { kbMatches } } = params;
-      if (kbMatches) {
-        const kbMatchesNonNull = kbMatches?.filter((match) => !Array.isArray(match));
-        if (kbMatchesNonNull.length > 1) {
-          const geneName = [];
-          for (const kbMatch of kbMatchesNonNull) {
-            if (kbMatch?.variantType === 'msi') {
-              geneName.push('msi');
-            }
-            if (kbMatch?.variantType === 'tmb') {
-              geneName.push('tmb');
-            }
-            if (kbMatch?.variant?.gene) {
-              geneName.push(kbMatch?.variant?.gene.name);
-            }
-            if (kbMatch?.variant?.gene1 && kbMatch?.variant?.gene2) {
-              geneName.push(`${kbMatch?.variant?.gene1.name}, ${kbMatch?.variant?.gene2.name}`);
-            }
-            if (kbMatch?.variant?.gene1) {
-              geneName.push(kbMatch?.variant?.gene1.name);
-            }
-            if (kbMatch?.variant?.gene2) {
-              geneName.push(kbMatch?.variant?.gene2.name);
-            }
-          }
-          return geneName.join(', ');
-        }
-        const [kbMatch] = kbMatchesNonNull;
-        // msi and tmb doesn't have gene field
-        if (kbMatch?.variantType === 'msi') {
-          return 'msi';
-        }
-        if (kbMatch?.variantType === 'tmb') {
-          return 'tmb';
-        }
-        if (kbMatch?.variantType === 'sigv') {
-          return kbMatch?.variant?.displayName;
-        }
-        if (kbMatch?.variant?.gene) {
-          return kbMatch?.variant?.gene?.name;
-        }
-        return kbMatch?.variant?.gene1?.name && kbMatch?.variant?.gene2?.name
-          ? `${kbMatch?.variant?.gene1?.name}, ${kbMatch?.variant?.gene2?.name}`
-          : kbMatch?.variant?.gene1?.name || kbMatch?.variant?.gene2?.name;
-      }
-      return null;
-    },
+    valueGetter: kbMStatementsGeneValueGetter,
     sort: 'asc',
   },
   {
     headerName: 'Known Variants',
     colId: 'kbVariant',
-    valueGetter: (params) => {
-      const { data: { kbMatches } } = params;
-      if (kbMatches) {
-        // const kbVariants = kbMatches?.map((match) => match.kbVariant).filter((kbVariant) => kbVariant !== undefined);
-        const kbVariants = kbMatches?.reduce((accumulator, match) => {
-          if (match.kbVariant !== undefined) {
-            accumulator.push(match.kbVariant);
-          }
-          return accumulator;
-        }, []);
-        return kbVariants.join(', ');
-      }
-      return null;
-    },
+    valueGetter: kbMatchStatementsKnownVarValueGetter,
     hide: false,
     maxWidth: 300,
   },
   {
     headerName: 'Observed Variants',
     colId: 'variant',
-    valueGetter: (params) => {
-      const { data: { kbMatches } } = params;
-      const kbMatchesNonNull = kbMatches?.filter((match) => !Array.isArray(match));
-
-      if (kbMatchesNonNull) {
-        const variantArr = [];
-        for (const kbMatch of kbMatchesNonNull) {
-          switch (kbMatch?.variantType) {
-            case ('cnv'):
-              variantArr.push(`${kbMatch?.variant.gene.name} ${kbMatch?.variant.cnvState}`);
-              break;
-            case ('sv'):
-              variantArr.push(`(${kbMatch?.variant.gene1.name || '?'
-              },${kbMatch?.variant.gene2.name || '?'
-              }):fusion(e.${kbMatch?.variant.exon1 || '?'
-              },e.${kbMatch?.variant.exon2 || '?'
-              })`);
-              break;
-            case ('mut'):
-              variantArr.push(`${kbMatch?.variant?.gene?.name}:${kbMatch?.variant?.proteinChange}`);
-              break;
-            case ('tmb'):
-              variantArr.push(kbMatch?.variant?.kbCategory);
-              break;
-            case ('msi'):
-              variantArr.push(kbMatch?.variant?.kbCategory);
-              break;
-            case ('sigv'):
-              variantArr.push(kbMatch?.variant?.displayName);
-              break;
-            default:
-              variantArr.push(`${kbMatch?.variant?.gene?.name} ${kbMatch?.variant?.expressionState}`);
-              break;
-          }
-        }
-        return variantArr.join(', ');
-      }
-      return null;
-    },
+    valueGetter: kbMatchStatementsObsVarValueGetter,
     hide: false,
     maxWidth: 300,
   },
@@ -210,7 +115,7 @@ const columnDefs: ColDef[] = [
     hide: true,
     valueGetter: (params) => {
       const { data: { variant } } = params;
-      return variant.zygosity;
+      return variant?.zygosity;
     },
   }, {
     headerName: 'Oncogene',
