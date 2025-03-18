@@ -16,12 +16,28 @@ const dateCellRenderer = (params) => {
 };
 
 const searchColumnDefs: ColDef[] = [{
-  headerName: 'Matched Key Variant',
+  headerName: 'Matched Key Variants',
   field: 'matchedKeyVariant',
 },
 {
-  headerName: 'Matched KB Variant',
+  headerName: 'Matched KB Variants',
   field: 'matchedKbVariant',
+},
+{
+  headerName: 'Matched Small Mutations',
+  field: 'matchedSmallMutation',
+},
+{
+  headerName: 'Matched Structural Variants',
+  field: 'matchedStructuralVariant',
+},
+{
+  headerName: 'Matched Therapeutic Targets',
+  field: 'matchedTherapeuticTarget',
+},
+{
+  headerName: 'Context',
+  field: 'matchedTherapeuticTargetContext',
 },
 {
   headerName: 'Patient ID',

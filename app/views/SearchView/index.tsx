@@ -135,7 +135,7 @@ const SearchView = () => {
               style={{
                 height: '100%',
                 width: '100%',
-                minWidth: '150px',
+                minWidth: '200px',
               }}
               inputProps={{
                 sx: {
@@ -148,6 +148,9 @@ const SearchView = () => {
               <MenuItem value="diagnosis">Diagnosis</MenuItem>
               <MenuItem value="keyVariant">Key Variant</MenuItem>
               <MenuItem value="kbVariant">KB Variant</MenuItem>
+              <MenuItem value="smallMutation">Small Mutation</MenuItem>
+              <MenuItem value="structuralVariant">Structural Variant</MenuItem>
+              <MenuItem value="therapeuticTarget">Therapeutic Target</MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -174,7 +177,7 @@ const SearchView = () => {
               sx: {
                 borderRadius: '0px',
                 height: '100%',
-                minWidth: '100px',
+                minWidth: '70px',
               },
             }}
           />
@@ -214,7 +217,7 @@ const SearchView = () => {
                 error={Boolean(searchErrorMessage)}
                 onChange={handleKeywordChange}
                 onKeyDown={handleKeyDown}
-                placeholder={searchKey.length < 1 ? 'Press enter to add search keyword. Press backspace to delete.' : ''}
+                placeholder={searchKey.length < 1 ? 'Press enter to add keyword. Press backspace to delete.' : ''}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
