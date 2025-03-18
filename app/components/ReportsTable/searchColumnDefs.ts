@@ -16,8 +16,28 @@ const dateCellRenderer = (params) => {
 };
 
 const searchColumnDefs: ColDef[] = [{
-  headerName: 'Matched Variant',
-  field: 'matchedVariant',
+  headerName: 'Matched Key Variants',
+  field: 'matchedKeyVariant',
+},
+{
+  headerName: 'Matched KB Variants',
+  field: 'matchedKbVariant',
+},
+{
+  headerName: 'Matched Small Mutations',
+  field: 'matchedSmallMutation',
+},
+{
+  headerName: 'Matched Structural Variants',
+  field: 'matchedStructuralVariant',
+},
+{
+  headerName: 'Matched Therapeutic Targets',
+  field: 'matchedTherapeuticTarget',
+},
+{
+  headerName: 'Context',
+  field: 'matchedTherapeuticTargetContext',
 },
 {
   headerName: 'Patient ID',
@@ -84,6 +104,7 @@ const searchColumnDefs: ColDef[] = [{
 },
 {
   headerName: 'Open',
+  colId: 'Open',
   pinned: 'right',
   cellRenderer: 'Launch',
   cellRendererParams: {

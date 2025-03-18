@@ -250,7 +250,9 @@ const TumourSummaryEdit = ({
         newMicbrobialEntries?.forEach((entry) => {
           apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, entry, {}));
         });
-        editedMicrobialEntries?.forEach(({ ident, integrationSite, species, microbialHidden }) => {
+        editedMicrobialEntries?.forEach(({
+          ident, integrationSite, species, microbialHidden,
+        }) => {
           apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${ident}`, { integrationSite, species, microbialHidden }, {}));
         });
       }
@@ -479,7 +481,7 @@ const TumourSummaryEdit = ({
           renderTags={(value) => value.map(({ species, integrationSite, microbialHidden }, idx) => (
             <Chip
               variant="filled"
-              label={  
+              label={(
                 <Chip
                   // eslint-disable-next-line react/no-array-index-key
                   key={`${species}-${idx}`}
@@ -488,15 +490,15 @@ const TumourSummaryEdit = ({
                   onClick={() => handleClicked(idx)}
                   onDelete={() => handleDelete(idx)}
                   sx={{
-                    "& .MuiChip-deleteIcon": {
-                      marginLeft: 0.5
+                    '& .MuiChip-deleteIcon': {
+                      marginLeft: 0.5,
                     },
                     borderTopLeftRadius: 1,
                     borderBottomLeftRadius: 1,
                   }}
                 />
-              }
-              icon={              
+              )}
+              icon={(
                 <Checkbox
                   size="small"
                   icon={<Visibility />}
@@ -510,9 +512,9 @@ const TumourSummaryEdit = ({
                     backgroundColor: 'transparent !important',
                   }}
                 />
-              }
+              )}
               sx={{
-                "& .MuiChip-label": {
+                '& .MuiChip-label': {
                   paddingRight: 0,
                 },
               }}
@@ -531,7 +533,7 @@ const TumourSummaryEdit = ({
       );
     }
     return null;
-  }, [handleClicked, handleDelete, handleKeyDown, newMicrobialData]);
+  }, [handleClicked, handleDelete, handleKeyDown, handleMicrobialVisibilityToggle, newMicrobialData]);
 
   const tCellCd8DataSection = useMemo(() => (
     <>
