@@ -17,16 +17,13 @@ import { ProjectType } from '../AdminView/types';
 const AddEditProjectDialog = lazy(() => import('./components/AddEditProjectDialog'));
 
 const fetchProjects = async (adminAccess: boolean): Promise<ProjectType[]> => {
-      if (adminAccess) {
-        return await api.get(`/project?admin=${adminAccess}`).request();
-      } else {
-        return await api.get('/project?admin=False').request();
-      }
+  if (adminAccess) {
+    return api.get(`/project?admin=${adminAccess}`).request();
+  }
+  return api.get('/project?admin=False').request();
 };
 
-const deleteProject = async (ident: string) => {
-  return await api.del(`/project/${ident}`, {}).request();
-};
+const deleteProject = async (ident: string) => api.del(`/project/${ident}`, {}).request();
 
 const Projects = (): JSX.Element => {
   const { userDetails } = useSecurity();
@@ -35,10 +32,13 @@ const Projects = (): JSX.Element => {
   const { adminAccess, managerAccess } = useResource();
   const queryClient = useQueryClient();
 
-  const { data: projects = [], isLoading, error } = useQuery<ProjectType[]>({
+  const { data: projects = [], isLoading } = useQuery<ProjectType[]>({
     queryKey: ['projects', adminAccess],
-    queryFn: () => fetchProjects(adminAccess)
-  })
+    queryFn: () => fetchProjects(adminAccess),
+    onError: (err) => {
+      snackbar.error(`Failed to retrieve project ${err}`);
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: deleteProject,
@@ -48,8 +48,8 @@ const Projects = (): JSX.Element => {
     },
     onError: (err) => {
       snackbar.error(`Failed to delete project ${err}`);
-    }
-  })
+    },
+  });
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
