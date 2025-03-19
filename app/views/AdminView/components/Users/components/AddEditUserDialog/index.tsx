@@ -20,7 +20,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
-import api, { ApiCallSet } from '@/services/api';
+import api, { ApiCall, ApiCallSet } from '@/services/api';
 import { UserType, GroupType, UserProjectsType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import AsyncButton from '@/components/AsyncButton';
@@ -200,10 +200,28 @@ const AddEditUserDialog = ({
 
       try {
         let addEditResp;
+        let addGraphKbResp;
         try {
-          addEditResp = editData
-            ? await api.put(`/user/${editData.ident}`, userReq).request()
-            : await api.post(`/user?gkb=${gkbAdd}`, userReq).request();
+          let apiRequest: ApiCall | ApiCallSet;
+          if (!editData) {
+            const calls = [
+              api.post('/user', userReq),
+            ];
+            if (gkbAdd) {
+              calls.push(api.post('/graphkb/new-user', userReq));
+            }
+            apiRequest = new ApiCallSet(calls);
+          } else {
+            apiRequest = api.put(`/user/${editData.ident}`, userReq);
+          }
+
+          const callResp = await apiRequest.request();
+
+          [addEditResp, addGraphKbResp] = callResp;
+
+          if (addGraphKbResp) {
+            snackbar.success(`User ${username} successfully added to GraphKb`);
+          }
         } catch (e) {
           snackbar.error(`Error adding new user: ${e}`);
         }
@@ -369,10 +387,10 @@ const AddEditUserDialog = ({
       <DialogTitle>{dialogTitle}</DialogTitle>
       <Typography
         className="edit-dialog__new-user-notice"
-        color="red" 
+        color="red"
         variant="caption"
       >
-        User must also be added to Keycloak with the roles IPR and GraphKB. 
+        User must also be added to Keycloak with the roles IPR and GraphKB.
         If you are at the BCGSC, make a Systems ticket to request that this user be added, specifying their email address.
       </Typography>
       <Divider><Typography variant="caption">User Information</Typography></Divider>
