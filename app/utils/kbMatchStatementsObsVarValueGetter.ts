@@ -33,7 +33,7 @@ const kbMatchStatementsObsVarValueGetter = (params) => {
           break;
       }
     }
-    return variantArr.join(', ');
+    return [...new Set(variantArr)].join(', ');
   }
   return null;
 };

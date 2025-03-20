@@ -7,7 +7,7 @@ const kbMatchStatementsKnownVarValueGetter = (params) => {
       }
       return accumulator;
     }, []);
-    return kbVariants.join(', ');
+    return [...new Set(kbVariants)].join(', ');
   }
   return null;
 };
