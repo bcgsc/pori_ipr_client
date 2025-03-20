@@ -101,8 +101,8 @@ const coalesceEntries = <T extends KbMatchedStatementType[]>(entries: T): Coales
         Object.entries(entry).forEach(([key, value]) => {
           if (Array.isArray(buckets[bucketKey][key])) {
             if (key === 'kbMatches' && Array.isArray(value)) {
-              const kbMatchesIdents = buckets[bucketKey][key].map((kbM) => kbM.kbVariantId).join();
-              const coalescedKbMatchesIdents = value.map((kbM) => kbM.kbVariantId).join();
+              const kbMatchesIdents = buckets[bucketKey][key].map((kbM) => kbM.ident).join();
+              const coalescedKbMatchesIdents = value.map((kbM) => kbM.ident).join();
               if (kbMatchesIdents !== coalescedKbMatchesIdents) {
                 buckets[bucketKey][key] = buckets[bucketKey][key].concat(value);
               }
