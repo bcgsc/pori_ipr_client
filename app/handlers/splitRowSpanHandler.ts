@@ -8,7 +8,7 @@ class SplitRowSpanHandler extends Handler {
   afterRendered(pages) {
     const rowSpanMap = {};
     pages.forEach((page) => {
-      const originTables = page.element.querySelectorAll('table[data-split-to]:not([data-split-from])');
+      const originTables = page.element.querySelectorAll('table[data-split-to]');
       originTables.forEach((t) => {
         const rowSpanTds = [...t.querySelectorAll('td[rowspan]')].filter((td) => td.rowSpan > 1);
 
@@ -34,6 +34,19 @@ class SplitRowSpanHandler extends Handler {
             td.innerHTML = '';
             td.appendChild(temp.cloneNode(true));
           });
+        // Subsequent headers gets added style to hide them from pagedjs, we reset these
+        const splitTableHeaders = [...t.querySelectorAll('thead')];
+        splitTableHeaders.forEach((thead) => {
+          thead.removeAttribute('style');
+          thead.querySelectorAll('th').forEach((element) => {
+            const { width } = element.style;
+            element.removeAttribute('style');
+            if (width) element.style.width = width;
+          });
+          thead.querySelectorAll('tr').forEach((element) => {
+            element.removeAttribute('style');
+          });
+        });
       });
     });
   }

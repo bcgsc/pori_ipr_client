@@ -17,9 +17,10 @@ import PrintTable from '@/components/PrintTable';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
 import columnDefs from './columnDefs';
-import TherapeuticType from './types';
 
 import './index.scss';
+import TherapeuticTargetPrintTable from './components/TherapeuticTargetPrintTable';
+import { TherapeuticDataTableType, TherapeuticType } from './types';
 
 // Sort by existing rank ascending, then reassign rank based on 0 index, 1 per step
 const orderRankStartingByZero = (data: { rank: number }[]) => data.sort((a, b) => a.rank - b.rank)
@@ -59,8 +60,6 @@ type TherapeuticProps = {
   isPrint?: boolean;
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
-
-type TherapeuticDataTableType = TherapeuticType[] | Partial<TherapeuticType>[];
 
 const Therapeutic = ({
   isLoading,
@@ -235,14 +234,10 @@ const Therapeutic = ({
         >
           Potential Therapeutic Targets
         </Typography>
-        <PrintTable
-          fullWidth
-          data={therapeuticData}
+        <TherapeuticTargetPrintTable
           columnDefs={columnDefs}
-          // DEVSU-2540 - turn off coalescing for now until more permanent solution
-          // collapseableCols={['gene', 'variant']}
-          // outerRowOrderByInternalCol={['evidenceLevel']}
-          // innerRowOrderByInternalCol={['evidenceLevel', 'therapy']}
+          data={therapeuticData}
+          coalesce={['gene', 'variant']}
         />
         <Typography
           className="therapeutic-print__title"
@@ -250,14 +245,10 @@ const Therapeutic = ({
         >
           Potential Resistance and Toxicity
         </Typography>
-        <PrintTable
-          fullWidth
-          data={chemoresistanceData}
+        <TherapeuticTargetPrintTable
           columnDefs={columnDefs}
-          // DEVSU-2540 - turn off coalescing for now until more permanent solution
-          // collapseableCols={['gene', 'variant']}
-          // outerRowOrderByInternalCol={['evidenceLevel']}
-          // innerRowOrderByInternalCol={['evidenceLevel']}
+          data={chemoresistanceData}
+          coalesce={['gene', 'variant']}
         />
       </div>
     );
@@ -274,14 +265,10 @@ const Therapeutic = ({
         >
           Potential Therapeutic Targets
         </Typography>
-        <PrintTable
-          fullWidth
-          data={therapeuticData}
+        <TherapeuticTargetPrintTable
           columnDefs={columnDefs}
-          // DEVSU-2540 - turn off coalescing for now until more permanent solution
-          // collapseableCols={['gene', 'variant']}
-          // outerRowOrderByInternalCol={['evidenceLevel']}
-          // innerRowOrderByInternalCol={['evidenceLevel', 'therapy']}
+          data={therapeuticData}
+          coalesce={['gene', 'variant']}
         />
         <br />
         <Typography
@@ -292,14 +279,10 @@ const Therapeutic = ({
         >
           Potential Resistance and Toxicity
         </Typography>
-        <PrintTable
-          fullWidth
-          data={chemoresistanceData}
+        <TherapeuticTargetPrintTable
           columnDefs={columnDefs}
-          // DEVSU-2540 - turn off coalescing for now until more permanent solution
-          // collapseableCols={['gene', 'variant']}
-          // outerRowOrderByInternalCol={['evidenceLevel']}
-          // innerRowOrderByInternalCol={['evidenceLevel']}
+          data={chemoresistanceData}
+          coalesce={['gene', 'variant']}
         />
       </div>
     );
