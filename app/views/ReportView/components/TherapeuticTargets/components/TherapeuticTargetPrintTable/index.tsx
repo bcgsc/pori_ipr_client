@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-
 import { ColDef } from '@ag-grid-community/core';
 import { TherapeuticDataTableType } from '../../types';
 
@@ -86,6 +85,8 @@ const TherapeuticTargetPrintTable = ({ data, columnDefs: rawColumnDefs, coalesce
   const sortedData = [...data].sort((a, b) => a.rank - b.rank);
   const spanMap = mergeCells(sortedData, coalesce);
 
+  if (!spanMap) return null;
+
   return (
     <div className="print-table__container">
       <table className="print-table therapeutic-targets__table" style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -105,26 +106,12 @@ const TherapeuticTargetPrintTable = ({ data, columnDefs: rawColumnDefs, coalesce
                 const cellValue = getCellValue(row, col);
                 const spanKey = `${rowIndex}-${col.colId || col.field || col.headerName}`;
                 const span = spanMap[spanKey];
-
-                if (span !== undefined) {
-                  if (span > 0) {
-                    return (
-                      <td key={spanKey + colIndex.toString()} rowSpan={span}>
-                        {cellValue}
-                      </td>
-                    );
-                  }
-                  return (
-                    <td
-                      key={spanKey + colIndex.toString()}
-                      style={{ display: 'none' }}
-                    >
-                      {cellValue}
-                    </td>
-                  );
-                }
                 return (
-                  <td key={spanKey + colIndex.toString()}>
+                  <td
+                    key={spanKey + colIndex.toString()}
+                    rowSpan={span && span > 1 ? span : undefined}
+                    style={span === 0 ? { display: 'none' } : undefined}
+                  >
                     {cellValue}
                   </td>
                 );
