@@ -1,5 +1,6 @@
 import { ColDef } from '@ag-grid-community/core';
 import { basicTooltipValueGetter } from '../DataTable/components/ToolTip';
+import CustomSetFilter from '../DataTable/components/CustomSetFilter';
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
@@ -16,8 +17,38 @@ const dateCellRenderer = (params) => {
 };
 
 const searchColumnDefs: ColDef[] = [{
-  headerName: 'Matched Variant',
-  field: 'matchedVariant',
+  headerName: 'Matched Key Variants',
+  field: 'matchedKeyVariant',
+  tooltipValueGetter: basicTooltipValueGetter,
+  filter: CustomSetFilter,
+},
+{
+  headerName: 'Matched KB Variants',
+  field: 'matchedKbVariant',
+  tooltipValueGetter: basicTooltipValueGetter,
+  filter: CustomSetFilter,
+},
+{
+  headerName: 'Matched Small Mutations',
+  field: 'matchedSmallMutation',
+  tooltipValueGetter: basicTooltipValueGetter,
+  filter: CustomSetFilter,
+},
+{
+  headerName: 'Matched Structural Variants',
+  field: 'matchedStructuralVariant',
+  tooltipValueGetter: basicTooltipValueGetter,
+  filter: CustomSetFilter,
+},
+{
+  headerName: 'Matched Therapeutic Targets',
+  field: 'matchedTherapeuticTarget',
+  filter: CustomSetFilter,
+},
+{
+  headerName: 'Context',
+  field: 'matchedTherapeuticTargetContext',
+  filter: CustomSetFilter,
 },
 {
   headerName: 'Patient ID',
@@ -31,26 +62,31 @@ const searchColumnDefs: ColDef[] = [{
 {
   headerName: 'Report Type',
   field: 'reportType',
+  filter: CustomSetFilter,
 },
 {
   headerName: 'State',
   field: 'state',
+  filter: CustomSetFilter,
 },
 {
   headerName: 'Case Type',
   field: 'caseType',
+  filter: CustomSetFilter,
 },
 {
   headerName: 'Project',
   field: 'project',
   tooltipComponent: 'ToolTip',
   tooltipValueGetter: basicTooltipValueGetter,
+  filter: CustomSetFilter,
 },
 {
   headerName: 'Tumour Type',
   field: 'tumourType',
   tooltipComponent: 'ToolTip',
   tooltipValueGetter: basicTooltipValueGetter,
+  filter: CustomSetFilter,
 },
 {
   headerName: 'Report ID',
@@ -63,16 +99,11 @@ const searchColumnDefs: ColDef[] = [{
   field: 'physician',
   tooltipComponent: 'ToolTip',
   tooltipValueGetter: basicTooltipValueGetter,
+  filter: CustomSetFilter,
 },
 {
   headerName: 'Analyst',
   field: 'analyst',
-},
-{
-  headerName: 'Date Created',
-  field: 'date',
-  sort: 'desc',
-  cellRenderer: dateCellRenderer,
 },
 {
   headerName: 'Bioinformatician',
@@ -83,7 +114,14 @@ const searchColumnDefs: ColDef[] = [{
   field: 'reviewer',
 },
 {
+  headerName: 'Date Created',
+  field: 'date',
+  sort: 'desc',
+  cellRenderer: dateCellRenderer,
+},
+{
   headerName: 'Open',
+  colId: 'Open',
   pinned: 'right',
   cellRenderer: 'Launch',
   cellRendererParams: {

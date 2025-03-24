@@ -76,11 +76,11 @@ html body {
 .search-view {
   margin: auto;
   left: 16px;
-  max-width: 800px;
-  min-width: 800px;
+  max-width: 1100px;
+  min-width: 1100px;
   position: relative;
   right: 16px;
-  top: 30vh;
+  top: 35vh;
 
   &__component {
     margin-top: 32px;
@@ -92,19 +92,27 @@ html body {
     display: flex;
     padding-left: 32px;
     padding-right: 32px;
+    height: inherit;
     width: 100%;
   }
 
-  &__main {
+  &__keyword-input {
     -webkit-tap-highlight-color: transparent;
-    width: 100%;
-    padding-top: 8.5px;
+    height: inherit;
+    width: 850px;
+    display: flex;
+  }
+
+  &__category-input {
+    height: inherit;
+    width: 200px;
+    display: flex;
   }
 
   &__threshold-input {
-    padding-top: 8.5px;
-    padding-left: 16px;
-    width: 15%;
+    height: inherit;
+    width: 70px;
+    display: flex;
 
     // Removes arrows in number input
     input::-webkit-outer-spin-button,
@@ -117,13 +125,22 @@ html body {
     }
   }
 
-  .help-dialog {
-    max-width: 800px;
-    min-width: 800px;
+  .error-dialog {
+    max-width: 1100px;
+    min-width: 1100px;
+    margin-top: 8px;
     height: auto;
-    margin-top: 12px;
-    padding-left: 32px;
-    padding-right: 32px;
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .help-dialog {
+    max-width: 1100px;
+    min-width: 1100px;
+    height: auto;
+    margin-top: 16px;
+    padding-left: 48px;
+    padding-right: 48px;
   }
 }
 
