@@ -54,7 +54,6 @@ const searchColumnDefs: ColDef[] = [{
   headerName: 'Patient ID',
   field: 'patientID',
   comparator: collator.compare,
-  filter: false,
 },
 {
   headerName: 'Analysis Biopsy',
