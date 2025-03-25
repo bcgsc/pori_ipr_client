@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import api from '@/services/api';
+import api, { ApiCall } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import { UserType } from '@/common';
@@ -131,10 +131,10 @@ const AddEditProjectDialog = ({
         onClose(updatedProjects, Boolean(!editData));
         queryClient.invalidateQueries(['projectReports']);
       },
-      onError: (error: any) => {
-        snackbar.error(`Error ${editData ? 'editing' : 'creating'} project, ${error?.content?.error?.message}`);
+      onError: (error: Error) => {
+        snackbar.error(`Error ${editData ? 'editing' : 'creating'} project, ${error?.message}`);
       },
-    }
+    },
   );
 
   const handleClose = useCallback(() => {
