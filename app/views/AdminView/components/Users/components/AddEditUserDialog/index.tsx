@@ -20,22 +20,72 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
-import api, { ApiCall, ApiCallSet } from '@/services/api';
+import api, { ApiCallSet } from '@/services/api';
 import { UserType, GroupType, UserProjectsType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import AsyncButton from '@/components/AsyncButton';
 import UserAutocomplete from '@/components/UserAutocomplete';
 import useSecurity from '@/hooks/useSecurity';
 import useResource from '@/hooks/useResource';
+import {
+  ErrorMixin,
+} from '@/services/errors/errors';
 
 import './index.scss';
+import { useMutation, useQuery } from 'react-query';
+
+const fetchProjects = async () => {
+  const projectsResp = await api.get('/project').request();
+  return projectsResp;
+};
+
+const fetchGroups = async () => {
+  const groupsResp = await api.get('/user/group').request();
+  return groupsResp;
+};
+
+const addModifyUser = async ({ formData, userIdent }: { formData: Partial<UserType>, userIdent: string }) => {
+  const userReq: Partial<UserType> = {
+    firstName: formData.firstName,
+    lastName: formData.lastName,
+    email: formData.email,
+    username: formData.username,
+    type: formData.type,
+  };
+  if (userIdent) {
+    return api.put(`/user/${userIdent}`, userReq).request();
+  }
+  return api.post('/user', userReq).request();
+};
+
+const addGraphKbUserMutation = async (userObject: Partial<UserType>) => api.post('/graphkb/new-user', userObject).request();
+
+const modifyUserProjects = async ({ existingProjectsIds, newProjectsIds, userId }) => {
+  const toAddProjs = newProjectsIds.filter((projectId) => !existingProjectsIds.includes(projectId));
+  const toRemoveProjs = existingProjectsIds.filter((projectId) => !newProjectsIds.includes(projectId));
+  const callSet = new ApiCallSet([
+    ...toAddProjs.map((projectId) => api.post(`/project/${projectId}/user`, { user: userId }, {})),
+    ...toRemoveProjs.map((projectId) => api.del(`/project/${projectId}/user`, { user: userId }, {})),
+  ]);
+  return callSet.request();
+};
+
+const modifyUserGroups = async ({ existingGroupsIds, newGroupsIds, userId }) => {
+  const toAddGroups = newGroupsIds.filter((projectId) => !existingGroupsIds.includes(projectId));
+  const toRemoveGroups = existingGroupsIds.filter((projectId) => !newGroupsIds.includes(projectId));
+  const callSet = new ApiCallSet([
+    ...toAddGroups.map((groupId) => api.post(`/user/group/${groupId}/member`, { user: userId }, {})),
+    ...toRemoveGroups.map((groupId) => api.del(`/user/group/${groupId}/member`, { user: userId }, {})),
+  ]);
+  return callSet.request();
+};
 
 // RFC 5322 regex for email
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 type AddEditUserDialogProps = {
   isOpen: boolean;
-  onClose: (newData?: null | UserType) => void;
+  onClose: (newData: boolean) => void;
   editData: null | UserType;
 };
 
@@ -91,51 +141,128 @@ const AddEditUserDialog = ({
   const [groupOptions, setGroupOptions] = useState<GroupType[]>([]);
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [isApiCalling, setIsApiCalling] = useState(false);
-  const [isDataLoading, setIsDataLoading] = useState(false);
   const [gkbAdd, setGkbAdd] = useState(false);
   const { userDetails } = useSecurity();
   const { adminAccess, allProjectsAccess } = useResource();
 
-  // Grab project and groups
-  useEffect(() => {
-    let cancelled = false;
-    const getData = async () => {
+  const addUserToGKBMutation = useMutation({
+    mutationFn: addGraphKbUserMutation,
+    onSuccess: (_data, { username }) => {
+      snackbar.success(`Successfully added user ${username} to GraphKb`);
+    },
+    onError: (err: ErrorMixin) => {
+      const { error } = err.toJSON();
+      snackbar.error(`Cannot add user to GraphKb: ${error.message}`);
+    },
+  });
+
+  const userProjectsMutation = useMutation({
+    mutationFn: modifyUserProjects,
+    onSuccess: () => {
+      snackbar.success('Successfully added user to projects.');
+    },
+    onError: (err: ErrorMixin) => {
+      const { error } = err.toJSON();
+      snackbar.error(`Cannot add user to projects: ${error.message}`);
+    },
+  });
+
+  const userGroupsMutation = useMutation({
+    mutationFn: modifyUserGroups,
+    onSuccess: () => {
+      snackbar.success('Successfully added user to groups.');
+    },
+    onError: (err: ErrorMixin) => {
+      const { error } = err.toJSON();
+      snackbar.error(`Cannot add user to groups: ${error.message}`);
+    },
+  });
+
+  const addModifyUserMutation = useMutation({
+    mutationFn: addModifyUser,
+    onMutate: () => {
+      setIsApiCalling(true);
+      return ({ editData, gkbAdd });
+    },
+    onSuccess: async (data, { formData }, { editData: contextEditData, gkbAdd: contextGkbAdd }) => {
+      const {
+        groups,
+        projects,
+      } = formData;
+      snackbar.success(`Successfully added ${formData.username} to IPR`);
+
+      const existingProjects = contextEditData?.projects.map(({ ident }) => ident) || [];
+      const existingGroups = contextEditData?.groups.map(({ ident }) => ident) || [];
+
       try {
-        setIsDataLoading(true);
-        if (!cancelled) {
-          const [projectsResp, groupsResp] = await Promise.all([
-            api.get('/project').request(),
-            api.get('/user/group').request(),
-          ]);
-          const nonAdminGroups = groupsResp.filter((group) => (group.name !== 'admin'));
+        await Promise.all([
+          contextGkbAdd
+          && addUserToGKBMutation.mutateAsync(formData).catch(),
+          dirtyFields.projects
+          && userProjectsMutation.mutateAsync({
+            existingProjectsIds: existingProjects,
+            newProjectsIds: projects,
+            userId: data.ident,
+          }),
+          dirtyFields.groups
+          && userGroupsMutation.mutateAsync({
+            existingGroupsIds: existingGroups,
+            newGroupsIds: groups,
+            userId: data.ident,
+          }),
+        ]);
 
-          if (adminAccess) {
-            setProjectOptions(projectsResp);
-            setGroupOptions(groupsResp);
-          } else if (editData) {
-            // Editing existing entry
-            const combinedProjects = userDetails.projects.concat(editData.projects);
-            const combinedUniqueProjects = [...new Map(combinedProjects.map((project) => [project.ident, project])).values()];
-
-            setProjectOptions(allProjectsAccess ? projectsResp : combinedUniqueProjects);
-            setGroupOptions(nonAdminGroups);
-          } else {
-            // New entry
-            setProjectOptions(allProjectsAccess ? projectsResp : userDetails.projects);
-            setGroupOptions(nonAdminGroups);
-          }
-        }
-      } catch (projectGroupErr) {
-        snackbar.error('Failed to retrieve list of project and groups for current user.');
-        // eslint-disable-next-line no-console
-        console.error(projectGroupErr);
+        onClose(true);
+      } catch (e) {
+        // Empty catch here, do not want to trigger another error response in this handler
       } finally {
-        setIsDataLoading(false);
+        // Send onClose to refech, because new user is added
+        onClose(true);
       }
-    };
-    getData();
-    return function cleanup() { cancelled = true; };
-  }, [adminAccess, allProjectsAccess, editData, userDetails.projects]);
+    },
+    onError: (err: ErrorMixin) => {
+      const { error } = err.toJSON();
+      snackbar.error(`Cannot add user: ${error.message}`);
+    },
+    onSettled: () => {
+      setIsApiCalling(false);
+    },
+  });
+
+  // Grab project and groups
+  const { data: projects, isLoading: isProjectsLoading } = useQuery('user/projects', fetchProjects, {
+    onError: (e: ErrorMixin) => {
+      snackbar.error('Cannot load user projects');
+      console.error(e.toJSON());
+    },
+  });
+  const { data: groups, isLoading: isGroupsLoading } = useQuery('user/groups', fetchGroups, {
+    onError: (e: ErrorMixin) => {
+      snackbar.error('Cannot load user groups');
+      console.error(e.toJSON());
+    },
+  });
+
+  useEffect(() => {
+    if (projects?.length && groups?.length) {
+      const nonAdminGroups = groups.filter((group) => (group.name !== 'admin'));
+      if (adminAccess) {
+        setProjectOptions(projects);
+        setGroupOptions(groups);
+      } else if (editData) {
+        // Editing existing entry
+        const combinedProjects = userDetails.projects.concat(editData.projects);
+        const combinedUniqueProjects = [...new Map(combinedProjects.map((project) => [project.ident, project])).values()];
+
+        setProjectOptions(allProjectsAccess ? projects : combinedUniqueProjects);
+        setGroupOptions(nonAdminGroups);
+      } else {
+        // New entry
+        setProjectOptions(allProjectsAccess ? projects : userDetails.projects);
+        setGroupOptions(nonAdminGroups);
+      }
+    }
+  }, [adminAccess, projects, groups, editData, userDetails.projects, allProjectsAccess]);
 
   // When params changed
   useEffect(() => {
@@ -144,11 +271,11 @@ const AddEditUserDialog = ({
     } else {
       setDialogTitle('Add user');
     }
-  }, [editData, groupOptions, projectOptions, setValue]);
+  }, [editData]);
 
   const handleCopyUserProjects = useCallback(async (user) => {
     const userResp = await api.get(`/user/${user.ident}`, {}).request();
-    const copiedProjects = (({ projects }) => ({ projects }))(userResp);
+    const copiedProjects = { projects: userResp.projects };
     const availableProjectIdents = projectOptions.map((project) => project.ident);
     copiedProjects.projects = copiedProjects.projects.filter((project: { ident: string; }) => (availableProjectIdents.includes(project.ident))); // Filter copied projects to be only ones where adding manager has access to
     Object.entries(copiedProjects).forEach(([key, val]) => {
@@ -162,7 +289,7 @@ const AddEditUserDialog = ({
 
   const handleCopyUserGroups = useCallback(async (user) => {
     const userResp = await api.get(`/user/${user.ident}`, {}).request();
-    const copiedGroups = (({ groups }) => ({ groups }))(userResp);
+    const copiedGroups = { groups: userResp.groups };
     copiedGroups.groups = copiedGroups.groups.filter((group: { name: string; }) => (group.name !== 'admin')); // Remove possible admin from copied groups
     Object.entries(copiedGroups).forEach(([key, val]) => {
       let nextVal = val;
@@ -177,116 +304,13 @@ const AddEditUserDialog = ({
     setGkbAdd(event.target.checked);
   };
 
-  const handleClose = useCallback(async (formData: UserForm) => {
-    setIsApiCalling(true);
-    const {
-      firstName,
-      lastName,
-      email,
-      groups,
-      projects,
-      type,
-      username,
-    } = formData;
-
+  const handleClose = useCallback(async (formData) => {
     if (Object.keys(dirtyFields).length > 0) {
-      const userReq = {
-        firstName,
-        lastName,
-        email,
-        username,
-        type,
-      };
-
-      try {
-        let addEditResp;
-        let addGraphKbResp;
-        try {
-          let apiRequest: ApiCall | ApiCallSet;
-          if (!editData) {
-            const calls = [
-              api.post('/user', userReq),
-            ];
-            if (gkbAdd) {
-              calls.push(api.post('/graphkb/new-user', userReq));
-            }
-            apiRequest = new ApiCallSet(calls);
-          } else {
-            apiRequest = api.put(`/user/${editData.ident}`, userReq);
-          }
-
-          const callResp = await apiRequest.request();
-
-          [addEditResp, addGraphKbResp] = callResp;
-
-          if (addGraphKbResp) {
-            snackbar.success(`User ${username} successfully added to GraphKb`);
-          }
-        } catch (e) {
-          snackbar.error(`Error adding new user: ${e}`);
-        }
-
-        // Project Section
-        if (dirtyFields.projects) {
-          let existingProjects = [];
-          if (editData) {
-            existingProjects = editData.projects.map(({ ident }) => ident);
-          }
-          const toAddProjs = projects.filter((projectId) => !existingProjects.includes(projectId));
-          const toRemoveProjs = existingProjects.filter((projectId) => !projects.includes(projectId));
-
-          const callSet = new ApiCallSet([
-            ...toAddProjs.map((projectId) => api.post(`/project/${projectId}/user`, { user: addEditResp.ident }, {})),
-            ...toRemoveProjs.map((projectId) => api.del(`/project/${projectId}/user`, { user: addEditResp.ident }, {})),
-          ]);
-          try {
-            await callSet.request();
-          } catch (e) {
-            throw { ...e, errorType: 'project' };
-          }
-        }
-
-        // Groups Section
-        if (dirtyFields.groups) {
-          let existingGroups = [];
-          if (editData) {
-            existingGroups = editData.groups.map(({ ident }) => ident);
-          }
-
-          const toAddGroups = groups.filter((groupId) => !existingGroups.includes(groupId));
-          const toRemoveGroups = existingGroups.filter((groupId) => !groups.includes(groupId));
-
-          const callSet = new ApiCallSet([
-            ...toAddGroups.map((groupId) => api.post(`/user/group/${groupId}/member`, { user: addEditResp.ident }, {})),
-            ...toRemoveGroups.map((groupId) => api.del(`/user/group/${groupId}/member`, { user: addEditResp.ident }, {})),
-          ]);
-          try {
-            await callSet.request();
-          } catch (e) {
-            throw { ...e, errorType: 'group' };
-          }
-        }
-        addEditResp.projects = projectOptions.filter(({ ident }) => projects.includes(ident));
-        addEditResp.groups = groupOptions.filter(({ ident }) => groups.includes(ident));
-
-        setIsApiCalling(false);
-        snackbar.success(`User successfully ${editData ? 'updated' : 'created'}`);
-        onClose(addEditResp);
-      } catch (e) {
-        let content = '';
-        if (e.content?.error?.message) {
-          content = `: ${e.content.error.message}`;
-        }
-        if (e.errorType) {
-          snackbar.error(`Error setting ${e.errorType}s related to user${content}`);
-        } else {
-          snackbar.error(`Error ${editData ? 'editing' : 'creating'} user${content}`);
-        }
-      }
+      addModifyUserMutation.mutate({ formData, userIdent: editData?.ident });
+    } else {
+      onClose(null);
     }
-
-    onClose(null);
-  }, [dirtyFields, editData, onClose, projectOptions, groupOptions, gkbAdd]);
+  }, [dirtyFields, onClose, addModifyUserMutation, editData?.ident]);
 
   // Email error text
   let emailErrorText = '';
@@ -464,7 +488,7 @@ const AddEditUserDialog = ({
           label="Copy an existing user's projects and groups"
           addEditUserDialog
         />
-        {!isDataLoading ? (
+        {!(isProjectsLoading || isGroupsLoading) ? (
           <>
             {projectSelectSection}
             {groupSelectionSection}
