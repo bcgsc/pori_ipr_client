@@ -30,12 +30,13 @@ const Users = (): JSX.Element => {
   const { data: users, isLoading } = useQuery<UserType[]>({
     queryKey: ['users'],
     queryFn: fetchUsers,
+    onError: (err) => snackbar.error(`Failed to retrive users ${err}`),
   });
 
   const deleteUserMutation = useMutation(deleteUser, {
-    onSuccess: (_data, ident) => {
+    onSuccess: () => {
       // Update the users list after successful deletion
-      queryClient.setQueryData('users', (oldUsers: UserType[]) => oldUsers.filter((user) => user.ident !== ident));
+      queryClient.invalidateQueries({ queryKey: ['users'] });
       snackbar.success('User deleted');
     },
     onError: (error: ErrorMixin) => {
@@ -63,7 +64,7 @@ const Users = (): JSX.Element => {
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      queryClient.invalidateQueries(['users']);
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     }
   }, [queryClient]);
 
