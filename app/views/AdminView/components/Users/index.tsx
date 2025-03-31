@@ -1,26 +1,21 @@
 import React, {
-  useState, useEffect, useCallback,
+  useState, useCallback,
 } from 'react';
 import { CircularProgress } from '@mui/material';
 import snackbar from '@/services/SnackbarUtils';
-import { useQuery, useQueryClient, useMutation, QueryClient } from 'react-query';
-
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
 import { UserType } from '@/common';
 import columnDefs from './columnDefs';
 import AddEditUserDialog from './components/AddEditUserDialog';
-
 import './index.scss';
 
 const Users = (): JSX.Element => {
-  // const [users, setUsers] = useState<UserType[]>([]);
-  // const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<UserType>();
   const queryClient = useQueryClient()
-  // const snackbar = useSnackbar();
 
   const { data: users = [], isLoading } = useQuery<UserType[]>({
     queryKey: ['users'],
@@ -36,17 +31,6 @@ const Users = (): JSX.Element => {
     },
     onError: (err) => snackbar.error(`Failed to delete user ${err}`),
   });
-
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     const usersResp = await api.get('/user').request();
-
-  //     setUsers(usersResp);
-  //     setLoading(false);
-  //   };
-
-  //   getData();
-  // }, []);
 
   const handleDelete = useCallback(async ({ ident }) => {
     // eslint-disable-next-line no-restricted-globals
