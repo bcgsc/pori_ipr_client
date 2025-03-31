@@ -10,7 +10,6 @@ import snackbar from '@/services/SnackbarUtils';
 import { ErrorMixin } from '@/services/errors/errors';
 import columnDefs from './columnDefs';
 import AddEditUserDialog from './components/AddEditUserDialog';
-
 import './index.scss';
 
 const fetchUsers = async () => {
