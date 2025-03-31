@@ -43,7 +43,7 @@ const Projects = (): JSX.Element => {
   const deleteMutation = useMutation({
     mutationFn: deleteProject,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['projects', adminAccess] });
       snackbar.success('Project deleted');
     },
     onError: (err) => {

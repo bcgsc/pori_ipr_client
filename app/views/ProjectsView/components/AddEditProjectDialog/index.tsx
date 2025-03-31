@@ -14,8 +14,8 @@ import {
   Typography,
 } from '@mui/material';
 
-import { useQuery, useQueryClient, useMutation } from 'react-query';
-import api, { ApiCall } from '@/services/api';
+import { useQuery, useMutation } from 'react-query';
+import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import { UserType } from '@/common';
@@ -43,6 +43,14 @@ function getIdentDiff(originalArray, updatedArray) {
   };
 }
 
+const fetchReports = async (editData): Promise<ShortReportType[]> => {
+  if (editData?.ident) {
+    const resp = await api.get(`/project/${editData.ident}/reports`).request();
+    return resp;
+  }
+  return [];
+};
+
 const AddEditProjectDialog = ({
   isOpen,
   onClose,
@@ -58,30 +66,19 @@ const AddEditProjectDialog = ({
   const [reports, setReports] = useState<ShortReportType[]>([]);
   const [existingReports, setExistingReports] = useState<ShortReportType[]>([]);
   const { adminAccess, managerAccess } = useResource();
-  const queryClient = useQueryClient();
 
-  const { isLoading: isReportsLoading, refetch } = useQuery<ShortReportType[]>({
+  const { isLoading: isReportsLoading } = useQuery<ShortReportType[]>({
     queryKey: ['projectReports', editData?.ident],
-    queryFn: async () => {
-      if (editData?.ident) {
-        const resp = await api.get(`/project/${editData.ident}/reports`).request();
-        return resp;
-      }
-      return [];
-    },
+    queryFn: () => fetchReports(editData),
     enabled: Boolean(isOpen && editData?.ident),
+    refetchOnMount: true,
+    staleTime: 0,
     onSuccess: (data) => {
       setExistingReports(data);
       setReports(data);
     },
     onError: () => snackbar.error('Error: failed to get reports'),
   });
-
-  useEffect(() => {
-    if (isOpen) {
-      refetch();
-    }
-  }, [isOpen, onClose, refetch]);
 
   // Populate initial data, if any
   useEffect(() => {
@@ -104,7 +101,7 @@ const AddEditProjectDialog = ({
     }
   }, [editData]);
 
-  const projectMutation = useMutation(
+  const { isLoading: isSaving, mutate: projectMutation} = useMutation(
     async (newEntry: { name: string; description: string }) => {
       // Update project specific fields
       if (editData) {
@@ -129,7 +126,6 @@ const AddEditProjectDialog = ({
         // Return the updated projects
         const updatedProjects = await api.get(`/project?admin=${adminAccess}`).request();
         onClose(updatedProjects, Boolean(!editData));
-        queryClient.invalidateQueries(['projectReports']);
       },
       onError: (error: Error) => {
         snackbar.error(`Error ${editData ? 'editing' : 'creating'} project, ${error?.message}`);
@@ -144,7 +140,7 @@ const AddEditProjectDialog = ({
         description: projectDesc,
       };
 
-      projectMutation.mutate(newEntry);
+      projectMutation(newEntry);
     } else {
       setErrors({
         projectName: true,
@@ -249,9 +245,9 @@ const AddEditProjectDialog = ({
         </Button>
         <AsyncButton
           color="primary"
-          disabled={isReportsLoading || projectMutation.isLoading}
+          disabled={isReportsLoading || isSaving}
           onClick={handleClose}
-          isLoading={projectMutation.isLoading}
+          isLoading={isSaving}
         >
           Save
         </AsyncButton>
