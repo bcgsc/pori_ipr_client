@@ -318,66 +318,70 @@ const RapidSummary = ({
       tCell = null;
     }
 
-    setTumourSummary([
-      {
-        term: 'Pathology Tumour Content',
-        value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour').pathoTc ?? ''}`,
-      },
-      {
-        term: 'M1M2 Score',
-        value: report.m1m2Score !== null
-          ? `${report.m1m2Score}`
-          : null,
-      },
-      {
-        term: 'Preliminary CAPTIV-8 Score',
-        value: report.captiv8Score !== null
-          ? `${report.captiv8Score}`
-          : null,
-      },
-      {
-        term: 'Microbial Species',
-        value: getMicbSiteSummary(microbial),
-      },
-      {
-        term:
+    setTumourSummary(() => {
+      let tmbDisplayValue = report?.genomeTmb?.toFixed(2) || null;
+
+      if (tmburMutBur) {
+        if (tmburMutBur.tmbHidden) {
+          tmbDisplayValue = null;
+        } else if (tmburMutBur.adjustedTmb != null) {
+          tmbDisplayValue = tmburMutBur.adjustedTmb.toFixed(2);
+        }
+      }
+
+      return ([
+        {
+          term: 'Pathology Tumour Content',
+          value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour').pathoTc ?? ''}`,
+        },
+        {
+          term: 'M1M2 Score',
+          value: report.m1m2Score !== null
+            ? `${report.m1m2Score}`
+            : null,
+        },
+        {
+          term: 'Preliminary CAPTIV-8 Score',
+          value: report.captiv8Score !== null
+            ? `${report.captiv8Score}`
+            : null,
+        },
+        {
+          term: 'Microbial Species',
+          value: getMicbSiteSummary(microbial),
+        },
+        {
+          term:
           tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
-        value: tCell,
-      },
-      {
-        term: 'Pediatric CD8+ T Cell Comment',
-        value:
+          value: tCell,
+        },
+        {
+          term: 'Pediatric CD8+ T Cell Comment',
+          value:
           tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
-      },
-      {
-        term: 'Mutation Burden',
-        value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
-      },
-      {
-        term: 'SV Burden (POG Average)',
-        value: svBurden,
-      },
-      {
-        term:
-          tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
-        value:
-          tmburMutBur && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmb?.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
-      },
-      {
-        term: 'Adjusted TMB Comment',
-        value:
-          tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
-      },
-      {
-        term: 'Intersect TMB Score',
-        value:
-          report?.genomeTmb ?? null,
-      },
-      {
-        term: 'MSI Status',
-        value: msiStatus,
-      },
-    ]);
+        },
+        {
+          term: 'Mutation Burden',
+          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
+        },
+        {
+          term: 'SV Burden (POG Average)',
+          value: svBurden,
+        },
+        {
+          term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
+          value: tmbDisplayValue,
+        },
+        {
+          term: 'Adjusted TMB Comment',
+          value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+        },
+        {
+          term: 'MSI Status',
+          value: msiStatus,
+        },
+      ]);
+    });
   }, [
     microbial, primaryBurden, tmburMutBur, tCellCd8,
     report.m1m2Score, report.sampleInfo, report.tumourContent, report?.genomeTmb, report.captiv8Score,

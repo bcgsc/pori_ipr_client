@@ -184,7 +184,7 @@ const TumourSummaryEdit = ({
   const handleTmburChange = useCallback(({ target: { value, name } }) => {
     setNewTmburMutData((tmb) => ({
       ...tmb,
-      [name]: parseFloat(value),
+      [name]: Number.isNaN(value) ? null : parseFloat(value),
     }));
     setTmburMutDirty(true);
   }, []);
@@ -250,7 +250,9 @@ const TumourSummaryEdit = ({
         newMicbrobialEntries?.forEach((entry) => {
           apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, entry, {}));
         });
-        editedMicrobialEntries?.forEach(({ ident, integrationSite, species, microbialHidden }) => {
+        editedMicrobialEntries?.forEach(({
+          ident, integrationSite, species, microbialHidden,
+        }) => {
           apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${ident}`, { integrationSite, species, microbialHidden }, {}));
         });
       }
@@ -418,6 +420,19 @@ const TumourSummaryEdit = ({
           type="number"
         />
       );
+      const genomeTmbField = (
+        <TextField
+          className="tumour-dialog__number-field"
+          label="Genome TMB (Mut/Mb)"
+          value={newReportData?.genomeTmb ?? ''}
+          name="genomeTmb"
+          onChange={handleReportChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+      );
+
       if (reportType === 'genomic') {
         return (
           <>
@@ -441,6 +456,7 @@ const TumourSummaryEdit = ({
               multiline
               fullWidth
             />
+            {genomeTmbField}
             {captiv8Section}
           </>
         );
@@ -448,16 +464,7 @@ const TumourSummaryEdit = ({
       if (reportType === 'rapid') {
         return (
           <>
-            <TextField
-              className="tumour-dialog__number-field"
-              label="Intersect TMB Score"
-              value={newReportData?.genomeTmb ?? ''}
-              name="genomeTmb"
-              onChange={handleReportChange}
-              variant="outlined"
-              fullWidth
-              type="number"
-            />
+            {genomeTmbField}
             {captiv8Section}
           </>
         );
@@ -479,7 +486,7 @@ const TumourSummaryEdit = ({
           renderTags={(value) => value.map(({ species, integrationSite, microbialHidden }, idx) => (
             <Chip
               variant="filled"
-              label={  
+              label={(
                 <Chip
                   // eslint-disable-next-line react/no-array-index-key
                   key={`${species}-${idx}`}
@@ -488,15 +495,15 @@ const TumourSummaryEdit = ({
                   onClick={() => handleClicked(idx)}
                   onDelete={() => handleDelete(idx)}
                   sx={{
-                    "& .MuiChip-deleteIcon": {
-                      marginLeft: 0.5
+                    '& .MuiChip-deleteIcon': {
+                      marginLeft: 0.5,
                     },
                     borderTopLeftRadius: 1,
                     borderBottomLeftRadius: 1,
                   }}
                 />
-              }
-              icon={              
+              )}
+              icon={(
                 <Checkbox
                   size="small"
                   icon={<Visibility />}
@@ -510,9 +517,9 @@ const TumourSummaryEdit = ({
                     backgroundColor: 'transparent !important',
                   }}
                 />
-              }
+              )}
               sx={{
-                "& .MuiChip-label": {
+                '& .MuiChip-label': {
                   paddingRight: 0,
                 },
               }}
@@ -531,7 +538,7 @@ const TumourSummaryEdit = ({
       );
     }
     return null;
-  }, [handleClicked, handleDelete, handleKeyDown, newMicrobialData]);
+  }, [handleClicked, handleDelete, handleKeyDown, handleMicrobialVisibilityToggle, newMicrobialData]);
 
   const tCellCd8DataSection = useMemo(() => (
     <>
@@ -610,7 +617,19 @@ const TumourSummaryEdit = ({
         type="text"
       />
     </>
-  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.percentileHidden, newTCellCd8Data?.pedsScore, newTCellCd8Data?.pedsPercentile, newTCellCd8Data?.pedsScoreComment, handleTCellCd8Change, handleTCellCd8PercentileVisibleChange, report.patientInformation.caseType, handlePedsCd8tChange, handlePedsCd8tCommentChange]);
+  ), [
+    handlePedsCd8tChange,
+    handlePedsCd8tCommentChange,
+    handleTCellCd8Change,
+    handleTCellCd8PercentileVisibleChange,
+    newTCellCd8Data?.pedsPercentile,
+    newTCellCd8Data?.pedsScore,
+    newTCellCd8Data?.pedsScoreComment,
+    newTCellCd8Data?.percentile,
+    newTCellCd8Data?.percentileHidden,
+    newTCellCd8Data?.score,
+    report.patientInformation.caseType,
+  ]);
 
   const mutBurDataSection = useMemo(() => (
     <>
