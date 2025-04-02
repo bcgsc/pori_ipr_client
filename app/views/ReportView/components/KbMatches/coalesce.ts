@@ -53,20 +53,7 @@ function getBucketKey(entry: KbMatchedStatementType, delimiter = '||') {
       const variantName = getVariantName(kbMatch?.variant, kbMatch?.variantType);
       const { relevance, disease } = entry;
       const commonSuffix = `${context}${delimiter}${variantName}${delimiter}${relevance}${delimiter}${disease}`;
-      if (kbMatch?.variantType === 'sv') {
-        const {
-          variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } },
-        } = kbMatch as KbMatchType<'sv'>;
-        bucketKey += `${gene1Name || '?'}${delimiter}${gene2Name || '?'}${delimiter}${commonSuffix}`;
-      } else if (kbMatch?.variantType === 'msi' || kbMatch?.variantType === 'tmb') {
-        const { kbCategory } = kbMatch.variant as KbMatchType<'tmb' | 'msi'>['variant'];
-        bucketKey += `${kbCategory}${delimiter}${commonSuffix}`;
-      } else {
-        const {
-          variant: { gene: { name: geneName } },
-        } = kbMatch as KbMatchType<'cnv' | 'exp' | 'mut'>;
-        bucketKey += `${geneName}${delimiter}${commonSuffix}`;
-      }
+      bucketKey += commonSuffix;
     }
     return bucketKey;
   }
@@ -78,7 +65,6 @@ function getBucketKey(entry: KbMatchedStatementType, delimiter = '||') {
     const commonSuffix = `${context}${delimiter}${variantName}${delimiter}${relevance}${delimiter}${disease}`;
     return commonSuffix;
   }
-
   return null;
 }
 
@@ -114,7 +100,13 @@ const coalesceEntries = <T extends KbMatchedStatementType[]>(entries: T): Coales
       } else {
         Object.entries(entry).forEach(([key, value]) => {
           if (Array.isArray(buckets[bucketKey][key])) {
-            if (!buckets[bucketKey][key].includes(value)) {
+            if (key === 'kbMatches' && Array.isArray(value)) {
+              const kbMatchesIdents = buckets[bucketKey][key].map((kbM) => kbM.ident).join();
+              const coalescedKbMatchesIdents = value.map((kbM) => kbM.ident).join();
+              if (kbMatchesIdents !== coalescedKbMatchesIdents) {
+                buckets[bucketKey][key] = buckets[bucketKey][key].concat(value);
+              }
+            } else if (!buckets[bucketKey][key].includes(value)) {
               buckets[bucketKey][key].push(value);
             }
           } else if (typeof buckets[bucketKey][key] !== 'object' && buckets[bucketKey][key] !== value) {
