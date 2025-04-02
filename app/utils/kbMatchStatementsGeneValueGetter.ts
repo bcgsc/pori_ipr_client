@@ -28,7 +28,7 @@ const kbMStatementGeneValueGetter = (params) => {
           geneName.push(kbMatch?.variant?.gene2.name);
         }
       }
-      return geneName.join(', ');
+      return [...new Set(geneName)].join(', ');
     }
     const [kbMatch] = kbMatchesNonNull;
     // msi and tmb doesn't have gene field
