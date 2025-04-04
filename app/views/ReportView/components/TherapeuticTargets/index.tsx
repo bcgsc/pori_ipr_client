@@ -62,6 +62,8 @@ type TherapeuticProps = {
 
 type TherapeuticDataTableType = TherapeuticType[] | Partial<TherapeuticType>[];
 
+const customColumnDefs = columnDefs.map((col) => col.headerName === 'Context' ? {...col, hide: false} : col);
+
 const Therapeutic = ({
   isLoading,
   isPrint = false,
@@ -253,7 +255,7 @@ const Therapeutic = ({
         <PrintTable
           fullWidth
           data={chemoresistanceData}
-          columnDefs={columnDefs}
+          columnDefs={customColumnDefs}
           // DEVSU-2540 - turn off coalescing for now until more permanent solution
           // collapseableCols={['gene', 'variant']}
           // outerRowOrderByInternalCol={['evidenceLevel']}
@@ -295,7 +297,7 @@ const Therapeutic = ({
         <PrintTable
           fullWidth
           data={chemoresistanceData}
-          columnDefs={columnDefs}
+          columnDefs={customColumnDefs}
           // DEVSU-2540 - turn off coalescing for now until more permanent solution
           // collapseableCols={['gene', 'variant']}
           // outerRowOrderByInternalCol={['evidenceLevel']}
@@ -334,7 +336,7 @@ const Therapeutic = ({
           />
           <DataTable
             titleText="Potential Resistance and Toxicity"
-            columnDefs={columnDefs}
+            columnDefs={customColumnDefs}
             canAdd={canEdit}
             canDelete={canEdit}
             canEdit={canEdit}
