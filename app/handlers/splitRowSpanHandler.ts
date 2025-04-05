@@ -34,19 +34,6 @@ class SplitRowSpanHandler extends Handler {
             td.innerHTML = '';
             td.appendChild(temp.cloneNode(true));
           });
-        // Subsequent headers gets added style to hide them from pagedjs, we reset these
-        const splitTableHeaders = [...t.querySelectorAll('thead')];
-        splitTableHeaders.forEach((thead) => {
-          thead.removeAttribute('style');
-          thead.querySelectorAll('th').forEach((element) => {
-            const { width } = element.style;
-            element.removeAttribute('style');
-            if (width) element.style.width = width;
-          });
-          thead.querySelectorAll('tr').forEach((element) => {
-            element.removeAttribute('style');
-          });
-        });
       });
     });
   }

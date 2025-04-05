@@ -30,7 +30,7 @@ const orderRankStartingByZero = (data: { rank: number }[]) => data.sort((a, b) =
   });
 
 const removeExtraProps = (data: TherapeuticType[]): Partial<TherapeuticType>[] => data.map(({
-  gene, variant, therapy, context, evidenceLevel, iprEvidenceLevel, notes, signature,
+  gene, variant, therapy, context, evidenceLevel, iprEvidenceLevel, notes, signature, rank,
 }) => ({
   gene,
   variant,
@@ -40,6 +40,7 @@ const removeExtraProps = (data: TherapeuticType[]): Partial<TherapeuticType>[] =
   iprEvidenceLevel,
   notes,
   signature,
+  rank,
 }));
 
 const filterType = (

@@ -144,10 +144,10 @@ $print-cell-padding-right: 8px;
     text-align: left;
     color: $palette__text--secondary;
     padding: 2px;
-    border-bottom: 1px solid $palette__text--hint;
+    border-bottom: 1px solid $palette__text--hint !important;
 
     & th {
-      padding: 10px $print-cell-padding-right 10px 0px;
+      padding: 10px $print-cell-padding-right 10px 0px !important;
     }
   }
 
