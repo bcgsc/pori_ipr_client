@@ -7,7 +7,6 @@ import React, {
 import { ColDef, ValueGetterParams } from '@ag-grid-community/core';
 import { v7 as createUuid } from 'uuid';
 import { registerHandlers, Handler } from 'pagedjs';
-import './index.scss';
 
 export type PrintTableProps = {
   data: Record<string, unknown>[];
@@ -72,7 +71,7 @@ function PrintTable({
   const sortedDataRows = useMemo(() => {
     let component = (
       <tr>
-        <td className="table__none" colSpan={sortedColDefs.length}>
+        <td className="print-table__none" colSpan={sortedColDefs.length}>
           {`${noRowsText || 'No Rows To Show'}`}
         </td>
       </tr>
@@ -191,7 +190,7 @@ function PrintTable({
         <>
           {
             massagedData.map((row, rowIdx) => (
-              <tr key={rowIdx} className="table__row">
+              <tr key={rowIdx} className="print-table__row">
                 {/* eslint-disable-next-line react/no-array-index-key */}
                 {row.map((value, cellIdx) => (<td key={`${rowIdx}-${cellIdx}-${value}`}>{value}</td>))}
               </tr>
@@ -204,10 +203,10 @@ function PrintTable({
           <>
             {
               massagedData.map((row, rowIdx) => (
-                <tr key={rowIdx} className="table__row">
+                <tr key={rowIdx} className="print-table__row">
                   {/* eslint-disable-next-line react/no-array-index-key */}
                   {row.map((value, cellIdx) => {
-                    let clsNames = 'table__cell';
+                    let clsNames = 'print-table__cell';
                     let rowSpan = 1;
                     if (rowIdxsToSkip[rowIdx] && colIdxsToCombine[cellIdx]) {
                       clsNames += '--skip';
@@ -262,8 +261,8 @@ function PrintTable({
             if (t > 0 && r === 0) {
               // Reset css of first row of cut-off table
               for (let c1 = 0; c1 < row.cells.length; c1++) {
-                if (row.cells[c1].rowSpan < 2 && row.cells[c1].classList.contains('table__cell--skip')) {
-                  row.cells[c1].classList.remove('table__cell--skip');
+                if (row.cells[c1].rowSpan < 2 && row.cells[c1].classList.contains('print-table__cell--skip')) {
+                  row.cells[c1].classList.remove('print-table__cell--skip');
                 }
               }
             }
@@ -280,10 +279,10 @@ function PrintTable({
   }, [data, tableId]);
 
   return (
-    <div className="table__container">
+    <div className="print-table__container">
       {Boolean(columnDefs.length) && (
-        <table data-table-id={tableId} className={`table ${fullWidth ? 'table--full-width' : ''}`}>
-          <thead className="table__header">
+        <table data-table-id={tableId} className={`print-table ${fullWidth ? 'print-table--full-width' : ''}`}>
+          <thead className="print-table__header">
             <tr>
               {sortedColDefs.map((col) => (
                 <th key={col.headerName}>

@@ -46,6 +46,7 @@ const columnDefs = [{
   sort: 'asc',
 }, {
   headerName: 'Actions',
+  colId: 'actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   sortable: false,
