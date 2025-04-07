@@ -25,14 +25,14 @@ const RenderArrayCell = (fieldPath: string, isLink: boolean = false): (cellParam
       let link = firstVal;
       let validLink = false;
 
-      if (firstVal.match(/^\d+$/)) {
+      if (firstVal?.match(/^\d+$/)) {
         link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
         validLink = true;
       } else if (urlRegex.test(firstVal)) {
         validLink = true;
       }
 
-      let linkComponent = firstVal;
+      let linkComponent = firstVal || '';
 
       if (validLink) {
         linkComponent = (
