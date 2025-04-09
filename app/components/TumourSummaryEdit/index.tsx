@@ -184,7 +184,7 @@ const TumourSummaryEdit = ({
   const handleTmburChange = useCallback(({ target: { value, name } }) => {
     setNewTmburMutData((tmb) => ({
       ...tmb,
-      [name]: parseFloat(value),
+      [name]: Number.isNaN(value) ? null : parseFloat(value),
     }));
     setTmburMutDirty(true);
   }, []);
@@ -420,6 +420,19 @@ const TumourSummaryEdit = ({
           type="number"
         />
       );
+      const genomeTmbField = (
+        <TextField
+          className="tumour-dialog__number-field"
+          label="Genome TMB (Mut/Mb)"
+          value={newReportData?.genomeTmb ?? ''}
+          name="genomeTmb"
+          onChange={handleReportChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+      );
+
       if (reportType === 'genomic') {
         return (
           <>
@@ -443,6 +456,7 @@ const TumourSummaryEdit = ({
               multiline
               fullWidth
             />
+            {genomeTmbField}
             {captiv8Section}
           </>
         );
@@ -450,16 +464,7 @@ const TumourSummaryEdit = ({
       if (reportType === 'rapid') {
         return (
           <>
-            <TextField
-              className="tumour-dialog__number-field"
-              label="Intersect TMB Score"
-              value={newReportData?.genomeTmb ?? ''}
-              name="genomeTmb"
-              onChange={handleReportChange}
-              variant="outlined"
-              fullWidth
-              type="number"
-            />
+            {genomeTmbField}
             {captiv8Section}
           </>
         );
@@ -612,7 +617,19 @@ const TumourSummaryEdit = ({
         type="text"
       />
     </>
-  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.percentileHidden, newTCellCd8Data?.pedsScore, newTCellCd8Data?.pedsPercentile, newTCellCd8Data?.pedsScoreComment, handleTCellCd8Change, handleTCellCd8PercentileVisibleChange, report.patientInformation.caseType, handlePedsCd8tChange, handlePedsCd8tCommentChange]);
+  ), [
+    handlePedsCd8tChange,
+    handlePedsCd8tCommentChange,
+    handleTCellCd8Change,
+    handleTCellCd8PercentileVisibleChange,
+    newTCellCd8Data?.pedsPercentile,
+    newTCellCd8Data?.pedsScore,
+    newTCellCd8Data?.pedsScoreComment,
+    newTCellCd8Data?.percentile,
+    newTCellCd8Data?.percentileHidden,
+    newTCellCd8Data?.score,
+    report.patientInformation.caseType,
+  ]);
 
   const mutBurDataSection = useMemo(() => (
     <>
