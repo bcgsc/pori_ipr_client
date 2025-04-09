@@ -1,0 +1,24 @@
+.custom-filter {
+  padding: 10px;
+  padding-top: 2px;
+  width: auto;
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: Arial, sans-serif;
+}
+
+.custom-filter div {
+  margin: 5px 0;
+}
+
+.custom-filter label {
+  margin-left: 5px;
+}
+
+#filterHeader {
+  font-weight: bold;
+}
+
+#selectAllLabel {
+  margin-left: 1px;
+}
