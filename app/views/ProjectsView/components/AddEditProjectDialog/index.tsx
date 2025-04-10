@@ -14,6 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 
+import { useQuery, useMutation } from 'react-query';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
@@ -42,6 +43,14 @@ function getIdentDiff(originalArray, updatedArray) {
   };
 }
 
+const fetchReports = async (editData): Promise<ShortReportType[]> => {
+  if (editData?.ident) {
+    const resp = await api.get(`/project/${editData.ident}/reports`).request();
+    return resp;
+  }
+  return [];
+};
+
 const AddEditProjectDialog = ({
   isOpen,
   onClose,
@@ -56,33 +65,20 @@ const AddEditProjectDialog = ({
   const [users, setUsers] = useState<UserType[]>([]);
   const [reports, setReports] = useState<ShortReportType[]>([]);
   const [existingReports, setExistingReports] = useState<ShortReportType[]>([]);
-
-  const [isReportsLoading, setIsReportsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
   const { adminAccess, managerAccess } = useResource();
-  useEffect(() => {
-    if (isOpen) {
-      const getData = async () => {
-        try {
-          const resp = await api.get(`/project/${editData.ident}/reports`).request();
-          // Existing reports is solely for calculating difference for submit API call
-          setExistingReports(resp);
-          setReports(resp);
-        } catch (err) {
-          console.error(err);
-          snackbar.error('Error: failed to get reports');
-        } finally {
-          setIsReportsLoading(false);
-        }
-      };
 
-      if (editData?.ident) {
-        getData();
-      } else {
-        setIsReportsLoading(false);
-      }
-    }
-  }, [onClose, isOpen, editData?.ident]);
+  const { isLoading: isReportsLoading } = useQuery<ShortReportType[]>({
+    queryKey: ['projectReports', editData?.ident],
+    queryFn: () => fetchReports(editData),
+    enabled: Boolean(isOpen && editData?.ident),
+    refetchOnMount: true,
+    staleTime: 0,
+    onSuccess: (data) => {
+      setExistingReports(data);
+      setReports(data);
+    },
+    onError: () => snackbar.error('Error: failed to get reports'),
+  });
 
   // Populate initial data, if any
   useEffect(() => {
@@ -105,25 +101,16 @@ const AddEditProjectDialog = ({
     }
   }, [editData]);
 
-  const handleClose = useCallback(async () => {
-    if (projectName.length) {
-      const newEntry = {
-        name: projectName,
-        description: projectDesc,
-      };
-
+  const { isLoading: isSaving, mutate: projectMutation} = useMutation(
+    async (newEntry: { name: string; description: string }) => {
       // Update project specific fields
-      let projectUpdateCall;
       if (editData) {
-        projectUpdateCall = api.put(`/project/${editData.ident}`, newEntry);
-      } else {
-        projectUpdateCall = api.post('/project', newEntry);
+        return api.put(`/project/${editData.ident}`, newEntry).request();
       }
-
-      try {
-        setIsSaving(true);
-        const projectUpdateResp = await projectUpdateCall.request();
-
+      return api.post('/project', newEntry).request();
+    },
+    {
+      onSuccess: async (projectUpdateResp) => {
         // Handle relationships to projects
         const { added: usersToAdd, removed: usersToRemove } = getIdentDiff(editData?.users ?? [], users);
         const { added: reportsToAdd, removed: reportsToRemove } = getIdentDiff(existingReports ?? [], reports);
@@ -139,17 +126,27 @@ const AddEditProjectDialog = ({
         // Return the updated projects
         const updatedProjects = await api.get(`/project?admin=${adminAccess}`).request();
         onClose(updatedProjects, Boolean(!editData));
-      } catch (e) {
-        snackbar.error(`Error ${editData ? 'editing' : 'creating'} project, ${e?.content?.error?.message}`);
-      } finally {
-        setIsSaving(false);
-      }
+      },
+      onError: (error: Error) => {
+        snackbar.error(`Error ${editData ? 'editing' : 'creating'} project, ${error?.message}`);
+      },
+    },
+  );
+
+  const handleClose = useCallback(() => {
+    if (projectName.length) {
+      const newEntry = {
+        name: projectName,
+        description: projectDesc,
+      };
+
+      projectMutation(newEntry);
     } else {
       setErrors({
         projectName: true,
       });
     }
-  }, [projectName, projectDesc, editData, users, existingReports, reports, adminAccess, onClose]);
+  }, [projectName, projectDesc, projectMutation]);
 
   const handleReportDelete = useCallback(({ ident }) => {
     setReports((oldReports) => oldReports.filter((entry) => entry.ident !== ident));
