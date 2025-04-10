@@ -173,73 +173,82 @@ const GenomicSummary = ({
         msiStatus = null;
       }
 
-      setTumourSummary([
-        {
-          term: 'Tumour Content',
-          value: `${report.tumourContent}%`,
-        },
-        {
-          term: 'Subtype',
-          value: report.subtyping,
-        },
-        {
-          term: 'Microbial Species',
-          value: getMicbSiteSummary(microbial),
-        },
-        {
-          term:
-            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
-          value: tCell,
-        },
-        {
-          term: 'Pediatric CD8+ T Cell Comment',
-          value:
-            tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
-        },
-        {
-          term: 'Mutation Signatures',
-          value: sigs,
-          action: !isPrint ? () => history.push('mutation-signatures') : null,
-        },
-        {
-          term: 'Mutation Burden',
-          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
-        },
-        {
-          term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
-          value: svBurden,
-        },
-        {
-          term: `HR Deficiency${isPrint ? '*' : ''}`,
-          value: null,
-        },
-        {
-          term: `SV Burden${isPrint ? '*' : ''}`,
-          value: null,
-        },
-        {
-          term: 'MSI Status',
-          value: msiStatus ?? null,
-        },
-        {
-          term: 'CAPTIV-8 Score',
-          value: report.captiv8Score !== null
-            ? `${report.captiv8Score}`
-            : null,
-        },
-        {
-          term:
-            tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)', // float
-          // Forced to do this due to javascript floating point issues
-          value:
-            tmburMutBur && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmb?.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
-        },
-        {
-          term: 'Adjusted TMB Comment',
-          value:
-            tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
-        },
-      ]);
+      setTumourSummary(() => {
+        let tmbDisplayValue = report?.genomeTmb?.toFixed(2) || null;
+
+        if (tmburMutBur) {
+          if (tmburMutBur.tmbHidden) {
+            tmbDisplayValue = null;
+          } else if (tmburMutBur.adjustedTmb != null) {
+            tmbDisplayValue = tmburMutBur.adjustedTmb.toFixed(2);
+          }
+        }
+
+        return ([
+          {
+            term: 'Tumour Content',
+            value: `${report.tumourContent}%`,
+          },
+          {
+            term: 'Subtype',
+            value: report.subtyping,
+          },
+          {
+            term: 'Microbial Species',
+            value: getMicbSiteSummary(microbial),
+          },
+          {
+            term:
+              tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+            value: tCell,
+          },
+          {
+            term: 'Pediatric CD8+ T Cell Comment',
+            value:
+              tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
+          },
+          {
+            term: 'Mutation Signatures',
+            value: sigs,
+            action: !isPrint ? () => history.push('mutation-signatures') : null,
+          },
+          {
+            term: 'Mutation Burden',
+            value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
+          },
+          {
+            term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
+            value: svBurden,
+          },
+          {
+            term: `HR Deficiency${isPrint ? '*' : ''}`,
+            value: null,
+          },
+          {
+            term: `SV Burden${isPrint ? '*' : ''}`,
+            value: null,
+          },
+          {
+            term: 'MSI Status',
+            value: msiStatus ?? null,
+          },
+          {
+            term: 'CAPTIV-8 Score',
+            value: report.captiv8Score !== null
+              ? `${report.captiv8Score}`
+              : null,
+          },
+          {
+            term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
+            value: tmbDisplayValue,
+          },
+          {
+            term: 'Adjusted TMB Comment',
+            value:
+              tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+          },
+        ]);
+      });
     }
   }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score]);
 
