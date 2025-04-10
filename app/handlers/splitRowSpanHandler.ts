@@ -8,7 +8,7 @@ class SplitRowSpanHandler extends Handler {
   afterRendered(pages) {
     const rowSpanMap = {};
     pages.forEach((page) => {
-      const originTables = page.element.querySelectorAll('table[data-split-to]:not([data-split-from])');
+      const originTables = page.element.querySelectorAll('table[data-split-to]');
       originTables.forEach((t) => {
         const rowSpanTds = [...t.querySelectorAll('td[rowspan]')].filter((td) => td.rowSpan > 1);
 
