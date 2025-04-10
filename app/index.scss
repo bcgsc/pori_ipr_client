@@ -144,3 +144,60 @@ html body {
   }
 }
 
+// Print Tables common styling
+$print-cell-padding-right: 8px;
+
+.print-table {
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+
+  &--full-width {
+    width: 100%;
+  }
+
+  &__header {
+    font-size: 9pt;
+    text-align: left;
+    color: $palette__text--secondary;
+    padding: 2px;
+    border-bottom: 1px solid $palette__text--hint !important;
+
+    & th {
+      padding: 10px $print-cell-padding-right 10px 0px !important;
+    }
+  }
+
+  &__row {
+    font-size: 10pt;
+    border-bottom: 0.5px solid lightgray;
+    page-break-inside: avoid;
+    break-inside: avoid;
+
+    & td {
+      padding: 3px $print-cell-padding-right 3px 0;
+      page-break-inside: avoid;
+      overflow-wrap: break-word;
+      break-inside: avoid;
+
+      &:last-child {
+        padding-right: 0;
+      }
+    }
+  }
+
+  &__none {
+    border-bottom: 1px solid $palette__text--hint;
+    padding: 3px 4px;
+    text-align: center;
+    border-bottom: 0.5px solid lightgray;
+    font-size: 10pt;
+  }
+
+  &__cell {
+    &--skip {
+      display: none;
+    }
+  }
+}
+// [END] Print Tables common styling

@@ -18,7 +18,6 @@ import snackbar from '@/services/SnackbarUtils';
 import DeleteCell from './components/DeleteCell';
 import columnDefs from './columnDefs';
 
-import '@/components/PrintTable/index.scss';
 import './index.scss';
 
 const Reviews = (): JSX.Element => {
