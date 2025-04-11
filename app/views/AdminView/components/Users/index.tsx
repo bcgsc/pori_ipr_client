@@ -1,6 +1,7 @@
 import React, {
-  useState, useEffect, useCallback,
+  useState, useCallback,
 } from 'react';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { CircularProgress } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
@@ -13,35 +14,47 @@ import AddEditUserDialog from './components/AddEditUserDialog';
 import './index.scss';
 
 const Users = (): JSX.Element => {
-  const [users, setUsers] = useState<UserType[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  // const [users, setUsers] = useState<UserType[]>([]);
+  // const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<UserType>();
-
+  const queryClient = useQueryClient();
   const snackbar = useSnackbar();
 
-  useEffect(() => {
-    const getData = async () => {
-      const usersResp = await api.get('/user').request();
+  const fetchUsers = async () => {
+    const resp = await api.get('/user').request();
+    return resp;
+  };
 
-      setUsers(usersResp);
-      setLoading(false);
-    };
+  const deleteUser = async (ident: string) => {
+    const resp = await api.del(`/user/${ident}`, {}).request();
+    return resp;
+  };
 
-    getData();
-  }, []);
+  const { data: users, isLoading } = useQuery<UserType[]>({
+    queryKey: ['users'],
+    queryFn: fetchUsers,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      queryClient.refetchQueries(['users']);
+      snackbar.enqueueSnackbar('User deleted');
+    },
+    onError: () => {
+      snackbar.enqueueSnackbar('User not deleted');
+    },
+  });
 
   const handleDelete = useCallback(async ({ ident }) => {
-    // eslint-disable-next-line no-restricted-globals
+    // eslint-disable-next-line no-restricted-globals, no-alert
     if (confirm('Are you sure you want to remove this user?')) {
-      await api.del(`/user/${ident}`, {}).request();
-      const newUsers = users.filter((user) => user.ident !== ident);
-      setUsers(newUsers);
-      snackbar.enqueueSnackbar('User deleted');
+      deleteMutation.mutate(ident);
     } else {
       snackbar.enqueueSnackbar('User not deleted');
     }
-  }, [snackbar, users]);
+  }, [deleteMutation, snackbar]);
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -51,20 +64,13 @@ const Users = (): JSX.Element => {
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      const userIndex = users.findIndex((user) => user.ident === newData.ident);
-      if (userIndex !== -1) {
-        const newUsers = [...users];
-        newUsers[userIndex] = newData;
-        setUsers(newUsers);
-      } else {
-        setUsers((prevVal) => [...prevVal, newData]);
-      }
+      queryClient.invalidateQueries(['users']);
     }
-  }, [users]);
+  }, [queryClient]);
 
   return (
     <div className="admin-table__container">
-      {!loading && (
+      {!isLoading && (
         <>
           <DataTable
             rowData={users}
@@ -92,7 +98,7 @@ const Users = (): JSX.Element => {
           )}
         </>
       )}
-      {loading && (
+      {isLoading && (
         <CircularProgress />
       )}
     </div>
