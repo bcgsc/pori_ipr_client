@@ -76,4 +76,5 @@ export {
   BadRequestError,
   APIConnectionFailureError,
   RecordConflictError,
+  ErrorMixin,
 };
