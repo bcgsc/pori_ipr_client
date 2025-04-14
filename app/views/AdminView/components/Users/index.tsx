@@ -14,8 +14,6 @@ import AddEditUserDialog from './components/AddEditUserDialog';
 import './index.scss';
 
 const Users = (): JSX.Element => {
-  // const [users, setUsers] = useState<UserType[]>([]);
-  // const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<UserType>();
   const queryClient = useQueryClient();
