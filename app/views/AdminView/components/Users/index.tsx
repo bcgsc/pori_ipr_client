@@ -3,12 +3,10 @@ import React, {
 } from 'react';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { CircularProgress } from '@mui/material';
-
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
 import { UserType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ErrorMixin } from '@/services/errors/errors';
 import columnDefs from './columnDefs';
 import AddEditUserDialog from './components/AddEditUserDialog';
@@ -28,17 +26,6 @@ const Users = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<UserType>();
   const queryClient = useQueryClient();
-  const snackbar = useSnackbar();
-
-  const fetchUsers = async () => {
-    const resp = await api.get('/user').request();
-    return resp;
-  };
-
-  const deleteUser = async (ident: string) => {
-    const resp = await api.del(`/user/${ident}`, {}).request();
-    return resp;
-  };
 
   const { data: users, isLoading } = useQuery<UserType[]>({
     queryKey: ['users'],
