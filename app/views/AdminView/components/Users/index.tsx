@@ -3,9 +3,6 @@ import React, {
 } from 'react';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { CircularProgress } from '@mui/material';
-
-import snackbar from '@/services/SnackbarUtils';
-import { useQuery, useQueryClient, useMutation } from 'react-query';
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
 import { UserType } from '@/common';
@@ -27,17 +24,17 @@ const deleteUser = async (ident: UserType['ident']) => {
 const Users = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<UserType>();
+  const queryClient = useQueryClient();
 
   const { data: users, isLoading } = useQuery<UserType[]>({
     queryKey: ['users'],
     queryFn: fetchUsers,
-    onError: (err) => snackbar.error(`Failed to retrive users ${err}`),
   });
 
-  const deleteUserMutation = useMutation({
-    mutationFn: async (ident) => await api.del(`/user/${ident}`, {}).request(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+  const deleteUserMutation = useMutation(deleteUser, {
+    onSuccess: (_data, ident) => {
+      // Update the users list after successful deletion
+      queryClient.setQueryData('users', (oldUsers: UserType[]) => oldUsers.filter((user) => user.ident !== ident));
       snackbar.success('User deleted');
     },
     onError: (error: ErrorMixin) => {
@@ -48,7 +45,7 @@ const Users = (): JSX.Element => {
   const handleDelete = useCallback((rowData) => {
     if (rowData.ident) {
       // TODO: Add an actual dialog whenever time allows
-      // eslint-disable-next-line no-restricted-globals
+      // eslint-disable-next-line no-restricted-globals, no-alert
       if (confirm(`Are you sure you want to remove this user (${rowData.username})?`)) {
         deleteUserMutation.mutate(rowData.ident);
       } else {
@@ -65,7 +62,7 @@ const Users = (): JSX.Element => {
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries(['users']);
     }
   }, [queryClient]);
 
