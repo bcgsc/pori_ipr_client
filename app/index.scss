@@ -76,11 +76,11 @@ html body {
 .search-view {
   margin: auto;
   left: 16px;
-  max-width: 800px;
-  min-width: 800px;
+  max-width: 1100px;
+  min-width: 1100px;
   position: relative;
   right: 16px;
-  top: 30vh;
+  top: 35vh;
 
   &__component {
     margin-top: 32px;
@@ -92,19 +92,27 @@ html body {
     display: flex;
     padding-left: 32px;
     padding-right: 32px;
+    height: inherit;
     width: 100%;
   }
 
-  &__main {
+  &__keyword-input {
     -webkit-tap-highlight-color: transparent;
-    width: 100%;
-    padding-top: 8.5px;
+    height: inherit;
+    width: 850px;
+    display: flex;
+  }
+
+  &__category-input {
+    height: inherit;
+    width: 200px;
+    display: flex;
   }
 
   &__threshold-input {
-    padding-top: 8.5px;
-    padding-left: 16px;
-    width: 15%;
+    height: inherit;
+    width: 70px;
+    display: flex;
 
     // Removes arrows in number input
     input::-webkit-outer-spin-button,
@@ -117,13 +125,79 @@ html body {
     }
   }
 
-  .help-dialog {
-    max-width: 800px;
-    min-width: 800px;
+  .error-dialog {
+    max-width: 1100px;
+    min-width: 1100px;
+    margin-top: 8px;
     height: auto;
-    margin-top: 12px;
-    padding-left: 32px;
-    padding-right: 32px;
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .help-dialog {
+    max-width: 1100px;
+    min-width: 1100px;
+    height: auto;
+    margin-top: 16px;
+    padding-left: 48px;
+    padding-right: 48px;
   }
 }
 
+// Print Tables common styling
+$print-cell-padding-right: 8px;
+
+.print-table {
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+
+  &--full-width {
+    width: 100%;
+  }
+
+  &__header {
+    font-size: 9pt;
+    text-align: left;
+    color: $palette__text--secondary;
+    padding: 2px;
+    border-bottom: 1px solid $palette__text--hint !important;
+
+    & th {
+      padding: 10px $print-cell-padding-right 10px 0px !important;
+    }
+  }
+
+  &__row {
+    font-size: 10pt;
+    border-bottom: 0.5px solid lightgray;
+    page-break-inside: avoid;
+    break-inside: avoid;
+
+    & td {
+      padding: 3px $print-cell-padding-right 3px 0;
+      page-break-inside: avoid;
+      overflow-wrap: break-word;
+      break-inside: avoid;
+
+      &:last-child {
+        padding-right: 0;
+      }
+    }
+  }
+
+  &__none {
+    border-bottom: 1px solid $palette__text--hint;
+    padding: 3px 4px;
+    text-align: center;
+    border-bottom: 0.5px solid lightgray;
+    font-size: 10pt;
+  }
+
+  &__cell {
+    &--skip {
+      display: none;
+    }
+  }
+}
+// [END] Print Tables common styling
