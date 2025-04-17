@@ -29,7 +29,6 @@ const Users = (): JSX.Element => {
   const { data: users, isLoading } = useQuery<UserType[]>({
     queryKey: ['users'],
     queryFn: fetchUsers,
-    onError: (err) => snackbar.error(`Failed to retrive users ${err}`),
   });
 
   const deleteUserMutation = useMutation(deleteUser, {
@@ -46,7 +45,7 @@ const Users = (): JSX.Element => {
   const handleDelete = useCallback((rowData) => {
     if (rowData.ident) {
       // TODO: Add an actual dialog whenever time allows
-      // eslint-disable-next-line no-restricted-globals
+      // eslint-disable-next-line no-restricted-globals, no-alert
       if (confirm(`Are you sure you want to remove this user (${rowData.username})?`)) {
         deleteUserMutation.mutate(rowData.ident);
       } else {
@@ -63,7 +62,7 @@ const Users = (): JSX.Element => {
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries(['users']);
     }
   }, [queryClient]);
 
