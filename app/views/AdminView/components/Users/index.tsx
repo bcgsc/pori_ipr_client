@@ -1,13 +1,12 @@
 import React, {
   useState, useCallback,
 } from 'react';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { CircularProgress } from '@mui/material';
-
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
 import { UserType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ErrorMixin } from '@/services/errors/errors';
 import columnDefs from './columnDefs';
 import AddEditUserDialog from './components/AddEditUserDialog';
@@ -27,7 +26,11 @@ const Users = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<UserType>();
   const queryClient = useQueryClient();
-  const { data: users, isLoading } = useQuery<UserType[]>('users', fetchUsers);
+
+  const { data: users, isLoading } = useQuery<UserType[]>({
+    queryKey: ['users'],
+    queryFn: fetchUsers,
+  });
 
   const deleteUserMutation = useMutation(deleteUser, {
     onSuccess: (_data, ident) => {
@@ -60,7 +63,7 @@ const Users = (): JSX.Element => {
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      queryClient.invalidateQueries('users');
+      queryClient.invalidateQueries(['users']);
     }
   }, [queryClient]);
 
