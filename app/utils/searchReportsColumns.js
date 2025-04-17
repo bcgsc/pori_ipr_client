@@ -1,8 +1,35 @@
 import startCase from '@/utils/startCase';
 
-function searchReportsColumns(report, analyst, reviewer, bioinformatician, searchType) {
+const getUniqueKeyVariants = (arr) => {
+  const mapObj = new Map();
+  arr.forEach((v) => {
+    const prevValue = mapObj.get(v.geneVariant);
+    if (!prevValue || prevValue.type === 'new') {
+      mapObj.set(v.geneVariant, v);
+    }
+  });
+  return [...mapObj.values()];
+};
+
+const getUniqueKbVariants = (arr) => {
+  const mapObj = new Map();
+  arr.forEach((v) => {
+    const prevValue = mapObj.get(v.kbVariant);
+    if (!prevValue || prevValue.type === 'new') {
+      mapObj.set(v.kbVariant, v);
+    }
+  });
+  return [...mapObj.values()];
+};
+
+function searchReportsColumns(report, analyst, reviewer, bioinformatician) {
   return {
-    matchedVariant: searchType === 'kbmatches' ? report?.kbMatches[0]?.kbVariant : report?.genomicAlterationsIdentified[0]?.geneVariant,
+    matchedKeyVariant: report?.genomicAlterationsIdentified ? getUniqueKeyVariants(report?.genomicAlterationsIdentified).map((v) => v.geneVariant).join(', ') : null,
+    matchedKbVariant: report?.kbMatches ? getUniqueKbVariants(report?.kbMatches).map((v) => v.kbVariant).join(', ') : null,
+    matchedSmallMutation: report?.smallMutations ? getUniqueKbVariants(report?.smallMutations).map((v) => v.displayName).join(', ') : null,
+    matchedStructuralVariant: report?.structuralVariants ? getUniqueKbVariants(report?.structuralVariants).map((v) => v.displayName).join(', ') : null,
+    matchedTherapeuticTarget: report?.therapeuticTarget ? report?.therapeuticTarget.map((t) => t.therapy).join(', ') : null,
+    matchedTherapeuticTargetContext: report?.therapeuticTarget ? report?.therapeuticTarget.map((t) => t.context).join(', ') : null,
     patientID: report.patientId,
     analysisBiopsy: report.biopsyName,
     reportType: report.template.name === 'probe' ? 'Targeted Gene' : startCase(report.template.name),
