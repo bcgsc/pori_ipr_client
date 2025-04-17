@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import GeneViewer from '../GeneViewer';
 
@@ -17,21 +17,21 @@ const GeneCellRenderer = ({
     return null;
   }
   return (
-  value && value.split(/\s*::\s*|,\s?/).map((val, index) => (
+    value && value.split(/\s*::\s*|,\s?/).map((val, index) => (
     // eslint-disable-next-line react/no-array-index-key
-    <React.Fragment key={`${val}_${index}`}>
-      {index > 0 && (
+      <React.Fragment key={`${val}_${index}`}>
+        {index > 0 && (
         <span>
           {value.includes(' :: ') ? ' :: ' : ', '}
         </span>
-      )}
-      <GeneViewer
-        isLink={link}
-        gene={val}
-      />
-    </React.Fragment>
-  ))
-
-)};
+        )}
+        <GeneViewer
+          isLink={link}
+          gene={val}
+        />
+      </React.Fragment>
+    ))
+  );
+};
 
 export default GeneCellRenderer;

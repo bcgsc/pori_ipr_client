@@ -12,7 +12,7 @@ import {
   Tab,
   AppBar,
 } from '@mui/material';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, AgGridReactProps } from '@ag-grid-community/react';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
@@ -21,6 +21,7 @@ import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/compo
 import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';
 import expressionColumnDefs from '@/views/ReportView/components/Expression/columnDefs';
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
+import { ColDef } from '@ag-grid-community/core';
 import { GeneViewerType } from './types';
 
 import KbMatchesActionCellRenderer from '../KbMatchesActionCellRenderer';
@@ -29,7 +30,7 @@ import NoRowsOverlay from '../NoRowsOverlay';
 
 import './index.scss';
 
-const defaultTableOptions = {
+const defaultTableOptions: Partial<AgGridReactProps> = {
   frameworkComponents: {
     ActionCellRenderer,
     KbMatchesActionCellRenderer,
@@ -37,6 +38,11 @@ const defaultTableOptions = {
   },
   noRowsOverlayComponent: 'NoRowsOverlay',
   enableCellTextSelection: true,
+};
+
+const defaultColumnDefs: ColDef = {
+  sortable: true,
+  filter: true,
 };
 
 const nullGeneViewerResp: GeneViewerType = {
@@ -132,6 +138,7 @@ const GeneViewer = ({
                 <AgGridReact
                   rowData={geneData.kbMatchedStatements}
                   columnDefs={columnDefs}
+                  defaultColDef={defaultColumnDefs}
                   domLayout="autoHeight"
                   {...defaultTableOptions}
                 />
@@ -142,6 +149,7 @@ const GeneViewer = ({
                 <AgGridReact
                   rowData={geneData.smallMutations}
                   columnDefs={smallMutationsColumnDefs}
+                  defaultColDef={defaultColumnDefs}
                   domLayout="autoHeight"
                   {...defaultTableOptions}
                 />
@@ -152,6 +160,7 @@ const GeneViewer = ({
                 <AgGridReact
                   rowData={geneData.copyNumber}
                   columnDefs={copyNumberColumnDefs}
+                  defaultColDef={defaultColumnDefs}
                   domLayout="autoHeight"
                   {...defaultTableOptions}
                 />
@@ -162,6 +171,7 @@ const GeneViewer = ({
                 <AgGridReact
                   rowData={geneData.expRNA}
                   columnDefs={expressionColumnDefs}
+                  defaultColDef={defaultColumnDefs}
                   domLayout="autoHeight"
                   {...defaultTableOptions}
                 />
@@ -183,6 +193,7 @@ const GeneViewer = ({
                 <AgGridReact
                   rowData={geneData.structuralVariants}
                   columnDefs={structuralVariantsColumnDefs}
+                  defaultColDef={defaultColumnDefs}
                   domLayout="autoHeight"
                   {...defaultTableOptions}
                 />
