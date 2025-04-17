@@ -20,4 +20,9 @@ type TherapeuticType = {
   variantGraphkbId: string | null;
 } & RecordDefaults;
 
-export default TherapeuticType;
+type TherapeuticDataTableType = TherapeuticType[] | Partial<TherapeuticType>[];
+
+export {
+  TherapeuticType,
+  TherapeuticDataTableType,
+};
