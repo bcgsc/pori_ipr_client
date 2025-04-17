@@ -57,8 +57,9 @@ const extensions = [
 ];
 
 const fetchProjects = async () => api.get('/project').request();
-
 const fetchTemplates = async () => api.get('/templates').request();
+const handleProjectError = (err) => snackbar.error(`Error getting project options: ${err}`);
+const handleTemplateError = (err) => snackbar.error(`Error getting template options: ${err}`);
 
 const AddEditVariantText = ({
   editData = null,
@@ -88,13 +89,13 @@ const AddEditVariantText = ({
   const { data: projectOptions, isLoading: isProjectsLoading } = useQuery({
     queryKey: ['projects'],
     queryFn: fetchProjects,
-    onError: (err) => snackbar.error(`Error getting project options: ${err}`),
+    onError: handleProjectError,
   });
 
   const { data: templateOptions, isLoading: isTemplatesLoading } = useQuery({
     queryKey: ['templates'],
     queryFn: fetchTemplates,
-    onError: (err) => snackbar.error(`Error getting template options: ${err}`),
+    onError: handleTemplateError,
   });
 
   const savingVariant = async ({
