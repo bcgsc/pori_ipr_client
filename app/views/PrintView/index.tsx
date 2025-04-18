@@ -242,7 +242,14 @@ const Print = ({
         const paged = new Previewer();
         paged.registerHandlers(SplitRowSpanHandler);
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
-        const templateName = report.template.name === 'probe' ? 'targeted_gene' : report.template.name;
+        let templateName = report.template.name;
+        let prefixName = '';
+        if (templateName === 'rapid') {
+          prefixName = 'targeted_gene_reportV2_';
+        }
+        if (templateName === 'probe') {
+          templateName = 'targeted_gene';
+        }
         const currentDate = new Date();
         const year = currentDate.getFullYear();
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
@@ -264,7 +271,7 @@ const Print = ({
         }
         const formattedDate = `${year}-${month}-${day}_${hours}h${minutes}m${seconds}s`;
 
-        document.title = `${report.patientId}${serverName}_${templateName}_report_${formattedDate}`;
+        document.title = `${prefixName}${report.patientId}${serverName}_${templateName}_report_${formattedDate}`;
 
         window.print();
         setIsPrintDialogShown(true);
