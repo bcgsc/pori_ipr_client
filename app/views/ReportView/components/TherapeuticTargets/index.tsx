@@ -13,10 +13,12 @@ import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import PrintTable from '@/components/PrintTable';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
-import columnDefs from './columnDefs';
+import {
+  potentialTherapeuticTargetsColDefs,
+  potentialResistanceToxicityColDefs,
+} from './columnDefs';
 
 import './index.scss';
 import TherapeuticTargetPrintTable from './components/TherapeuticTargetPrintTable';
@@ -142,8 +144,8 @@ const Therapeutic = ({
   const handleEditClose = useCallback((newData) => {
     try {
       setShowDialog(false);
-      let tableData: TherapeuticType[] | Partial<TherapeuticType>[];
-      let setter: React.Dispatch<React.SetStateAction<TherapeuticType[] | Partial<TherapeuticType>[]>>;
+      let tableData: TherapeuticDataTableType;
+      let setter: React.Dispatch<React.SetStateAction<TherapeuticDataTableType>>;
       if (newData) {
         if (newData.type === 'therapeutic') {
           tableData = therapeuticData;
@@ -173,8 +175,8 @@ const Therapeutic = ({
 
   const handleReorder = useCallback(async (newRow, newRank, tableType) => {
     try {
-      let setter: React.Dispatch<React.SetStateAction<TherapeuticType[] | Partial<TherapeuticType>[]>>;
-      let data: TherapeuticType[] | Partial<TherapeuticType>[];
+      let setter: React.Dispatch<React.SetStateAction<TherapeuticDataTableType>>;
+      let data: TherapeuticDataTableType;
       const oldRank = newRow.rank;
 
       if (tableType === 'therapeutic') {
@@ -236,7 +238,7 @@ const Therapeutic = ({
           Potential Therapeutic Targets
         </Typography>
         <TherapeuticTargetPrintTable
-          columnDefs={columnDefs}
+          columnDefs={potentialTherapeuticTargetsColDefs}
           data={therapeuticData}
           coalesce={['gene', 'variant']}
         />
@@ -247,7 +249,7 @@ const Therapeutic = ({
           Potential Resistance and Toxicity
         </Typography>
         <TherapeuticTargetPrintTable
-          columnDefs={columnDefs}
+          columnDefs={potentialResistanceToxicityColDefs}
           data={chemoresistanceData}
           coalesce={['gene', 'variant']}
         />
@@ -267,7 +269,7 @@ const Therapeutic = ({
           Potential Therapeutic Targets
         </Typography>
         <TherapeuticTargetPrintTable
-          columnDefs={columnDefs}
+          columnDefs={potentialTherapeuticTargetsColDefs}
           data={therapeuticData}
           coalesce={['gene', 'variant']}
         />
@@ -281,7 +283,7 @@ const Therapeutic = ({
           Potential Resistance and Toxicity
         </Typography>
         <TherapeuticTargetPrintTable
-          columnDefs={columnDefs}
+          columnDefs={potentialResistanceToxicityColDefs}
           data={chemoresistanceData}
           coalesce={['gene', 'variant']}
         />
@@ -301,7 +303,7 @@ const Therapeutic = ({
         <>
           <DataTable
             titleText="Potential Therapeutic Targets"
-            columnDefs={columnDefs}
+            columnDefs={potentialTherapeuticTargetsColDefs}
             canAdd={canEdit}
             canDelete={canEdit}
             canEdit={canEdit}
@@ -318,7 +320,7 @@ const Therapeutic = ({
           />
           <DataTable
             titleText="Potential Resistance and Toxicity"
-            columnDefs={columnDefs}
+            columnDefs={potentialResistanceToxicityColDefs}
             canAdd={canEdit}
             canDelete={canEdit}
             canEdit={canEdit}

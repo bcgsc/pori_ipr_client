@@ -1,4 +1,4 @@
-const columnDefs = [{
+const potentialTherapeuticTargetsColDefs = [{
   colId: 'drag',
   rowDrag: true,
   rowDragText: (params) => params.rowNode.data.gene,
@@ -53,4 +53,9 @@ const columnDefs = [{
   suppressMenu: true,
 }];
 
-export default columnDefs;
+const potentialResistanceToxicityColDefs = potentialTherapeuticTargetsColDefs.map((col) => (col.field === 'context' ? { ...col, hide: false } : col));
+
+export default {
+  potentialTherapeuticTargetsColDefs,
+  potentialResistanceToxicityColDefs,
+};
