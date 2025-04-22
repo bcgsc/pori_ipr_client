@@ -10,7 +10,6 @@ import snackbar from '@/services/SnackbarUtils';
 import { ErrorMixin } from '@/services/errors/errors';
 import columnDefs from './columnDefs';
 import AddEditUserDialog from './components/AddEditUserDialog';
-
 import './index.scss';
 
 const fetchUsers = async () => {
@@ -46,7 +45,7 @@ const Users = (): JSX.Element => {
   const handleDelete = useCallback((rowData) => {
     if (rowData.ident) {
       // TODO: Add an actual dialog whenever time allows
-      // eslint-disable-next-line no-restricted-globals
+      // eslint-disable-next-line no-restricted-globals, no-alert
       if (confirm(`Are you sure you want to remove this user (${rowData.username})?`)) {
         deleteUserMutation.mutate(rowData.ident);
       } else {
