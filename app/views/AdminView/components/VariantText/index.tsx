@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useCallback,
+  useState, useCallback,
 } from 'react';
 import { CircularProgress } from '@mui/material';
 import { VariantTextType } from '@/common';
@@ -7,45 +7,54 @@ import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 import columnDefs from './columnDefs';
 import AddEditVariantText from './components/AddEditVariantText';
 
+const fetchVariantText = async () => {
+  const data = await api.get('/variant-text').request();
+  return data.map((variant: VariantTextType) => ({
+    ...variant,
+    text: sanitizeHtml(variant.text, {
+      allowedSchemes: [],
+      allowedAttributes: { '*': ['style'] },
+    }),
+  }));
+};
+
+const deleteVariantText = async (rowData: VariantTextType) => api.del(`/variant-text/${rowData.ident}`, {}, {}).request();
+
+const updateVariantText = async (rowData: VariantTextType) => api.put(`/variant-text/${rowData.ident}`, rowData);
+
 function VariantText(): JSX.Element {
-  const [variantText, setVariantText] = useState<VariantTextType[]>();
-  const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [editingData, setEditingData] = useState(null);
+  const queryClient = useQueryClient();
 
-  // Grab template appendices
-  useEffect(() => {
-    let cancelled = false;
-    const getVariantText = async () => {
-      try {
-        const variantTextResp = await api.get('/variant-text').request();
-        if (variantTextResp) {
-          const sanitizedVariantText = variantTextResp.map((variant: VariantTextType) => ({
-            ...variant,
-            text: sanitizeHtml(variant.text, {
-              allowedSchemes: [],
-              allowedAttributes: {
-                '*': ['style'],
-              },
-            }),
-          }));
-          if (!cancelled) {
-            setVariantText(sanitizedVariantText);
-          }
-        }
-      } catch (err) {
-        snackbar.error(`Network error: ${err}`);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getVariantText();
-    return function cleanup() { cancelled = true; };
-  }, []);
+  const { data: variantText = [], isLoading } = useQuery<VariantTextType[]>({
+    queryKey: ['variantText'],
+    queryFn: fetchVariantText,
+    onError: () => snackbar.error('Error: failed to get variants text.'),
+  });
+
+  const variantTextDeleteMutation = useMutation({
+    mutationFn: deleteVariantText,
+    onSuccess: () => {
+      snackbar.success('Variant text deleted');
+      queryClient.invalidateQueries(['variantText']);
+    },
+    onError: (err) => snackbar.error(`Error deleting variant text: ${err}`),
+  });
+
+  const variantTextUpdateMutation = useMutation({
+    mutationFn: updateVariantText,
+    onSuccess: () => {
+      snackbar.success('Variant text updated');
+      queryClient.invalidateQueries(['variantText']);
+    },
+    onError: (err) => snackbar.error(`Error deleting variant text: ${err}`),
+  });
 
   const handleOnEdit = useCallback((rowData) => {
     setEditingData(rowData);
@@ -57,45 +66,22 @@ function VariantText(): JSX.Element {
   }, []);
 
   const handleOnDelete = useCallback(async (rowData: VariantTextType) => {
-    try {
-      await api.del(`/variant-text/${rowData.ident}`, {}, {}).request();
-      snackbar.success('Variant text deleted');
-      setVariantText((prevVal) => prevVal.filter((variant) => variant.ident !== rowData.ident));
-    } catch (err) {
-      snackbar.error(`Error deleting variant text: ${err}`);
-    }
-  }, []);
+    variantTextDeleteMutation.mutate(rowData);
+  }, [variantTextDeleteMutation]);
 
   const handleAddClose = useCallback((newData) => {
     if (newData) {
-      setVariantText((prevVal) => [...prevVal, newData]);
+      queryClient.invalidateQueries(['variantText']);
     }
     setIsAdding(false);
-  }, []);
+  }, [queryClient]);
 
   const handleEditClose = useCallback(async (nextData) => {
-    let cancelled = false;
-    try {
-      if (nextData) {
-        if (!cancelled) {
-          setVariantText((currVariantText) => {
-            const index = currVariantText.findIndex((app) => app.ident === editingData.ident);
-            const nextVariantText = [...currVariantText];
-            nextVariantText[index] = nextData;
-            return nextVariantText;
-          });
-          snackbar.success('Variant Text successfully updated.');
-          setIsEditing(false);
-        }
-      }
-    } catch (e) {
-      snackbar.error(`Error editing variant text: ${e.message ?? e}`);
-    } finally {
-      setIsEditing(false);
+    if (nextData) {
+      variantTextUpdateMutation.mutate(nextData);
     }
-
-    return function cleanup() { cancelled = true; };
-  }, [editingData]);
+    setIsEditing(false);
+  }, [variantTextUpdateMutation]);
 
   return (
     <>
