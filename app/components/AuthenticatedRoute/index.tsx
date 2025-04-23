@@ -4,16 +4,16 @@ import {
   Redirect,
   Route,
   RouteProps,
-
 } from 'react-router-dom';
 
 import useSecurity from '@/hooks/useSecurity';
 import useResource from '@/hooks/useResource';
 import { isAuthorized } from '@/services/management/auth';
+import { ResourceContextType } from '@/context/ResourceContext';
 
 type AuthenticatedRouteType = {
   component: ComponentType<never> | LazyExoticComponent<ComponentType<never>>,
-  requiredAccess?: string,
+  requiredAccess?: keyof ResourceContextType,
   showNav?: boolean,
   onToggleNav?: React.Dispatch<React.SetStateAction<boolean>>,
 } & RouteProps;
