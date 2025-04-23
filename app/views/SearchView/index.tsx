@@ -42,7 +42,7 @@ const useStyles = makeStyles({
 const SearchView = () => {
   const [searchKey, setSearchKey] = useState<SearchKeyType[]>([]);
   const [searchThreshold, setSearchThreshold] = useState(DEFAULT_THRESHOLD);
-  const [searchCategory, setSearchCategory] = useState('patientId');
+  const [searchCategory, setSearchCategory] = useState('keyVariant');
   const [searchKeyword, setSearchKeyword] = useState('');
   const history = useHistory();
   const [searchErrorMessage, setSearchErrorMessage] = useState('');
@@ -143,14 +143,14 @@ const SearchView = () => {
                 },
               }}
             >
+              <MenuItem value="keyVariant">Key Variant</MenuItem>
+              <MenuItem value="kbVariant">KB Variant</MenuItem>
               <MenuItem value="patientId">Patient ID</MenuItem>
               <MenuItem value="projectName">Project Name</MenuItem>
               <MenuItem value="diagnosis">Diagnosis</MenuItem>
-              <MenuItem value="keyVariant">Key Variant</MenuItem>
-              <MenuItem value="kbVariant">KB Variant</MenuItem>
+              <MenuItem value="therapeuticTarget">Therapeutic Target</MenuItem>
               <MenuItem value="smallMutation">Small Mutation</MenuItem>
               <MenuItem value="structuralVariant">Structural Variant</MenuItem>
-              <MenuItem value="therapeuticTarget">Therapeutic Target</MenuItem>
             </Select>
           </FormControl>
         </div>
