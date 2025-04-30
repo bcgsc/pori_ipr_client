@@ -10,7 +10,7 @@ const getCellValue = (row, col) => {
   return '';
 };
 
-const mergeCells = (sortedData, coalesce) => {
+const mergeCells = (sortedData: unknown[], colDefs: ColDef[], coalesce: string[]) => {
   const spanMap = {};
 
   coalesce.forEach((columnKey, colIndex) => {
@@ -23,6 +23,7 @@ const mergeCells = (sortedData, coalesce) => {
         colId: columnKey,
         field: columnKey,
         headerName: columnKey,
+        valueGetter: colDefs[colIndex]?.valueGetter,
       });
 
       // If this is not the first column in coalesce, check if the previous column is merged
@@ -35,10 +36,12 @@ const mergeCells = (sortedData, coalesce) => {
             colId: previousColumnKey,
             field: previousColumnKey,
             headerName: previousColumnKey,
+            valueGetter: colDefs[colIndex]?.valueGetter,
           }) === getCellValue(row, {
             colId: previousColumnKey,
             field: previousColumnKey,
             headerName: previousColumnKey,
+            valueGetter: colDefs[colIndex]?.valueGetter,
           }));
 
       if (currentValue === previousValue && isGroupedWithPrevious) {
@@ -83,7 +86,7 @@ const TherapeuticTargetPrintTable = ({ data, columnDefs: rawColumnDefs, coalesce
   }), [rawColumnDefs]);
 
   const sortedData = [...data].sort((a, b) => a.rank - b.rank);
-  const spanMap = mergeCells(sortedData, coalesce);
+  const spanMap = mergeCells(sortedData, columnDefs, coalesce);
 
   if (!spanMap) return null;
 
@@ -102,9 +105,9 @@ const TherapeuticTargetPrintTable = ({ data, columnDefs: rawColumnDefs, coalesce
         <tbody>
           {sortedData.map((row, rowIndex) => (
             <tr className="print-table__row" key={row.ident || rowIndex}>
-              {columnDefs.map((col, colIndex) => {
-                const cellValue = getCellValue(row, col);
-                const spanKey = `${rowIndex}-${col.colId || col.field || col.headerName}`;
+              {columnDefs.map((colDef, colIndex) => {
+                const cellValue = getCellValue(row, colDef);
+                const spanKey = `${rowIndex}-${colDef.colId || colDef.field || colDef.headerName}`;
                 const span = spanMap[spanKey];
                 return (
                   <td
