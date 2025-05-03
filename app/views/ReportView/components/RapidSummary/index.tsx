@@ -442,6 +442,7 @@ const RapidSummary = ({
             isPaginated={!isPrint}
           />
           <RapidVariantEditDialog
+            rapidVariantTableType="therapeutic"
             open={showMatchedTumourEditDialog}
             fields={[FIELDS.comments, FIELDS.kbMatches]}
             editData={editData}
@@ -505,6 +506,7 @@ const RapidSummary = ({
             isPaginated={!isPrint}
           />
           <RapidVariantEditDialog
+            rapidVariantTableType="cancerRelevance"
             open={showCancerRelevanceEventsDialog}
             editData={editData}
             onClose={handleCancerRelevanceEditClose}

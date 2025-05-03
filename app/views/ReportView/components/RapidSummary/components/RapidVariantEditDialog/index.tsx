@@ -23,51 +23,165 @@ import { Box } from '@mui/system';
 import { RapidVariantType } from '../../types';
 import { getVariantRelevanceDict } from '../../utils';
 
-const KbMatchesTable = ({ kbMatches, onDelete }: {
-  kbMatches: KbMatchType[],
-  onDelete: (ident: string) => void;
-}) => {
-  const handleKbMatchDelete = useCallback((ident) => () => {
-    if (onDelete && ident) {
-      onDelete(ident);
-    }
-  }, [onDelete]);
+const condenseMatches = (matches: KbMatchedStatementType[]) => {
+  const grouped = {};
 
-  const kbMatchesTable = useMemo(() => {
-    if (!kbMatches) { return null; }
-    const sorted = getVariantRelevanceDict(kbMatches);
-    const sortedStatements = {};
-    Object.entries(sorted).forEach(([relevance, matches]) => {
+  matches.forEach((item) => {
+    const { context, iprEvidenceLevel } = item;
+
+    if (!grouped[context]) {
+      grouped[context] = {};
+    }
+
+    if (!grouped[context][iprEvidenceLevel]) {
+      grouped[context][iprEvidenceLevel] = [];
+    }
+
+    grouped[context][iprEvidenceLevel].push(item);
+  });
+
+  return grouped;
+};
+
+const separateNoTable = (groupedData) => {
+  const noTable = {};
+  const hasTable = {};
+
+  Object.entries(groupedData).forEach(([context, iprLevels]) => {
+    Object.entries(iprLevels).forEach(([iprLevel, entries]) => {
+      const noTableEntries = entries.filter(
+        (item) => item.kbData?.rapidReportTableTag === 'noTable',
+      );
+      const otherEntries = entries.filter(
+        (item) => item.kbData?.rapidReportTableTag !== 'noTable',
+      );
+
+      if (noTableEntries.length > 0) {
+        if (!noTable[context]) noTable[context] = {};
+        noTable[context][iprLevel] = noTableEntries;
+      }
+
+      if (otherEntries.length > 0) {
+        if (!hasTable[context]) hasTable[context] = {};
+        hasTable[context][iprLevel] = otherEntries;
+      }
+    });
+  });
+
+  return { noTable, hasTable };
+};
+
+const keepHighestIprPerContext = (groupedData) => {
+  const result = {};
+
+  Object.entries(groupedData).forEach(([context, iprMap]) => {
+    const iprLevels = Object.keys(iprMap);
+
+    if (iprLevels.length === 0) return;
+
+    const [highest] = iprLevels.sort();
+
+    result[context] = {
+      [highest]: iprMap[highest],
+    };
+  });
+
+  return result;
+};
+
+type KbMatchesTableProps = {
+  kbMatches: KbMatchType[];
+  onDelete: (idents: string[]) => void;
+};
+
+const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
+  const [editingMatches, setEditingMatches] = useState(kbMatches);
+  useEffect(() => {
+    if (kbMatches) {
+      setEditingMatches(kbMatches);
+    }
+  }, [kbMatches]);
+
+  const sortedStatements = useMemo(() => {
+    if (!editingMatches) {
+      return null;
+    }
+
+    const variantRelDict = getVariantRelevanceDict(editingMatches);
+    const sorted = {};
+    Object.entries(variantRelDict).forEach(([relevance, matches]) => {
       matches.forEach((match) => {
         for (const statement of match.kbMatchedStatements) {
-          if (!sortedStatements[relevance]) {
-            sortedStatements[relevance] = [statement];
-          } else if (!sortedStatements[relevance].some((item: KbMatchedStatementType) => item.ident === statement.ident)) {
-            sortedStatements[relevance].push(statement);
+          if (!sorted[relevance]) {
+            sorted[relevance] = [statement];
+          } else if (!sorted[relevance].some((item: KbMatchedStatementType) => item.ident === statement.ident)) {
+            sorted[relevance].push(statement);
           }
         }
       });
     });
+    return sorted;
+  }, [editingMatches]);
+
+  const handleKbMatchesToggle = useCallback((idents) => () => {
+    if (onDelete && idents.length) {
+      onDelete(idents);
+    }
+  }, [onDelete]);
+
+  const kbMatchesInnerTable = useMemo(() => {
+    if (!sortedStatements) { return null; }
     return Object.entries(sortedStatements)
-      .sort(([relevance1], [relevance2]) => (relevance1 > relevance2 ? 1 : -1))
-      .map(([relevance, matches]: [relevance: string, matches: KbMatchedStatementType[]]) => (
-        <TableRow key={relevance + matches.toString()}>
-          <TableCell>{relevance}</TableCell>
-          <TableCell>
-            {
-              matches.map((match) => (
-                <Chip
-                  key={match.ident}
-                  label={`${match.context} ${match.iprEvidenceLevel ? `(${match.iprEvidenceLevel})` : ''}`}
-                  deleteIcon={<DeleteIcon />}
-                  onDelete={handleKbMatchDelete(match.ident)}
-                />
-              ))
-            }
-          </TableCell>
-        </TableRow>
-      ));
-  }, [kbMatches, handleKbMatchDelete]);
+      .sort(([relevance1], [relevance2]) => (relevance1 > relevance2 ? 1 : -1)) // Sorts by relevance alphabetically
+      .map(([relevance, matches]: [relevance: string, matches: KbMatchedStatementType[]]) => {
+        const condensedMatches = condenseMatches(matches);
+        const { noTable, hasTable } = separateNoTable(condensedMatches);
+        const highest = keepHighestIprPerContext(hasTable);
+        return (
+          <React.Fragment key={relevance + matches.toString()}>
+            <TableRow>
+              <TableCell rowSpan={2}>{relevance}</TableCell>
+              <TableCell>
+                {
+                  Object.entries(highest).map(([key, val]) => {
+                    const flattenedEntry = Object.values(val).flat();
+                    const [firstFlatEntry] = flattenedEntry;
+                    const idents = flattenedEntry.map((stmt) => stmt.ident);
+
+                    return (
+                      <Chip
+                        key={`${key}-${firstFlatEntry.iprEvidenceLevel}`}
+                        label={`${key} ${firstFlatEntry.iprEvidenceLevel ? `(${firstFlatEntry.iprEvidenceLevel})` : ''}`}
+                        deleteIcon={<DeleteIcon />}
+                        onDelete={handleKbMatchesToggle(idents)}
+                      />
+                    );
+                  })
+                }
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                {
+                  Object.entries(noTable).map(([key, val]) => Object.entries(val).map(([iprLevel, statements]) => {
+                    const idents = statements.map(({ ident }) => ident);
+                    return (
+                      <Chip
+                        key={`${key}-${iprLevel}-'noTable'`}
+                        label={`${key} ${iprLevel ? `(${iprLevel})` : ''}`}
+                        deleteIcon={<DeleteIcon />}
+                        onDelete={handleKbMatchesToggle(idents)}
+                        sx={{ '& .MuiChip-label': { textDecoration: 'line-through' } }}
+                      />
+                    );
+                  }))
+                }
+              </TableCell>
+            </TableRow>
+          </React.Fragment>
+        );
+      });
+  }, [sortedStatements, handleKbMatchesToggle]);
 
   return (
     <Box my={1}>
@@ -80,7 +194,7 @@ const KbMatchesTable = ({ kbMatches, onDelete }: {
             </TableRow>
           </TableHead>
           <TableBody>
-            {kbMatchesTable}
+            {kbMatchesInnerTable}
           </TableBody>
         </Table>
       </TableContainer>
@@ -101,6 +215,7 @@ enum FIELDS {
 
 interface VariantEditDialogProps extends DialogProps {
   editData: RapidVariantType & { potentialClinicalAssociation?: string };
+  rapidVariantTableType: KbMatchedStatementType['kbData']['rapidReportTableTag'];
   onClose: (newData: boolean) => void;
   fields?: Array<FIELDS>;
 }
@@ -109,6 +224,7 @@ const RapidVariantEditDialog = ({
   onClose,
   open,
   editData,
+  rapidVariantTableType,
   fields = [FIELDS.comments],
 }: VariantEditDialogProps) => {
   const { report } = useContext(ReportContext);
@@ -117,6 +233,9 @@ const RapidVariantEditDialog = ({
   const [data, setData] = useState(editData);
   const [editDataDirty, setEditDataDirty] = useState<boolean>(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
+
+  const [noTableSet] = useState(new Set());
+  const [tableTypeSet] = useState(new Set());
 
   useEffect(() => {
     if (editData) {
@@ -135,19 +254,6 @@ const RapidVariantEditDialog = ({
       setEditDataDirty(true);
     }
   }, [editDataDirty]);
-
-  const handleKbMatchDelete = useCallback((kbMatchStatementId) => {
-    const updatedKbMatches = data?.kbMatches.map((kbMatch: KbMatchType) => {
-      const updatedStatements = kbMatch.kbMatchedStatements.filter(({ ident }) => kbMatchStatementId !== ident);
-      return { ...kbMatch, kbMatchedStatements: updatedStatements };
-    });
-    handleDataChange({
-      target: {
-        value: updatedKbMatches,
-        name: 'kbMatches',
-      },
-    });
-  }, [data?.kbMatches, handleDataChange]);
 
   const handleSave = useCallback(async () => {
     if (editDataDirty) {
@@ -171,21 +277,16 @@ const RapidVariantEditDialog = ({
         }
 
         if (fields.includes(FIELDS.kbMatches) && data?.kbMatches && editData?.kbMatches) {
-          const initialIdsSet = new Set(
-            editData.kbMatches.flatMap((match) => match.kbMatchedStatements.map(({ ident }) => ident)),
-          );
-          const initialIds = Array.from(initialIdsSet);
-
-          const remainingIdsSet = new Set();
-
-          for (const kbMatch of data.kbMatches) {
-            for (const { ident } of kbMatch.kbMatchedStatements) {
-              remainingIdsSet.add(ident);
-            }
-          }
-
-          const idsToDelete = initialIds.filter((initId) => !remainingIdsSet.has(initId));
-          idsToDelete.forEach((stmtId) => calls.push(api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${stmtId}`, {})));
+          noTableSet.forEach((ident) => {
+            calls.push(api.put(`/reports/${report.ident}/kb-matches/kb-matched-statements/${ident}`, {
+              kbData: { rapidReportTableTag: 'noTable' },
+            }));
+          });
+          tableTypeSet.forEach((ident) => {
+            calls.push(api.put(`/reports/${report.ident}/kb-matches/kb-matched-statements/${ident}`, {
+              kbData: { rapidReportTableTag: rapidVariantTableType },
+            }));
+          });
         }
 
         const callSet = new ApiCallSet(calls);
@@ -203,18 +304,49 @@ const RapidVariantEditDialog = ({
     } else {
       onClose(null);
     }
-  }, [editDataDirty, data, fields, isSigned, report.ident, editData?.kbMatches, showConfirmDialog, onClose]);
+  }, [editDataDirty, tableTypeSet, noTableSet, data?.ident, data?.potentialClinicalAssociation, data?.comments, data?.kbMatches, data?.variantType, fields, editData?.kbMatches, isSigned, report.ident, rapidVariantTableType, showConfirmDialog, onClose]);
 
   const handleDialogClose = useCallback(() => onClose(null), [onClose]);
 
-  const kbMatchesField = () => {
+  const handleKbMatchToggle = useCallback((kbMatchStatementIds) => {
+    // Find all kbMatches with that ident
+    const updatedKbMatches = data?.kbMatches.map((kbMatch: KbMatchType) => {
+      const statementsToToggle = kbMatch.kbMatchedStatements
+        .map((stmt) => {
+          if (!kbMatchStatementIds.includes(stmt.ident)) {
+            return stmt;
+          }
+          const nextStmt = stmt;
+          const { rapidReportTableTag } = nextStmt.kbData;
+          if (rapidReportTableTag !== 'noTable') {
+            nextStmt.kbData.rapidReportTableTag = 'noTable';
+            noTableSet.add(stmt.ident);
+            tableTypeSet.delete(stmt.ident);
+          } else {
+            nextStmt.kbData.rapidReportTableTag = rapidVariantTableType;
+            noTableSet.delete(stmt.ident);
+            tableTypeSet.add(stmt.ident);
+          }
+          return nextStmt;
+        });
+      return { ...kbMatch, kbMatchedStatements: statementsToToggle };
+    });
+    handleDataChange({
+      target: {
+        value: updatedKbMatches,
+        name: 'kbMatches',
+      },
+    });
+  }, [data?.kbMatches, handleDataChange, noTableSet, rapidVariantTableType, tableTypeSet]);
+
+  const kbMatchesField = useMemo(() => {
     if (!fields.includes(FIELDS.kbMatches)) {
       return null;
     }
     return (
-      <KbMatchesTable kbMatches={data?.kbMatches} onDelete={handleKbMatchDelete} />
+      <KbMatchesTable kbMatches={data?.kbMatches} onDelete={handleKbMatchToggle} />
     );
-  };
+  }, [data?.kbMatches, fields, handleKbMatchToggle]);
 
   return (
     <Dialog fullWidth maxWidth="xl" open={open}>
@@ -222,7 +354,7 @@ const RapidVariantEditDialog = ({
         Edit Event
       </DialogTitle>
       <DialogContent className="patient-dialog__content">
-        {kbMatchesField()}
+        {kbMatchesField}
         <TextField
           className="patient-dialog__text-field"
           label="comments"
