@@ -23,12 +23,12 @@ import { GeneVariantType } from '@/views/ReportView/components/GenomicSummary/ty
 
 import './index.scss';
 
-  type VariantEditDialogProps = {
-    editData: SmallMutationType | CopyNumberType | StructuralVariantType | ExpOutliersType;
-    variantType: string;
-    isOpen: boolean;
-    onClose: (newData?: SmallMutationType | CopyNumberType | StructuralVariantType | ExpOutliersType) => void;
-  };
+type VariantEditDialogProps = {
+  editData: SmallMutationType | CopyNumberType | StructuralVariantType | ExpOutliersType;
+  variantType: string;
+  isOpen: boolean;
+  onClose: (newData?: SmallMutationType | CopyNumberType | StructuralVariantType | ExpOutliersType) => void;
+};
 
 const VariantEditDialog = ({
   editData,

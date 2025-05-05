@@ -28,7 +28,7 @@ import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
-import { VariantEditDialog, FIELDS } from './components/VariantEditDialog';
+import { RapidVariantEditDialog, FIELDS } from './components/RapidVariantEditDialog';
 import { RapidVariantType } from './types';
 import { getVariantRelevanceDict } from './utils';
 
@@ -441,7 +441,7 @@ const RapidSummary = ({
             isPrint={isPrint}
             isPaginated={!isPrint}
           />
-          <VariantEditDialog
+          <RapidVariantEditDialog
             open={showMatchedTumourEditDialog}
             fields={[FIELDS.comments, FIELDS.kbMatches]}
             editData={editData}
@@ -504,7 +504,7 @@ const RapidSummary = ({
             isPrint={isPrint}
             isPaginated={!isPrint}
           />
-          <VariantEditDialog
+          <RapidVariantEditDialog
             open={showCancerRelevanceEventsDialog}
             editData={editData}
             onClose={handleCancerRelevanceEditClose}

@@ -105,7 +105,7 @@ interface VariantEditDialogProps extends DialogProps {
   fields?: Array<FIELDS>;
 }
 
-const VariantEditDialog = ({
+const RapidVariantEditDialog = ({
   onClose,
   open,
   editData,
@@ -171,13 +171,21 @@ const VariantEditDialog = ({
         }
 
         if (fields.includes(FIELDS.kbMatches) && data?.kbMatches && editData?.kbMatches) {
-          const existingIds = [].concat(...editData.kbMatches.map((match) => match.kbMatchedStatements.map(({ ident }) => ident)));
-          data?.kbMatches.forEach((kbMatch) => {
-            const remainingIds = new Set(kbMatch.kbMatchedStatements.map(({ ident }) => ident));
-            existingIds.filter((id) => !remainingIds.has(id)).forEach((stmtId) => {
-              calls.push(api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${stmtId}`, {}));
-            });
-          });
+          const initialIdsSet = new Set(
+            editData.kbMatches.flatMap((match) => match.kbMatchedStatements.map(({ ident }) => ident)),
+          );
+          const initialIds = Array.from(initialIdsSet);
+
+          const remainingIdsSet = new Set();
+
+          for (const kbMatch of data.kbMatches) {
+            for (const { ident } of kbMatch.kbMatchedStatements) {
+              remainingIdsSet.add(ident);
+            }
+          }
+
+          const idsToDelete = initialIds.filter((initId) => !remainingIdsSet.has(initId));
+          idsToDelete.forEach((stmtId) => calls.push(api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${stmtId}`, {})));
         }
 
         const callSet = new ApiCallSet(calls);
@@ -240,7 +248,7 @@ const VariantEditDialog = ({
 };
 
 export {
-  VariantEditDialog,
+  RapidVariantEditDialog,
   FIELDS,
 };
-export default VariantEditDialog;
+export default RapidVariantEditDialog;
