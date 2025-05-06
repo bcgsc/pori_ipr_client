@@ -89,6 +89,19 @@ const keepHighestIprPerContext = (groupedData) => {
   return result;
 };
 
+const sortByIprThenName = ([keyA, valA], [keyB, valB]) => {
+  const [iprA] = Object.keys(valA);
+  const [iprB] = Object.keys(valB);
+
+  const [, levelA] = iprA.split('-');
+  const [, levelB] = iprB.split('-');
+
+  const levelCmp = levelA.localeCompare(levelB);
+  if (levelCmp !== 0) return levelCmp;
+
+  return keyA.toLowerCase().localeCompare(keyB.toLowerCase());
+};
+
 type KbMatchesTableProps = {
   kbMatches: KbMatchType[];
   onDelete: (idents: string[]) => void;
@@ -141,9 +154,10 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
           <React.Fragment key={relevance + matches.toString()}>
             <TableRow>
               <TableCell rowSpan={2}>{relevance}</TableCell>
+              <TableCell>Shown</TableCell>
               <TableCell>
                 {
-                  Object.entries(highest).map(([key, val]) => {
+                  Object.entries(highest).sort(sortByIprThenName).map(([key, val]) => {
                     const flattenedEntry = Object.values(val).flat();
                     const [firstFlatEntry] = flattenedEntry;
                     const idents = flattenedEntry.map((stmt) => stmt.ident);
@@ -161,9 +175,10 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
               </TableCell>
             </TableRow>
             <TableRow>
+              <TableCell>Not Shown</TableCell>
               <TableCell>
                 {
-                  Object.entries(noTable).map(([key, val]) => Object.entries(val).map(([iprLevel, statements]) => {
+                  Object.entries(noTable).sort(sortByIprThenName).map(([key, val]) => Object.entries(val).map(([iprLevel, statements]) => {
                     const idents = statements.map(({ ident }) => ident);
                     return (
                       <Chip
@@ -190,6 +205,7 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
           <TableHead sx={{ bgcolor: '#ddd' }}>
             <TableRow>
               <TableCell>Relevance</TableCell>
+              <TableCell />
               <TableCell>Drugs</TableCell>
             </TableRow>
           </TableHead>

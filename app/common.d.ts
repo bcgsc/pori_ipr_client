@@ -179,6 +179,7 @@ type KbMatchedStatementType<T extends KbMatchType = KbMatchType> = {
     inferred: boolean;
     recruitment_status: string;
     kbmatchTag: string | null;
+    rapidReportTableTag: 'therapeutic' | 'cancerRelevance' | 'unknownSig' | 'noTable';
   } | null;
   kbMatches: T[];
   kbStatementId: string;

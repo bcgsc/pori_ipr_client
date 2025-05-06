@@ -61,9 +61,18 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   return iprRelevanceDict;
 };
 
-const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
+const filterNoTable = (kbMatches: KbMatchType[]) => kbMatches.map(({ kbMatchedStatements, ...rest }) => ({
+  ...rest,
+  kbMatchedStatements: kbMatchedStatements.filter(
+    ({ kbData }) => !kbData || kbData.rapidReportTableTag !== 'noTable',
+  ),
+}));
+
+const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(
+  getVariantRelevanceDict(variant.kbMatches),
+)
   .map(([relevanceKey, kbMatches]) => {
-    const iprEvidenceDict = splitIprEvidenceLevels(kbMatches);
+    const iprEvidenceDict = splitIprEvidenceLevels(filterNoTable(kbMatches));
 
     const sortedIprKeys = Object.keys(iprEvidenceDict).sort(
       (a, b) => a.localeCompare(b),
@@ -81,8 +90,12 @@ const processPotentialClinicalAssociation = (variant: RapidVariantType) => Objec
     }
 
     const combinedDrugList = [...drugToLevel.entries()]
+      .sort(([drugA, levelA], [drugB, levelB]) => {
+        const levelCmp = levelA.localeCompare(levelB);
+        if (levelCmp !== 0) return levelCmp;
+        return drugA[0].localeCompare(drugB[0]); // compare first letter only
+      })
       .map(([drug, level]) => `${drug} (${level})`)
-      .sort()
       .join(', ');
 
     return ({
