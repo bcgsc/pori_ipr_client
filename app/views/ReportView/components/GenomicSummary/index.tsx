@@ -27,6 +27,9 @@ import './index.scss';
 import PatientInformation from '../PatientInformation';
 
 import TumourSummary from '../TumourSummary';
+import {
+  defaultComparator, defaultImmune, defaultMsi, defaultMutationBurden, defaultTmbur,
+} from './defaultStates';
 
 type GenomicSummaryProps = {
   loadedDispatch?: SummaryProps['loadedDispatch'];
@@ -50,13 +53,13 @@ const GenomicSummary = ({
 
   const [signatures, setSignatures] = useState<MutationSignatureType[]>([]);
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
-  const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
-  const [msi, setMsi] = useState<MsiType>();
-  const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
+  const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>(defaultMutationBurden);
+  const [msi, setMsi] = useState<MsiType>(defaultMsi);
+  const [tmburMutBur, setTmburMutBur] = useState<TmburType>(defaultTmbur);
 
   const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
-  const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
-  const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>();
+  const [tCellCd8, setTCellCd8] = useState<ImmuneType>(defaultImmune);
+  const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>(defaultComparator);
 
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
 
@@ -174,14 +177,18 @@ const GenomicSummary = ({
       }
 
       setTumourSummary(() => {
-        let tmbDisplayValue = report?.genomeTmb?.toFixed(2) || null;
+        // Check if genomeTmb (new version) exists
+        const { genomeTmb } = report;
+        const {
+          tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb,
+        } = tmburMutBur;
+        let tmbDisplayValue = genomeTmb?.toFixed(2) || (genomeSnvTmb + genomeIndelTmb).toFixed(2);
 
-        if (tmburMutBur) {
-          if (tmburMutBur.tmbHidden) {
-            tmbDisplayValue = null;
-          } else if (tmburMutBur.adjustedTmb != null) {
-            tmbDisplayValue = tmburMutBur.adjustedTmb.toFixed(2);
-          }
+        // AdjustedTmb will still overwrite
+        if (tmbHidden) {
+          tmbDisplayValue = null;
+        } else if (adjustedTmb != null) {
+          tmbDisplayValue = adjustedTmb.toFixed(2);
         }
 
         return ([
