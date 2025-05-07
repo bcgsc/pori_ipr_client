@@ -222,6 +222,7 @@ const VARIANT_TYPE_TO_API_MAP = {
   cnv: 'copy-variants',
   mut: 'small-mutations',
   sv: 'structural-variants',
+  tmb: 'tmbur_mutation_burden',
 };
 
 enum FIELDS {
@@ -283,7 +284,7 @@ const RapidVariantEditDialog = ({
 
         const calls = [];
 
-        if (fields.includes(FIELDS.comments) && data?.comments) {
+        if (fields.includes(FIELDS.comments)) {
           calls.push(api.put(
             `/reports/${report.ident}/${VARIANT_TYPE_TO_API_MAP[data.variantType]}/${variantId}`,
             {
@@ -364,6 +365,8 @@ const RapidVariantEditDialog = ({
     );
   }, [data?.kbMatches, fields, handleKbMatchToggle]);
 
+  const disableCommentField = !fields.includes(FIELDS.comments) || editData?.variantType === 'tmb';
+
   return (
     <Dialog fullWidth maxWidth="xl" open={open}>
       <DialogTitle>
@@ -378,7 +381,7 @@ const RapidVariantEditDialog = ({
           name="comments"
           onChange={handleDataChange}
           variant="outlined"
-          disabled={!fields.includes(FIELDS.comments)}
+          disabled={disableCommentField}
           multiline
           fullWidth
         />
