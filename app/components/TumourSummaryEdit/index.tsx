@@ -680,26 +680,6 @@ const TumourSummaryEdit = ({
     <>
       <TextField
         className="tumour-dialog__number-field"
-        label="genomeSnvTmb"
-        value={newTmburMutData?.genomeSnvTmb ?? null}
-        name="genomeSnvTmb"
-        onChange={handleTmburChange}
-        variant="outlined"
-        fullWidth
-        type="number"
-      />
-      <TextField
-        className="tumour-dialog__number-field"
-        label="genomeIndelTmb"
-        value={newTmburMutData?.genomeIndelTmb ?? null}
-        name="genomeIndelTmb"
-        onChange={handleTmburChange}
-        variant="outlined"
-        fullWidth
-        type="number"
-      />
-      <TextField
-        className="tumour-dialog__number-field"
         label="Adjusted TMB"
         value={newTmburMutData?.adjustedTmb ?? null}
         name="adjustedTmb"
