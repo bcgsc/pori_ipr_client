@@ -55,7 +55,7 @@ const potentialTherapeuticTargetsColDefs = [{
 
 const potentialResistanceToxicityColDefs = potentialTherapeuticTargetsColDefs.map((col) => (col.field === 'context' ? { ...col, hide: false } : col));
 
-export default {
+export {
   potentialTherapeuticTargetsColDefs,
   potentialResistanceToxicityColDefs,
 };
