@@ -365,7 +365,7 @@ const RapidVariantEditDialog = ({
     );
   }, [data?.kbMatches, fields, handleKbMatchToggle]);
 
-  const disableCommentField = !fields.includes(FIELDS.comments) || editData?.variantType === 'tmb';
+  const disableCommentField = !fields.includes(FIELDS.comments) || ['tmb', 'signature'].includes(editData?.variantType);
 
   return (
     <Dialog fullWidth maxWidth="xl" open={open}>
