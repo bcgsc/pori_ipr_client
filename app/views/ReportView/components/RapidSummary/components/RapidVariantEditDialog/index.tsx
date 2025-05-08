@@ -222,7 +222,6 @@ const VARIANT_TYPE_TO_API_MAP = {
   cnv: 'copy-variants',
   mut: 'small-mutations',
   sv: 'structural-variants',
-  tmb: 'tmbur_mutation_burden',
 };
 
 enum FIELDS {
@@ -285,12 +284,16 @@ const RapidVariantEditDialog = ({
         const calls = [];
 
         if (fields.includes(FIELDS.comments)) {
-          calls.push(api.put(
-            `/reports/${report.ident}/${VARIANT_TYPE_TO_API_MAP[data.variantType]}/${variantId}`,
-            {
-              comments: data.comments,
-            },
-          ));
+          const variantLink = VARIANT_TYPE_TO_API_MAP[data.variantType];
+          // TODO: Once API finalizes remove this check
+          if (variantLink) {
+            calls.push(api.put(
+              `/reports/${report.ident}/${variantLink}/${variantId}`,
+              {
+                comments: data.comments,
+              },
+            ));
+          }
         }
 
         if (fields.includes(FIELDS.kbMatches) && data?.kbMatches && editData?.kbMatches) {
