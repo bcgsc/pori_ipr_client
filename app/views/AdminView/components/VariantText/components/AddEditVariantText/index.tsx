@@ -30,6 +30,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import sanitizeHtml from 'sanitize-html';
 import { VariantTextType } from '@/common';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 
 type AddEditVariantTextProps = {
   editData?: VariantTextType;
@@ -42,20 +43,31 @@ type AddEditVariantFormProps = Omit<VariantTextType, 'project' | 'template'> & {
   project: string
 };
 
+type VariantTextPayload = {
+  template: string;
+  project: string;
+  variantName: string;
+  cancerType: string[];
+  text: string;
+};
+
 const extensions = [
   StarterKit,
   Underline,
 ];
+
+const fetchProjects = async () => api.get('/project').request();
+const fetchTemplates = async () => api.get('/templates').request();
+const handleProjectError = (err) => snackbar.error(`Error getting project options: ${err}`);
+const handleTemplateError = (err) => snackbar.error(`Error getting template options: ${err}`);
 
 const AddEditVariantText = ({
   editData = null,
   isOpen,
   onClose,
 }: AddEditVariantTextProps): JSX.Element => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [projectOptions, setProjectOptions] = useState([]);
-  const [templateOptions, setTemplateOptions] = useState([]);
   const [isEditorDirty, setIsEditorDirty] = useState(false);
+  const queryClient = useQueryClient();
 
   const {
     register, handleSubmit, formState: { dirtyFields }, setValue, getValues, reset, control,
@@ -74,6 +86,39 @@ const AddEditVariantText = ({
     onUpdate: () => setIsEditorDirty(true),
   });
 
+  const { data: projectOptions, isLoading: isProjectsLoading } = useQuery({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    onError: handleProjectError,
+  });
+
+  const { data: templateOptions, isLoading: isTemplatesLoading } = useQuery({
+    queryKey: ['templates'],
+    queryFn: fetchTemplates,
+    onError: handleTemplateError,
+  });
+
+  const savingVariant = async ({
+    template, project, variantName, cancerType, text,
+  }: VariantTextPayload) => {
+    let response;
+    if (editData) {
+      response = await api.put(`/variant-text/${editData.ident}`, {
+        cancerType,
+        text,
+      }).request();
+    } else {
+      response = await api.post('/variant-text', {
+        template,
+        project,
+        variantName,
+        cancerType,
+        text,
+      }).request();
+    }
+    return response;
+  };
+
   useEffect(() => {
     if (editData) {
       reset({
@@ -85,30 +130,6 @@ const AddEditVariantText = ({
       editor.commands.setContent(editData.text);
     }
   }, [editor, reset, editData]);
-
-  // Grab project and group options
-  useEffect(() => {
-    let cancelled = false;
-    const getData = async () => {
-      setIsLoading(true);
-      try {
-        const [projectsResp, templatesResp] = await Promise.all([
-          api.get('/project').request(),
-          api.get('/templates').request(),
-        ]);
-        if (!cancelled) {
-          setProjectOptions(projectsResp);
-          setTemplateOptions(templatesResp);
-        }
-      } catch (e) {
-        snackbar.error(`Error getting Project and Template options: ${e}`);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getData();
-    return function cleanup() { cancelled = true; };
-  }, []);
 
   const handlecancerTypesFieldKeyDown = useCallback(({ code, target: { value } }) => {
     if (code === 'Backspace' && !value) {
@@ -141,76 +162,54 @@ const AddEditVariantText = ({
     });
   }, [getValues, setValue]);
 
+  const { mutate: mutateVariant } = useMutation({
+    mutationFn: savingVariant,
+    onSuccess: (res, { template, project }) => {
+      snackbar.success(editData ? 'Variant text modified successfully' : 'Variant text created successfully');
+
+      const returnedData = {
+        ...res,
+        template: templateOptions?.find(({ ident }) => ident === template) || null,
+        project: projectOptions?.find(({ ident }) => ident === project) || null,
+      };
+
+      queryClient.invalidateQueries(['variant-text']);
+      onClose(returnedData);
+      editor.commands.clearContent();
+      reset();
+    },
+    onError: (err) => {
+      snackbar.error(`Error ${editData ? 'modifying' : 'creating'} variant text: ${err}`);
+    },
+  });
+
   const saveVariant = useCallback(async ({
-    template,
-    project,
-    variantName: nextVariantName,
-    cancerType: nextCancerType,
+    template, project, variantName, cancerType,
   }) => {
     try {
-      const sanitizedText = sanitizeHtml(editor?.getHTML(), {
-        allowedAttributes: {
-          a: ['href', 'target', 'rel'],
-        },
+      const sanitizedText = sanitizeHtml(editor?.getHTML() || '', {
+        allowedAttributes: { a: ['href', 'target', 'rel'] },
         transformTags: {
           a: (_tagName, attribs) => ({
             tagName: 'a',
-            attribs: {
-              href: attribs.href,
-              target: '_blank',
-              rel: 'noopener noreferrer',
-            },
+            attribs: { href: attribs.href, target: '_blank', rel: 'noopener noreferrer' },
           }),
         },
       });
 
-      let call = api.post('/variant-text', {
+      mutateVariant({
         template,
         project,
-        variantName: nextVariantName,
-        cancerType: nextCancerType,
+        variantName,
+        cancerType,
         text: sanitizedText,
       });
-      let successText = 'Variant text record created successfully';
-
-      if (editData) {
-        call = api.put(`/variant-text/${editData.ident}`, {
-          cancerType: nextCancerType,
-          text: sanitizedText,
-        });
-        successText = 'Variant text record modified successfully';
-      }
-
-      const res = await call.request();
-      snackbar.success(successText);
-      const returnedData = {
-        ...res,
-        template: templateOptions.find(({ ident }) => ident === template),
-        project: projectOptions.find(({ ident }) => ident === project),
-      };
-      onClose(returnedData);
-      editor.commands.clearContent();
-      reset();
     } catch (err) {
-      if (err.message && err.message.includes('[409]')) {
-        let projectStr = '';
-        const tempId = getValues('template');
-        const projId = getValues('project');
-        const temp = templateOptions.find(({ ident }) => ident === tempId);
-        const proj = projectOptions.find(({ ident }) => ident === projId);
-        if (proj) {
-          projectStr = `and project ${proj.name}`;
-        } else {
-          projectStr = '(default variant text)';
-        }
-        snackbar.error(`Error creating variant text record: record already exists for pair: template ${temp.name} ${projectStr}`);
-      } else {
-        snackbar.error(`Error ${editData ? 'modifying' : 'creating'} variant text record: ${err}`);
-      }
+      snackbar.error(`Error preparing variant text: ${err}`);
     }
-  }, [editor, editData, templateOptions, projectOptions, onClose, reset, getValues]);
+  }, [editor, mutateVariant]);
 
-  const disableSubmit = isLoading || (Object.keys(dirtyFields).length === 0 && !isEditorDirty);
+  const disableSubmit = (isTemplatesLoading || isProjectsLoading) || (Object.keys(dirtyFields).length === 0 && !isEditorDirty);
 
   const handleCancel = useCallback(() => {
     reset();
