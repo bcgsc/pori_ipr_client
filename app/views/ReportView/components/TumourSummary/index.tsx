@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { ReportType } from '@/context/ReportContext';
 import {
   TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType,
+  MsiType,
 } from '@/common';
 import { TumourSummaryEdit, TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
@@ -30,6 +31,7 @@ const TumourSummary = ({
   onEditClose,
   mutationBurden,
   tmburMutBur,
+  msi,
   tCellCd8,
   loadedDispatch,
   microbial,
@@ -48,6 +50,7 @@ const TumourSummary = ({
     newTCellCd8Data?: ImmuneType,
     newMutationBurdenData?: MutationBurdenType,
     newTmBurMutBurData?: TmburType,
+    newMsiData?: MsiType,
   ) => {
     setShowTumourSummaryEdit(false);
     onEditClose(
@@ -57,6 +60,7 @@ const TumourSummary = ({
       newTCellCd8Data,
       newMutationBurdenData,
       newTmBurMutBurData,
+      newMsiData,
     );
   }, [onEditClose]);
 
@@ -98,6 +102,7 @@ const TumourSummary = ({
                   tCellCd8={tCellCd8}
                   mutationBurden={mutationBurden}
                   tmburMutBur={tmburMutBur}
+                  msi={msi}
                   isOpen={showTumourSummaryEdit}
                   onEditClose={handleClose}
                 />
