@@ -17,8 +17,7 @@ import PrintTable from '@/components/PrintTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import capitalize from 'lodash/capitalize';
 import orderBy from 'lodash/orderBy';
-
-import './index.scss';
+import getMostCurrentObj from '@/utils/getMostCurrentObj';
 import {
   TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, MsiType, KbMatchType,
 } from '@/common';
@@ -31,10 +30,10 @@ import {
 import { RapidVariantEditDialog, FIELDS } from './components/RapidVariantEditDialog';
 import { RapidVariantType } from './types';
 import { getVariantRelevanceDict } from './utils';
-
 import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
-import { isArray } from 'lodash';
+
+import './index.scss';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -242,7 +241,7 @@ const RapidSummary = ({
           }
 
           if (msiResp.status === 'fulfilled') {
-            const msiVal = msiResp.value[0];
+            const msiVal = getMostCurrentObj(msiResp.value);
             setMsi(msiVal);
           } else if (!isPrint && msiResp.reason.content?.status !== 404) {
             snackbar.error(msiResp.reason?.content?.error?.message);
@@ -660,7 +659,7 @@ const RapidSummary = ({
     }
 
     if(newMsiData) {
-      setMsi(newMsiData[0]);
+      setMsi(getMostCurrentObj(newMsiData));
     }
   }, [setReport]);
 
