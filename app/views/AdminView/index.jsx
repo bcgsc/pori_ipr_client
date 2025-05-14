@@ -11,7 +11,7 @@ const Users = lazy(() => import('./components/Users/index.tsx'));
 const Groups = lazy(() => import('./components/Groups/index.tsx'));
 const Projects = lazy(() => import('../ProjectsView/index.tsx'));
 const Appendices = lazy(() => import('./components/Appendices/index'));
-const VariantText = lazy(() => import('./components/VariantText/index'));
+const VariantText = lazy(() => import('../VariantTextView/index'));
 
 const AdminView = () => (
   <div className="admin">

@@ -30,7 +30,19 @@ const descriptions = {
   manager: 'can create/edit/delete nonadmin users; all other permissions within assigned projects',
 };
 
-const ALL_ACCESS = ['admin', 'manager', 'report assignment access', 'create report access', 'germline access', 'non-production access', 'unreviewed access', 'all projects access', 'template edit access', 'appendix edit access', 'variant-text edit access'];
+const ALL_ACCESS = [
+  'admin',
+  'manager',
+  'report assignment access',
+  'create report access',
+  'germline access',
+  'non-production access',
+  'unreviewed access',
+  'all projects access',
+  'template edit access',
+  'appendix edit access',
+  'variant-text edit access',
+];
 
 const Groups = (): JSX.Element => {
   const [groups, setGroups] = useState<GroupType[]>([]);
