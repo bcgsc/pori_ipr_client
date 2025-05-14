@@ -44,7 +44,7 @@ const fetchGroups = async () => {
   return groupsResp;
 };
 
-const addModifyUser = async ({ formData, userIdent }: { formData: Partial<UserType>, userIdent: string }) => {
+const addModifyUser = async ({ formData, userIdent }: { formData: UserForm, userIdent: string }) => {
   const userReq: Partial<UserType> = {
     firstName: formData.firstName,
     lastName: formData.lastName,
@@ -58,9 +58,26 @@ const addModifyUser = async ({ formData, userIdent }: { formData: Partial<UserTy
   return api.post('/user', userReq).request();
 };
 
-const addGraphKbUserMutation = async (userObject: Partial<UserType>) => api.post('/graphkb/new-user', userObject).request();
+type AddToGraphKbUserParams = Pick<UserType, 'email' | 'username'>;
+const addGraphKbUserMutation = async (userObject: AddToGraphKbUserParams) => api.post('/graphkb/new-user', userObject).request();
 
-const modifyUserProjects = async ({ existingProjectsIds, newProjectsIds, userId }) => {
+type ModifyUserProjectsFnType = {
+  existingProjectsIds: string[];
+  newProjectsIds: string[];
+  userId: string;
+  username?: string;
+};
+
+type ModifyUserGroupsFnType = {
+  existingGroupsIds: string[];
+  newGroupsIds: string[];
+  userId: string;
+  username?: string;
+};
+
+const modifyUserProjects = async ({
+  existingProjectsIds, newProjectsIds, userId,
+}: ModifyUserProjectsFnType) => {
   const toAddProjs = newProjectsIds.filter((projectId) => !existingProjectsIds.includes(projectId));
   const toRemoveProjs = existingProjectsIds.filter((projectId) => !newProjectsIds.includes(projectId));
   const callSet = new ApiCallSet([
@@ -70,7 +87,9 @@ const modifyUserProjects = async ({ existingProjectsIds, newProjectsIds, userId 
   return callSet.request();
 };
 
-const modifyUserGroups = async ({ existingGroupsIds, newGroupsIds, userId }) => {
+const modifyUserGroups = async ({
+  existingGroupsIds, newGroupsIds, userId,
+}: ModifyUserGroupsFnType) => {
   const toAddGroups = newGroupsIds.filter((projectId) => !existingGroupsIds.includes(projectId));
   const toRemoveGroups = existingGroupsIds.filter((projectId) => !newGroupsIds.includes(projectId));
   const callSet = new ApiCallSet([
@@ -95,10 +114,10 @@ type UserForm = {
   email: string;
   deletedAt: null | string;
   firstName: string;
-  groups: string[];
+  groups: GroupType['ident'][];
   lastLogin: null | string;
   lastName: string;
-  projects: string[];
+  projects: UserProjectsType['ident'][];
   // Db type
   type: string;
   username: string;
@@ -158,8 +177,12 @@ const AddEditUserDialog = ({
 
   const userProjectsMutation = useMutation({
     mutationFn: modifyUserProjects,
-    onSuccess: () => {
-      snackbar.success('Successfully added user to projects.');
+    onSuccess: (_data, { userId, username }) => {
+      if (!userId) {
+        snackbar.success(`Successfully added ${username} to projects.`);
+      } else {
+        snackbar.success(`Successfully edited ${username}'s projects.`);
+      }
     },
     onError: (err: ErrorMixin) => {
       const { error } = err.toJSON();
@@ -169,8 +192,12 @@ const AddEditUserDialog = ({
 
   const userGroupsMutation = useMutation({
     mutationFn: modifyUserGroups,
-    onSuccess: () => {
-      snackbar.success('Successfully added user to groups.');
+    onSuccess: (_data, { userId, username }) => {
+      if (!userId) {
+        snackbar.success(`Successfully added ${username} to groups.`);
+      } else {
+        snackbar.success(`Successfully edited ${username}'s groups.`);
+      }
     },
     onError: (err: ErrorMixin) => {
       const { error } = err.toJSON();
@@ -184,12 +211,18 @@ const AddEditUserDialog = ({
       setIsApiCalling(true);
       return ({ editData, gkbAdd });
     },
-    onSuccess: async (data, { formData }, { editData: contextEditData, gkbAdd: contextGkbAdd }) => {
+    onSuccess: async (data, { formData, userIdent }, { editData: contextEditData, gkbAdd: contextGkbAdd }) => {
       const {
         groups,
         projects,
+        username,
       } = formData;
-      snackbar.success(`Successfully added ${formData.username} to IPR`);
+
+      if (!userIdent) {
+        snackbar.success(`Successfully added ${username} to IPR`);
+      } else {
+        snackbar.success(`Successfully edited ${username}`);
+      }
 
       const existingProjects = contextEditData?.projects.map(({ ident }) => ident) || [];
       const existingGroups = contextEditData?.groups.map(({ ident }) => ident) || [];
@@ -203,12 +236,14 @@ const AddEditUserDialog = ({
             existingProjectsIds: existingProjects,
             newProjectsIds: projects,
             userId: data.ident,
+            username,
           }),
           dirtyFields.groups
           && userGroupsMutation.mutateAsync({
             existingGroupsIds: existingGroups,
             newGroupsIds: groups,
             userId: data.ident,
+            username,
           }),
         ]);
 
@@ -304,7 +339,7 @@ const AddEditUserDialog = ({
     setGkbAdd(event.target.checked);
   };
 
-  const handleClose = useCallback(async (formData) => {
+  const handleClose = useCallback(async (formData: UserForm) => {
     if (Object.keys(dirtyFields).length > 0) {
       addModifyUserMutation.mutate({ formData, userIdent: editData?.ident });
     } else {
