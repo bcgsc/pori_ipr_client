@@ -24,7 +24,7 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import './index.scss';
 import { ReportType } from '@/context/ReportContext';
 import {
-  ImmuneType, MicrobialType, MutationBurdenType, TmburType,
+  ImmuneType, MicrobialType, MsiType, MutationBurdenType, TmburType,
 } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import { getMicbSiteIntegrationStatusLabel } from '@/utils/getMicbSiteIntegrationStatusLabel';
@@ -41,6 +41,7 @@ type TumourSummaryEditProps = {
   tCellCd8: ImmuneType;
   mutationBurden: MutationBurdenType;
   tmburMutBur: TmburType;
+  msi?: MsiType;
   isOpen: boolean;
   onEditClose: (
     isSaved: boolean,
@@ -49,6 +50,7 @@ type TumourSummaryEditProps = {
     newTCellCd8Data?: ImmuneType,
     newMutationBurdenData?: MutationBurdenType,
     newTmBurMutBurData?: TmburType,
+    newMsiData?: MsiType,
   ) => void;
 };
 
@@ -61,6 +63,7 @@ const TumourSummaryEdit = ({
   tCellCd8,
   mutationBurden,
   tmburMutBur,
+  msi,
   isOpen,
   onEditClose,
 }: TumourSummaryEditProps): JSX.Element => {
@@ -72,11 +75,13 @@ const TumourSummaryEdit = ({
   const [newTCellCd8Data, setNewTCellCd8Data] = useState<Partial<ImmuneType>>(null);
   const [newMutationBurdenData, setNewMutationBurdenData] = useState<Partial<MutationBurdenType>>(null);
   const [newTmburMutData, setNewTmburMutData] = useState<Partial<TmburType>>(null);
+  const [newMsiData, setNewMsiData] = useState<Partial<MsiType>>(null);
   const [microbialDirty, setMicrobialDirty] = useState(false);
   const [reportDirty, setReportDirty] = useState(false);
   const [tCellCd8Dirty, setTCellCd8Dirty] = useState(false);
   const [mutationBurdenDirty, setMutationBurdenDirty] = useState(false);
   const [tmburMutDirty, setTmburMutDirty] = useState(false);
+  const [msiDirty, setMsiDirty] = useState(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
 
   useEffect(() => {
@@ -129,9 +134,18 @@ const TumourSummaryEdit = ({
         adjustedTmb: tmburMutBur.adjustedTmb,
         adjustedTmbComment: tmburMutBur.adjustedTmbComment,
         tmbHidden: tmburMutBur.tmbHidden,
+        msiScore: tmburMutBur.msiScore,
       });
     }
   }, [tmburMutBur]);
+
+  useEffect(() => {
+    if (msi) {
+      setNewMsiData({
+        score: msi.score,
+      });
+    }
+  }, [msi]);
 
   const handleReportChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
@@ -184,9 +198,19 @@ const TumourSummaryEdit = ({
   const handleTmburChange = useCallback(({ target: { value, name } }) => {
     setNewTmburMutData((tmb) => ({
       ...tmb,
-      [name]: parseFloat(value),
+      [name]: Number.isNaN(value) ? null : parseFloat(value),
     }));
     setTmburMutDirty(true);
+  }, []);
+
+  const handleMsiScoreChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target: { value, name } } = event;
+    setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
+    if (msi) {
+      setMsiDirty(true);
+    } else if (tmburMutBur) {
+      setTmburMutDirty(true);
+    }
   }, []);
 
   const handleAdjustedTmbCommentChange = useCallback(({ target: { value, name } }) => {
@@ -250,7 +274,9 @@ const TumourSummaryEdit = ({
         newMicbrobialEntries?.forEach((entry) => {
           apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, entry, {}));
         });
-        editedMicrobialEntries?.forEach(({ ident, integrationSite, species, microbialHidden }) => {
+        editedMicrobialEntries?.forEach(({
+          ident, integrationSite, species, microbialHidden,
+        }) => {
           apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${ident}`, { integrationSite, species, microbialHidden }, {}));
         });
       }
@@ -289,6 +315,14 @@ const TumourSummaryEdit = ({
         }
       }
 
+      if (msiDirty && newMsiData) {
+        if (msi?.ident) {
+          apiCalls.push(api.put(`/reports/${report.ident}/msi/${msi.ident}`, newMsiData, {}));
+        } else {
+          apiCalls.push(api.post(`/reports/${report.ident}/msi`, newMsiData, {}));
+        }
+      }
+
       callSet = new ApiCallSet(apiCalls);
 
       if (isSigned) {
@@ -301,6 +335,7 @@ const TumourSummaryEdit = ({
           let microbialResp = null;
           let immuneResp = null;
           let tmburMutResp = null;
+          let msiResp = null;
           let mutationBurdenResp = null;
           let reportResp = null;
 
@@ -312,6 +347,9 @@ const TumourSummaryEdit = ({
           }
           if (tmburMutDirty) {
             tmburMutResp = await api.get(`/reports/${report.ident}/tmbur-mutation-burden`).request();
+          }
+          if (msiDirty) {
+            msiResp = await api.get(`/reports/${report.ident}/msi`).request();
           }
           if (mutationBurdenDirty) {
             mutationBurdenResp = await api.get(`/reports/${report.ident}/mutation-burden`).request();
@@ -328,6 +366,7 @@ const TumourSummaryEdit = ({
             tCellCd8Dirty ? immuneResp.find(({ cellType }) => cellType === 'T cells CD8') : null,
             mutationBurdenDirty ? mutationBurdenResp.find((mb) => mb.role === 'primary') : null,
             tmburMutDirty ? tmburMutResp : null,
+            msiDirty ? msiResp : null,
           );
         } catch (callSetError) {
           snackbar.error(`Error updating Tumour Summary: ${callSetError?.message}`);
@@ -349,6 +388,8 @@ const TumourSummaryEdit = ({
     newMutationBurdenData,
     tmburMutDirty,
     newTmburMutData,
+    msiDirty,
+    newMsiData,
     isSigned,
     newMicrobialData,
     microbial,
@@ -356,6 +397,7 @@ const TumourSummaryEdit = ({
     tCellCd8?.ident,
     mutationBurden?.ident,
     tmburMutBur?.ident,
+    msi?.ident,
     showConfirmDialog,
     onEditClose,
   ]);
@@ -418,6 +460,19 @@ const TumourSummaryEdit = ({
           type="number"
         />
       );
+      const genomeTmbField = (
+        <TextField
+          className="tumour-dialog__number-field"
+          label="Genome TMB (Mut/Mb)"
+          value={newReportData?.genomeTmb ?? ''}
+          name="genomeTmb"
+          onChange={handleReportChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+      );
+
       if (reportType === 'genomic') {
         return (
           <>
@@ -441,6 +496,7 @@ const TumourSummaryEdit = ({
               multiline
               fullWidth
             />
+            {genomeTmbField}
             {captiv8Section}
           </>
         );
@@ -448,16 +504,7 @@ const TumourSummaryEdit = ({
       if (reportType === 'rapid') {
         return (
           <>
-            <TextField
-              className="tumour-dialog__number-field"
-              label="Intersect TMB Score"
-              value={newReportData?.genomeTmb ?? ''}
-              name="genomeTmb"
-              onChange={handleReportChange}
-              variant="outlined"
-              fullWidth
-              type="number"
-            />
+            {genomeTmbField}
             {captiv8Section}
           </>
         );
@@ -479,7 +526,7 @@ const TumourSummaryEdit = ({
           renderTags={(value) => value.map(({ species, integrationSite, microbialHidden }, idx) => (
             <Chip
               variant="filled"
-              label={  
+              label={(
                 <Chip
                   // eslint-disable-next-line react/no-array-index-key
                   key={`${species}-${idx}`}
@@ -488,15 +535,15 @@ const TumourSummaryEdit = ({
                   onClick={() => handleClicked(idx)}
                   onDelete={() => handleDelete(idx)}
                   sx={{
-                    "& .MuiChip-deleteIcon": {
-                      marginLeft: 0.5
+                    '& .MuiChip-deleteIcon': {
+                      marginLeft: 0.5,
                     },
                     borderTopLeftRadius: 1,
                     borderBottomLeftRadius: 1,
                   }}
                 />
-              }
-              icon={              
+              )}
+              icon={(
                 <Checkbox
                   size="small"
                   icon={<Visibility />}
@@ -510,9 +557,9 @@ const TumourSummaryEdit = ({
                     backgroundColor: 'transparent !important',
                   }}
                 />
-              }
+              )}
               sx={{
-                "& .MuiChip-label": {
+                '& .MuiChip-label': {
                   paddingRight: 0,
                 },
               }}
@@ -531,7 +578,7 @@ const TumourSummaryEdit = ({
       );
     }
     return null;
-  }, [handleClicked, handleDelete, handleKeyDown, newMicrobialData]);
+  }, [handleClicked, handleDelete, handleKeyDown, handleMicrobialVisibilityToggle, newMicrobialData]);
 
   const tCellCd8DataSection = useMemo(() => (
     <>
@@ -610,7 +657,19 @@ const TumourSummaryEdit = ({
         type="text"
       />
     </>
-  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.percentileHidden, newTCellCd8Data?.pedsScore, newTCellCd8Data?.pedsPercentile, newTCellCd8Data?.pedsScoreComment, handleTCellCd8Change, handleTCellCd8PercentileVisibleChange, report.patientInformation.caseType, handlePedsCd8tChange, handlePedsCd8tCommentChange]);
+  ), [
+    handlePedsCd8tChange,
+    handlePedsCd8tCommentChange,
+    handleTCellCd8Change,
+    handleTCellCd8PercentileVisibleChange,
+    newTCellCd8Data?.pedsPercentile,
+    newTCellCd8Data?.pedsScore,
+    newTCellCd8Data?.pedsScoreComment,
+    newTCellCd8Data?.percentile,
+    newTCellCd8Data?.percentileHidden,
+    newTCellCd8Data?.score,
+    report.patientInformation.caseType,
+  ]);
 
   const mutBurDataSection = useMemo(() => (
     <>
@@ -659,26 +718,6 @@ const TumourSummaryEdit = ({
 
   const tmburMutBurSection = useMemo(() => (
     <>
-      <TextField
-        className="tumour-dialog__number-field"
-        label="genomeSnvTmb"
-        value={newTmburMutData?.genomeSnvTmb ?? null}
-        name="genomeSnvTmb"
-        onChange={handleTmburChange}
-        variant="outlined"
-        fullWidth
-        type="number"
-      />
-      <TextField
-        className="tumour-dialog__number-field"
-        label="genomeIndelTmb"
-        value={newTmburMutData?.genomeIndelTmb ?? null}
-        name="genomeIndelTmb"
-        onChange={handleTmburChange}
-        variant="outlined"
-        fullWidth
-        type="number"
-      />
       <TextField
         className="tumour-dialog__number-field"
         label="Adjusted TMB"
@@ -733,6 +772,39 @@ const TumourSummaryEdit = ({
     handleAdjustedTmbVisibleChange,
   ]);
 
+  const msiSection = useMemo(() => (
+    <>
+      {msi && 
+        <TextField
+          className="tumour-dialog__number-field"
+          label="MSI Score"
+          value={newMsiData?.score ?? null}
+          name="score"
+          onChange={handleMsiScoreChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        /> 
+      }
+      {!msi && tmburMutBur &&
+        <TextField
+          className="tumour-dialog__number-field"
+          label="MSI Score"
+          value={newTmburMutData?.msiScore ?? null}
+          name="msiScore"
+          onChange={handleMsiScoreChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+      }
+    </>
+  ), [
+    newMsiData?.score,
+    newTmburMutData?.msiScore,
+    handleMsiScoreChange,
+  ]);
+
   return (
     <Dialog open={isOpen}>
       <DialogTitle>
@@ -744,6 +816,7 @@ const TumourSummaryEdit = ({
         {tCellCd8DataSection}
         {mutBurDataSection}
         {tmburMutBurSection}
+        {msiSection}
       </DialogContent>
       <DialogActions>
         <Button onClick={() => handleClose(false)}>

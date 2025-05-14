@@ -17,10 +17,9 @@ import PrintTable from '@/components/PrintTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import capitalize from 'lodash/capitalize';
 import orderBy from 'lodash/orderBy';
-
-import './index.scss';
+import getMostCurrentObj from '@/utils/getMostCurrentObj';
 import {
-  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, KbMatchType,
+  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, MsiType, KbMatchType,
 } from '@/common';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
@@ -28,12 +27,13 @@ import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
-import { VariantEditDialog, FIELDS } from './components/VariantEditDialog';
+import { RapidVariantEditDialog, FIELDS } from './components/RapidVariantEditDialog';
 import { RapidVariantType } from './types';
 import { getVariantRelevanceDict } from './utils';
-
 import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
+
+import './index.scss';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -148,6 +148,7 @@ const RapidSummary = ({
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
+  const [msi, setMsi] = useState<MsiType>();
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
   const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [editData, setEditData] = useState();
@@ -167,6 +168,7 @@ const RapidSummary = ({
             api.get(`/reports/${report.ident}/variants?rapidTable=cancerRelevance`),
             api.get(`/reports/${report.ident}/variants?rapidTable=unknownSignificance`),
             api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
+            api.get(`/reports/${report.ident}/msi`),
             api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(`/reports/${report.ident}/summary/microbial`),
             api.get(`/templates/${report.template.ident}/signature-types`),
@@ -177,6 +179,7 @@ const RapidSummary = ({
             cancerRelevanceResp,
             unknownSignificanceResp,
             tmBurdenResp,
+            msiResp,
             immuneResp,
             microbialResp,
             signatureTypesResp,
@@ -186,6 +189,7 @@ const RapidSummary = ({
             PromiseSettledResult<RapidVariantType[]>,
             PromiseSettledResult<RapidVariantType[]>,
             PromiseSettledResult<TmburType>,
+            PromiseSettledResult<MsiType[]>,
             PromiseSettledResult<ImmuneType[]>,
             PromiseSettledResult<MicrobialType[]>,
             PromiseSettledResult<SignatureUserType[]>,
@@ -236,6 +240,13 @@ const RapidSummary = ({
             snackbar.error(tmBurdenResp.reason?.content?.error?.message);
           }
 
+          if (msiResp.status === 'fulfilled') {
+            const msiVal = getMostCurrentObj(msiResp.value);
+            setMsi(msiVal);
+          } else if (!isPrint && msiResp.reason.content?.status !== 404) {
+            snackbar.error(msiResp.reason?.content?.error?.message);
+          }
+
           if (immuneResp.status === 'fulfilled') {
             setTCellCd8(immuneResp.value.find(({ cellType }) => cellType === 'T cells CD8'));
           } else if (!isPrint) {
@@ -284,17 +295,15 @@ const RapidSummary = ({
   }, [loadedDispatch, report, setIsLoading, isPrint]);
 
   useEffect(() => {
-    let msiStatus: null | string;
-    if (tmburMutBur) {
-      const { msiScore } = tmburMutBur;
-      if (msiScore < 20) {
-        msiStatus = 'MSS';
-      }
-      if (msiScore >= 20) {
-        msiStatus = 'MSI';
-      }
+    // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
+    // Rapid report will now incorporate both sources to retain information in old reports and use updated msi score in future reports
+    let msiScore: null | number;
+    if (msi && msi.score !== null) {
+      msiScore = msi.score;
+    } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
+      msiScore = tmburMutBur.msiScore;
     } else {
-      msiStatus = null;
+      msiScore = null;
     }
 
     let svBurden: null | string = null;
@@ -318,68 +327,72 @@ const RapidSummary = ({
       tCell = null;
     }
 
-    setTumourSummary([
-      {
-        term: 'Pathology Tumour Content',
-        value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour').pathoTc ?? ''}`,
-      },
-      {
-        term: 'M1M2 Score',
-        value: report.m1m2Score !== null
-          ? `${report.m1m2Score}`
-          : null,
-      },
-      {
-        term: 'Preliminary CAPTIV-8 Score',
-        value: report.captiv8Score !== null
-          ? `${report.captiv8Score}`
-          : null,
-      },
-      {
-        term: 'Microbial Species',
-        value: getMicbSiteSummary(microbial),
-      },
-      {
-        term:
+    setTumourSummary(() => {
+      let tmbDisplayValue = report?.genomeTmb?.toFixed(2) || null;
+
+      if (tmburMutBur) {
+        if (tmburMutBur.tmbHidden) {
+          tmbDisplayValue = null;
+        } else if (tmburMutBur.adjustedTmb != null) {
+          tmbDisplayValue = tmburMutBur.adjustedTmb.toFixed(2);
+        }
+      }
+
+      return ([
+        {
+          term: 'Pathology Tumour Content',
+          value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour').pathoTc ?? ''}`,
+        },
+        {
+          term: 'M1M2 Score',
+          value: report.m1m2Score !== null
+            ? `${report.m1m2Score}`
+            : null,
+        },
+        {
+          term: 'Preliminary CAPTIV-8 Score',
+          value: report.captiv8Score !== null
+            ? `${report.captiv8Score}`
+            : null,
+        },
+        {
+          term: 'Microbial Species',
+          value: getMicbSiteSummary(microbial),
+        },
+        {
+          term:
           tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
-        value: tCell,
-      },
-      {
-        term: 'Pediatric CD8+ T Cell Comment',
-        value:
+          value: tCell,
+        },
+        {
+          term: 'Pediatric CD8+ T Cell Comment',
+          value:
           tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
-      },
-      {
-        term: 'Mutation Burden',
-        value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
-      },
-      {
-        term: 'SV Burden (POG Average)',
-        value: svBurden,
-      },
-      {
-        term:
-          tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
-        value:
-          tmburMutBur && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmb?.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
-      },
-      {
-        term: 'Adjusted TMB Comment',
-        value:
-          tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
-      },
-      {
-        term: 'Intersect TMB Score',
-        value:
-          report?.genomeTmb ?? null,
-      },
-      {
-        term: 'MSI Status',
-        value: msiStatus,
-      },
-    ]);
+        },
+        {
+          term: 'Mutation Burden',
+          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
+        },
+        {
+          term: 'SV Burden (POG Average)',
+          value: svBurden,
+        },
+        {
+          term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
+          value: tmbDisplayValue,
+        },
+        {
+          term: 'Adjusted TMB Comment',
+          value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+        },
+        {
+          term: 'MSI Score',
+          value: `${msiScore} (MSI Status: ${msiScore < 20 ? 'MSS' : 'MSI'})`,
+        },
+      ]);
+    });
   }, [
-    microbial, primaryBurden, tmburMutBur, tCellCd8,
+    microbial, primaryBurden, tmburMutBur, tCellCd8, msi, msi?.score,
     report.m1m2Score, report.sampleInfo, report.tumourContent, report?.genomeTmb, report.captiv8Score,
     tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
     tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
@@ -437,7 +450,7 @@ const RapidSummary = ({
             isPrint={isPrint}
             isPaginated={!isPrint}
           />
-          <VariantEditDialog
+          <RapidVariantEditDialog
             open={showMatchedTumourEditDialog}
             fields={[FIELDS.comments, FIELDS.kbMatches]}
             editData={editData}
@@ -500,7 +513,7 @@ const RapidSummary = ({
             isPrint={isPrint}
             isPaginated={!isPrint}
           />
-          <VariantEditDialog
+          <RapidVariantEditDialog
             open={showCancerRelevanceEventsDialog}
             editData={editData}
             onClose={handleCancerRelevanceEditClose}
@@ -619,8 +632,9 @@ const RapidSummary = ({
     newTCellCd8Data,
     newMutationBurdenData,
     newTmBurMutBurData,
+    newMsiData,
   ) => {
-    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData && !newMsiData)) {
       return;
     }
 
@@ -642,6 +656,10 @@ const RapidSummary = ({
 
     if (newTmBurMutBurData) {
       setTmburMutBur(newTmBurMutBurData);
+    }
+
+    if(newMsiData) {
+      setMsi(getMostCurrentObj(newMsiData));
     }
   }, [setReport]);
 
@@ -680,6 +698,7 @@ const RapidSummary = ({
                 report={report}
                 tCellCd8={tCellCd8}
                 tmburMutBur={tmburMutBur}
+                msi={msi}
                 tumourSummary={tumourSummary}
               />
             )}
@@ -743,6 +762,7 @@ const RapidSummary = ({
               report={report}
               tCellCd8={tCellCd8}
               tmburMutBur={tmburMutBur}
+              msi={msi}
               tumourSummary={tumourSummary}
             />
           )}

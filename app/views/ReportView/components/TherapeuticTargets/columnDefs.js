@@ -1,4 +1,4 @@
-const columnDefs = [{
+const potentialTherapeuticTargetsColDefs = [{
   colId: 'drag',
   rowDrag: true,
   rowDragText: (params) => params.rowNode.data.gene,
@@ -46,10 +46,16 @@ const columnDefs = [{
   sort: 'asc',
 }, {
   headerName: 'Actions',
+  colId: 'actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   sortable: false,
   suppressMenu: true,
 }];
 
-export default columnDefs;
+const potentialResistanceToxicityColDefs = potentialTherapeuticTargetsColDefs.map((col) => (col.field === 'context' ? { ...col, hide: false } : col));
+
+export {
+  potentialTherapeuticTargetsColDefs,
+  potentialResistanceToxicityColDefs,
+};
