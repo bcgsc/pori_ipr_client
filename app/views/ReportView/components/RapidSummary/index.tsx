@@ -17,10 +17,9 @@ import PrintTable from '@/components/PrintTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import capitalize from 'lodash/capitalize';
 import orderBy from 'lodash/orderBy';
-
-import './index.scss';
+import getMostCurrentObj from '@/utils/getMostCurrentObj';
 import {
-  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, KbMatchType,
+  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, MsiType, KbMatchType,
 } from '@/common';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
@@ -31,9 +30,10 @@ import {
 import { RapidVariantEditDialog, FIELDS } from './components/RapidVariantEditDialog';
 import { RapidVariantType } from './types';
 import { getVariantRelevanceDict } from './utils';
-
 import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
+
+import './index.scss';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -61,39 +61,42 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   return iprRelevanceDict;
 };
 
-const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
+const filterNoTable = (kbMatches: KbMatchType[]) => kbMatches.map(({ kbMatchedStatements, ...rest }) => ({
+  ...rest,
+  kbMatchedStatements: kbMatchedStatements.filter(
+    ({ kbData }) => !kbData || kbData.rapidReportTableTag !== 'noTable',
+  ),
+}));
+
+const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(
+  getVariantRelevanceDict(variant.kbMatches),
+)
   .map(([relevanceKey, kbMatches]) => {
-    const iprEvidenceDict = splitIprEvidenceLevels(kbMatches);
-    if (!iprEvidenceDict['IPR-A']) {
-      iprEvidenceDict['IPR-A'] = new Set();
-    }
-    if (!iprEvidenceDict['IPR-B']) {
-      iprEvidenceDict['IPR-B'] = new Set();
-    }
+    const iprEvidenceDict = splitIprEvidenceLevels(filterNoTable(kbMatches));
 
-    const iprAArr = Array.from(iprEvidenceDict['IPR-A']);
-    const iprBArr = Array.from(iprEvidenceDict['IPR-B']);
+    const sortedIprKeys = Object.keys(iprEvidenceDict).sort(
+      (a, b) => a.localeCompare(b),
+    );
 
-    let iprAlist = [];
-    if (iprAArr.length > 0) {
-      iprAlist = orderBy(
-        iprAArr,
-        [(cont) => cont[0].toLowerCase()],
-      ).map((drugName) => `${drugName} (IPR-A)`);
+    const drugToLevel = new Map();
+
+    for (const iprLevel of sortedIprKeys) {
+      const drugs = iprEvidenceDict[iprLevel];
+      for (const drug of drugs) {
+        if (!drugToLevel.has(drug)) {
+          drugToLevel.set(drug, iprLevel);
+        }
+      }
     }
 
-    let iprBlist = [];
-    if (iprBArr.length > 0) {
-      iprBlist = orderBy(
-        iprBArr,
-        [(cont) => cont[0].toLowerCase()],
-      ).filter((drugName) => !iprEvidenceDict['IPR-A'].has(drugName)).map((drugName) => `${drugName} (IPR-B)`);
-    }
-
-    const combinedDrugList = [
-      ...iprAlist,
-      ...iprBlist,
-    ].join(', ');
+    const combinedDrugList = [...drugToLevel.entries()]
+      .sort(([drugA, levelA], [drugB, levelB]) => {
+        const levelCmp = levelA.localeCompare(levelB);
+        if (levelCmp !== 0) return levelCmp;
+        return drugA[0].localeCompare(drugB[0]); // compare first letter only
+      })
+      .map(([drug, level]) => `${drug} (${level})`)
+      .join(', ');
 
     return ({
       ...variant,
@@ -148,6 +151,7 @@ const RapidSummary = ({
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
+  const [msi, setMsi] = useState<MsiType>();
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
   const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [editData, setEditData] = useState();
@@ -167,6 +171,7 @@ const RapidSummary = ({
             api.get(`/reports/${report.ident}/variants?rapidTable=cancerRelevance`),
             api.get(`/reports/${report.ident}/variants?rapidTable=unknownSignificance`),
             api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
+            api.get(`/reports/${report.ident}/msi`),
             api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(`/reports/${report.ident}/summary/microbial`),
             api.get(`/templates/${report.template.ident}/signature-types`),
@@ -177,6 +182,7 @@ const RapidSummary = ({
             cancerRelevanceResp,
             unknownSignificanceResp,
             tmBurdenResp,
+            msiResp,
             immuneResp,
             microbialResp,
             signatureTypesResp,
@@ -186,6 +192,7 @@ const RapidSummary = ({
             PromiseSettledResult<RapidVariantType[]>,
             PromiseSettledResult<RapidVariantType[]>,
             PromiseSettledResult<TmburType>,
+            PromiseSettledResult<MsiType[]>,
             PromiseSettledResult<ImmuneType[]>,
             PromiseSettledResult<MicrobialType[]>,
             PromiseSettledResult<SignatureUserType[]>,
@@ -236,6 +243,13 @@ const RapidSummary = ({
             snackbar.error(tmBurdenResp.reason?.content?.error?.message);
           }
 
+          if (msiResp.status === 'fulfilled') {
+            const msiVal = getMostCurrentObj(msiResp.value);
+            setMsi(msiVal);
+          } else if (!isPrint && msiResp.reason.content?.status !== 404) {
+            snackbar.error(msiResp.reason?.content?.error?.message);
+          }
+
           if (immuneResp.status === 'fulfilled') {
             setTCellCd8(immuneResp.value.find(({ cellType }) => cellType === 'T cells CD8'));
           } else if (!isPrint) {
@@ -284,17 +298,15 @@ const RapidSummary = ({
   }, [loadedDispatch, report, setIsLoading, isPrint]);
 
   useEffect(() => {
-    let msiStatus: null | string;
-    if (tmburMutBur) {
-      const { msiScore } = tmburMutBur;
-      if (msiScore < 20) {
-        msiStatus = 'MSS';
-      }
-      if (msiScore >= 20) {
-        msiStatus = 'MSI';
-      }
+    // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
+    // Rapid report will now incorporate both sources to retain information in old reports and use updated msi score in future reports
+    let msiScore: null | number;
+    if (msi && msi.score !== null) {
+      msiScore = msi.score;
+    } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
+      msiScore = tmburMutBur.msiScore;
     } else {
-      msiStatus = null;
+      msiScore = null;
     }
 
     let svBurden: null | string = null;
@@ -377,13 +389,13 @@ const RapidSummary = ({
           value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
         },
         {
-          term: 'MSI Status',
-          value: msiStatus,
+          term: 'MSI Score',
+          value: `${msiScore} (MSI Status: ${msiScore < 20 ? 'MSS' : 'MSI'})`,
         },
       ]);
     });
   }, [
-    microbial, primaryBurden, tmburMutBur, tCellCd8,
+    microbial, primaryBurden, tmburMutBur, tCellCd8, msi, msi?.score,
     report.m1m2Score, report.sampleInfo, report.tumourContent, report?.genomeTmb, report.captiv8Score,
     tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
     tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
@@ -442,6 +454,7 @@ const RapidSummary = ({
             isPaginated={!isPrint}
           />
           <RapidVariantEditDialog
+            rapidVariantTableType="therapeutic"
             open={showMatchedTumourEditDialog}
             fields={[FIELDS.comments, FIELDS.kbMatches]}
             editData={editData}
@@ -505,6 +518,7 @@ const RapidSummary = ({
             isPaginated={!isPrint}
           />
           <RapidVariantEditDialog
+            rapidVariantTableType="cancerRelevance"
             open={showCancerRelevanceEventsDialog}
             editData={editData}
             onClose={handleCancerRelevanceEditClose}
@@ -623,8 +637,9 @@ const RapidSummary = ({
     newTCellCd8Data,
     newMutationBurdenData,
     newTmBurMutBurData,
+    newMsiData,
   ) => {
-    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData && !newMsiData)) {
       return;
     }
 
@@ -646,6 +661,10 @@ const RapidSummary = ({
 
     if (newTmBurMutBurData) {
       setTmburMutBur(newTmBurMutBurData);
+    }
+
+    if(newMsiData) {
+      setMsi(getMostCurrentObj(newMsiData));
     }
   }, [setReport]);
 
@@ -684,6 +703,7 @@ const RapidSummary = ({
                 report={report}
                 tCellCd8={tCellCd8}
                 tmburMutBur={tmburMutBur}
+                msi={msi}
                 tumourSummary={tumourSummary}
               />
             )}
@@ -747,6 +767,7 @@ const RapidSummary = ({
               report={report}
               tCellCd8={tCellCd8}
               tmburMutBur={tmburMutBur}
+              msi={msi}
               tumourSummary={tumourSummary}
             />
           )}

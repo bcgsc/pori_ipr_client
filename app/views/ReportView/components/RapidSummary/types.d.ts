@@ -1,8 +1,8 @@
 import {
-  CopyNumberType, SmallMutationType, StructuralVariantType,
+  CopyNumberType, SmallMutationType, StructuralVariantType, TmburType,
 } from '@/common';
 
-type RapidVariantType = CopyNumberType | SmallMutationType | StructuralVariantType;
+type RapidVariantType = CopyNumberType | SmallMutationType | StructuralVariantType | TmburType;
 
 export {
   RapidVariantType,
