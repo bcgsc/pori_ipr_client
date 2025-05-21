@@ -42,6 +42,7 @@ const AdminView = lazy(() => import('../AdminView'));
 const LinkOutView = lazy(() => import('../LinkOutView'));
 const TemplateView = lazy(() => import('../TemplateView'));
 const ProjectsView = lazy(() => import('../ProjectsView'));
+const VariantTextView = lazy(() => import('../VariantTextView'));
 
 function formatTime(seconds) {
   const hours = Math.floor(seconds / 3600);
@@ -232,11 +233,12 @@ const Main = (): JSX.Element => {
                   <AuthenticatedRoute component={ReportView} path="/report/:ident" />
                   <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
                   <AuthenticatedRoute component={CondensedPrintView} path="/condensedLayoutPrint/:ident" showNav={false} onToggleNav={setIsNavVisible} />
-                  <AuthenticatedRoute germlineRequired component={GermlineView} path="/germline" />
+                  <AuthenticatedRoute requiredAccess="germlineAccess" component={GermlineView} path="/germline" />
                   <AuthenticatedRoute component={ProjectsView} path="/projects" />
-                  <AuthenticatedRoute appendixEditorRequired component={AdminView} path="/admin/appendices" />
-                  <AuthenticatedRoute managerRequired component={AdminView} path="/admin" />
-                  <AuthenticatedRoute templateEditorRequired component={TemplateView} path="/template" />
+                  <AuthenticatedRoute requiredAccess="variantTextEditAccess" component={VariantTextView} path="/variant-text" />
+                  <AuthenticatedRoute requiredAccess="appendixEditAccess" component={AdminView} path="/admin/appendices" />
+                  <AuthenticatedRoute requiredAccess="managerAccess" component={AdminView} path="/admin" />
+                  <AuthenticatedRoute requiredAccess="templateEditAccess" component={TemplateView} path="/template" />
                 </Switch>
               </Suspense>
             </section>

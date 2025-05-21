@@ -32,9 +32,9 @@ const Users = (): JSX.Element => {
   });
 
   const deleteUserMutation = useMutation(deleteUser, {
-    onSuccess: (_data, ident) => {
+    onSuccess: () => {
       // Update the users list after successful deletion
-      queryClient.setQueryData('users', (oldUsers: UserType[]) => oldUsers.filter((user) => user.ident !== ident));
+      queryClient.invalidateQueries({ queryKey: ['users'] });
       snackbar.success('User deleted');
     },
     onError: (error: ErrorMixin) => {

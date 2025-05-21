@@ -14,6 +14,7 @@ type ResourceContextType = {
   templateEditAccess: boolean;
   unreviewedAccess: boolean;
   unreviewedStates: string[];
+  variantTextEditAccess: boolean;
 };
 
 export default ResourceContextType;
