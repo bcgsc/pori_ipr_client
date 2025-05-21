@@ -19,8 +19,8 @@ type SectionType = {
 };
 
 type ReportSidebarProps = {
-  allSections: SectionType[]; // Array of objects
-  visibleSections: string[]; // Array of strings
+  allSections: SectionType[];
+  visibleSections: string[];
   isSidebarVisible: boolean;
 };
 
