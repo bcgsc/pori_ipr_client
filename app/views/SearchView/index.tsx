@@ -108,8 +108,18 @@ const SearchView = () => {
       setSearchKey((currData) => currData.slice(0, -1));
     }
     if (code === ENTER_KEY) {
+      // Allow user to press enter to submit search when there is no new character being entered for new keyword
+      if (searchKey.length > 0 && !target.value) {
+        setSearchErrorMessage('');
+        const searchUrl: string[] = [];
+        searchKey.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
+        history.push({
+          pathname: '/search/result',
+          search: `?searchParams=${searchUrl.join('')}`,
+        });
+      }
       // Validate value
-      if (!target.value) {
+      if ((searchKey.length < 1 && target.value.length < MIN_KEYWORD_LENGTH ) || (searchKey.length > 0 && target.value.length > 0 && target.value.length < MIN_KEYWORD_LENGTH)) {
         setSearchErrorMessage(`Must have 1 or more terms of at least ${MIN_KEYWORD_LENGTH} characters`);
       } else {
         setSearchErrorMessage('');
@@ -121,7 +131,7 @@ const SearchView = () => {
         } as SearchKeyType]);
       }
     }
-  }, [searchCategory, searchKeyword, searchThreshold]);
+  }, [searchKey, searchCategory, searchKeyword, searchThreshold]);
 
   return (
     <div className="search-view">
@@ -217,7 +227,7 @@ const SearchView = () => {
                 error={Boolean(searchErrorMessage)}
                 onChange={handleKeywordChange}
                 onKeyDown={handleKeyDown}
-                placeholder={searchKey.length < 1 ? 'Press enter to add keyword. Press backspace to delete.' : ''}
+                placeholder={searchKey.length < 1 ? 'Press enter to add keyword. Press backspace to delete keyword.' : ''}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
