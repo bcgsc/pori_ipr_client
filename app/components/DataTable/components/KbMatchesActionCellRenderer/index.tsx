@@ -10,7 +10,7 @@ import { KbMatchedStatementType } from '@/common';
 import { useParams } from 'react-router-dom';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
-import TherapeuticType from '@/views/ReportView/components/TherapeuticTargets/types';
+import { TherapeuticType } from '@/views/ReportView/components/TherapeuticTargets/types';
 import { useKbMatches } from '@/context/KbMatchesMoveDialogContext/KbmatchesMoveDialogContext';
 import {
   ActionCellRendererProps,
@@ -33,6 +33,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
     setMoveKbMatchesDialogOpen,
     setMoveKbMatchesTableName,
     setSelectedRows,
+    setDestinationType,
   } = useKbMatches();
 
   const { report: { template: { name: reportType } } } = useContext(ReportContext);
@@ -173,6 +174,13 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
     setSelectedRows([data]);
   }, [category, data, approvedTherapy, matchedCancer, kbData?.kbmatchTag, setMoveKbMatchesDialogOpen, setMoveKbMatchesTableName, setSelectedRows]);
 
+  const handleMoveToRapidSummary = useCallback(() => {
+    setMoveKbMatchesDialogOpen(true);
+    setMoveKbMatchesTableName('');
+    setDestinationType('rapidSummary');
+    setSelectedRows([data]);
+  }, [data, setDestinationType, setMoveKbMatchesDialogOpen, setMoveKbMatchesTableName, setSelectedRows]);
+
   if (!REPORT_TYPES_TO_SHOW_EXTRA_MENU.includes(reportType)) {
     return <ActionCellRenderer {...props} />;
   }
@@ -232,8 +240,14 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           )
         }
         <MenuItem onClick={handleMoveKbMatch}>
-          Move to another table
+          Move to another KbMatches Table
         </MenuItem>
+        {reportType === 'rapid'
+          && (
+            <MenuItem onClick={handleMoveToRapidSummary}>
+              Add to Rapid Summary Table
+            </MenuItem>
+          )}
         <ActionCellRenderer displayMode="menu" {...props} />
       </Menu>
     </>
