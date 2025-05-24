@@ -1,6 +1,7 @@
 // TODO fix api permissions/error text for adding users to project
 import React, {
   useState, useEffect, useCallback,
+  useMemo,
 } from 'react';
 import {
   Button,
@@ -197,17 +198,24 @@ const AddEditProjectDialog = ({
     setProjectUsersToAdd(null);
   }, [projectUsersToAdd]);
 
+  const projectSelectOptions = useMemo(() => projects.filter((p) => p.ident !== editData?.ident).map((project) => (
+    // @ts-expect-error: using object as value is intentional
+    <MenuItem key={project.ident} value={project}>
+      {project.name}
+    </MenuItem>
+  )), [editData?.ident, projects]);
+
   return (
     <>
       <Dialog open={Boolean(projectUsersToAdd)} maxWidth="lg" fullWidth className="edit-dialog">
-        <DialogTitle>{`Add all users from ${projectUsersToAdd?.name} to ${projectName}?`}</DialogTitle>
+        <DialogTitle>{`Add all users from ${projectUsersToAdd?.name} to ${projectName || 'new project'}?`}</DialogTitle>
         <DialogContent>
           {`The following users will be added to ${projectName}`}
           <List>
             {
               projectUsersToAdd?.users.map((u) => {
                 if (!users?.map(({ ident }) => ident).includes(u.ident)) {
-                  return <ListItem>{`${u.username} (${u.firstName} ${u.lastName})`}</ListItem>;
+                  return <ListItem key={u.ident}>{`${u.username} (${u.firstName} ${u.lastName})`}</ListItem>;
                 }
                 return null;
               })
@@ -268,12 +276,7 @@ const AddEditProjectDialog = ({
               disabled={!managerAccess}
               onChange={handleAddAllUsersToProject}
             >
-              {projects.filter((p) => p.ident !== editData.ident).map((project) => (
-                // @ts-expect-error: using object as value is intentional
-                <MenuItem key={project.ident} value={project}>
-                  {project.name}
-                </MenuItem>
-              ))}
+              {projectSelectOptions}
             </Select>
           </FormControl>
           <DataTable
