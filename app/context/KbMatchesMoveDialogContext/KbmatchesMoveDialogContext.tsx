@@ -8,7 +8,7 @@ type KbMatchesMoveDialogContextType = {
   setMoveKbMatchesDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
   moveKbMatchesTableName: string,
   setMoveKbMatchesTableName: React.Dispatch<React.SetStateAction<string>>,
-  selectedRows: [],
+  selectedRows: Partial<KbMatchedStatementType>[],
   setSelectedRows: React.Dispatch<React.SetStateAction<KbMatchedStatementType[]>>,
   selectedKbIdToIprMapping: Record<string, string>,
   destinationType: 'kbMatches' | 'rapidSummary',
