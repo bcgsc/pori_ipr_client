@@ -270,9 +270,8 @@ const AddEditProjectDialog = ({
           <FormControl className="add-user__field" fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
             <InputLabel id="select-project-label">Add all users from another Project</InputLabel>
             <Select
-              placeholder="Choose project from drop down"
               labelId="select-project-label"
-              label="Select Project"
+              label="Add all users from another Project"
               disabled={!managerAccess}
               onChange={handleAddAllUsersToProject}
             >
