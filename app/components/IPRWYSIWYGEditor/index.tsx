@@ -201,7 +201,7 @@ const IPRWYSIWYGEditor = ({
   }, [onClose, editor, text]);
 
   return (
-    <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={handleOnClose}>
+    <Dialog fullWidth maxWidth="lg" open={isOpen}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
