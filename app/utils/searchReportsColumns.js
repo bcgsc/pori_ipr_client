@@ -24,7 +24,7 @@ const getUniqueKbVariants = (arr) => {
 
 function searchReportsColumns(report, analyst, reviewer, bioinformatician) {
   return {
-    matchedKeyVariant: report?.genomicAlterationsIdentified ? getUniqueKeyVariants(report?.genomicAlterationsIdentified).map((v) => v.geneVariant).join(', ') : null,
+    matchedKeyVariant: report?.genomicAlterationsIdentified ? getUniqueKeyVariants(report?.genomicAlterationsIdentified).map((v) => v.geneVariant) : null,
     matchedKbVariant: report?.kbMatches ? getUniqueKbVariants(report?.kbMatches).map((v) => v.kbVariant).join(', ') : null,
     matchedSmallMutation: report?.smallMutations ? getUniqueKbVariants(report?.smallMutations).map((v) => v.displayName).join(', ') : null,
     matchedStructuralVariant: report?.structuralVariants ? getUniqueKbVariants(report?.structuralVariants).map((v) => v.displayName).join(', ') : null,
