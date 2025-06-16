@@ -1,6 +1,6 @@
 .custom-filter {
   padding: 10px;
-  padding-top: 2px;
+  padding-top: 0;
   width: auto;
   max-height: 400px;
   overflow-y: auto;
@@ -15,10 +15,29 @@
   margin-left: 5px;
 }
 
-#filterHeader {
-  font-weight: bold;
-}
-
 #selectAllLabel {
   margin-left: 1px;
+}
+
+#checkboxContainer {
+  width: 100%;
+}
+
+.text-filter-input {
+  margin: 12px;
+  margin-bottom: 8px;
+  padding-left: 8px;
+  height: 32px;
+  width: calc(100% - 24px);
+  font-family: Arial, sans-serif;
+  border: solid;
+  border-radius: 5px;
+  border-width: 1px;
+  border-color: darkblue;
+}
+
+.text-filter-input:focus {
+  border: solid;
+  border-color: darkblue;
+  outline: none;
 }
