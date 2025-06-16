@@ -24,17 +24,6 @@ const searchColumnDefs: ColDef[] = [{
     return params.value ? params.value.join(", ") : "";
   },
   filter: CustomSetFilter,
-  // filter: 'agMultiColumnFilter',
-  // filterParams: {
-  //   filters: [
-  //     {
-  //       filter: CustomSetFilter,
-  //     },
-  //     {
-  //       filter: 'agTextColumnFilter',
-  //     }
-  //   ],
-  // },
 },
 {
   headerName: 'Matched KB Variants',
