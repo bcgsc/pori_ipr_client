@@ -59,7 +59,7 @@ const SearchView = () => {
     searchKey.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
     history.push({
       pathname: '/search/result',
-      search: `?searchParams=${searchUrl.join('')}`,
+      search: encodeURIComponent(`searchParams=${searchUrl.join('')}`),
     });
   }, [searchKey, history]);
 

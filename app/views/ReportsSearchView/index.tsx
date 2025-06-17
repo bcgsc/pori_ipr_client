@@ -17,12 +17,13 @@ const ReportsSearchView = ({
   setIsLoading,
 }: ReportsSearchViewProps): JSX.Element => {
   const { search } = useLocation();
+  const searchParams = decodeURIComponent(search);
   const [rowData, setRowData] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const { reports } = await api.get(`/reports${search}`).request();
+        const { reports } = await api.get(`/reports${searchParams}`).request();
 
         setRowData(reports.map((report) => {
           const [analyst] = report.users
