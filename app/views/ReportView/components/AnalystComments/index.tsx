@@ -23,6 +23,12 @@ import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import './index.scss';
 import { useQuery } from 'react-query';
 
+const DEFAULT_SIGNATURE_TYPES = [
+  { signatureType: 'author' },
+  { signatureType: 'reviewer' },
+  { signatureType: 'creator' },
+] as SignatureUserType[];
+
 const useComments = (report?: ReportType) => useQuery({
   queryKey: ['report-comments', report?.ident],
   enabled: Boolean(report),
@@ -48,13 +54,7 @@ const useSignatureTypes = (report?: ReportType) => useQuery({
   enabled: Boolean(report?.template?.ident),
   queryFn: async () => {
     const resp = await api.get(`/templates/${report!.template.ident}/signature-types`).request();
-    return resp?.length === 0
-      ? [
-        { signatureType: 'author' },
-        { signatureType: 'reviewer' },
-        { signatureType: 'creator' },
-      ] as SignatureUserType[]
-      : resp;
+    return resp?.length === 0 ? DEFAULT_SIGNATURE_TYPES : resp;
   },
 });
 
@@ -78,7 +78,7 @@ const AnalystComments = ({
 
   const [comments, setComments] = useState('');
   const [signatures, setSignatures] = useState<SignatureType>();
-  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>([]);
+  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>(DEFAULT_SIGNATURE_TYPES);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   const commentsQuery = useComments(report);
