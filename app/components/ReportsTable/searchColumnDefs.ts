@@ -16,56 +16,48 @@ const dateCellRenderer = (params) => {
   return gui;
 };
 
+const arrayCellRenderer = (params) => {
+  return params.value ? params.value.join(", ") : "";
+}
+
 const searchColumnDefs: ColDef[] = [{
   headerName: 'Matched Key Variants',
   field: 'matchedKeyVariant',
   tooltipValueGetter: basicTooltipValueGetter,
-  cellRenderer: (params) => {
-    return params.value ? params.value.join(", ") : "";
-  },
+  cellRenderer: arrayCellRenderer,
   filter: CustomSetFilter,
 },
 {
   headerName: 'Matched KB Variants',
   field: 'matchedKbVariant',
   tooltipValueGetter: basicTooltipValueGetter,
-  cellRenderer: (params) => {
-    return params.value ? params.value.join(", ") : "";
-  },
+  cellRenderer: arrayCellRenderer,
   filter: CustomSetFilter,
 },
 {
   headerName: 'Matched Small Mutations',
   field: 'matchedSmallMutation',
   tooltipValueGetter: basicTooltipValueGetter,
-  cellRenderer: (params) => {
-    return params.value ? params.value.join(", ") : "";
-  },
+  cellRenderer: arrayCellRenderer,
   filter: CustomSetFilter,
 },
 {
   headerName: 'Matched Structural Variants',
   field: 'matchedStructuralVariant',
   tooltipValueGetter: basicTooltipValueGetter,
-  cellRenderer: (params) => {
-    return params.value ? params.value.join(", ") : "";
-  },
+  cellRenderer: arrayCellRenderer,
   filter: CustomSetFilter,
 },
 {
   headerName: 'Matched Therapeutic Targets',
   field: 'matchedTherapeuticTarget',
-  cellRenderer: (params) => {
-    return params.value ? params.value.join(", ") : "";
-  },
+  cellRenderer: arrayCellRenderer,
   filter: CustomSetFilter,
 },
 {
   headerName: 'Context',
   field: 'matchedTherapeuticTargetContext',
-  cellRenderer: (params) => {
-    return params.value ? params.value.join(", ") : "";
-  },
+  cellRenderer: arrayCellRenderer,
   filter: CustomSetFilter,
 },
 {
