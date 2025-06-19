@@ -1,5 +1,6 @@
 import React, {
   forwardRef, useCallback, useEffect,
+  useMemo,
 } from 'react';
 import {
   Button,
@@ -169,6 +170,7 @@ type IPRWYSIWYGEditorProps = {
   isOpen: boolean;
   // Returns null if nothing is edited
   onClose: (editedText?: string) => void;
+  onSave?: (editedText?: string) => void;
   title?: string;
 };
 
@@ -176,6 +178,7 @@ const IPRWYSIWYGEditor = ({
   text,
   isOpen,
   onClose,
+  onSave,
   title = 'IPR WYSIWYG Editor',
 }: IPRWYSIWYGEditorProps): JSX.Element => {
   const editor = useEditor({
@@ -188,11 +191,17 @@ const IPRWYSIWYGEditor = ({
     }
   }, [text, editor]);
 
-  const handleOnSave = useCallback(() => {
+  const handleOnSaveClose = useCallback(() => {
     if (editor) {
       onClose(editor.isEmpty ? '' : editor.getHTML());
     }
   }, [editor, onClose]);
+
+  const handleOnSave = useCallback(() => {
+    if (editor) {
+      onSave(editor.isEmpty ? '' : editor.getHTML());
+    }
+  }, [editor, onSave]);
 
   const handleOnClose = useCallback(() => {
     onClose(null);
@@ -200,8 +209,15 @@ const IPRWYSIWYGEditor = ({
     editor.commands.setContent(text);
   }, [onClose, editor, text]);
 
+  const saveButton = useMemo(() => {
+    if (onSave) {
+      return <Button color="secondary" onClick={handleOnSave}>Save</Button>;
+    }
+    return null;
+  }, [onSave, handleOnSave]);
+
   return (
-    <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={handleOnClose}>
+    <Dialog fullWidth maxWidth="lg" open={isOpen}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
@@ -209,7 +225,8 @@ const IPRWYSIWYGEditor = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleOnClose}>Close</Button>
-        <Button color="secondary" onClick={handleOnSave}>Save</Button>
+        {saveButton}
+        <Button color="secondary" onClick={handleOnSaveClose}>Save and Close</Button>
       </DialogActions>
     </Dialog>
   );
