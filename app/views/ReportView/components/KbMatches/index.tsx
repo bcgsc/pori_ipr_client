@@ -15,7 +15,6 @@ import {
   List,
   ListItem,
   Select,
-  SelectChangeEvent,
   FormControl,
   InputLabel,
   FormControlLabel,
@@ -27,24 +26,26 @@ import {
 } from '@mui/icons-material';
 
 import { useDebounce } from 'use-debounce';
+import { useMutation } from 'react-query';
 
-import api, { ApiCallSet } from '@/services/api';
+import api, { ApiCallPayload, ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import useReport from '@/hooks/useReport';
 import DataTable from '@/components/DataTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import { KbMatchedStatementType } from '@/common';
 import { GridApi } from '@ag-grid-community/core';
-import { KbMatchesMoveDialogContext, useKbMatches } from '@/context/KbMatchesMoveDialogContext/KbmatchesMoveDialogContext';
+import { KbMatchesMoveDialogContext, KbMatchesMoveDialogContextType, useKbMatches } from '@/context/KbMatchesMoveDialogContext/KbmatchesMoveDialogContext';
+import { ErrorMixin, RecordConflictError } from '@/services/errors/errors';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import { coalesceEntries, getBucketKey } from './coalesce';
 
 import './index.scss';
 import ProbeResultsType from '../ProbeSummary/types';
 
-const TITLE_MAP = {
+const KB_MATCHES_TITLE_MAP = {
   highEvidence: 'Therapeutic Alterations with High-Level Clinical Evidence in this Tumour Type',
   therapeutic: 'Therapeutic Alterations',
   diagnostic: 'Diagnostic Alterations',
@@ -55,14 +56,85 @@ const TITLE_MAP = {
   targetedSomaticGenes: 'Detected Alterations From Somatic Targeted Gene Report',
 };
 
-const getDestinationTables = (currentTable) => Object.entries(TITLE_MAP)
+const RAPID_TABLE_TITLE_MAP = {
+  // Should be therapeuticAssociation, but the tag in backend is looking for 'therapeutic'
+  therapeutic: 'Variants with Clinical Evidence for Treatment in This Tumour Type',
+  cancerRelevance: 'Variants with Cancer Relevance',
+  unknownSignificance: 'Variants of Uncertain Significance',
+};
+
+type KbMatchesDestinationTableType = keyof typeof KB_MATCHES_TITLE_MAP | keyof typeof RAPID_TABLE_TITLE_MAP | '';
+
+const getKbDestinationTables = (currentTable) => Object.entries(KB_MATCHES_TITLE_MAP)
   .filter(([key]) => !['targetedSomaticGenes', currentTable].includes(key))
   .map(([key, value]) => ({
     label: value,
     value: key,
   }));
 
+const getRapidSummaryDestinationTables = () => Object.entries(RAPID_TABLE_TITLE_MAP)
+  .map(([key, value]) => ({
+    label: value,
+    value: key,
+  }));
+
+const getPayloadOptions = (
+  destinationType: KbMatchesMoveDialogContextType['destinationType'],
+  destinationTable: KbMatchesDestinationTableType,
+) => {
+  if (destinationType === 'kbMatches') {
+    if (destinationTable === 'highEvidence') {
+      return {
+        category: 'therapeutic',
+        kbData: { kbmatchTag: 'bestTherapeutic' },
+      };
+    }
+    return {
+      category: destinationTable,
+      kbData: { kbmatchTag: destinationTable },
+    };
+  }
+  return {};
+};
+
 const FILTER_DEBOUNCE_TIME = 500; // ms before input text for filter refreshes for tables
+
+type AddObservedVariantAnnotationFnType = {
+  reportId: ReportType['ident'];
+  destTable: KbMatchesDestinationTableType;
+  dataRows: KbMatchesMoveDialogContextType['selectedRows'];
+};
+
+type UpdateKbStatementsFnType = {
+  idMap: Record<string, string>;
+  reportId: ReportType['ident'];
+  payloadOptions: ApiCallPayload;
+  selectedStatementIds: KbMatchedStatementType['ident'][];
+};
+
+const updateKbStatementsFn = async ({
+  idMap, reportId, selectedStatementIds, payloadOptions,
+}: UpdateKbStatementsFnType) => {
+  const requests = selectedStatementIds.map((id) => api.put(`/reports/${reportId}/kb-matches/kb-matched-statements/${idMap[id]}`, payloadOptions));
+  const callSetResp = await new ApiCallSet(requests).request();
+  return callSetResp;
+};
+
+type UpdateObservedVariantAnnotationFnType = {
+  reportId: ReportType['ident'];
+  observedVariantAnnotId: string;
+  destinationTable: KbMatchesDestinationTableType;
+};
+
+const updateObservedVariantAnnotationFn = async (
+  {
+    reportId, observedVariantAnnotId, destinationTable,
+  }: UpdateObservedVariantAnnotationFnType,
+) => api.put(`/reports/${reportId}/observed-variant-annotations/${observedVariantAnnotId}`, {
+  annotations: {
+    rapidReportTableTag: destinationTable,
+  },
+}).request();
 
 type KbMatchesMoveDialogType = {
   onClose: () => void;
@@ -80,8 +152,9 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
     moveKbMatchesDialogOpen,
     selectedRows,
     selectedKbIdToIprMapping,
+    destinationType,
   } = useKbMatches();
-  const [destinationTable, setDestinationTable] = useState('');
+  const [destinationTable, setDestinationTable] = useState<KbMatchesDestinationTableType>('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedKbStatementIds, setSelectedKbStatementIds] = useState<string[]>(null);
 
@@ -93,45 +166,102 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
     }
   }, [selectedRows]);
 
+  const { mutate: updateKbStatements } = useMutation({
+    mutationFn: updateKbStatementsFn,
+    onSuccess: () => {
+      snackbar.success('Moved Kb Statements (PUT), refetching ...');
+      onConfirm(true);
+    },
+    onError: (e: ErrorMixin) => {
+      snackbar.error(`Unable to move Kb statements, ${e.message ?? e}`);
+    },
+  });
+
+  const { mutate: addObservedVariantAnnotation } = useMutation({
+    mutationFn: async ({ reportId, destTable, dataRows }: AddObservedVariantAnnotationFnType) => {
+      const extractedVariants = dataRows.flatMap((item) => item.kbMatches);
+
+      const seen = new Set();
+      const uniqueVariants = extractedVariants.filter(({ variant: { ident } }) => {
+        if (seen.has(ident)) return false;
+        seen.add(ident);
+        return true;
+      });
+
+      const results = await Promise.allSettled(
+        uniqueVariants.map(async ({ variant: { ident: variantIdent }, variantType }) => {
+          try {
+            await api.post(`/reports/${reportId}/observed-variant-annotations`, {
+              variantIdent,
+              variantType,
+              annotations: {
+                rapidReportTableTag: destTable,
+              },
+            }).request();
+          } catch (e) {
+            if (e instanceof RecordConflictError && e.content.data) {
+              // Fallback to PUT
+              try {
+                await updateObservedVariantAnnotationFn({
+                  reportId,
+                  observedVariantAnnotId: (e.content.data as { ident: string }).ident,
+                  destinationTable: destTable,
+                });
+              } catch (putError) {
+                snackbar.error(`Failed to update variant: ${variantType}: ${variantIdent}`);
+                throw putError;
+              }
+            } else {
+              throw e;
+            }
+          }
+        }),
+      );
+
+      const rejected = results.filter((r) => r.status === 'rejected');
+      if (rejected.length > 0) {
+        throw new Error(`${rejected.length} variant(s) failed.`);
+      }
+
+      return results;
+    },
+    onSuccess: () => {
+      snackbar.success('Moved Variants, refetching ...');
+      onConfirm(true);
+    },
+    onError: (e: { message?: string }) => {
+      snackbar.error(`Unable to move Kb statements, ${e.message ?? e}`);
+    },
+    onSettled: () => {
+      setIsUpdating(false);
+    },
+  });
+
   const handleOnSave = useCallback(() => {
     setIsUpdating(true);
-    const moveKbMatches = async () => {
-      try {
-        // Check if the table is highEvidence or not
-        const payloadOptions = destinationTable === 'highEvidence'
-          ? {
-            category: 'therapeutic',
-            kbData: { kbmatchTag: 'bestTherapeutic' },
-          }
-          : {
-            category: destinationTable,
-            kbData: { kbmatchTag: destinationTable },
-          };
+    if (destinationType === 'rapidSummary') {
+      addObservedVariantAnnotation({
+        destTable: destinationTable,
+        reportId: reportIdent,
+        dataRows: selectedRows,
+      });
+    } else {
+      updateKbStatements({
+        idMap: selectedKbIdToIprMapping,
+        payloadOptions: getPayloadOptions('kbMatches', destinationTable),
+        reportId: reportIdent,
+        selectedStatementIds: selectedKbStatementIds,
+      });
+    }
+  }, [addObservedVariantAnnotation, destinationTable, destinationType, reportIdent, selectedKbIdToIprMapping, selectedKbStatementIds, selectedRows, updateKbStatements]);
 
-        // Check if a row is coalesced by checking if the ident property of the statement is an array or not. If it is an array, deconstruct and call the api with each ident
-        const kbStatementCalls = selectedKbStatementIds
-          .map((id) => api.put(`/reports/${reportIdent}/kb-matches/kb-matched-statements/${selectedKbIdToIprMapping[id]}`, payloadOptions));
-        const apiCalls = new ApiCallSet(kbStatementCalls);
-        await apiCalls.request();
-        snackbar.success('Moved Kb Statements, refetching ...');
-        onConfirm(true);
-      } catch (e) {
-        snackbar.error(`Unable to move Kb statements, ${e.message ?? e}`);
-      } finally {
-        setIsUpdating(false);
-      }
-    };
-    moveKbMatches();
-  }, [destinationTable, onConfirm, reportIdent, selectedKbIdToIprMapping, selectedKbStatementIds]);
-
-  const handleDestinationChange = useCallback(({ target: { value } }: SelectChangeEvent<string>) => {
-    setDestinationTable(value);
+  const handleDestinationChange = useCallback(({ target: { value } }) => {
+    setDestinationTable(value as KbMatchesDestinationTableType);
   }, [setDestinationTable]);
 
-  const handleOnClose = useCallback((_evt, reason) => {
-    if (reason === 'backdropClick') {
-      onClose();
-    }
+  const handleOnClose = useCallback(() => {
+    setDestinationTable('');
+    onClose();
   }, [onClose]);
 
   const handleOnCheck = useCallback(({ target: { checked, value } }) => {
@@ -152,7 +282,6 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       open={moveKbMatchesDialogOpen}
       fullWidth
       maxWidth="lg"
-      onClose={handleOnClose}
     >
       <DialogTitle>
         Move Selected KbMatches to another Table
@@ -171,26 +300,26 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
                 statementIds = kbM.kbStatementId;
               }
               return (
-                <ListItem key={statementIds.toString()}>
+                <ListItem key={statementIds.toString()} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                   <DialogContentText>
                     {getBucketKey(kbM).replace(/\|\|/g, ' ')}
-                    <List disablePadding>
-                      {statementIds.map((id) => (
-                        <ListItem key={id} sx={{ py: 0 }}>
-                          <FormControlLabel
-                            control={(
-                              <Checkbox
-                                value={id}
-                                checked={selectedKbStatementIds?.includes(id)}
-                                onChange={handleOnCheck}
-                              />
-                              )}
-                            label={id}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
                   </DialogContentText>
+                  <List disablePadding>
+                    {statementIds.map((id) => (
+                      <ListItem key={id} sx={{ py: 0 }}>
+                        <FormControlLabel
+                          control={(
+                            <Checkbox
+                              value={id}
+                              checked={selectedKbStatementIds?.includes(id)}
+                              onChange={handleOnCheck}
+                            />
+                          )}
+                          label={id}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
                 </ListItem>
               );
             })
@@ -204,9 +333,17 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
             labelId="destination-table-select-label"
             onChange={handleDestinationChange}
             label="Destination Table" // MUI requires both labelId and label to properly display
+            value={destinationTable}
           >
             {
-              getDestinationTables(moveKbMatchesTableName).map(({ label, value }) => (
+              destinationType === 'kbMatches'
+              && getKbDestinationTables(moveKbMatchesTableName).map(({ label, value }) => (
+                <MenuItem value={value} key={value}>{label}</MenuItem>
+              ))
+            }
+            {
+              destinationType === 'rapidSummary'
+              && getRapidSummaryDestinationTables().map(({ label, value }) => (
                 <MenuItem value={value} key={value}>{label}</MenuItem>
               ))
             }
@@ -214,7 +351,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleOnClose}>Cancel</Button>
         <Button
           disabled={isUpdating || !destinationTable || !selectedKbStatementIds}
           variant="contained"
@@ -256,12 +393,15 @@ const KbMatches = ({
   });
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedRows, setSelectedRows] = useState(null);
+  const [destinationType, setDestinationType] = useState<KbMatchesMoveDialogContextType['destinationType']>('kbMatches');
   const [moveKbMatchesDialogOpen, setMoveKbMatchesDialogOpen] = useState(false);
   const [moveKbMatchesTableName, setMoveKbMatchesTableName] = useState('');
   const [fetchData, setFetchData] = useState('initial');
 
   // TODO: find a better way
   const [allKbMatches, setAllKbMatches] = useState(null);
+
+  const templateName = report?.template.name;
 
   useEffect(() => {
     if (report && fetchData) {
@@ -416,8 +556,15 @@ const KbMatches = ({
     setMenuAnchor(null);
   }, []);
 
-  const handleMoveToAnotherTable = useCallback(() => {
+  const handleMoveToAnotherKbTable = useCallback(() => {
     setMoveKbMatchesDialogOpen(true);
+    setDestinationType('kbMatches');
+    handleMenuClose();
+  }, [handleMenuClose]);
+
+  const handleMoveToRapidSummary = useCallback(() => {
+    setMoveKbMatchesDialogOpen(true);
+    setDestinationType('rapidSummary');
     handleMenuClose();
   }, [handleMenuClose]);
 
@@ -435,56 +582,64 @@ const KbMatches = ({
     setMoveKbMatchesDialogOpen(false);
   }, []);
 
-  const kbMatchedTables = useMemo(() => Object.keys(TITLE_MAP).map((key) => {
+  const kbMatchedTables = useMemo(() => Object.keys(KB_MATCHES_TITLE_MAP).map((key) => {
+    // Only when the table is probe or rapid, do not display targeted Somatic/Germline genes
+    const shouldRenderTable = (
+      templateName !== 'probe' && templateName !== 'rapid'
+    ) || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes');
+
+    if (!shouldRenderTable) return null;
+
     const additionalTableMenuItems = (gridApi: GridApi) => {
       const currentSelectedRows = gridApi?.getSelectedRows();
-      return (
+      const isRapid = templateName.toLowerCase() === 'rapid';
+      const kbMatchesMoveOption = (
         <MenuItem
           key={key}
           onClick={() => {
             setSelectedRows(currentSelectedRows);
             setMoveKbMatchesTableName(key);
+            setDestinationType('kbMatches');
             setMoveKbMatchesDialogOpen(true);
           }}
         >
           Move Selected KbMatches
         </MenuItem>
       );
+      const rapidMoveOption = isRapid ? (
+        <MenuItem
+          key={`${key}-rapid`}
+          onClick={() => {
+            setSelectedRows(currentSelectedRows);
+            setMoveKbMatchesTableName(key);
+            setDestinationType('rapidSummary');
+            setMoveKbMatchesDialogOpen(true);
+          }}
+        >
+          Add Selected to Rapid Summary
+        </MenuItem>
+      ) : null;
+      return ([kbMatchesMoveOption, rapidMoveOption]);
     };
+
     return (
       <div onContextMenu={handleGridContextMenu} key={key}>
-        {
-          (
-            (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
-            || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
-          ) && (
-            <DataTable
-              canDelete={canEdit}
-              canToggleColumns
-              columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
-              filterText={debouncedFilterText}
-              isPrint={isPrint}
-              onDelete={handleDelete}
-              rowData={groupedMatches[key]}
-              titleText={TITLE_MAP[key]}
-              rowSelection="multiple"
-              onCellContextMenu={onCellContextMenu(key)}
-              additionalTableMenuItems={additionalTableMenuItems}
-            />
-          )
-        }
+        <DataTable
+          canDelete={canEdit}
+          canToggleColumns
+          columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
+          filterText={debouncedFilterText}
+          isPrint={isPrint}
+          onDelete={handleDelete}
+          rowData={groupedMatches[key]}
+          titleText={KB_MATCHES_TITLE_MAP[key]}
+          rowSelection="multiple"
+          onCellContextMenu={onCellContextMenu(key)}
+          additionalTableMenuItems={additionalTableMenuItems}
+        />
       </div>
     );
-  }), [
-    canEdit,
-    debouncedFilterText,
-    groupedMatches,
-    handleDelete,
-    handleGridContextMenu,
-    isPrint,
-    onCellContextMenu,
-    report?.template.name,
-  ]);
+  }), [canEdit, debouncedFilterText, groupedMatches, handleDelete, handleGridContextMenu, isPrint, onCellContextMenu, setSelectedRows, templateName]);
 
   const moveKbMatchesContextValue = useMemo(() => {
     const kbMatchesToFind = Array.from(new Set(selectedRows?.map(({ kbStatementId }) => kbStatementId))).flat();
@@ -506,8 +661,10 @@ const KbMatches = ({
       setMoveKbMatchesTableName,
       selectedRows,
       setSelectedRows,
+      destinationType,
+      setDestinationType,
     });
-  }, [allKbMatches, moveKbMatchesDialogOpen, moveKbMatchesTableName, selectedRows]);
+  }, [allKbMatches, destinationType, moveKbMatchesDialogOpen, moveKbMatchesTableName, selectedRows]);
 
   return (
     <KbMatchesMoveDialogContext.Provider value={moveKbMatchesContextValue}>
@@ -543,19 +700,22 @@ const KbMatches = ({
           <div>
             {kbMatchedTables}
             {menuAnchor && (
-            <Menu
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClose={handleMenuClose}
-              anchorReference="anchorPosition"
-              anchorPosition={
-                menuAnchor
-                  ? { top: menuAnchor.mouseY, left: menuAnchor.mouseX }
-                  : undefined
-              }
-            >
-              <MenuItem onClick={handleMoveToAnotherTable}>Move to another table</MenuItem>
-            </Menu>
+              <Menu
+                open={Boolean(menuAnchor)}
+                onClose={handleMenuClose}
+                anchorReference="anchorPosition"
+                anchorPosition={
+                  menuAnchor
+                    ? { top: menuAnchor.mouseY, left: menuAnchor.mouseX }
+                    : undefined
+                }
+              >
+                <MenuItem onClick={handleMoveToAnotherKbTable}>Move to another KbMatches Table</MenuItem>
+                {
+                  templateName === 'rapid'
+                  && <MenuItem onClick={handleMoveToRapidSummary}>Add to Rapid Summary Table</MenuItem>
+                }
+              </Menu>
             )}
             <KbMatchesMoveDialog
               onClose={() => {
