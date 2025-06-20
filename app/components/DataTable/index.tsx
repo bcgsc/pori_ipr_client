@@ -124,7 +124,7 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
 type DataTableCustomProps = {
   /* Text shown next to the add row button */
   addText?: string;
-  additionalTableMenuItems?: (gridApi: GridApi) => JSX.Element;
+  additionalTableMenuItems?: (gridApi: GridApi) => JSX.Element | JSX.Element[];
   /* Can rows be added to the table? */
   canAdd?: boolean;
   /* Can rows be deleted? */
