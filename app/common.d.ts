@@ -34,6 +34,9 @@ declare global {
       KEYCLOAK: string;
       DATABASE_TYPE: string;
     },
+    MISC: {
+      ENV: 'DEVELOPMENT' | 'STAGING' | 'PRODUCTION' | 'LOCAL',
+    },
   };
 }
 
