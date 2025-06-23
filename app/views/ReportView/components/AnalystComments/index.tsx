@@ -12,7 +12,7 @@ import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import useReport from '@/hooks/useReport';
 import DemoDescription from '@/components/DemoDescription';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import ConfirmContext from '@/context/ConfirmContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -21,6 +21,42 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 
 import './index.scss';
+import { useQuery } from 'react-query';
+
+const DEFAULT_SIGNATURE_TYPES = [
+  { signatureType: 'author' },
+  { signatureType: 'reviewer' },
+  { signatureType: 'creator' },
+] as SignatureUserType[];
+
+const useComments = (report?: ReportType) => useQuery({
+  queryKey: ['report-comments', report?.ident],
+  enabled: Boolean(report),
+  queryFn: async () => {
+    const resp = await api.get(`/reports/${report!.ident}/summary/analyst-comments`).request();
+    return resp?.comments
+      ? sanitizeHtml(resp.comments, {
+        allowedSchemes: [],
+        allowedAttributes: { '*': ['style'] },
+      })
+      : null;
+  },
+});
+
+const useSignatures = (report?: ReportType) => useQuery({
+  queryKey: ['report-signatures', report?.ident],
+  enabled: Boolean(report),
+  queryFn: () => api.get(`/reports/${report!.ident}/signatures`).request(),
+});
+
+const useSignatureTypes = (report?: ReportType) => useQuery({
+  queryKey: ['signature-types', report?.template.ident],
+  enabled: Boolean(report?.template?.ident),
+  queryFn: async () => {
+    const resp = await api.get(`/templates/${report!.template.ident}/signature-types`).request();
+    return resp?.length === 0 ? DEFAULT_SIGNATURE_TYPES : resp;
+  },
+});
 
 type AnalystCommentsProps = {
   isPrint?: boolean;
@@ -30,9 +66,9 @@ type AnalystCommentsProps = {
 
 const AnalystComments = ({
   isPrint = false,
-  isLoading,
+  isLoading: isComponentLoading,
   isSigned,
-  setIsLoading,
+  setIsLoading: setIsComponentLoading,
   loadedDispatch,
 }: AnalystCommentsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
@@ -42,50 +78,31 @@ const AnalystComments = ({
 
   const [comments, setComments] = useState('');
   const [signatures, setSignatures] = useState<SignatureType>();
-  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>([]);
+  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>(DEFAULT_SIGNATURE_TYPES);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
-  useEffect(() => {
-    if (report) {
-      const getData = async () => {
-        try {
-          const [commentsResp, signaturesResp, signatureTypesResp] = await Promise.all([
-            api.get(`/reports/${report.ident}/summary/analyst-comments`).request(),
-            api.get(`/reports/${report.ident}/signatures`).request(),
-            api.get(`/templates/${report.template.ident}/signature-types`).request(),
-          ]);
+  const commentsQuery = useComments(report);
+  const signaturesQuery = useSignatures(report);
+  const signatureTypesQuery = useSignatureTypes(report);
 
-          if (commentsResp?.comments) {
-            setComments(sanitizeHtml(commentsResp?.comments, {
-              allowedSchemes: [],
-              allowedAttributes: {
-                '*': ['style'],
-              },
-            }));
-          }
-          setSignatures(signaturesResp);
-          if (signatureTypesResp?.length === 0) {
-            const defaultSigatureTypes = [
-              { signatureType: 'author' },
-              { signatureType: 'reviewer' },
-              { signatureType: 'creator' },
-            ] as SignatureUserType[];
-            setSignatureTypes(defaultSigatureTypes);
-          } else if (signatureTypesResp?.length > 0) {
-            setSignatureTypes(signatureTypesResp);
-          }
-        } catch (err) {
-          snackbar.error(`Network error: ${err}`);
-        } finally {
-          setIsLoading(false);
-          if (loadedDispatch) {
-            loadedDispatch({ type: 'analyst-comments' });
-          }
-        }
-      };
-      getData();
+  const isApiLoading = commentsQuery.isLoading || signaturesQuery.isLoading || signatureTypesQuery.isLoading;
+  const isError = commentsQuery.isError || signaturesQuery.isError || signatureTypesQuery.isError;
+
+  useEffect(() => {
+    if (isError) {
+      snackbar.error(`Network error: ${
+        commentsQuery.error || signaturesQuery.error || signatureTypesQuery.error
+      }`);
     }
-  }, [report, setIsLoading, loadedDispatch]);
+
+    if (!isApiLoading) {
+      setComments(commentsQuery.data);
+      setSignatures(signaturesQuery.data);
+      setSignatureTypes(signatureTypesQuery.data);
+      setIsComponentLoading(false);
+      if (loadedDispatch) loadedDispatch({ type: 'analyst-comments' });
+    }
+  }, [setIsComponentLoading, isApiLoading, isError, commentsQuery.data, signaturesQuery.data, signatureTypesQuery.data, loadedDispatch, commentsQuery.error, signaturesQuery.error, signatureTypesQuery.error]);
 
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
@@ -96,9 +113,14 @@ const AnalystComments = ({
     setIsEditorOpen(true);
   };
 
-  const handleEditorClose = useCallback(async (editedComments?: string) => {
-    try {
-      if (editedComments !== null && editedComments !== undefined) {
+  const handleEditorAction = useCallback(
+    async (editedComments?: string, shouldCloseEditor: boolean = false) => {
+      if (editedComments == null) {
+        setIsEditorOpen(false);
+        return;
+      }
+
+      try {
         const sanitizedText = sanitizeHtml(editedComments, {
           allowedAttributes: {
             a: ['href', 'target', 'rel'],
@@ -114,30 +136,48 @@ const AnalystComments = ({
             }),
           },
         });
+
         const commentCall = api.put(
           `/reports/${report.ident}/summary/analyst-comments`,
           { comments: sanitizedText },
         );
 
         if (isSigned) {
-          showConfirmDialog(commentCall);
+          const isResolved = await showConfirmDialog(commentCall, true);
+          if (isResolved) {
+            snackbar.success('Comment updated');
+          }
         } else {
-          // If signed, the dialog that opens up will refesh the page instead
           const commentsResp = await commentCall.request();
-          setComments(sanitizeHtml(commentsResp?.comments, {
-            allowedSchemes: [],
-            allowedAttributes: {
-              '*': ['style'],
-            },
-          }));
+          setComments(
+            sanitizeHtml(commentsResp?.comments, {
+              allowedSchemes: [],
+              allowedAttributes: {
+                '*': ['style'],
+              },
+            }),
+          );
+          snackbar.success('Comment updated');
+          if (shouldCloseEditor) {
+            setIsEditorOpen(false);
+          }
         }
+      } catch (e) {
+        snackbar.error(`Error saving edit: ${e.message ?? e}`);
       }
-    } catch (e) {
-      snackbar.error(`Error saving edit: ${e.message ?? e}`);
-    } finally {
-      setIsEditorOpen(false);
-    }
-  }, [report, isSigned, showConfirmDialog]);
+    },
+    [report, isSigned, showConfirmDialog],
+  );
+
+  const handleEditorSave = useCallback(
+    (editedComments?: string) => handleEditorAction(editedComments, false),
+    [handleEditorAction],
+  );
+
+  const handleEditorClose = useCallback(
+    (editedComments?: string) => handleEditorAction(editedComments, true),
+    [handleEditorAction],
+  );
 
   const signatureSection = useMemo(() => signatureTypes.map((sigType) => {
     let title = sigType.signatureType;
@@ -167,7 +207,7 @@ const AnalystComments = ({
       <DemoDescription>
         This section is a manually curated textual summary of the main findings from tumour biopsy sequencing.
       </DemoDescription>
-      {!isLoading && (
+      {!(isComponentLoading || isApiLoading) && (
         <>
           {!isPrint && canEdit && (
             <>
@@ -184,6 +224,7 @@ const AnalystComments = ({
                 text={comments}
                 title="Edit Comments"
                 onClose={handleEditorClose}
+                onSave={handleEditorSave}
               />
             </>
           )}

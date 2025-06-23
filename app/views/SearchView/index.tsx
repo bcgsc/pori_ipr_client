@@ -18,6 +18,7 @@ import {
   MIN_KEYWORD_LENGTH,
   DEFAULT_THRESHOLD,
   ENTER_KEY,
+  NUMPAD_ENTER_KEY,
   BACKSPACE_KEY,
 } from '@/constants';
 
@@ -107,7 +108,7 @@ const SearchView = () => {
       // Delete the last entry
       setSearchKey((currData) => currData.slice(0, -1));
     }
-    if (code === ENTER_KEY) {
+    if (code === ENTER_KEY || code === NUMPAD_ENTER_KEY) {
       // Allow user to press enter to submit search when there is no new character being entered for new keyword
       if (searchKey.length > 0 && !target.value) {
         setSearchErrorMessage('');
