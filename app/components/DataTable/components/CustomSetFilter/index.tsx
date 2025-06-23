@@ -32,9 +32,12 @@ export default class CustomSetFilter implements IFilterComp {
     // Collect unique values for this column
     params.api.forEachNode((node) => {
       const value = params.valueGetter(node);
-      const valueArr = value.split(', ');
-      if (valueArr !== undefined && valueArr !== null) {
-        valueArr.forEach((val: string) => allValues.add(val.toString()));
+      if (value !== undefined && value !== null) {
+        if (Array.isArray(value)) {
+          value.forEach((val: string) => allValues.add(val));
+        } else {
+          allValues.add(value);
+        }
       }
     });
 
@@ -185,7 +188,7 @@ export default class CustomSetFilter implements IFilterComp {
     checkboxes.forEach((checkbox) => {
       const { value } = checkbox;
       // eslint-disable-next-line no-param-reassign
-      checkbox.checked = Array.from(this.selectedValues).some((item) => value.split(', ').includes(item));
+      checkbox.checked = Array.from(this.selectedValues).some((item) => value.includes(item));
     });
 
     // Update "Select All" checkbox state
