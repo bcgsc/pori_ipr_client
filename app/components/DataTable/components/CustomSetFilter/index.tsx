@@ -146,7 +146,7 @@ export default class CustomSetFilter implements IFilterComp {
       : true;
   
     const matchesCheckbox = this.selectedValues.size > 0
-      ? Array.from(this.selectedValues).some((item) => value.split(', ').includes(item))
+      ? Array.from(this.selectedValues).some((item) => value.includes(item))
       : true;
   
     return matchesText && matchesCheckbox;
