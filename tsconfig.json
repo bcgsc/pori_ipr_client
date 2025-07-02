@@ -1,15 +1,21 @@
 {
   "compilerOptions": {
     "sourceMap": true,
-    "module": "commonjs",
-    "target": "es6",
-    "jsx": "react",
+    "module": "ESNext",
+    "target": "ES2020",
+    "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["app/*"]
+      "@/*": [
+        "app/*"
+      ]
     },
-    "lib": ["ES2020.Promise", "DOM"]
+    "lib": ["ES2020","DOM"],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
   },
   "include": [
     "app/**/*.ts",
@@ -23,5 +29,6 @@
     "app/custom.d.ts"
   ],
   "compileOnSave": false,
-  "allowJs": true
+  "allowJs": true,
+  "strict": true,
 }
