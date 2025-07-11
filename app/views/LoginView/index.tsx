@@ -8,6 +8,13 @@ import {
 } from '@/services/management/auth';
 import api from '@/services/api';
 
+export const trimKeyCloakStates = (hash?: string): string => {
+  if (!hash) return '';
+
+  const [clean] = hash.split('&'); // keeps everything before the first "&"
+  return clean;
+};
+
 const Login = (props: RouteChildrenProps): null => {
   const {
     history,
@@ -23,7 +30,7 @@ const Login = (props: RouteChildrenProps): null => {
   let from;
 
   try {
-    from = location.state.from.pathname + location.state.from.search;
+    from = location.state.from.pathname + location.state.from.search + trimKeyCloakStates(location.state.from.hash);
   } catch (err) {
     from = getReferrerUri() || '/reports';
   }
