@@ -1,5 +1,6 @@
 import React, {
-  useState, useEffect, useContext, useCallback, useMemo,
+  useState, useEffect, useContext, useCallback, useMemo, useRef,
+  createRef,
 } from 'react';
 import {
   TextField,
@@ -32,13 +33,14 @@ import api, { ApiCallPayload, ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import useReport from '@/hooks/useReport';
-import DataTable from '@/components/DataTable';
+import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import ReportContext, { ReportType } from '@/context/ReportContext';
 import { KbMatchedStatementType } from '@/common';
 import { GridApi } from '@ag-grid-community/core';
 import { KbMatchesMoveDialogContext, KbMatchesMoveDialogContextType, useKbMatches } from '@/context/KbMatchesMoveDialogContext/KbmatchesMoveDialogContext';
 import { ErrorMixin, RecordConflictError } from '@/services/errors/errors';
+import { useLocation } from 'react-router-dom';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import { coalesceEntries, getBucketKey } from './coalesce';
 
@@ -62,6 +64,8 @@ const RAPID_TABLE_TITLE_MAP = {
   cancerRelevance: 'Variants with Cancer Relevance',
   unknownSignificance: 'Variants of Uncertain Significance',
 };
+
+const SHOW_NATIVE_CONTEXT_TABLES = ['targetedSomaticGenes', 'targetedGermlineGenes'];
 
 type KbMatchesDestinationTableType = keyof typeof KB_MATCHES_TITLE_MAP | keyof typeof RAPID_TABLE_TITLE_MAP | '';
 
@@ -378,6 +382,7 @@ const KbMatches = ({
 }: KbMatchesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useReport();
+  const { hash, pathname } = useLocation();
 
   const [filterText, setFilterText] = useState('');
   const [debouncedFilterText] = useDebounce(filterText, FILTER_DEBOUNCE_TIME);
@@ -400,6 +405,16 @@ const KbMatches = ({
 
   // TODO: find a better way
   const [allKbMatches, setAllKbMatches] = useState(null);
+
+  // Initiate refs for each DataTable
+  const kbMatchedTableRefs = useRef<Record<string, React.RefObject<DataTableImperativeHandle>>>({});
+  useEffect(() => {
+    Object.keys(KB_MATCHES_TITLE_MAP).forEach((key) => {
+      if (!kbMatchedTableRefs.current[key]) {
+        kbMatchedTableRefs.current[key] = createRef<DataTableImperativeHandle>();
+      }
+    });
+  }, []);
 
   const templateName = report?.template.name;
 
@@ -569,8 +584,13 @@ const KbMatches = ({
   }, [handleMenuClose]);
 
   const handleGridContextMenu = useCallback((event) => {
+    const section = event.target.closest('section[id]');
+
     // Disable right-click on empty grid areas (outside of cells)
-    if (event.target.closest('.ag-root')) {
+    if (
+      event.target.closest('.ag-root')
+      && !SHOW_NATIVE_CONTEXT_TABLES.includes(section?.id)
+    ) {
       event.preventDefault(); // Disable browser's context menu
     }
   }, []);
@@ -582,6 +602,38 @@ const KbMatches = ({
     setMoveKbMatchesDialogOpen(false);
   }, []);
 
+  const additionalTableMenuItems = useCallback((tableName) => (gridApi: GridApi) => {
+    const currentSelectedRows = gridApi?.getSelectedRows();
+    const isRapid = templateName.toLowerCase() === 'rapid';
+    const kbMatchesMoveOption = (
+      <MenuItem
+        key={tableName}
+        onClick={() => {
+          setSelectedRows(currentSelectedRows);
+          setMoveKbMatchesTableName(tableName);
+          setDestinationType('kbMatches');
+          setMoveKbMatchesDialogOpen(true);
+        }}
+      >
+        Move Selected KbMatches
+      </MenuItem>
+    );
+    const rapidMoveOption = isRapid ? (
+      <MenuItem
+        key={`${tableName}-rapid`}
+        onClick={() => {
+          setSelectedRows(currentSelectedRows);
+          setMoveKbMatchesTableName(tableName);
+          setDestinationType('rapidSummary');
+          setMoveKbMatchesDialogOpen(true);
+        }}
+      >
+        Add Selected to Rapid Summary
+      </MenuItem>
+    ) : null;
+    return ([kbMatchesMoveOption, rapidMoveOption]);
+  }, [templateName]);
+
   const kbMatchedTables = useMemo(() => Object.keys(KB_MATCHES_TITLE_MAP).map((key) => {
     // Only when the table is probe or rapid, do not display targeted Somatic/Germline genes
     const shouldRenderTable = (
@@ -590,41 +642,12 @@ const KbMatches = ({
 
     if (!shouldRenderTable) return null;
 
-    const additionalTableMenuItems = (gridApi: GridApi) => {
-      const currentSelectedRows = gridApi?.getSelectedRows();
-      const isRapid = templateName.toLowerCase() === 'rapid';
-      const kbMatchesMoveOption = (
-        <MenuItem
-          key={key}
-          onClick={() => {
-            setSelectedRows(currentSelectedRows);
-            setMoveKbMatchesTableName(key);
-            setDestinationType('kbMatches');
-            setMoveKbMatchesDialogOpen(true);
-          }}
-        >
-          Move Selected KbMatches
-        </MenuItem>
-      );
-      const rapidMoveOption = isRapid ? (
-        <MenuItem
-          key={`${key}-rapid`}
-          onClick={() => {
-            setSelectedRows(currentSelectedRows);
-            setMoveKbMatchesTableName(key);
-            setDestinationType('rapidSummary');
-            setMoveKbMatchesDialogOpen(true);
-          }}
-        >
-          Add Selected to Rapid Summary
-        </MenuItem>
-      ) : null;
-      return ([kbMatchesMoveOption, rapidMoveOption]);
-    };
+    const hideCustomContextMenu = SHOW_NATIVE_CONTEXT_TABLES.includes(key);
 
     return (
-      <div onContextMenu={handleGridContextMenu} key={key}>
+      <section onContextMenu={handleGridContextMenu} id={key} key={key}>
         <DataTable
+          ref={kbMatchedTableRefs.current[key]}
           canDelete={canEdit}
           canToggleColumns
           columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
@@ -634,12 +657,12 @@ const KbMatches = ({
           rowData={groupedMatches[key]}
           titleText={KB_MATCHES_TITLE_MAP[key]}
           rowSelection="multiple"
-          onCellContextMenu={onCellContextMenu(key)}
-          additionalTableMenuItems={additionalTableMenuItems}
+          onCellContextMenu={!hideCustomContextMenu ? onCellContextMenu(key) : null}
+          additionalTableMenuItems={additionalTableMenuItems(key)}
         />
-      </div>
+      </section>
     );
-  }), [canEdit, debouncedFilterText, groupedMatches, handleDelete, handleGridContextMenu, isPrint, onCellContextMenu, setSelectedRows, templateName]);
+  }), [additionalTableMenuItems, canEdit, debouncedFilterText, groupedMatches, handleDelete, handleGridContextMenu, isPrint, onCellContextMenu, templateName]);
 
   const moveKbMatchesContextValue = useMemo(() => {
     const kbMatchesToFind = Array.from(new Set(selectedRows?.map(({ kbStatementId }) => kbStatementId))).flat();
@@ -665,6 +688,72 @@ const KbMatches = ({
       setDestinationType,
     });
   }, [allKbMatches, destinationType, moveKbMatchesDialogOpen, moveKbMatchesTableName, selectedRows]);
+
+  useEffect(() => {
+    if (isLoading || !hash) return;
+
+    const dehashed = hash.slice(1); // remove leading #
+    const [tableId, id] = dehashed.split(':');
+
+    let attempts = 0;
+    const maxAttempts = 10;
+    const retryDelay = 100; // ms
+
+    // Polls for when gridApi ready
+    const tryGoToEntry = () => {
+      const targetTableRef = kbMatchedTableRefs.current[tableId]?.current;
+
+      if (targetTableRef?.goToEntry) {
+        targetTableRef.goToEntry(id);
+
+        const el = document.getElementById(tableId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } else if (attempts < maxAttempts) {
+        attempts += 1;
+        setTimeout(tryGoToEntry, retryDelay);
+      } else {
+        snackbar.warning(`goToEntry failed: ${tableId} ref not ready after ${maxAttempts} tries`);
+      }
+    };
+
+    tryGoToEntry();
+  }, [isLoading, hash]);
+
+  const copyIdentToClipboard = useCallback(async () => {
+    const { ident, category } = selectedRows[0] ?? [];
+
+    if (!ident || !category) {
+      snackbar.error('Unable to copy link due to either ident or category being null');
+      return;
+    }
+
+    const fullLink = `${window.location.origin}${pathname}#${category}:${ident}`;
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(fullLink);
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = fullLink;
+        textArea.style.position = 'fixed'; // prevent scroll jump
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        if (!successful) throw new Error('Fallback: Copy command failed');
+      }
+      snackbar.info(`Copied to clipboard: ${ident}`);
+    } catch (err) {
+      snackbar.error('Failed to copy to clipboard');
+    }
+  }, [selectedRows, pathname]);
 
   return (
     <KbMatchesMoveDialogContext.Provider value={moveKbMatchesContextValue}>
@@ -711,6 +800,12 @@ const KbMatches = ({
                 }
               >
                 <MenuItem onClick={handleMoveToAnotherKbTable}>Move to another KbMatches Table</MenuItem>
+                <MenuItem
+                  disabled={selectedRows?.length > 1}
+                  onClick={copyIdentToClipboard}
+                >
+                  Copy Row Link
+                </MenuItem>
                 {
                   templateName === 'rapid'
                   && <MenuItem onClick={handleMoveToRapidSummary}>Add to Rapid Summary Table</MenuItem>
