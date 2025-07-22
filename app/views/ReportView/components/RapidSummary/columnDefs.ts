@@ -1,4 +1,5 @@
 import { sampleColumnDefs } from '../../common';
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 /**
  * @param row KbMatch data
@@ -97,6 +98,7 @@ const therapeuticAssociationColDefs = [
       }
       return '';
     },
+    comparator: collator.compare,
     hide: false,
   },
   {
@@ -159,6 +161,7 @@ const cancerRelevanceColDefs = [
       }
       return '';
     },
+    comparator: collator.compare,
     hide: false,
   },
   {
