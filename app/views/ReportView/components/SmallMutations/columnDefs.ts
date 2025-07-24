@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef } from '@ag-grid-community/core';
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 const columnDefs: ColDef[] = [{
   headerName: 'Gene',
@@ -78,6 +79,7 @@ const columnDefs: ColDef[] = [{
     }
     return '';
   },
+  comparator: collator.compare,
   hide: false,
 },
 {
