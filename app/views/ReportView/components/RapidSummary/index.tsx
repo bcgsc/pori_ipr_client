@@ -16,7 +16,6 @@ import SignatureCard, { SignatureType, SignatureUserType } from '@/components/Si
 import PrintTable from '@/components/PrintTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import capitalize from 'lodash/capitalize';
-import orderBy from 'lodash/orderBy';
 import getMostCurrentObj from '@/utils/getMostCurrentObj';
 import {
   TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, MsiType, KbMatchType,
@@ -40,16 +39,15 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
 
   kbMatches.forEach(({ kbMatchedStatements }) => {
     for (const statement of kbMatchedStatements) {
-      if (!iprRelevanceDict[statement.iprEvidenceLevel]) {
-        iprRelevanceDict[statement.iprEvidenceLevel] = new Set();
+      if (statement.iprEvidenceLevel) {
+        if (!iprRelevanceDict[statement.iprEvidenceLevel]) {
+          iprRelevanceDict[statement.iprEvidenceLevel] = new Set();
+        }
       }
     }
   });
 
-  orderBy(
-    kbMatches,
-    ['iprEvidenceLevel', 'context'],
-  ).forEach(({ kbMatchedStatements }: KbMatchType) => {
+  kbMatches.forEach(({ kbMatchedStatements }: KbMatchType) => {
     // Remove square brackets and add to dictionary
     for (const statement of kbMatchedStatements) {
       if (statement.iprEvidenceLevel && statement.context) {
@@ -61,19 +59,23 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   return iprRelevanceDict;
 };
 
-const filterNoTable = (kbMatches: KbMatchType[]) => kbMatches.map(({ kbMatchedStatements, ...rest }) => ({
+const filterNoTableAndRelevance = (kbMatches: KbMatchType[], relevance) => kbMatches.map(({ kbMatchedStatements, ...rest }) => ({
   ...rest,
-  kbMatchedStatements: kbMatchedStatements.filter(
-    ({ kbData }) => !kbData || kbData.rapidReportTableTag !== 'noTable',
-  ),
+  kbMatchedStatements: kbMatchedStatements
+    .filter(
+      ({ relevance: statementRelevance }) => statementRelevance === relevance,
+    )
+    .filter(
+      ({ kbData }) => !kbData || kbData.rapidReportTableTag !== 'noTable',
+    ),
 }));
 
 const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(
   getVariantRelevanceDict(variant.kbMatches),
 )
   .map(([relevanceKey, kbMatches]) => {
-    const iprEvidenceDict = splitIprEvidenceLevels(filterNoTable(kbMatches));
-
+    const filtered = filterNoTableAndRelevance(kbMatches, relevanceKey);
+    const iprEvidenceDict = splitIprEvidenceLevels(filtered);
     const sortedIprKeys = Object.keys(iprEvidenceDict).sort(
       (a, b) => a.localeCompare(b),
     );
@@ -663,7 +665,7 @@ const RapidSummary = ({
       setTmburMutBur(newTmBurMutBurData);
     }
 
-    if(newMsiData) {
+    if (newMsiData) {
       setMsi(getMostCurrentObj(newMsiData));
     }
   }, [setReport]);
