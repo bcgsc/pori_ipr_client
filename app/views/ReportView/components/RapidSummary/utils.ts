@@ -1,6 +1,11 @@
 import {
-  KbMatchType,
+  KbMatchType, KbMatchedStatementType,
 } from '@/common';
+
+/**
+ * Constant for Rapid Summary tables of relevance to avoid showing to users
+ */
+const RESTRICTED_RELEVANCE_LIST: KbMatchedStatementType['relevance'][] = ['eligibility'];
 
 /**
  * Bins Variants by relevance, if on of Variant's many kbMatchedStatements contain said relevance
@@ -10,16 +15,18 @@ import {
 const getVariantRelevanceDict = (kbMatches: KbMatchType[]) => {
   const relevanceDict: Record<string, KbMatchType[]> = {};
   kbMatches.forEach((variant) => {
-    for (const statement of variant.kbMatchedStatements) {
-      if (!relevanceDict[statement.relevance]) {
-        // Make new entry by relevance key
-        relevanceDict[statement.relevance] = [variant];
-      } else if (
-        relevanceDict[statement.relevance].length >= 0
-        // Do not add repeat variants
-        && !relevanceDict[statement.relevance].map(({ ident }) => ident).includes(variant.ident)
-      ) {
-        relevanceDict[statement.relevance].push(variant);
+    for (const { relevance } of variant.kbMatchedStatements) {
+      if (relevance) {
+        if (!relevanceDict[relevance]) {
+          // Make new entry by relevance key
+          relevanceDict[relevance] = [variant];
+        } else if (
+          relevanceDict[relevance].length >= 0
+          // Do not add repeat variants
+          && !relevanceDict[relevance].map(({ ident }) => ident).includes(variant.ident)
+        ) {
+          relevanceDict[relevance].push(variant);
+        }
       }
     }
   });
@@ -27,5 +34,6 @@ const getVariantRelevanceDict = (kbMatches: KbMatchType[]) => {
 };
 
 export {
+  RESTRICTED_RELEVANCE_LIST,
   getVariantRelevanceDict,
 };

@@ -22,7 +22,7 @@ import { KbMatchedStatementType, KbMatchType } from '@/common';
 import { Box } from '@mui/system';
 import { cloneDeep } from 'lodash';
 import { RapidVariantType } from '../../types';
-import { getVariantRelevanceDict } from '../../utils';
+import { getVariantRelevanceDict, RESTRICTED_RELEVANCE_LIST } from '../../utils';
 
 const condenseMatches = (matches: KbMatchedStatementType[]) => {
   const grouped = {};
@@ -124,7 +124,10 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
     Object.entries(variantRelDict).forEach(([relevance, variants]) => {
       variants.forEach((variant) => {
         for (const statement of variant.kbMatchedStatements) {
-          if (statement.relevance === relevance) {
+          if (
+            statement.relevance === relevance
+            && !RESTRICTED_RELEVANCE_LIST.includes(statement.relevance)
+          ) {
             if (!sorted[relevance]) {
               sorted[relevance] = [statement];
             } else if (

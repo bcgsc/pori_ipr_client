@@ -134,7 +134,7 @@ const ObjectAttributes = ({
       .sort(([a], [b]) => compare(a, b))
       .map(([key, mappedVal], index) => {
         if (
-          ['ident', 'svg', 'svgTitle', 'image'].includes(key)
+          ['svg', 'svgTitle', 'image'].includes(key)
           || mappedVal === null
           || mappedVal === undefined
         ) {
