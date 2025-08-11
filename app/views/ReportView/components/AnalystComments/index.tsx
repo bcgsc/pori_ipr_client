@@ -216,6 +216,7 @@ const AnalystComments = ({
                 color="secondary"
                 onClick={handleEditorStart}
                 size="small"
+                style={{ right: 295, position: 'fixed' }}
               >
                 <EditIcon />
               </Fab>
