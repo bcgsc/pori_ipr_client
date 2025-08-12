@@ -94,8 +94,7 @@ const ReportHistory = (): JSX.Element => {
       <Typography variant="h3">Report History</Typography>
       <div className="analysis__content">
         <Typography>
-          Report created at:
-          {`${formatDate(report?.createdAt, true)}`}
+          {`Report created at: ${formatDate(report?.createdAt, true)}`}
           <br />
           {report?.analysisStartedAt ? (
             <>
