@@ -9,7 +9,7 @@
     "paths": {
       "@/*": ["app/*"]
     },
-    "lib": ["ES2020.Promise", "DOM"]
+    "lib": ["ES2022", "DOM"]
   },
   "include": [
     "app/**/*.ts",

@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback, useContext, useEffect, useState,
+} from 'react';
 import {
   Typography,
 } from '@mui/material';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
-import useResource from '@/hooks/useResource';
 import { formatDate } from '@/utils/date';
 
 import './index.scss';
@@ -13,90 +14,80 @@ import { useQuery } from 'react-query';
 
 const ReportHistory = (): JSX.Element => {
   const { report } = useContext(ReportContext);
-  let { reportEditAccess: canEdit } = useResource();
   const [orderedHistory, setOrderedHistory] = useState([]);
-  if (report.state === 'completed') {
-    canEdit = false;
-  }
 
   const { data: signatureHistoryData } = useQuery(
     `/reports/${report.ident}/signatures/history`,
-    async ({queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
-      select: (response) => {
-        return response
-      },
+      select: (response) => response,
     },
   );
 
   const { data: stateHistoryData } = useQuery(
     `/reports/${report.ident}/state-history`,
-    async ({queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
-      select: (response) => {
-        return response;
-      },
+      select: (response) => response,
     },
   );
 
-  useEffect(() => {
-    if (signatureHistoryData && stateHistoryData && report.users) {
-      const historyArr = signatureHistoryData.concat(stateHistoryData).concat(report.users);
-      historyArr.sort(function(a,b){
-        return new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf();
-      });
-      const orderedHistoryArr = handleOrderReportHistory(historyArr);
-      setOrderedHistory(orderedHistoryArr);
-    }
-  }, [signatureHistoryData, stateHistoryData, report.users]);
-
-  const handleOrderReportHistory = (orderedHistory) => {
+  const handleOrderReportHistory = useCallback((orderedHist) => {
     const historyArray = [];
     let authorSigned = null;
     let creatorSigned = null;
     let reviewerSigned = null;
 
-    for (const element of orderedHistory) {
-      if (element.hasOwnProperty('authorSignature')) {
-        if (element.authorSignedAt!== authorSigned) {
+    for (const element of orderedHist) {
+      if (Object.hasOwn(element, 'authorSignature')) {
+        if (element.authorSignedAt !== authorSigned) {
           if (element.authorSignature) {
-            historyArray.push(`${element.authorSignature.firstName} ${element.authorSignature.lastName} signed as Author: ${formatDate(element.authorSignedAt, true)}`)
+            historyArray.push(`${element.authorSignature.firstName} ${element.authorSignature.lastName} signed as Author: ${formatDate(element.authorSignedAt, true)}`);
           } else {
-            historyArray.push(`Author signature removed: ${formatDate(element.updatedAt, true)}`)
+            historyArray.push(`Author signature removed: ${formatDate(element.updatedAt, true)}`);
           }
           authorSigned = element.authorSignedAt;
         }
-        if (element.creatorSignedAt!== creatorSigned) {
+        if (element.creatorSignedAt !== creatorSigned) {
           if (element.creatorSignature) {
-            historyArray.push(`${element.creatorSignature.firstName} ${element.creatorSignature.lastName} signed as Creator: ${formatDate(element.creatorSignedAt, true)}`)
+            historyArray.push(`${element.creatorSignature.firstName} ${element.creatorSignature.lastName} signed as Creator: ${formatDate(element.creatorSignedAt, true)}`);
           } else {
-            historyArray.push(`Creator signature removed: ${formatDate(element.updatedAt, true)}`)
+            historyArray.push(`Creator signature removed: ${formatDate(element.updatedAt, true)}`);
           }
           creatorSigned = element.creatorSignedAt;
         }
-        if (element.reviewerSignedAt!== reviewerSigned) {
+        if (element.reviewerSignedAt !== reviewerSigned) {
           if (element.reviewerSignature) {
-            historyArray.push(`${element.reviewerSignature.firstName} ${element.reviewerSignature.lastName} signed as Reviewer: ${formatDate(element.reviewerSignedAt, true)}`)
+            historyArray.push(`${element.reviewerSignature.firstName} ${element.reviewerSignature.lastName} signed as Reviewer: ${formatDate(element.reviewerSignedAt, true)}`);
           } else {
-            historyArray.push(`Reviewer signature removed: ${formatDate(element.updatedAt, true)}`)
+            historyArray.push(`Reviewer signature removed: ${formatDate(element.updatedAt, true)}`);
           }
           reviewerSigned = element.reviewerSignedAt;
         }
       }
 
-      if (element.hasOwnProperty('state')) {
+      if (Object.hasOwn(element, 'state')) {
         historyArray.push(`Report updated to ${element.state} at: ${formatDate(element.updatedAt, true)}`);
       }
 
-      if (element.hasOwnProperty('user')) {
-        historyArray.push(`${element.user.firstName} ${element.user.lastName} assigned at: ${formatDate(element.updatedAt, true)}`)
+      if (Object.hasOwn(element, 'user')) {
+        historyArray.push(`${element.user.firstName} ${element.user.lastName} assigned at: ${formatDate(element.updatedAt, true)}`);
       }
     }
 
     return historyArray;
-  }
+  }, []);
+
+  useEffect(() => {
+    if (signatureHistoryData && stateHistoryData && report.users) {
+      const historyArr = signatureHistoryData.concat(stateHistoryData).concat(report.users);
+      historyArr.sort((a, b) => new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf());
+      const orderedHistoryArr = handleOrderReportHistory(historyArr);
+      setOrderedHistory(orderedHistoryArr);
+    }
+  }, [handleOrderReportHistory, signatureHistoryData, stateHistoryData, report.users]);
 
   return (
     <div className="analysis">
@@ -104,8 +95,8 @@ const ReportHistory = (): JSX.Element => {
       <div className="analysis__content">
         <Typography>
           Report created at:
-            {` ${formatDate(report?.createdAt, true)}`}
-            <br />
+          {`${formatDate(report?.createdAt, true)}`}
+          <br />
           {report?.analysisStartedAt ? (
             <>
               Analysis started on:
@@ -113,8 +104,8 @@ const ReportHistory = (): JSX.Element => {
               <br />
             </>
           ) : null}
-          {orderedHistory ? orderedHistory.map((result, index) => (
-            <div key={index}>
+          {orderedHistory ? orderedHistory.map((result) => (
+            <div>
               {result}
               <br />
             </div>
