@@ -396,6 +396,13 @@ type MicrobialType = {
   microbialHidden: boolean;
 } & RecordDefaults;
 
+type UserNotificationType = {
+  ident: string;
+  eventType: string;
+  template: Partial<TemplateType>
+  project: Partial<ProjectType>;
+};
+
 export {
   RecordDefaults,
   ShortReportType,
@@ -423,4 +430,5 @@ export {
   MutationBurdenType,
   ImmuneType,
   MicrobialType,
+  UserNotificationType,
 };
