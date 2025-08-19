@@ -628,7 +628,7 @@ const KbMatches = ({
           setMoveKbMatchesDialogOpen(true);
         }}
       >
-        Add Selected to Rapid Summary
+        Add Selected Variant(s) to Rapid Summary Table
       </MenuItem>
     ) : null;
     return ([kbMatchesMoveOption, rapidMoveOption]);
@@ -808,7 +808,7 @@ const KbMatches = ({
                 </MenuItem>
                 {
                   templateName === 'rapid'
-                  && <MenuItem onClick={handleMoveToRapidSummary}>Add to Rapid Summary Table</MenuItem>
+                  && <MenuItem onClick={handleMoveToRapidSummary}>Add Variant to Rapid Summary Table</MenuItem>
                 }
               </Menu>
             )}

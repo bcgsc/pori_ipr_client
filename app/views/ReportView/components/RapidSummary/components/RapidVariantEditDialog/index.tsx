@@ -20,22 +20,19 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import api, { ApiCallSet } from '@/services/api';
 import { KbMatchedStatementType, KbMatchType } from '@/common';
 import { Box } from '@mui/system';
+import { cloneDeep } from 'lodash';
 import { RapidVariantType } from '../../types';
-import { getVariantRelevanceDict } from '../../utils';
+import { getVariantRelevanceDict, RESTRICTED_RELEVANCE_LIST } from '../../utils';
 
 const condenseMatches = (matches: KbMatchedStatementType[]) => {
   const grouped = {};
 
   matches.forEach((item) => {
     const { context, iprEvidenceLevel } = item;
+    if (!iprEvidenceLevel) return;
 
-    if (!grouped[context]) {
-      grouped[context] = {};
-    }
-
-    if (!grouped[context][iprEvidenceLevel]) {
-      grouped[context][iprEvidenceLevel] = [];
-    }
+    grouped[context] = {};
+    grouped[context][iprEvidenceLevel] = [];
 
     grouped[context][iprEvidenceLevel].push(item);
   });
@@ -104,7 +101,7 @@ const sortByIprThenName = ([keyA, valA], [keyB, valB]) => {
 
 type KbMatchesTableProps = {
   kbMatches: KbMatchType[];
-  onDelete: (idents: string[]) => void;
+  onDelete: (idents: string[], relevance: KbMatchedStatementType['relevance']) => void;
 };
 
 const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
@@ -115,20 +112,30 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
     }
   }, [kbMatches]);
 
+  // Map Relevance to kbMatchedStatements
   const sortedStatements = useMemo(() => {
     if (!editingMatches) {
       return null;
     }
 
     const variantRelDict = getVariantRelevanceDict(editingMatches);
+
     const sorted = {};
-    Object.entries(variantRelDict).forEach(([relevance, matches]) => {
-      matches.forEach((match) => {
-        for (const statement of match.kbMatchedStatements) {
-          if (!sorted[relevance]) {
-            sorted[relevance] = [statement];
-          } else if (!sorted[relevance].some((item: KbMatchedStatementType) => item.ident === statement.ident)) {
-            sorted[relevance].push(statement);
+    Object.entries(variantRelDict).forEach(([relevance, variants]) => {
+      variants.forEach((variant) => {
+        for (const statement of variant.kbMatchedStatements) {
+          if (
+            statement.relevance === relevance
+            && !RESTRICTED_RELEVANCE_LIST.includes(statement.relevance)
+          ) {
+            if (!sorted[relevance]) {
+              sorted[relevance] = [statement];
+            } else if (
+              sorted[relevance]
+              && !sorted[relevance].some((item: KbMatchedStatementType) => item.ident === statement.ident)
+            ) {
+              sorted[relevance].push(statement);
+            }
           }
         }
       });
@@ -136,9 +143,9 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
     return sorted;
   }, [editingMatches]);
 
-  const handleKbMatchesToggle = useCallback((idents) => () => {
+  const handleKbMatchesToggle = useCallback((idents, relevance) => () => {
     if (onDelete && idents.length) {
-      onDelete(idents);
+      onDelete(idents, relevance);
     }
   }, [onDelete]);
 
@@ -147,11 +154,15 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
     return Object.entries(sortedStatements)
       .sort(([relevance1], [relevance2]) => (relevance1 > relevance2 ? 1 : -1)) // Sorts by relevance alphabetically
       .map(([relevance, matches]: [relevance: string, matches: KbMatchedStatementType[]]) => {
-        const condensedMatches = condenseMatches(matches);
+        // Only grab matches that is specific to this relevance
+        const relevanceMatches = matches.filter((m) => m.relevance === relevance);
+        // Condenses kbmatchStatements via drug name
+        const condensedMatches = condenseMatches(relevanceMatches);
         const { noTable, hasTable } = separateNoTable(condensedMatches);
         const highest = keepHighestIprPerContext(hasTable);
+
         return (
-          <React.Fragment key={relevance + matches.toString()}>
+          <React.Fragment key={relevance + relevanceMatches.toString()}>
             <TableRow>
               <TableCell rowSpan={2}>{relevance}</TableCell>
               <TableCell>Shown</TableCell>
@@ -164,10 +175,10 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
 
                     return (
                       <Chip
-                        key={`${key}-${firstFlatEntry.iprEvidenceLevel}`}
+                        key={`${key}-${firstFlatEntry.iprEvidenceLevel}-${relevance}`}
                         label={`${key} ${firstFlatEntry.iprEvidenceLevel ? `(${firstFlatEntry.iprEvidenceLevel})` : ''}`}
                         deleteIcon={<DeleteIcon />}
-                        onDelete={handleKbMatchesToggle(idents)}
+                        onDelete={handleKbMatchesToggle(idents, relevance)}
                       />
                     );
                   })
@@ -180,12 +191,13 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
                 {
                   Object.entries(noTable).sort(sortByIprThenName).map(([key, val]) => Object.entries(val).map(([iprLevel, statements]) => {
                     const idents = statements.map(({ ident }) => ident);
+
                     return (
                       <Chip
-                        key={`${key}-${iprLevel}-'noTable'`}
+                        key={`${key}-${iprLevel}-${relevance}-'noTable'`}
                         label={`${key} ${iprLevel ? `(${iprLevel})` : ''}`}
                         deleteIcon={<DeleteIcon />}
-                        onDelete={handleKbMatchesToggle(idents)}
+                        onDelete={handleKbMatchesToggle(idents, relevance)}
                         sx={{ '& .MuiChip-label': { textDecoration: 'line-through' } }}
                       />
                     );
@@ -328,7 +340,7 @@ const RapidVariantEditDialog = ({
 
   const handleDialogClose = useCallback(() => onClose(null), [onClose]);
 
-  const handleKbMatchToggle = useCallback((kbMatchStatementIds) => {
+  const handleKbMatchToggle = useCallback((kbMatchStatementIds, relevance) => {
     // Find all kbMatches with that ident
     const updatedKbMatches = data?.kbMatches.map((kbMatch: KbMatchType) => {
       const statementsToToggle = kbMatch.kbMatchedStatements
@@ -336,7 +348,10 @@ const RapidVariantEditDialog = ({
           if (!kbMatchStatementIds.includes(stmt.ident)) {
             return stmt;
           }
-          const nextStmt = stmt;
+          if (stmt.relevance !== relevance) {
+            return stmt;
+          }
+          const nextStmt = cloneDeep(stmt);
           const { rapidReportTableTag } = nextStmt.kbData;
           if (rapidReportTableTag !== 'noTable') {
             nextStmt.kbData.rapidReportTableTag = 'noTable';
@@ -373,7 +388,7 @@ const RapidVariantEditDialog = ({
   return (
     <Dialog fullWidth maxWidth="xl" open={open}>
       <DialogTitle>
-        Edit Event
+        Edit Variant
       </DialogTitle>
       <DialogContent className="patient-dialog__content">
         {kbMatchesField}
