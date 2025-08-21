@@ -25,14 +25,19 @@ import { RapidVariantType } from '../../types';
 import { getVariantRelevanceDict, RESTRICTED_RELEVANCE_LIST } from '../../utils';
 
 const condenseMatches = (matches: KbMatchedStatementType[]) => {
-  const grouped = {};
+  const grouped: Record<string, Record<string, KbMatchedStatementType[]>> = {};
 
   matches.forEach((item) => {
     const { context, iprEvidenceLevel } = item;
     if (!iprEvidenceLevel) return;
 
-    grouped[context] = {};
-    grouped[context][iprEvidenceLevel] = [];
+    if (!grouped[context]) {
+      grouped[context] = {};
+    }
+
+    if (!grouped[context][iprEvidenceLevel]) {
+      grouped[context][iprEvidenceLevel] = [];
+    }
 
     grouped[context][iprEvidenceLevel].push(item);
   });
