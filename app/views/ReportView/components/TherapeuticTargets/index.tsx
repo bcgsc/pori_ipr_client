@@ -331,6 +331,7 @@ const Therapeutic = ({
             onAdd={handleEditStart}
             onDelete={handleDeleteTherapeuticTarget}
             onEdit={handleEditStart}
+            onReorder={handleReorder}
             rowData={chemoresistanceData}
             tableType="chemoresistance"
           />
