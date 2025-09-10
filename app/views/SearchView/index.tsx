@@ -28,7 +28,6 @@ import {
   BACKSPACE_KEY,
 } from '@/constants';
 
-
 type SearchKeyType = {
   category: string;
   keyword: string;
