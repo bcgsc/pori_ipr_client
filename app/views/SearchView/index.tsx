@@ -305,12 +305,6 @@ const SearchView = () => {
           {thresholdErrorMessage}
         </Typography>
       </div>
-      {/* <div className="help-dialog">
-        <Typography variant="subtitle2" color="primary">
-          The matching threshold scales from 0 to 1 and determines the cutoff of similarity between the search keyword and a match value.
-          A threshold of 1 means the entire match value or a substring of it is identical to the search keyword. The default value is 0.8 if not specified.
-        </Typography>
-      </div> */}
       <Dialog open={showDialog} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>
           <Typography variant="h3" color="primary">
