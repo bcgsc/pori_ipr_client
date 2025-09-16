@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect,
+  useState, useEffect, useMemo,
 } from 'react';
 import ReportsTableComponent from '@/components/ReportsTable';
 
@@ -26,23 +26,24 @@ const ReportsView = (): JSX.Element => {
   } = useResource();
   const [rowData, setRowData] = useState<ReportType[]>();
 
-  let statesArray = allStates;
-  if (!nonproductionAccess) {
-    statesArray = statesArray.filter((elem) => !nonproductionStates.includes(elem));
-  }
-  if (!unreviewedAccess) {
-    statesArray = statesArray.filter((elem) => !unreviewedStates.includes(elem));
-  }
-  const states = statesArray.join(',');
-  const reportsQuery = useReports(states);
+  const states = useMemo(() => {
+    let statesArray = allStates;
+    if (!nonproductionAccess) {
+      statesArray = statesArray.filter((elem) => !nonproductionStates.includes(elem));
+    }
+    if (!unreviewedAccess) {
+      statesArray = statesArray.filter((elem) => !unreviewedStates.includes(elem));
+    }
+    return statesArray.join(',');
+  }, [allStates, nonproductionAccess, unreviewedAccess, nonproductionStates, unreviewedStates]);
+
+  const { isLoading: isApiLoading, data: reportsData } = useReports(states);
 
   useEffect(() => {
     if (!rowData) {
       const getData = async () => {
-        const isApiLoading = reportsQuery.isLoading;
         if (!isApiLoading) {
-          const { reports } = reportsQuery.data;
-          setRowData(reports.map((report: ReportType) => {
+          setRowData(reportsData.reports.map((report: ReportType) => {
             const [analyst] = report.users
               .filter((u) => u.role === 'analyst')
               .map((u) => u.user);
@@ -63,7 +64,7 @@ const ReportsView = (): JSX.Element => {
       };
       getData();
     }
-  }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData, reportsQuery]);
+  }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData, isApiLoading, reportsData]);
 
   return (
     <ReportsTableComponent rowData={rowData} />
