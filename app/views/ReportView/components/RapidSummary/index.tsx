@@ -81,18 +81,18 @@ const filterRestrictedRelevance = (
   kbMatchedStatements: kbMatchedStatements.filter(({ relevance: statementRelevance }) => !restrictedRelList.includes(statementRelevance)),
 }));
 
-const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(
-  getVariantRelevanceDict(variant.kbMatches),
-)
+/**
+ * Splits variants data by relevance, adds extra fields for display purposes
+ * potentialClinicalAssociation - shows treatment list
+ * @param variant variant
+ * @returns processed variants with extra params
+ */
+const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
-    const filtered = filterRestrictedRelevance(filterNoTableAndByRelevance(kbMatches, relevanceKey));
-    const iprEvidenceDict = splitIprEvidenceLevels(filtered);
-    const sortedIprKeys = Object.keys(iprEvidenceDict).sort(
-      (a, b) => a.localeCompare(b),
-    );
-
+    const filteredKbMatches = filterRestrictedRelevance(filterNoTableAndByRelevance(kbMatches, relevanceKey));
+    const iprEvidenceDict = splitIprEvidenceLevels(filteredKbMatches);
+    const sortedIprKeys = Object.keys(iprEvidenceDict).sort((a, b) => a.localeCompare(b));
     const drugToLevel = new Map();
-
     for (const iprLevel of sortedIprKeys) {
       const drugs = iprEvidenceDict[iprLevel];
       for (const drug of drugs) {
@@ -101,7 +101,6 @@ const processPotentialClinicalAssociation = (variant: RapidVariantType) => Objec
         }
       }
     }
-
     const combinedDrugList = [...drugToLevel.entries()]
       .sort(([drugA, levelA], [drugB, levelB]) => {
         const levelCmp = levelA.localeCompare(levelB);
@@ -110,13 +109,14 @@ const processPotentialClinicalAssociation = (variant: RapidVariantType) => Objec
       })
       .map(([drug, level]) => `${drug} (${level})`)
       .join(', ');
-
     return ({
       ...variant,
       ident: `${variant.ident}-${relevanceKey}`,
-      potentialClinicalAssociation: `${relevanceKey} to ${combinedDrugList}`,
+      potentialClinicalAssociation: `${relevanceKey}${combinedDrugList ? ` to ${combinedDrugList}` : ''}`,
+      relevanceKey, // For filtering out relevance not wanted to be displayed
     });
-  });
+  })
+  .filter(({ relevanceKey }) => !RESTRICTED_RELEVANCE_LIST.includes(relevanceKey));
 
 const splitVariantsByRelevance = (data: RapidVariantType[]): RapidVariantType[] => {
   const returnData = [];
@@ -423,6 +423,7 @@ const RapidSummary = ({
   const handleMatchedTumourEditStart = useCallback((rowData) => {
     setShowMatchedTumourEditDialog(true);
     if (rowData) {
+      console.log('🚀 ~ RapidSummary ~ rowData:', rowData);
       setEditData(rowData);
     }
   }, []);
