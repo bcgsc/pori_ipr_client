@@ -447,10 +447,18 @@ const RapidSummary = ({
 
   let therapeuticAssociationSection;
   if (therapeuticAssociationResults?.length > 0) {
+    const filteredOutEmpty = therapeuticAssociationResults.filter(
+      ({ kbMatches }) => Array.isArray(kbMatches)
+        && kbMatches.length > 0
+        && kbMatches.some(
+          ({ kbMatchedStatements }) => Array.isArray(kbMatchedStatements) && kbMatchedStatements.length > 0,
+        ),
+    );
+
     if (isPrint) {
       therapeuticAssociationSection = (
         <PrintTable
-          data={therapeuticAssociationResults}
+          data={filteredOutEmpty}
           columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
           collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
           fullWidth
@@ -461,7 +469,7 @@ const RapidSummary = ({
         <>
           <DataTable
             columnDefs={therapeuticAssociationColDefs}
-            rowData={therapeuticAssociationResults}
+            rowData={filteredOutEmpty}
             canEdit={canEdit}
             collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
             onEdit={handleMatchedTumourEditStart}
