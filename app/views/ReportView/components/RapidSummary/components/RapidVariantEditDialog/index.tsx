@@ -239,6 +239,7 @@ const VARIANT_TYPE_TO_API_MAP = {
   cnv: 'copy-variants',
   mut: 'small-mutations',
   sv: 'structural-variants',
+  sigv: 'signature-variants',
 };
 
 enum FIELDS {
@@ -337,6 +338,8 @@ const RapidVariantEditDialog = ({
       } catch (e) {
         snackbar.error(`Error editing variant: ${e.message}`);
         onClose(true);
+      } finally {
+        setIsApiCalling(false);
       }
     } else {
       onClose(null);
