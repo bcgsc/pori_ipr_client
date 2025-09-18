@@ -24,7 +24,7 @@ import { cloneDeep } from 'lodash';
 import { RapidVariantType } from '../../types';
 import { getVariantRelevanceDict, RESTRICTED_RELEVANCE_LIST } from '../../utils';
 
-const unspecified = unspecified;
+const unspecified = 'Unspecified evidence level';
 
 const condenseMatches = (matches: KbMatchedStatementType[]) => {
   const grouped: Record<string, Record<string, KbMatchedStatementType[]>> = {};
