@@ -60,7 +60,7 @@ const KB_MATCHES_TITLE_MAP = {
 
 const RAPID_TABLE_TITLE_MAP = {
   // Should be therapeuticAssociation, but the tag in backend is looking for 'therapeutic'
-  therapeutic: 'Variants with Clinical Evidence for Treatment in This Tumour Type',
+  therapeuticAssociation: 'Variants with Clinical Evidence for Treatment in This Tumour Type',
   cancerRelevance: 'Variants with Cancer Relevance',
   unknownSignificance: 'Variants of Uncertain Significance',
 };
@@ -199,7 +199,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
               variantIdent,
               variantType,
               annotations: {
-                rapidReportTableTag: 'therapeuticAssociation',
+                rapidReportTableTag: destTable,
               },
               kbStatementIds,
             }).request();

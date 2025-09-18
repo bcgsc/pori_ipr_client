@@ -34,6 +34,8 @@ import TumourSummary from '../TumourSummary';
 
 import './index.scss';
 
+const unspecified = 'Unspecified evidence level'
+
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
 
@@ -43,6 +45,8 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
         if (!iprRelevanceDict[statement.iprEvidenceLevel]) {
           iprRelevanceDict[statement.iprEvidenceLevel] = new Set();
         }
+      } else if (!iprRelevanceDict[unspecified]) {
+          iprRelevanceDict[unspecified] = new Set();
       }
     }
   });
@@ -52,6 +56,8 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
     for (const statement of kbMatchedStatements) {
       if (statement.iprEvidenceLevel && statement.context) {
         iprRelevanceDict[statement.iprEvidenceLevel].add(statement.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+      } else if (statement.context) {
+        iprRelevanceDict[unspecified].add(statement.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
       }
     }
   });
@@ -92,6 +98,7 @@ const processPotentialClinicalAssociation = (variant: RapidVariantType) => Objec
     const filteredKbMatches = filterRestrictedRelevance(filterNoTableAndByRelevance(kbMatches, relevanceKey));
     const iprEvidenceDict = splitIprEvidenceLevels(filteredKbMatches);
     const sortedIprKeys = Object.keys(iprEvidenceDict).sort((a, b) => a.localeCompare(b));
+
     const drugToLevel = new Map();
     for (const iprLevel of sortedIprKeys) {
       const drugs = iprEvidenceDict[iprLevel];
@@ -423,7 +430,7 @@ const RapidSummary = ({
   const handleMatchedTumourEditStart = useCallback((rowData) => {
     setShowMatchedTumourEditDialog(true);
     if (rowData) {
-      console.log('🚀 ~ RapidSummary ~ rowData:', rowData);
+      // console.log('🚀 ~ RapidSummary ~ rowData:', rowData);
       setEditData(rowData);
     }
   }, []);

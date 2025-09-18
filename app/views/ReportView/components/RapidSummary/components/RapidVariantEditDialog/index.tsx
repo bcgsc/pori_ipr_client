@@ -24,22 +24,27 @@ import { cloneDeep } from 'lodash';
 import { RapidVariantType } from '../../types';
 import { getVariantRelevanceDict, RESTRICTED_RELEVANCE_LIST } from '../../utils';
 
+const unspecified = unspecified;
+
 const condenseMatches = (matches: KbMatchedStatementType[]) => {
   const grouped: Record<string, Record<string, KbMatchedStatementType[]>> = {};
 
   matches.forEach((item) => {
     const { context, iprEvidenceLevel } = item;
-    if (!iprEvidenceLevel) return;
+    let evidenceLevel = iprEvidenceLevel;
+    if (!iprEvidenceLevel) {
+      evidenceLevel = unspecified;
+    }
 
     if (!grouped[context]) {
       grouped[context] = {};
     }
 
-    if (!grouped[context][iprEvidenceLevel]) {
-      grouped[context][iprEvidenceLevel] = [];
+    if (!grouped[context][evidenceLevel]) {
+      grouped[context][evidenceLevel] = [];
     }
 
-    grouped[context][iprEvidenceLevel].push(item);
+    grouped[context][evidenceLevel].push(item);
   });
 
   return grouped;
@@ -79,7 +84,9 @@ const keepHighestIprPerContext = (groupedData) => {
   Object.entries(groupedData).forEach(([context, iprMap]) => {
     const iprLevels = Object.keys(iprMap);
 
-    if (iprLevels.length === 0) return;
+    if (iprLevels.length === 0) {
+      iprLevels.push(unspecified)
+    }
 
     const [highest] = iprLevels.sort();
 
@@ -165,7 +172,6 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
         const condensedMatches = condenseMatches(relevanceMatches);
         const { noTable, hasTable } = separateNoTable(condensedMatches);
         const highest = keepHighestIprPerContext(hasTable);
-
         return (
           <React.Fragment key={relevance + relevanceMatches.toString()}>
             <TableRow>
@@ -181,7 +187,7 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
                     return (
                       <Chip
                         key={`${key}-${firstFlatEntry.iprEvidenceLevel}-${relevance}`}
-                        label={`${key} ${firstFlatEntry.iprEvidenceLevel ? `(${firstFlatEntry.iprEvidenceLevel})` : ''}`}
+                        label={`${key} (${firstFlatEntry.iprEvidenceLevel ? firstFlatEntry.iprEvidenceLevel : unspecified})`}
                         deleteIcon={<DeleteIcon />}
                         onDelete={handleKbMatchesToggle(idents, relevance)}
                       />
@@ -200,7 +206,7 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
                     return (
                       <Chip
                         key={`${key}-${iprLevel}-${relevance}-'noTable'`}
-                        label={`${key} ${iprLevel ? `(${iprLevel})` : ''}`}
+                        label={`${key} ${iprLevel ? `(${iprLevel})` : unspecified}`}
                         deleteIcon={<DeleteIcon />}
                         onDelete={handleKbMatchesToggle(idents, relevance)}
                         sx={{ '& .MuiChip-label': { textDecoration: 'line-through' } }}
@@ -319,9 +325,6 @@ const RapidVariantEditDialog = ({
           const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
           const variantIdent = uuidRegex.test(data.ident) ? data.ident : data.ident.split('-').slice(0, 5).join('-');
           noTableSet.forEach((ident) => {
-            // calls.push(api.put(`/reports/${report.ident}/kb-matches/kb-matched-statements/${ident}`, {
-            //  kbData: { rapidReportTableTag: 'noTable' },
-            // }));
             calls.push(api.post(`/reports/${report.ident}/variants/set-summary-table`, {
               variantIdent,
               variantType: data.variantType,
@@ -331,10 +334,8 @@ const RapidVariantEditDialog = ({
               kbStatementIds: [ident],
             }));
           });
+          // don't know what this is doing
           tableTypeSet.forEach((ident) => {
-            // calls.push(api.put(`/reports/${report.ident}/kb-matches/kb-matched-statements/${ident}`, {
-            //  kbData: { rapidReportTableTag: rapidVariantTableType },
-            // }));
             calls.push(api.post(`/reports/${report.ident}/variants/set-summary-table`, {
               variantIdent,
               variantType: data.variantType,
