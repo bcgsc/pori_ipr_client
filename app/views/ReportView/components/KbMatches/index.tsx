@@ -184,7 +184,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
   const { mutate: addObservedVariantAnnotation } = useMutation({
     mutationFn: async ({ reportId, destTable, dataRows }: AddObservedVariantAnnotationFnType) => {
       const extractedVariants = dataRows.flatMap((item) => item.kbMatches);
-
+      const kbStatementIds = dataRows.flatMap((item) => item.ident);
       const seen = new Set();
       const uniqueVariants = extractedVariants.filter(({ variant: { ident } }) => {
         if (seen.has(ident)) return false;
@@ -195,12 +195,13 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       const results = await Promise.allSettled(
         uniqueVariants.map(async ({ variant: { ident: variantIdent }, variantType }) => {
           try {
-            await api.post(`/reports/${reportId}/observed-variant-annotations`, {
+            await api.post(`/reports/${reportId}/variants/set-summary-table`, {
               variantIdent,
               variantType,
               annotations: {
-                rapidReportTableTag: destTable,
+                rapidReportTableTag: 'therapeuticAssociation',
               },
+              kbStatementIds,
             }).request();
           } catch (e) {
             if (e instanceof RecordConflictError && e.content.data) {
@@ -365,7 +366,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
           Save
         </Button>
       </DialogActions>
-      { isUpdating && <LinearProgress />}
+      {isUpdating && <LinearProgress />}
     </Dialog>
   );
 };
@@ -768,23 +769,23 @@ const KbMatches = ({
             and those that have early clinical or preclinical evidence.
           </DemoDescription>
           {!isPrint && (
-          <div className="kb-matches__filter">
-            <TextField
-              label="Filter Table Text"
-              type="text"
-              variant="outlined"
-              value={filterText}
-              onChange={handleFilter}
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <FilterList color="action" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
+            <div className="kb-matches__filter">
+              <TextField
+                label="Filter Table Text"
+                type="text"
+                variant="outlined"
+                value={filterText}
+                onChange={handleFilter}
+                fullWidth
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <FilterList color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
           )}
           <div>
             {kbMatchedTables}
