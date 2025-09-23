@@ -50,18 +50,27 @@ const condenseMatches = (matches: KbMatchedStatementType[]) => {
   return grouped;
 };
 
-const separateNoTable = (groupedData) => {
+const separateNoTable = (groupedData, variantIdent, variantType) => {
   const noTable = {};
   const hasTable = {};
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const trimmedVariantIdent = uuidRegex.test(variantIdent) ? variantIdent : variantIdent.split('-').slice(0, 5).join('-');
 
   Object.entries(groupedData).forEach(([context, iprLevels]) => {
     Object.entries(iprLevels).forEach(([iprLevel, entries]) => {
-      const noTableEntries = entries.filter(
-        (item) => item.kbData?.rapidReportTableTag === 'noTable',
-      );
-      const otherEntries = entries.filter(
-        (item) => item.kbData?.rapidReportTableTag !== 'noTable',
-      );
+      let noTableEntries = [];
+      let otherEntries = [];
+
+      // if the stmt is tagged noTable
+      for (const item in entries) {
+        const entry = entries[item];
+        const noTableList = entry?.kbData?.rapidReportTableTag?.noTable?.[variantType] || [];
+        if (noTableList.includes(trimmedVariantIdent)) {
+          noTableEntries.push(entry);
+        } else {
+          otherEntries.push(entry);
+        }
+      };
 
       if (noTableEntries.length > 0) {
         if (!noTable[context]) noTable[context] = {};
@@ -87,9 +96,7 @@ const keepHighestIprPerContext = (groupedData) => {
     if (iprLevels.length === 0) {
       iprLevels.push(unspecified)
     }
-
     const [highest] = iprLevels.sort();
-
     result[context] = {
       [highest]: iprMap[highest],
     };
@@ -113,10 +120,12 @@ const sortByIprThenName = ([keyA, valA], [keyB, valB]) => {
 
 type KbMatchesTableProps = {
   kbMatches: KbMatchType[];
+  variantIdent: string;
+  variantType: string;
   onDelete: (idents: string[], relevance: KbMatchedStatementType['relevance']) => void;
 };
 
-const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
+const KbMatchesTable = ({ kbMatches, variantIdent, variantType, onDelete }: KbMatchesTableProps) => {
   const [editingMatches, setEditingMatches] = useState(kbMatches);
   useEffect(() => {
     if (kbMatches) {
@@ -170,7 +179,7 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
         const relevanceMatches = matches.filter((m) => m.relevance === relevance);
         // Condenses kbmatchStatements via drug name
         const condensedMatches = condenseMatches(relevanceMatches);
-        const { noTable, hasTable } = separateNoTable(condensedMatches);
+        const { noTable, hasTable } = separateNoTable(condensedMatches, variantIdent, variantType);
         const highest = keepHighestIprPerContext(hasTable);
         return (
           <React.Fragment key={relevance + relevanceMatches.toString()}>
@@ -219,7 +228,7 @@ const KbMatchesTable = ({ kbMatches, onDelete }: KbMatchesTableProps) => {
           </React.Fragment>
         );
       });
-  }, [sortedStatements, handleKbMatchesToggle]);
+  }, [sortedStatements, variantIdent, variantType, handleKbMatchesToggle]);
 
   return (
     <Box my={1}>
@@ -296,6 +305,8 @@ const RapidVariantEditDialog = ({
   }, [editDataDirty]);
 
   const handleSave = useCallback(async () => {
+    console.log('in handlesave. editDataDirty:');
+    console.log(editDataDirty);
     if (editDataDirty) {
       setIsApiCalling(true);
       try {
@@ -325,7 +336,9 @@ const RapidVariantEditDialog = ({
           const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
           const variantIdent = uuidRegex.test(data.ident) ? data.ident : data.ident.split('-').slice(0, 5).join('-');
           noTableSet.forEach((ident) => {
-            calls.push(api.post(`/reports/${report.ident}/variants/set-summary-table`, {
+            console.log(ident);
+            console.log('sending to set-statement-summary-table noTable');
+            calls.push(api.post(`/reports/${report.ident}/variants/set-statement-summary-table`, {
               variantIdent,
               variantType: data.variantType,
               annotations: {
@@ -334,13 +347,14 @@ const RapidVariantEditDialog = ({
               kbStatementIds: [ident],
             }));
           });
-          // don't know what this is doing
           tableTypeSet.forEach((ident) => {
-            calls.push(api.post(`/reports/${report.ident}/variants/set-summary-table`, {
+            console.log(ident);
+            console.log('sending to set-statement-summary-table therapeutic');
+            calls.push(api.post(`/reports/${report.ident}/variants/set-statement-summary-table`, {
               variantIdent,
               variantType: data.variantType,
               annotations: {
-                rapidReportTableTag: rapidVariantTableType,
+                rapidReportTableTag: 'therapeuticAssociation',
               },
               kbStatementIds: [ident],
             }));
@@ -370,6 +384,8 @@ const RapidVariantEditDialog = ({
 
   const handleKbMatchToggle = useCallback((kbMatchStatementIds, relevance) => {
     // Find all kbMatches with that ident
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    const trimmedVariantIdent = uuidRegex.test(data?.ident) ? data?.ident : data?.ident.split('-').slice(0, 5).join('-');
     const updatedKbMatches = data?.kbMatches.map((kbMatch: KbMatchType) => {
       const statementsToToggle = kbMatch.kbMatchedStatements
         .map((stmt) => {
@@ -380,13 +396,57 @@ const RapidVariantEditDialog = ({
             return stmt;
           }
           const nextStmt = cloneDeep(stmt);
-          const { rapidReportTableTag } = nextStmt.kbData;
-          if (rapidReportTableTag !== 'noTable') {
-            nextStmt.kbData.rapidReportTableTag = 'noTable';
+          const { rapidReportTableTag } = nextStmt.kbData || {};
+          // create rapidReport dict in kbData if necessary
+          if (!nextStmt.kbData.rapidReportTableTag) {
+            nextStmt.kbData.rapidReportTableTag = {};
+          }
+
+          // get the current tag:
+          // using this tag as the default because an untagged stmt is treated the same way
+          let currentTag = 'therapeuticAssociation';
+          for (const key of Object.keys(rapidReportTableTag)) {
+            // only need to check the therapeuticAssociation and noTable tags
+            const variantTypesDict = rapidReportTableTag[key] || {};
+            const variantIdentList = variantTypesDict.hasOwnProperty(data?.variantType) ? variantTypesDict[data?.variantType] : [];
+            //const { variantIdentList } = variantTypesDict[data?.variantType] || []
+            if (variantIdentList.includes(trimmedVariantIdent)) {
+              currentTag = key;
+            }
+          }
+
+          // untagged and therapeuticAssociation are treated the same way, as show
+          // noTable and any other tag are treated the same way, as don't show
+
+          let newTag = 'noTable';
+          if (currentTag !== 'therapeuticAssociation') {
+            newTag = 'therapeuticAssociation';
+          }
+
+          // unset old tag...
+          for (const tableKey of Object.keys(rapidReportTableTag)) {
+            const typeMap = nextStmt.kbData.rapidReportTableTag[tableKey];
+            if (Array.isArray(typeMap?.[data?.variantType])) {
+              typeMap[data?.variantType] = typeMap[data?.variantType].filter((id) => { return id !== trimmedVariantIdent; });
+            }
+          }
+
+          // set new tag
+          if (!nextStmt.kbData.rapidReportTableTag[newTag]) {
+            nextStmt.kbData.rapidReportTableTag[newTag] = { [data?.variantType]: [trimmedVariantIdent] };
+          } else {
+            const tableEntry = nextStmt.kbData.rapidReportTableTag[newTag];
+            tableEntry[data?.variantType] = tableEntry[data?.variantType] || [];
+            if (!tableEntry[data?.variantType].includes(trimmedVariantIdent)) {
+              tableEntry[data?.variantType].push(trimmedVariantIdent);
+            }
+          }
+
+          // currently this will only set as noTable or therapeutic
+          if (newTag === 'noTable') {
             noTableSet.add(stmt.ident);
             tableTypeSet.delete(stmt.ident);
           } else {
-            nextStmt.kbData.rapidReportTableTag = rapidVariantTableType;
             noTableSet.delete(stmt.ident);
             tableTypeSet.add(stmt.ident);
           }
@@ -400,16 +460,16 @@ const RapidVariantEditDialog = ({
         name: 'kbMatches',
       },
     });
-  }, [data?.kbMatches, handleDataChange, noTableSet, rapidVariantTableType, tableTypeSet]);
+  }, [data?.kbMatches, handleDataChange, noTableSet, rapidVariantTableType, tableTypeSet, data?.variantType, data?.ident]);
 
   const kbMatchesField = useMemo(() => {
     if (!fields.includes(FIELDS.kbMatches)) {
       return null;
     }
     return (
-      <KbMatchesTable kbMatches={data?.kbMatches} onDelete={handleKbMatchToggle} />
+      <KbMatchesTable kbMatches={data?.kbMatches} variantIdent={data?.ident} variantType={data?.variantType} onDelete={handleKbMatchToggle} />
     );
-  }, [data?.kbMatches, fields, handleKbMatchToggle]);
+  }, [data?.ident, data?.kbMatches, data?.variantType, fields, handleKbMatchToggle]);
 
   const disableCommentField = !fields.includes(FIELDS.comments) || ['tmb', 'signature'].includes(editData?.variantType);
 
