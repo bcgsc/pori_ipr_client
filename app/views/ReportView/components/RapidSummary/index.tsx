@@ -46,7 +46,7 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
           iprRelevanceDict[statement.iprEvidenceLevel] = new Set();
         }
       } else if (!iprRelevanceDict[unspecified]) {
-          iprRelevanceDict[unspecified] = new Set();
+        iprRelevanceDict[unspecified] = new Set();
       }
     }
   });
@@ -66,6 +66,8 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
 };
 
 const filterNoTableAndByRelevance = (
+  variantIdent: string, // todo add uuid format check
+  variantType: string, // todo add enum check
   kbMatches: KbMatchType[],
   relevance: KbMatchedStatementType['relevance'],
 ): KbMatchType[] => kbMatches.map(({ kbMatchedStatements, ...rest }) => ({
@@ -75,7 +77,29 @@ const filterNoTableAndByRelevance = (
       ({ relevance: statementRelevance }) => statementRelevance === relevance,
     )
     .filter(
-      ({ kbData }) => !kbData || kbData.rapidReportTableTag !== 'noTable',
+      ({ kbData }) => {
+        if (!kbData) return true;
+        // check if statement is tagged with 'noTable' or a nontherapeutic table;
+        // if so, hide it, otherwise display
+
+        // get the current tag
+        // (using this tag as the default because an untagged stmt is treated the same way)
+        let currentTag = 'therapeuticAssociation';
+        const rapidReportDict = kbData?.rapidReportTableTag || {}
+        for (const key of Object.keys(rapidReportDict)) {
+          const variantTypesDict = rapidReportDict[key] || {};
+          const variantIdentList = variantTypesDict.hasOwnProperty(variantType) ? variantTypesDict[variantType] : [];
+          if (variantIdentList.includes(variantIdent)) {
+            currentTag = key;
+          }
+        }
+
+        if (currentTag === 'therapeuticAssociation') {
+          return true;
+        } else {
+          return false;
+        }
+      }
     ),
 }));
 
@@ -95,7 +119,7 @@ const filterRestrictedRelevance = (
  */
 const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
-    const filteredKbMatches = filterRestrictedRelevance(filterNoTableAndByRelevance(kbMatches, relevanceKey));
+    const filteredKbMatches = filterRestrictedRelevance(filterNoTableAndByRelevance(variant.ident, variant.variantType, kbMatches, relevanceKey));
     const iprEvidenceDict = splitIprEvidenceLevels(filteredKbMatches);
     const sortedIprKeys = Object.keys(iprEvidenceDict).sort((a, b) => a.localeCompare(b));
 
@@ -385,13 +409,13 @@ const RapidSummary = ({
         },
         {
           term:
-          tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
           value: tCell,
         },
         {
           term: 'Pediatric CD8+ T Cell Comment',
           value:
-          tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
+            tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
         },
         {
           term: 'Mutation Burden',
@@ -484,7 +508,7 @@ const RapidSummary = ({
             isPaginated={!isPrint}
           />
           <RapidVariantEditDialog
-            rapidVariantTableType="therapeutic"
+            rapidVariantTableType="therapeuticAssociation"
             open={showMatchedTumourEditDialog}
             fields={[FIELDS.comments, FIELDS.kbMatches]}
             editData={editData}
@@ -740,35 +764,35 @@ const RapidSummary = ({
           </Box>
         </Box>
         {report && therapeuticAssociationResults && (
-        <div className="rapid-summary__events">
-          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-            Variants with Clinical Evidence for Treatment in This Tumour Type
-          </Typography>
-          {therapeuticAssociationSection}
-        </div>
+          <div className="rapid-summary__events">
+            <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+              Variants with Clinical Evidence for Treatment in This Tumour Type
+            </Typography>
+            {therapeuticAssociationSection}
+          </div>
         )}
         {report && cancerRelevanceResults && (
-        <div className="rapid-summary__events">
-          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-            Variants with Cancer Relevance
-          </Typography>
-          {cancerRelevanceSection}
-        </div>
+          <div className="rapid-summary__events">
+            <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+              Variants with Cancer Relevance
+            </Typography>
+            {cancerRelevanceSection}
+          </div>
         )}
         {report && unknownSignificanceResults && (
-        <div className="rapid-summary__events">
-          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-            Variants of Uncertain Significance
-          </Typography>
-          {unknownSignificanceSection}
-        </div>
+          <div className="rapid-summary__events">
+            <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+              Variants of Uncertain Significance
+            </Typography>
+            {unknownSignificanceSection}
+          </div>
         )}
         {
-            isPrint ? reviewSignaturesSection : sampleInfoSection
-          }
+          isPrint ? reviewSignaturesSection : sampleInfoSection
+        }
         {
-            isPrint ? sampleInfoSection : reviewSignaturesSection
-          }
+          isPrint ? sampleInfoSection : reviewSignaturesSection
+        }
       </div>
     );
   }
