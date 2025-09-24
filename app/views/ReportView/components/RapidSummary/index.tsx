@@ -171,7 +171,6 @@ const RapidSummary = ({
 
   const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>([]);
   const [showMatchedTumourEditDialog, setShowMatchedTumourEditDialog] = useState(false);
-  const [showCancerRelevanceEventsDialog, setShowCancerRelevanceEventsDialog] = useState(false);
 
   useEffect(() => {
     let apiCalls = null;
@@ -460,7 +459,7 @@ const RapidSummary = ({
         <PrintTable
           data={filteredOutEmpty}
           columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
-          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
+          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
           fullWidth
         />
       );
@@ -471,7 +470,7 @@ const RapidSummary = ({
             columnDefs={therapeuticAssociationColDefs}
             rowData={filteredOutEmpty}
             canEdit={canEdit}
-            collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
+            collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
@@ -479,7 +478,7 @@ const RapidSummary = ({
           <RapidVariantEditDialog
             rapidVariantTableType="therapeutic"
             open={showMatchedTumourEditDialog}
-            fields={[FIELDS.comments, FIELDS.kbMatches]}
+            fields={[FIELDS.kbMatches]}
             editData={editData}
             onClose={handleMatchedTumourEditClose}
           />
@@ -494,29 +493,6 @@ const RapidSummary = ({
     );
   }
 
-  const handleCancerRelevanceEditStart = useCallback((rowData) => {
-    setShowCancerRelevanceEventsDialog(true);
-    if (rowData) {
-      setEditData(rowData);
-    }
-  }, []);
-
-  const handleCancerRelevanceEditClose = useCallback(async (newData) => {
-    setShowCancerRelevanceEventsDialog(false);
-    if (newData) {
-      try {
-        const updateResp = await api.get(`/reports/${report.ident}/variants?rapidTable=cancerRelevance`).request();
-        setCancerRelevanceResults(updateResp);
-      } catch (e) {
-        snackbar.error(`Refetching of cancer relevance data failed: ${e.message ? e.message : e}`);
-      } finally {
-        setShowCancerRelevanceEventsDialog(false);
-      }
-    } else {
-      setShowCancerRelevanceEventsDialog(false);
-    }
-  }, [report.ident]);
-
   let cancerRelevanceSection;
   if (cancerRelevanceResults?.length > 0) {
     if (isPrint) {
@@ -530,23 +506,13 @@ const RapidSummary = ({
       );
     } else {
       cancerRelevanceSection = (
-        <>
-          <DataTable
-            columnDefs={cancerRelevanceColDefs}
-            rowData={cancerRelevanceResults}
-            canEdit={canEdit}
-            collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
-            onEdit={handleCancerRelevanceEditStart}
-            isPrint={isPrint}
-            isPaginated={!isPrint}
-          />
-          <RapidVariantEditDialog
-            rapidVariantTableType="cancerRelevance"
-            open={showCancerRelevanceEventsDialog}
-            editData={editData}
-            onClose={handleCancerRelevanceEditClose}
-          />
-        </>
+        <DataTable
+          columnDefs={cancerRelevanceColDefs}
+          rowData={cancerRelevanceResults}
+          collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
+          isPrint={isPrint}
+          isPaginated={!isPrint}
+        />
       );
     }
   } else {

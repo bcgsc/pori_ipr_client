@@ -243,7 +243,6 @@ const VARIANT_TYPE_TO_API_MAP = {
 };
 
 enum FIELDS {
-  'comments',
   'kbMatches',
 }
 
@@ -259,7 +258,7 @@ const RapidVariantEditDialog = ({
   open,
   editData,
   rapidVariantTableType,
-  fields = [FIELDS.comments],
+  fields = [],
 }: VariantEditDialogProps) => {
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
@@ -301,19 +300,6 @@ const RapidVariantEditDialog = ({
 
         const calls = [];
 
-        if (fields.includes(FIELDS.comments)) {
-          const variantLink = VARIANT_TYPE_TO_API_MAP[data.variantType];
-          // TODO: Once API finalizes remove this check
-          if (variantLink) {
-            calls.push(api.put(
-              `/reports/${report.ident}/${variantLink}/${variantId}`,
-              {
-                comments: data.comments,
-              },
-            ));
-          }
-        }
-
         if (fields.includes(FIELDS.kbMatches) && data?.kbMatches && editData?.kbMatches) {
           noTableSet.forEach((ident) => {
             calls.push(api.put(`/reports/${report.ident}/kb-matches/kb-matched-statements/${ident}`, {
@@ -344,7 +330,7 @@ const RapidVariantEditDialog = ({
     } else {
       onClose(null);
     }
-  }, [editDataDirty, tableTypeSet, noTableSet, data?.ident, data?.potentialClinicalAssociation, data?.comments, data?.kbMatches, data?.variantType, fields, editData?.kbMatches, isSigned, report.ident, rapidVariantTableType, showConfirmDialog, onClose]);
+  }, [editDataDirty, tableTypeSet, noTableSet, data?.ident, data?.potentialClinicalAssociation, data?.kbMatches, data?.variantType, fields, editData?.kbMatches, isSigned, report.ident, rapidVariantTableType, showConfirmDialog, onClose]);
 
   const handleDialogClose = useCallback(() => onClose(null), [onClose]);
 
@@ -391,7 +377,7 @@ const RapidVariantEditDialog = ({
     );
   }, [data?.kbMatches, fields, handleKbMatchToggle]);
 
-  const disableCommentField = !fields.includes(FIELDS.comments) || ['tmb', 'signature'].includes(editData?.variantType);
+  const disableCommentField = ['tmb', 'signature'].includes(editData?.variantType);
 
   return (
     <Dialog fullWidth maxWidth="xl" open={open}>
@@ -400,17 +386,6 @@ const RapidVariantEditDialog = ({
       </DialogTitle>
       <DialogContent className="patient-dialog__content">
         {kbMatchesField}
-        <TextField
-          className="patient-dialog__text-field"
-          label="comments"
-          value={data?.comments ?? ''}
-          name="comments"
-          onChange={handleDataChange}
-          variant="outlined"
-          disabled={disableCommentField}
-          multiline
-          fullWidth
-        />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleDialogClose}>
