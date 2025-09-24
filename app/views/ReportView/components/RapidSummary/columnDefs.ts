@@ -104,7 +104,7 @@ const therapeuticAssociationColDefs = [
   {
     headerName: 'Comments',
     field: 'comments',
-    hide: false,
+    hide: true,
   },
   {
     headerName: 'Potential Clinical Association',
@@ -167,7 +167,7 @@ const cancerRelevanceColDefs = [
   {
     headerName: 'Comments',
     field: 'comments',
-    hide: false,
+    hide: true,
   },
   {
     ...ACTIONS_COLDEF,

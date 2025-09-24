@@ -314,6 +314,7 @@ type TmburType = {
   cdsSnvs: number,
   cdsSnvTmb: number;
   comments: string;
+  displayName: string;
   genomeSnvTmb: number;
   genomeIndelTmb: number;
   germline?: string | null;
