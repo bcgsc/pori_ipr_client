@@ -9,10 +9,16 @@ import {
   Select,
   SelectChangeEvent,
   InputAdornment,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import SearchDescription from './components/SearchDescription';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   MIN_KEYWORD_LENGTH,
@@ -48,6 +54,7 @@ const SearchView = () => {
   const history = useHistory();
   const [searchErrorMessage, setSearchErrorMessage] = useState('');
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
+  const [showDialog, setShowDialog] = useState<boolean>(false);
   const customCss = useStyles();
 
   // Calls submit function
@@ -62,7 +69,7 @@ const SearchView = () => {
       pathname: '/search/result',
       search: encodeURIComponent(`searchParams=${searchUrl.join('')}`),
     });
-  }, [searchKey, history]);
+  }, [searchKey, history, encodeURIComponent]);
 
   // Validate threshold value
   useEffect(() => {
@@ -116,7 +123,7 @@ const SearchView = () => {
         searchKey.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
         history.push({
           pathname: '/search/result',
-          search: `?searchParams=${searchUrl.join('')}`,
+          search: encodeURIComponent(`searchParams=${searchUrl.join('')}`),
         });
       }
       // Validate value
@@ -133,6 +140,14 @@ const SearchView = () => {
       }
     }
   }, [searchKey, searchCategory, searchKeyword, searchThreshold]);
+
+  const handleOpen = useCallback(() => {
+    setShowDialog(true);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setShowDialog(false);
+  }, []);
 
   return (
     <div className="search-view">
@@ -228,7 +243,7 @@ const SearchView = () => {
                 error={Boolean(searchErrorMessage)}
                 onChange={handleKeywordChange}
                 onKeyDown={handleKeyDown}
-                placeholder={searchKey.length < 1 ? 'Press enter to add keyword. Press backspace to delete keyword.' : ''}
+                placeholder={searchKey.length < 1 ? 'After inputting a keyword, press enter to add search chip. Press backspace to delete.' : ''}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -260,6 +275,24 @@ const SearchView = () => {
             )}
           />
         </div>
+        <Button
+          variant="contained"
+          color="inherit"
+          size="large"
+          onClick={handleOpen}
+          sx={{
+            display: 'flex',
+            padding: '8px',
+            marginLeft: '12px',
+            marginTop: '8px',
+            marginBottom: '8px',
+            minHeight: 0,
+            minWidth: '40px',
+            borderRadius: '25px',
+          }}
+        >
+          <QuestionMarkIcon />
+        </Button>
       </div>
       <div className="error-dialog">
         <Typography variant="subtitle2" color="error">
@@ -271,12 +304,21 @@ const SearchView = () => {
           {thresholdErrorMessage}
         </Typography>
       </div>
-      <div className="help-dialog">
-        <Typography variant="subtitle2" color="primary">
-          The matching threshold scales from 0 to 1 and determines the cutoff of similarity between the search keyword and a match value.
-          A threshold of 1 means the entire match value or a substring of it is identical to the search keyword. The default value is 0.8 if not specified.
-        </Typography>
-      </div>
+      <Dialog open={showDialog} onClose={handleClose} maxWidth="md" fullWidth>
+        <DialogTitle>
+          <Typography variant="h3" color="primary">
+            Search Feature Details
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <SearchDescription />
+        </DialogContent>
+        <DialogActions>
+          <Button color="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

@@ -12,7 +12,7 @@
         "app/*"
       ]
     },
-    "lib": ["ES2020","DOM"],
+    "lib": ["ES2022","DOM"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,

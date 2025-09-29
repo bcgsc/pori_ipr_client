@@ -1,4 +1,5 @@
 import { sampleColumnDefs } from '../../common';
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 /**
  * @param row KbMatch data
@@ -97,12 +98,13 @@ const therapeuticAssociationColDefs = [
       }
       return '';
     },
+    comparator: collator.compare,
     hide: false,
   },
   {
     headerName: 'Comments',
     field: 'comments',
-    hide: false,
+    hide: true,
   },
   {
     headerName: 'Potential Clinical Association',
@@ -159,12 +161,13 @@ const cancerRelevanceColDefs = [
       }
       return '';
     },
+    comparator: collator.compare,
     hide: false,
   },
   {
     headerName: 'Comments',
     field: 'comments',
-    hide: false,
+    hide: true,
   },
   {
     ...ACTIONS_COLDEF,
