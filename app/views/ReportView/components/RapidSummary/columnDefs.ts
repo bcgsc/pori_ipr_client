@@ -1,4 +1,5 @@
 import { sampleColumnDefs } from '../../common';
+
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 /**
@@ -46,6 +47,7 @@ const getGenomicEvent = ({ data }) => {
 const ACTIONS_COLDEF = {
   headerName: 'Actions',
   colId: 'Actions',
+  field: 'Actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   hide: false,
