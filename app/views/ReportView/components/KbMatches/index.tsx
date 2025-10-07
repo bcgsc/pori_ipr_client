@@ -198,9 +198,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
             await api.post(`/reports/${reportId}/variants/set-summary-table`, {
               variantIdent,
               variantType,
-              annotations: {
-                rapidReportTableTag: destTable,
-              },
+              rapidReportTableTag: destTable,
               kbStatementIds,
             }).request();
           } catch (e) {

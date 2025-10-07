@@ -341,9 +341,7 @@ const RapidVariantEditDialog = ({
             calls.push(api.post(`/reports/${report.ident}/variants/set-statement-summary-table`, {
               variantIdent,
               variantType: data.variantType,
-              annotations: {
-                rapidReportTableTag: 'noTable',
-              },
+              rapidReportTableTag: 'noTable',
               kbStatementIds: [ident],
             }));
           });
@@ -353,9 +351,7 @@ const RapidVariantEditDialog = ({
             calls.push(api.post(`/reports/${report.ident}/variants/set-statement-summary-table`, {
               variantIdent,
               variantType: data.variantType,
-              annotations: {
-                rapidReportTableTag: 'therapeuticAssociation',
-              },
+              rapidReportTableTag: 'therapeuticAssociation',
               kbStatementIds: [ident],
             }));
           });
