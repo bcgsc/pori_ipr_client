@@ -122,18 +122,6 @@ const processPotentialClinicalAssociation = (variant: RapidVariantType) => Objec
     const filteredKbMatches = filterRestrictedRelevance(filterNoTableAndByRelevance(variant.ident, variant.variantType, kbMatches, relevanceKey));
     const iprEvidenceDict = splitIprEvidenceLevels(filteredKbMatches);
     const sortedIprKeys = Object.keys(iprEvidenceDict).sort((a, b) => a.localeCompare(b));
-
-/**
- * Splits variants data by relevance, adds extra fields for display purposes
- * potentialClinicalAssociation - shows treatment list
- * @param variant variant
- * @returns processed variants with extra params
- */
-const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
-  .map(([relevanceKey, kbMatches]) => {
-    const filteredKbMatches = filterRestrictedRelevance(filterNoTableAndByRelevance(kbMatches, relevanceKey));
-    const iprEvidenceDict = splitIprEvidenceLevels(filteredKbMatches);
-    const sortedIprKeys = Object.keys(iprEvidenceDict).sort((a, b) => a.localeCompare(b));
     const drugToLevel = new Map();
     for (const iprLevel of sortedIprKeys) {
       const drugs = iprEvidenceDict[iprLevel];
