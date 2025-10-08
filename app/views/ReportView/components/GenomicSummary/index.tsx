@@ -30,6 +30,7 @@ import TumourSummary from '../TumourSummary';
 import {
   defaultComparator, defaultImmune, defaultMsi, defaultMutationBurden, defaultTmbur,
 } from './defaultStates';
+import { HlaType } from '../Immune/types';
 
 type GenomicSummaryProps = {
   loadedDispatch?: SummaryProps['loadedDispatch'];
@@ -60,6 +61,8 @@ const GenomicSummary = ({
   const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>(defaultImmune);
   const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>(defaultComparator);
+  const [hlaNormal, setHlaNormal] = useState<string>();
+  const [hlaTumour, setHlaTumour] = useState<string>();
 
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
 
@@ -74,6 +77,7 @@ const GenomicSummary = ({
             api.get(`/reports/${report.ident}/mutation-burden`),
             api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(`/reports/${report.ident}/msi`),
+            api.get(`/reports/${report.ident}/hla-types`),
           ]);
 
           const [
@@ -83,6 +87,7 @@ const GenomicSummary = ({
             burdenResp,
             immuneResp,
             msiResp,
+            hlaTypesResp,
           ] = await apiCalls.request() as [
             MicrobialType[],
             ComparatorType[],
@@ -90,6 +95,7 @@ const GenomicSummary = ({
             MutationBurdenType[],
             ImmuneType[],
             MsiType[],
+            HlaType[],
           ];
 
           try {
@@ -114,6 +120,17 @@ const GenomicSummary = ({
 
           if (msiResp.length) {
             setMsi(msiResp[0]);
+          }
+
+          if (hlaTypesResp.length) {
+            const normal = hlaTypesResp.find((h) => h.pathology === 'normal');
+            const tumour = hlaTypesResp.find((h) => h.pathology === 'diseased');
+            if (normal) {
+              setHlaNormal(`${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`);
+            }
+            if (tumour) {
+              setHlaTumour(`${tumour.a1} ${tumour.a2} ${tumour.b1} ${tumour.b2} ${tumour.c1} ${tumour.c2}`);
+            }
           }
 
           if (loadedDispatch) {
@@ -251,13 +268,20 @@ const GenomicSummary = ({
           },
           {
             term: 'Adjusted TMB Comment',
-            value:
-              tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+            value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+          },
+          {
+            term: 'HLA (normal)',
+            value: hlaNormal ?? null,
+          },
+          {
+            term: 'HLA (tumour)',
+            value: hlaTumour ?? null,
           },
         ]);
       });
     }
-  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score]);
+  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score, hlaNormal, hlaTumour]);
 
   const handleTumourSummaryEditClose: TumourSummaryEditProps['onEditClose'] = useCallback((
     isSaved,
