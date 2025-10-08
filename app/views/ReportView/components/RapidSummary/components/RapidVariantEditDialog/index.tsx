@@ -305,8 +305,6 @@ const RapidVariantEditDialog = ({
   }, [editDataDirty]);
 
   const handleSave = useCallback(async () => {
-    console.log('in handlesave. editDataDirty:');
-    console.log(editDataDirty);
     if (editDataDirty) {
       setIsApiCalling(true);
       try {
@@ -323,8 +321,6 @@ const RapidVariantEditDialog = ({
           const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
           const variantIdent = uuidRegex.test(data.ident) ? data.ident : data.ident.split('-').slice(0, 5).join('-');
           noTableSet.forEach((ident) => {
-            console.log(ident);
-            console.log('sending to set-statement-summary-table noTable');
             calls.push(api.post(`/reports/${report.ident}/variants/set-statement-summary-table`, {
               variantIdent,
               variantType: data.variantType,
@@ -333,8 +329,6 @@ const RapidVariantEditDialog = ({
             }));
           });
           tableTypeSet.forEach((ident) => {
-            console.log(ident);
-            console.log('sending to set-statement-summary-table therapeutic');
             calls.push(api.post(`/reports/${report.ident}/variants/set-statement-summary-table`, {
               variantIdent,
               variantType: data.variantType,
@@ -378,19 +372,17 @@ const RapidVariantEditDialog = ({
           if (stmt.relevance !== relevance) {
             return stmt;
           }
+
           const nextStmt = cloneDeep(stmt);
-          const { rapidReportTableTag } = nextStmt.kbData || {};
-          // create rapidReport dict in kbData if necessary
-          if (!nextStmt.kbData.rapidReportTableTag) {
-            nextStmt.kbData.rapidReportTableTag = {};
-          }
+          nextStmt.kbData = nextStmt.kbData || {};
+          nextStmt.kbData.rapidReportTableTag = nextStmt.kbData.rapidReportTableTag || {};
 
           // get the current tag:
           // using this tag as the default because an untagged stmt is treated the same way
           let currentTag = 'therapeuticAssociation';
-          for (const key of Object.keys(rapidReportTableTag)) {
+          for (const key of Object.keys(nextStmt.kbData.rapidReportTableTag)) {
             // only need to check the therapeuticAssociation and noTable tags
-            const variantTypesDict = rapidReportTableTag[key] || {};
+            const variantTypesDict = nextStmt.kbData.rapidReportTableTag[key] || {};
             const variantIdentList = variantTypesDict.hasOwnProperty(data?.variantType) ? variantTypesDict[data?.variantType] : [];
             //const { variantIdentList } = variantTypesDict[data?.variantType] || []
             if (variantIdentList.includes(trimmedVariantIdent)) {
@@ -405,15 +397,13 @@ const RapidVariantEditDialog = ({
           if (currentTag !== 'therapeuticAssociation') {
             newTag = 'therapeuticAssociation';
           }
-
           // unset old tag...
-          for (const tableKey of Object.keys(rapidReportTableTag)) {
-            const typeMap = nextStmt.kbData.rapidReportTableTag[tableKey];
+          for (const tableKey of Object.keys(nextStmt.kbData.rapidReportTableTag)) {
+            const typeMap = nextStmt.kbData.rapidReportTableTag[tableKey] || {};
             if (Array.isArray(typeMap?.[data?.variantType])) {
               typeMap[data?.variantType] = typeMap[data?.variantType].filter((id) => { return id !== trimmedVariantIdent; });
             }
           }
-
           // set new tag
           if (!nextStmt.kbData.rapidReportTableTag[newTag]) {
             nextStmt.kbData.rapidReportTableTag[newTag] = { [data?.variantType]: [trimmedVariantIdent] };
@@ -424,7 +414,6 @@ const RapidVariantEditDialog = ({
               tableEntry[data?.variantType].push(trimmedVariantIdent);
             }
           }
-
           // currently this will only set as noTable or therapeutic
           if (newTag === 'noTable') {
             noTableSet.add(stmt.ident);

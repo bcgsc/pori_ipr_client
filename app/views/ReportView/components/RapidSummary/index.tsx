@@ -85,15 +85,17 @@ const filterNoTableAndByRelevance = (
         // get the current tag
         // (using this tag as the default because an untagged stmt is treated the same way)
         let currentTag = 'therapeuticAssociation';
-        const rapidReportDict = kbData?.rapidReportTableTag || {}
-        for (const key of Object.keys(rapidReportDict)) {
-          const variantTypesDict = rapidReportDict[key] || {};
-          const variantIdentList = variantTypesDict.hasOwnProperty(variantType) ? variantTypesDict[variantType] : [];
-          if (variantIdentList.includes(variantIdent)) {
-            currentTag = key;
+        const rapidReportDict = kbData?.rapidReportTableTag || {};
+
+        if (Object.keys(rapidReportDict).length > 0) {
+          for (const key of Object.keys(rapidReportDict)) {
+            const variantTypesDict = rapidReportDict[key] || {};
+            const variantIdentList = variantTypesDict.hasOwnProperty(variantType) ? variantTypesDict[variantType] : [];
+            if (variantIdentList.includes(variantIdent)) {
+              currentTag = key;
+            }
           }
         }
-
         if (currentTag === 'therapeuticAssociation') {
           return true;
         } else {
