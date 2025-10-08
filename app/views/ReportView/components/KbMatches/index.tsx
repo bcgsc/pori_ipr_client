@@ -347,7 +347,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
             {
               destinationType === 'rapidSummary'
               && getRapidSummaryDestinationTables().map(({ label, value }) => (
-                <MenuItem value={value} key={value}>{label}</MenuItem>
+                !Array.from(new Set(selectedRows.flatMap(({ category }) => category))).includes('therapeutic') && value === 'therapeutic' ? <MenuItem value={value} key={value} disabled>{label}</MenuItem> : <MenuItem value={value} key={value}>{label}</MenuItem>
               ))
             }
           </Select>
