@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import fetchIntercept from 'fetch-intercept';
 import { RouteChildrenProps } from 'react-router-dom';
 
@@ -7,6 +7,8 @@ import {
   login, isAuthorized, getReferrerUri, keycloak,
 } from '@/services/management/auth';
 import api from '@/services/api';
+import { Typography } from '@mui/material';
+import './index.scss';
 
 export const trimKeyCloakStates = (hash?: string): string => {
   if (!hash) return '';
@@ -15,7 +17,7 @@ export const trimKeyCloakStates = (hash?: string): string => {
   return clean;
 };
 
-const Login = (props: RouteChildrenProps): null => {
+const Login = (props: RouteChildrenProps): JSX.Element => {
   const {
     history,
     location,
@@ -26,6 +28,8 @@ const Login = (props: RouteChildrenProps): null => {
     setAuthorizationToken,
     setUserDetails,
   } = useSecurity();
+
+  const [error, setError] = useState<string | null>(null);
 
   let from;
 
@@ -62,13 +66,20 @@ const Login = (props: RouteChildrenProps): null => {
       try {
         auth();
       } catch (err) {
+        const message = `Error getting token: ${err.toString}`;
+        setError(message);
         return undefined;
       }
     } else {
       const retrieveUser = async () => {
-        const user = await api.get('/user/me').request();
-        setUserDetails(user);
-        history.push(from);
+        try {
+          const user = await api.get('/user/me').request();
+          setUserDetails(user);
+          history.push(from);
+        } catch (err) {
+          const message = `Error retrieving user ${err?.content?.url}: ${err?.content?.status} ${err.toString()}`;
+          setError(message);
+        }
       };
 
       retrieveUser();
@@ -76,7 +87,17 @@ const Login = (props: RouteChildrenProps): null => {
     return undefined;
   }, [authorizationToken, from, history, setAuthorizationToken, setUserDetails]);
 
-  return (null);
+  return (
+    <div>
+      {error ? (
+        <div className="auth-centered">
+          <Typography color="error" gutterBottom variant="h2">Error Authenticating</Typography>
+          <Typography paragraph>An Error occurred while authenticating. please logout and try again or contact your administrator if the problem persists</Typography>
+          <Typography paragraph>{error}</Typography>
+        </div>
+      ) : null}
+    </div>
+  );
 };
 
 export default Login;
