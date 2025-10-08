@@ -181,6 +181,7 @@ const KbMatchesTable = ({ kbMatches, variantIdent, variantType, onDelete }: KbMa
         const condensedMatches = condenseMatches(relevanceMatches);
         const { noTable, hasTable } = separateNoTable(condensedMatches, variantIdent, variantType);
         const highest = keepHighestIprPerContext(hasTable);
+
         return (
           <React.Fragment key={relevance + relevanceMatches.toString()}>
             <TableRow>
