@@ -19,6 +19,7 @@ import capitalize from 'lodash/capitalize';
 import getMostCurrentObj from '@/utils/getMostCurrentObj';
 import {
   TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, MsiType, KbMatchType, KbMatchedStatementType,
+  RecordDefaults,
 } from '@/common';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
@@ -33,8 +34,7 @@ import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
 import './index.scss';
-
-const unspecified = 'Unspecified evidence level'
+import { UNSPECIFIED_EVIDENCE_LEVEL } from './common';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -45,8 +45,8 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
         if (!iprRelevanceDict[statement.iprEvidenceLevel]) {
           iprRelevanceDict[statement.iprEvidenceLevel] = new Set();
         }
-      } else if (!iprRelevanceDict[unspecified]) {
-        iprRelevanceDict[unspecified] = new Set();
+      } else if (!iprRelevanceDict[UNSPECIFIED_EVIDENCE_LEVEL]) {
+        iprRelevanceDict[UNSPECIFIED_EVIDENCE_LEVEL] = new Set();
       }
     }
   });
@@ -57,7 +57,7 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
       if (statement.iprEvidenceLevel && statement.context) {
         iprRelevanceDict[statement.iprEvidenceLevel].add(statement.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
       } else if (statement.context) {
-        iprRelevanceDict[unspecified].add(statement.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+        iprRelevanceDict[UNSPECIFIED_EVIDENCE_LEVEL].add(statement.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
       }
     }
   });
@@ -66,8 +66,8 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
 };
 
 const filterNoTableAndByRelevance = (
-  variantIdent: string, // todo add uuid format check
-  variantType: string, // todo add enum check
+  variantIdent: RecordDefaults['ident'], // todo add uuid format check
+  variantType: RapidVariantType['variantType'], // todo add enum check
   kbMatches: KbMatchType[],
   relevance: KbMatchedStatementType['relevance'],
 ): KbMatchType[] => kbMatches.map(({ kbMatchedStatements, ...rest }) => ({
@@ -90,7 +90,9 @@ const filterNoTableAndByRelevance = (
         if (Object.keys(rapidReportDict).length > 0) {
           for (const key of Object.keys(rapidReportDict)) {
             const variantTypesDict = rapidReportDict[key] || {};
-            const variantIdentList = variantTypesDict.hasOwnProperty(variantType) ? variantTypesDict[variantType] : [];
+            const variantIdentList = variantType in variantTypesDict
+              ? variantTypesDict[variantType]
+              : [];
             if (variantIdentList.includes(variantIdent)) {
               currentTag = key;
             }
@@ -98,10 +100,9 @@ const filterNoTableAndByRelevance = (
         }
         if (currentTag === 'therapeuticAssociation') {
           return true;
-        } else {
-          return false;
         }
-      }
+        return false;
+      },
     ),
 }));
 
@@ -508,7 +509,6 @@ const RapidSummary = ({
             isPaginated={!isPrint}
           />
           <RapidVariantEditDialog
-            rapidVariantTableType="therapeuticAssociation"
             open={showMatchedTumourEditDialog}
             fields={[FIELDS.kbMatches]}
             editData={editData}
