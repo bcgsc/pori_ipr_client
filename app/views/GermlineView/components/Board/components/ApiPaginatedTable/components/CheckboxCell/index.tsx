@@ -2,12 +2,13 @@ import React, { useCallback } from 'react';
 import {
   Checkbox,
 } from '@mui/material';
-import { useSnackbar } from 'notistack';
+
 import { ICellRendererParams } from '@ag-grid-community/core';
 
 import api from '@/services/api';
 
 import './index.scss';
+import snackbar from '@/services/SnackbarUtils';
 
 type CheckboxCellProps = {
   isExportCell?: boolean;
@@ -19,19 +20,18 @@ const CheckboxCell = ({
   data,
   node,
 }: CheckboxCellProps): JSX.Element => {
-  const snackbar = useSnackbar();
   const handleUnexport = useCallback(async (): Promise<void> => {
     if (value) {
       try {
         const resp = await api.put(`/germline-small-mutation-reports/${data.ident}`, { exported: false }).request();
         node.setData(resp);
-        snackbar.enqueueSnackbar('Export removed', { variant: 'success' });
+        snackbar.success('Export removed');
       } catch (err) {
-        console.log(err);
-        snackbar.enqueueSnackbar(`Error removing export: ${err}`, { variant: 'error' });
+        console.error(err);
+        snackbar.error(`Error removing export: ${err}`);
       }
     }
-  }, [node, value]);
+  }, [data.ident, node, value]);
 
   return (
     <Checkbox
