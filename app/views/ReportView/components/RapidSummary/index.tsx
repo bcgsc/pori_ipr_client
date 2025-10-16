@@ -245,7 +245,9 @@ const RapidSummary = ({
 
           try {
             const burdenResp = await api.get(`/reports/${report.ident}/mutation-burden`).request();
-            if (burdenResp[0].qualitySvCount == null) {
+            if (!(burdenResp.length > 0)) {
+              setPrimaryBurden(null);
+            } else if (burdenResp[0].qualitySvCount == null) {
               setPrimaryBurden(null);
             } else {
               setPrimaryBurden(burdenResp[0]);
@@ -390,7 +392,7 @@ const RapidSummary = ({
       return ([
         {
           term: 'Pathology Tumour Content',
-          value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour').pathoTc ?? ''}`,
+          value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour')?.pathoTc ?? ''}`,
         },
         {
           term: 'M1M2 Score',
@@ -455,7 +457,6 @@ const RapidSummary = ({
   const handleMatchedTumourEditStart = useCallback((rowData) => {
     setShowMatchedTumourEditDialog(true);
     if (rowData) {
-      // console.log('🚀 ~ RapidSummary ~ rowData:', rowData);
       setEditData(rowData);
     }
   }, []);
