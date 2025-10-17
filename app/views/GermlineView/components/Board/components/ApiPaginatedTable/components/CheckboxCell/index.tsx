@@ -3,6 +3,7 @@ import {
   Checkbox,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
+
 import { ICellRendererParams } from '@ag-grid-community/core';
 
 import api from '@/services/api';
@@ -27,11 +28,11 @@ const CheckboxCell = ({
         node.setData(resp);
         snackbar.enqueueSnackbar('Export removed', { variant: 'success' });
       } catch (err) {
-        console.log(err);
+        console.error(err);
         snackbar.enqueueSnackbar(`Error removing export: ${err}`, { variant: 'error' });
       }
     }
-  }, [node, value]);
+  }, [snackbar, data.ident, node, value]);
 
   return (
     <Checkbox
