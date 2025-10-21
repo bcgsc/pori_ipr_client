@@ -280,6 +280,29 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
     });
   }, []);
 
+  const renderKbMenuItems = () => getKbDestinationTables(moveKbMatchesTableName).map(({ label, value }) => (
+    <MenuItem key={value} value={value}>
+      {label}
+    </MenuItem>
+  ));
+
+  const renderRapidSummaryMenuItems = () => {
+    const selectedCategories = new Set(
+      selectedRows.flatMap(({ category }) => category),
+    );
+
+    return getRapidSummaryDestinationTables().map(({ label, value }) => {
+      const isTherapeutic = value === 'therapeutic';
+      const shouldDisable = isTherapeutic && !selectedCategories.has('therapeutic');
+
+      return (
+        <MenuItem key={value} value={value} disabled={shouldDisable}>
+          {label}
+        </MenuItem>
+      );
+    });
+  };
+
   return (
     <Dialog
       open={moveKbMatchesDialogOpen}
@@ -338,18 +361,8 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
             label="Destination Table" // MUI requires both labelId and label to properly display
             value={destinationTable}
           >
-            {
-              destinationType === 'kbMatches'
-              && getKbDestinationTables(moveKbMatchesTableName).map(({ label, value }) => (
-                <MenuItem value={value} key={value}>{label}</MenuItem>
-              ))
-            }
-            {
-              destinationType === 'rapidSummary'
-              && getRapidSummaryDestinationTables().map(({ label, value }) => (
-                !Array.from(new Set(selectedRows.flatMap(({ category }) => category))).includes('therapeutic') && value === 'therapeutic' ? <MenuItem value={value} key={value} disabled>{label}</MenuItem> : <MenuItem value={value} key={value}>{label}</MenuItem>
-              ))
-            }
+            {destinationType === 'kbMatches' && renderKbMenuItems()}
+            {destinationType === 'rapidSummary' && renderRapidSummaryMenuItems()}
           </Select>
         </FormControl>
       </DialogContent>
