@@ -69,3 +69,14 @@ A demo site is available at https://pori-demo.bcgsc.ca
 
 Contributions are welcome! Before doing so, please open an issue with the feature that would be added.
 In addition, make sure that the code that is being added is linted using the rules in our .eslintrc file.
+
+## Compatibility Matrix
+
+| IPR Client | IPR API | GraphKB API |
+|------------|---------|-------------|
+| v7.1.2     | ~v8.2.1 | ~v3.16.0    |
+| v7.1.1     | ~v8.2.0 | ~v3.15.0    |
+| v7.1.0     | ~v8.2.0 | ~v3.15.0    |
+| v7.0.2     | ~v8.1.0 | ~v3.15.0    |
+| v7.0.1     | ~v8.1.0 | ~v3.15.0    |
+| v7.0.0     | ~v8.1.0 | ~v3.15.0    |
