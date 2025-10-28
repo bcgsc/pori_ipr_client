@@ -31,7 +31,6 @@ const formatDate = (date, long = false) => {
 const formatDateWithoutTime = (date, long = false) => {
   const convertedDate = new Date(date);
   const formattedDate = new Intl.DateTimeFormat('en-ca', {
-    weekday: long ? 'long' : undefined,
     month: long ? 'long' : '2-digit',
     day: '2-digit',
     year: 'numeric',
