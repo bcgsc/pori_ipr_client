@@ -4,6 +4,7 @@ import kbMStatementsGeneValueGetter from '@/utils/kbMatchStatementsGeneValueGett
 import kbMatchStatementsKnownVarValueGetter from '@/utils/kbMatchStatementsKnownVarValueGetter';
 import kbMatchStatementsObsVarValueGetter from '@/utils/kbMatchStatementsObsVarValueGetter';
 import { ColDef } from '@ag-grid-community/core';
+import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
 
 const columnDefs: ColDef[] = [
   {
@@ -21,6 +22,8 @@ const columnDefs: ColDef[] = [
     valueGetter: kbMatchStatementsKnownVarValueGetter,
     hide: false,
     maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
   },
   {
     headerName: 'Observed Variants',
@@ -28,6 +31,8 @@ const columnDefs: ColDef[] = [
     valueGetter: kbMatchStatementsObsVarValueGetter,
     hide: false,
     maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
   },
   {
     headerName: 'Cancer Type',
@@ -36,6 +41,8 @@ const columnDefs: ColDef[] = [
     hide: false,
     cellRendererFramework: ArrayCell('disease', false),
     maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
   },
   {
     headerName: 'Evidence Level',
@@ -68,6 +75,8 @@ const columnDefs: ColDef[] = [
     cellRendererFramework: ArrayCell('context', false),
     hide: false,
     maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
   },
   {
     headerName: 'PMID',
@@ -76,6 +85,8 @@ const columnDefs: ColDef[] = [
     cellRendererFramework: ArrayCell('reference', true),
     hide: false,
     maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
   },
   {
     headerName: 'Recruitment Status',
