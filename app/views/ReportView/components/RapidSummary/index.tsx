@@ -34,7 +34,9 @@ import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
 import './index.scss';
-import { UNSPECIFIED_EVIDENCE_LEVEL } from './common';
+import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
+
+const CLINICIAN_DISABLED = 'clinician disabled';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -485,21 +487,56 @@ const RapidSummary = ({
 
   let therapeuticAssociationSection;
   if (therapeuticAssociationResults?.length > 0) {
-    const filteredOutEmpty = therapeuticAssociationResults
-      .filter(({ observedVariantAnnotation: ova }) => ova.annotations?.rapidReportTableTag !== 'noTable')
+    // Variant level noTable
+    const variantLevelEmptyVariants = therapeuticAssociationResults
+      .filter(({ observedVariantAnnotation: ova }) => ova.annotations?.rapidReportTableTag === 'noTable');
+
+    const variantsHasTable = therapeuticAssociationResults
+      .filter(({ observedVariantAnnotation: ova }) => ova.annotations?.rapidReportTableTag !== 'noTable');
+
+    // KbMatchStatement level noTable (all of them)
+    // Requires analyst to disable on front-page
+    const statementLevelEmptyVariants = variantsHasTable
+      .filter((variant, index, arr) => {
+        const uuid = extractUUID(variant.ident);
+        return arr.findIndex((v) => extractUUID(v.ident) === uuid) === index;
+      })
+      .filter((variant) => {
+        const { ident, variantType } = variant;
+        const varIdent = extractUUID(ident);
+
+        const isAllEmpty = variant.kbMatches.every((kbM) => kbM.kbMatchedStatements.every((stmt) => {
+          const noTableMap = stmt.kbData.rapidReportTableTag.noTable;
+          return noTableMap?.[variantType]?.includes(varIdent) ?? false;
+        }));
+
+        return isAllEmpty;
+      })
+      .map((variant) => ({
+        ...variant,
+        potentialClinicalAssociation: CLINICIAN_DISABLED,
+      }));
+    const crossedOutVariants = [...statementLevelEmptyVariants, ...variantLevelEmptyVariants];
+
+    const filteredOutEmpty = variantsHasTable
       .filter(
         ({ kbMatches }) => Array.isArray(kbMatches)
         && kbMatches.length > 0
         && kbMatches.some(
           ({ kbMatchedStatements }) => Array.isArray(kbMatchedStatements) && kbMatchedStatements.length > 0,
         ),
-      ) // Piggy-back added-in attributes to filter out relevance rows where empty
-      .filter(({ relevanceKey, potentialClinicalAssociation }) => relevanceKey.length !== potentialClinicalAssociation.length);
+      );
 
+    // Piggy-back added-in attributes to filter out relevance rows where empty
+    // Only shown variants where there's at least one treatment
+    const printData = filteredOutEmpty.filter(({ relevanceKey, potentialClinicalAssociation }) => relevanceKey.length !== potentialClinicalAssociation.length);
+
+    // Show valid variants first, then the variants that are disabled
+    const webData = [...printData, ...crossedOutVariants];
     if (isPrint) {
       therapeuticAssociationSection = (
         <PrintTable
-          data={filteredOutEmpty}
+          data={printData}
           columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
           collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
           fullWidth
@@ -510,12 +547,13 @@ const RapidSummary = ({
         <>
           <DataTable
             columnDefs={therapeuticAssociationColDefs}
-            rowData={filteredOutEmpty}
+            rowData={webData}
             canEdit={canEdit}
             collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'Actions']}
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
+            getRowClass={({ data }) => (data.potentialClinicalAssociation === CLINICIAN_DISABLED ? 'strikeout' : '')} // Decoration for crossed out
           />
           <RapidVariantEditDialog
             open={showMatchedTumourEditDialog}
