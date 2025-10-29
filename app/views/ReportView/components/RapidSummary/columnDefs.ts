@@ -1,4 +1,5 @@
 import { sampleColumnDefs } from '../../common';
+
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 /**
@@ -9,13 +10,13 @@ const getGenomicEvent = ({ data }) => {
   const {
     gene, proteinChange, variantType, kbCategory, displayName,
   } = data;
-  if (displayName) {
-    return displayName;
-  }
-
   if (variantType === 'cnv') {
     const { cnvState } = data;
     return `${gene.name} ${cnvState}`;
+  }
+
+  if (displayName) {
+    return displayName;
   }
 
   if (variantType === 'sv') {
@@ -46,6 +47,7 @@ const getGenomicEvent = ({ data }) => {
 const ACTIONS_COLDEF = {
   headerName: 'Actions',
   colId: 'Actions',
+  field: 'Actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   hide: false,

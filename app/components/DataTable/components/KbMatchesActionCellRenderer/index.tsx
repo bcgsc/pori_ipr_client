@@ -245,7 +245,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         {reportType === 'rapid'
           && (
             <MenuItem onClick={handleMoveToRapidSummary}>
-              Add to Rapid Summary Table
+              Add Variant to Rapid Summary Table
             </MenuItem>
           )}
         <ActionCellRenderer displayMode="menu" {...props} />
