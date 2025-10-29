@@ -60,7 +60,7 @@ const KB_MATCHES_TITLE_MAP = {
 
 const RAPID_TABLE_TITLE_MAP = {
   // Should be therapeuticAssociation, but the tag in backend is looking for 'therapeutic'
-  therapeutic: 'Variants with Clinical Evidence for Treatment in This Tumour Type',
+  therapeuticAssociation: 'Variants with Clinical Evidence for Treatment in This Tumour Type',
   cancerRelevance: 'Variants with Cancer Relevance',
   unknownSignificance: 'Variants of Uncertain Significance',
 };
@@ -184,7 +184,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
   const { mutate: addObservedVariantAnnotation } = useMutation({
     mutationFn: async ({ reportId, destTable, dataRows }: AddObservedVariantAnnotationFnType) => {
       const extractedVariants = dataRows.flatMap((item) => item.kbMatches);
-
+      const kbStatementIds = dataRows.flatMap((item) => item.ident);
       const seen = new Set();
       const uniqueVariants = extractedVariants.filter(({ variant: { ident } }) => {
         if (seen.has(ident)) return false;
@@ -195,12 +195,11 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       const results = await Promise.allSettled(
         uniqueVariants.map(async ({ variant: { ident: variantIdent }, variantType }) => {
           try {
-            await api.post(`/reports/${reportId}/observed-variant-annotations`, {
+            await api.post(`/reports/${reportId}/variants/set-summary-table`, {
               variantIdent,
               variantType,
-              annotations: {
-                rapidReportTableTag: destTable,
-              },
+              rapidReportTableTag: destTable,
+              kbStatementIds,
             }).request();
           } catch (e) {
             if (e instanceof RecordConflictError && e.content.data) {
@@ -281,6 +280,29 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
     });
   }, []);
 
+  const renderKbMenuItems = () => getKbDestinationTables(moveKbMatchesTableName).map(({ label, value }) => (
+    <MenuItem key={value} value={value}>
+      {label}
+    </MenuItem>
+  ));
+
+  const renderRapidSummaryMenuItems = () => {
+    const selectedCategories = new Set(
+      selectedRows.flatMap(({ category }) => category),
+    );
+
+    return getRapidSummaryDestinationTables().map(({ label, value }) => {
+      const isTherapeutic = value === 'therapeutic';
+      const shouldDisable = isTherapeutic && !selectedCategories.has('therapeutic');
+
+      return (
+        <MenuItem key={value} value={value} disabled={shouldDisable}>
+          {label}
+        </MenuItem>
+      );
+    });
+  };
+
   return (
     <Dialog
       open={moveKbMatchesDialogOpen}
@@ -339,18 +361,8 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
             label="Destination Table" // MUI requires both labelId and label to properly display
             value={destinationTable}
           >
-            {
-              destinationType === 'kbMatches'
-              && getKbDestinationTables(moveKbMatchesTableName).map(({ label, value }) => (
-                <MenuItem value={value} key={value}>{label}</MenuItem>
-              ))
-            }
-            {
-              destinationType === 'rapidSummary'
-              && getRapidSummaryDestinationTables().map(({ label, value }) => (
-                !Array.from(new Set(selectedRows.flatMap(({ category }) => category))).includes('therapeutic') && value === 'therapeutic' ? <MenuItem value={value} key={value} disabled>{label}</MenuItem> : <MenuItem value={value} key={value}>{label}</MenuItem>
-              ))
-            }
+            {destinationType === 'kbMatches' && renderKbMenuItems()}
+            {destinationType === 'rapidSummary' && renderRapidSummaryMenuItems()}
           </Select>
         </FormControl>
       </DialogContent>
@@ -365,7 +377,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
           Save
         </Button>
       </DialogActions>
-      { isUpdating && <LinearProgress />}
+      {isUpdating && <LinearProgress />}
     </Dialog>
   );
 };
@@ -628,7 +640,7 @@ const KbMatches = ({
           setMoveKbMatchesDialogOpen(true);
         }}
       >
-        Add Selected to Rapid Summary
+        Add Selected Variant(s) to Rapid Summary Table
       </MenuItem>
     ) : null;
     return ([kbMatchesMoveOption, rapidMoveOption]);
@@ -768,23 +780,23 @@ const KbMatches = ({
             and those that have early clinical or preclinical evidence.
           </DemoDescription>
           {!isPrint && (
-          <div className="kb-matches__filter">
-            <TextField
-              label="Filter Table Text"
-              type="text"
-              variant="outlined"
-              value={filterText}
-              onChange={handleFilter}
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <FilterList color="action" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
+            <div className="kb-matches__filter">
+              <TextField
+                label="Filter Table Text"
+                type="text"
+                variant="outlined"
+                value={filterText}
+                onChange={handleFilter}
+                fullWidth
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <FilterList color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
           )}
           <div>
             {kbMatchedTables}
@@ -808,7 +820,7 @@ const KbMatches = ({
                 </MenuItem>
                 {
                   templateName === 'rapid'
-                  && <MenuItem onClick={handleMoveToRapidSummary}>Add to Rapid Summary Table</MenuItem>
+                  && <MenuItem onClick={handleMoveToRapidSummary}>Add Variant to Rapid Summary Table</MenuItem>
                 }
               </Menu>
             )}
