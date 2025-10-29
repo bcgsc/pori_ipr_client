@@ -10,13 +10,13 @@ const getGenomicEvent = ({ data }) => {
   const {
     gene, proteinChange, variantType, kbCategory, displayName,
   } = data;
-  if (displayName) {
-    return displayName;
-  }
-
   if (variantType === 'cnv') {
     const { cnvState } = data;
     return `${gene.name} ${cnvState}`;
+  }
+
+  if (displayName) {
+    return displayName;
   }
 
   if (variantType === 'sv') {
