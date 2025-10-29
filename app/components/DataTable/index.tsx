@@ -548,7 +548,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   }, [gridApi]);
 
   return (
-    <div className="data-table--padded" style={{ height: isFullLength ? '100%' : '' }}>
+    <div className="data-table" style={{ height: isFullLength ? '100%' : '' }}>
       {Boolean(rowData.length) || canEdit ? (
         <>
           <div className="data-table__header-container">
