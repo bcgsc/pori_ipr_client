@@ -489,10 +489,10 @@ const RapidSummary = ({
   if (therapeuticAssociationResults?.length > 0) {
     // Variant level noTable
     const variantLevelEmptyVariants = therapeuticAssociationResults
-      .filter(({ observedVariantAnnotation: ova }) => ova.annotations?.rapidReportTableTag === 'noTable');
+      .filter(({ observedVariantAnnotation: ova }) => ova?.annotations?.rapidReportTableTag === 'noTable');
 
     const variantsHasTable = therapeuticAssociationResults
-      .filter(({ observedVariantAnnotation: ova }) => ova.annotations?.rapidReportTableTag !== 'noTable');
+      .filter(({ observedVariantAnnotation: ova }) => ova?.annotations?.rapidReportTableTag !== 'noTable');
 
     // KbMatchStatement level noTable (all of them)
     // Requires analyst to disable on front-page
@@ -506,7 +506,7 @@ const RapidSummary = ({
         const varIdent = extractUUID(ident);
 
         const isAllEmpty = variant.kbMatches.every((kbM) => kbM.kbMatchedStatements.every((stmt) => {
-          const noTableMap = stmt.kbData.rapidReportTableTag.noTable;
+          const noTableMap = stmt.kbData.rapidReportTableTag?.noTable;
           return noTableMap?.[variantType]?.includes(varIdent) ?? false;
         }));
 
