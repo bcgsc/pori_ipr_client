@@ -52,6 +52,7 @@ const useResources = (): ResourceContextType => {
   const [nonproductionAccess, setNonproductionAccess] = useState(false);
   const [templateEditAccess, setTemplateEditAccess] = useState(false);
   const [appendixEditAccess, setAppendixEditAccess] = useState(false);
+  const [variantTextEditAccess, setVariantTextEditAccess] = useState(false);
 
   // Check user group first to see which resources they can access
   useEffect(() => {
@@ -100,6 +101,10 @@ const useResources = (): ResourceContextType => {
       if (checkAccess(groups, NONPRODUCTION_ACCESS, NONPRODUCTION_ACCESS_BLOCK)) {
         setNonproductionAccess(true);
       }
+
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'variant-text edit access'], ADMIN_BLOCK)) {
+        setVariantTextEditAccess(true);
+      }
     }
   }, [groups]);
 
@@ -119,6 +124,7 @@ const useResources = (): ResourceContextType => {
     templateEditAccess,
     unreviewedAccess,
     unreviewedStates: UNREVIEWED_STATES,
+    variantTextEditAccess,
   };
 };
 
@@ -138,6 +144,7 @@ const ResourceContext = createContext<ResourceContextType>({
   templateEditAccess: false,
   unreviewedAccess: false,
   unreviewedStates: UNREVIEWED_STATES,
+  variantTextEditAccess: false,
 });
 
 type ResourceContextProviderProps = {
@@ -161,6 +168,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     templateEditAccess,
     unreviewedAccess,
     unreviewedStates,
+    variantTextEditAccess,
   } = useResources();
 
   const providerValue = useMemo(() => ({
@@ -179,6 +187,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     templateEditAccess,
     unreviewedAccess,
     unreviewedStates,
+    variantTextEditAccess,
   }), [
     adminAccess,
     allProjectsAccess,
@@ -195,6 +204,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     templateEditAccess,
     unreviewedAccess,
     unreviewedStates,
+    variantTextEditAccess,
   ]);
 
   return (

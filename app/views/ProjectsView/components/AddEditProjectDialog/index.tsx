@@ -1,6 +1,7 @@
 // TODO fix api permissions/error text for adding users to project
 import React, {
   useState, useEffect, useCallback,
+  useMemo,
 } from 'react';
 import {
   Button,
@@ -12,9 +13,14 @@ import {
   TextField,
   FormControl,
   Typography,
+  InputLabel,
+  Select,
+  MenuItem,
+  List,
+  ListItem,
 } from '@mui/material';
 
-import { useQuery, useMutation } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
@@ -65,7 +71,9 @@ const AddEditProjectDialog = ({
   const [users, setUsers] = useState<UserType[]>([]);
   const [reports, setReports] = useState<ShortReportType[]>([]);
   const [existingReports, setExistingReports] = useState<ShortReportType[]>([]);
+  const [projectUsersToAdd, setProjectUsersToAdd] = useState<ProjectType | null>(null);
   const { adminAccess, managerAccess } = useResource();
+  const queryClient = useQueryClient();
 
   const { isLoading: isReportsLoading } = useQuery<ShortReportType[]>({
     queryKey: ['projectReports', editData?.ident],
@@ -79,6 +87,8 @@ const AddEditProjectDialog = ({
     },
     onError: () => snackbar.error('Error: failed to get reports'),
   });
+
+  const projects: ProjectType[] = queryClient.getQueryData(['projects', adminAccess]);
 
   // Populate initial data, if any
   useEffect(() => {
@@ -101,7 +111,7 @@ const AddEditProjectDialog = ({
     }
   }, [editData]);
 
-  const { isLoading: isSaving, mutate: projectMutation} = useMutation(
+  const { isLoading: isSaving, mutate: projectMutation } = useMutation(
     async (newEntry: { name: string; description: string }) => {
       // Update project specific fields
       if (editData) {
@@ -174,85 +184,147 @@ const AddEditProjectDialog = ({
     });
   }, []);
 
-  return (
-    <Dialog open={isOpen} onClose={() => onClose(null)} maxWidth="sm" fullWidth className="edit-dialog">
-      <DialogTitle>{dialogTitle}</DialogTitle>
-      <DialogContent>
-        <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
-          <TextField
-            value={projectName}
-            fullWidth
-            onChange={({ target: { value } }) => setProjectName(value)}
-            label="Project Name"
-            variant="outlined"
-            error={errors.projectName}
-            helperText={errors.projectName ? 'Project name is required' : null}
-            className="add-user__text-field"
-            disabled={!adminAccess}
-            required
-          />
-        </FormControl>
-        <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
-          <TextField
-            value={projectDesc || 'no project description'}
-            fullWidth
-            onChange={({ target: { value } }) => setProjectDesc(value)}
-            label="Project Description"
-            variant="outlined"
-            className="add-user__text-field"
-            disabled={!managerAccess}
-          />
-        </FormControl>
+  const handleAddAllUsersToProject = useCallback((evt) => {
+    setProjectUsersToAdd(evt.target.value);
+  }, []);
 
-        <Typography className="edit-dialog__section-title" variant="h3">
-          Users
-        </Typography>
-        <UserAutocomplete
-          onSubmit={handleUserAdd}
-          label="Add User"
-        />
-        <DataTable
-          rowData={users}
-          columnDefs={userColumnDefs}
-          canViewDetails={false}
-          onDelete={handleUserDelete}
-          canDelete
-        />
-        <Typography className="edit-dialog__section-title" variant="h3">
-          Reports
-        </Typography>
-        {adminAccess && (
-        <ReportAutocomplete
-          onSubmit={handleReportAdd}
-          label="Add Report"
-        />
-        )}
-        {isReportsLoading
-          ? <CircularProgress />
-          : (
-            <DataTable
-              rowData={reports}
-              columnDefs={reportColumnDefs}
-              canViewDetails={false}
-              onDelete={handleReportDelete}
-              canDelete
+  const handleConfirmAddAllusersToProject = useCallback(() => {
+    setUsers((prevVal) => {
+      const existing = new Set();
+      prevVal.forEach((p) => existing.add(p.ident));
+      const toAdd = projectUsersToAdd?.users.filter(({ ident }) => !existing.has(ident));
+      return [...prevVal, ...toAdd];
+    });
+    setProjectUsersToAdd(null);
+  }, [projectUsersToAdd]);
+
+  const projectSelectOptions = useMemo(() => projects.filter((p) => p.ident !== editData?.ident).map((project) => (
+    // @ts-expect-error: using object as value is intentional
+    <MenuItem key={project.ident} value={project}>
+      {project.name}
+    </MenuItem>
+  )), [editData?.ident, projects]);
+
+  return (
+    <>
+      <Dialog open={Boolean(projectUsersToAdd)} maxWidth="lg" fullWidth className="edit-dialog">
+        <DialogTitle>{`Add all users from ${projectUsersToAdd?.name} to ${projectName || 'new project'}?`}</DialogTitle>
+        <DialogContent>
+          {`The following users will be added to ${projectName}`}
+          <List>
+            {
+              projectUsersToAdd?.users.map((u) => {
+                if (!users?.map(({ ident }) => ident).includes(u.ident)) {
+                  return <ListItem key={u.ident}>{`${u.username} (${u.firstName} ${u.lastName})`}</ListItem>;
+                }
+                return null;
+              })
+            }
+          </List>
+        </DialogContent>
+        <DialogActions className="edit-dialog__actions">
+          <Button color="primary" onClick={() => setProjectUsersToAdd(null)}>
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmAddAllusersToProject}>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
+        <DialogTitle>{dialogTitle}</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
+            <TextField
+              value={projectName}
+              fullWidth
+              onChange={({ target: { value } }) => setProjectName(value)}
+              label="Project Name"
+              variant="outlined"
+              error={errors.projectName}
+              helperText={errors.projectName ? 'Project name is required' : null}
+              className="add-user__field"
+              disabled={!adminAccess}
+              required
             />
+          </FormControl>
+          <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
+            <TextField
+              value={projectDesc || 'no project description'}
+              fullWidth
+              onChange={({ target: { value } }) => setProjectDesc(value)}
+              label="Project Description"
+              variant="outlined"
+              className="add-user__field"
+              disabled={!managerAccess}
+            />
+          </FormControl>
+
+          <Typography className="edit-dialog__section-title" variant="h3">
+            Users
+          </Typography>
+          <UserAutocomplete
+            onSubmit={handleUserAdd}
+            label="Add User"
+          />
+          <FormControl className="add-user__field" fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
+            <InputLabel id="select-project-label">Add all users from another Project</InputLabel>
+            <Select
+              labelId="select-project-label"
+              label="Add all users from another Project"
+              disabled={!managerAccess}
+              onChange={handleAddAllUsersToProject}
+            >
+              {projectSelectOptions}
+            </Select>
+          </FormControl>
+          <DataTable
+            rowData={users}
+            columnDefs={userColumnDefs}
+            canViewDetails={false}
+            onDelete={handleUserDelete}
+            canDelete
+            canToggleColumns={false}
+            canExport={false}
+          />
+          <Typography className="edit-dialog__section-title" variant="h3">
+            Reports
+          </Typography>
+          {adminAccess && (
+          <ReportAutocomplete
+            onSubmit={handleReportAdd}
+            label="Add Report"
+          />
           )}
-      </DialogContent>
-      <DialogActions className="edit-dialog__actions">
-        <Button color="primary" onClick={() => onClose(null, false)}>
-          Cancel
-        </Button>
-        <AsyncButton
-          color="primary"
-          disabled={isReportsLoading || isSaving}
-          onClick={handleClose}
-          isLoading={isSaving}
-        >
-          Save
-        </AsyncButton>
-      </DialogActions>
-    </Dialog>
+          {isReportsLoading
+            ? <CircularProgress />
+            : (
+              <DataTable
+                rowData={reports}
+                columnDefs={reportColumnDefs}
+                canViewDetails={false}
+                onDelete={handleReportDelete}
+                canDelete
+                canToggleColumns={false}
+                canExport={false}
+              />
+            )}
+        </DialogContent>
+        <DialogActions className="edit-dialog__actions">
+          <Button color="primary" onClick={() => onClose(null, false)}>
+            Cancel
+          </Button>
+          <AsyncButton
+            color="primary"
+            disabled={isReportsLoading || isSaving}
+            onClick={handleClose}
+            isLoading={isSaving}
+          >
+            Save
+          </AsyncButton>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

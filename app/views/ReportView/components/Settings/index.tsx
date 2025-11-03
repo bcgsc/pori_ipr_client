@@ -19,7 +19,7 @@ import useReport from '@/hooks/useReport';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import Analysis from './components/Analysis';
+import ReportHistory from './components/ReportHistory';
 import AssociationCard from './components/AssociationCard';
 import AddUserCard from './components/AddUserCard';
 import AddUserDialog from './components/AddUserDialog';
@@ -280,7 +280,7 @@ const Settings = ({
             </div>
           </div>
           <Divider />
-          <Analysis />
+          <ReportHistory />
           {
             <>
               <Divider />

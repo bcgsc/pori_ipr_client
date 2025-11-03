@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, {
-  useRef, useState, useEffect, useCallback, useContext, useMemo,
+  useRef, useState, useEffect, useCallback, useContext, useMemo, forwardRef, useImperativeHandle,
 } from 'react';
 import { AgGridReact, AgGridReactProps } from '@ag-grid-community/react';
 import { AgGridReact as AgGridReactType } from '@ag-grid-community/react/lib/agGridReact';
@@ -121,10 +121,14 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
   return nextColDefs;
 };
 
+export type DataTableImperativeHandle = {
+  goToEntry: (ident: string) => void;
+};
+
 type DataTableCustomProps = {
   /* Text shown next to the add row button */
   addText?: string;
-  additionalTableMenuItems?: (gridApi: GridApi) => JSX.Element;
+  additionalTableMenuItems?: (gridApi: GridApi) => JSX.Element | JSX.Element[];
   /* Can rows be added to the table? */
   canAdd?: boolean;
   /* Can rows be deleted? */
@@ -185,7 +189,7 @@ type DataTableCustomProps = {
 
 type DataTableProps = DataTableCustomProps & Omit<AgGridReactProps, keyof DataTableCustomProps>;
 
-const DataTable = ({
+const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   addText,
   additionalTableMenuItems = null,
   canAdd,
@@ -217,7 +221,7 @@ const DataTable = ({
   titleText = '',
   visibleColumns = [],
   ...rest
-}: DataTableProps): JSX.Element => {
+}: DataTableProps, forwardedRef): JSX.Element => {
   const domLayout = isPrint ? 'print' : 'autoHeight';
   const { gridApi, colApi, onGridReady } = useGrid();
   const { report } = useContext(ReportContext);
@@ -521,6 +525,28 @@ const DataTable = ({
     return columnWithNames.filter((col) => col.isVisible()).map((col) => col.getColId());
   }, [columnWithNames, visibleColumns]);
 
+  useImperativeHandle(forwardedRef, () => {
+    if (!gridApi) return null; // Wait until gridApi is ready
+
+    return {
+      goToEntry: (ident: string) => {
+        const rowNode = gridApi.getRowNode(ident);
+        if (!rowNode) return;
+
+        const { rowIndex } = rowNode;
+        const pageSize = gridApi.paginationGetPageSize();
+        const targetPage = Math.floor(rowIndex / pageSize);
+
+        gridApi.paginationGoToPage(targetPage);
+
+        setTimeout(() => {
+          gridApi.ensureIndexVisible(rowIndex, 'middle');
+          rowNode.setSelected(true);
+        }, 50);
+      },
+    };
+  }, [gridApi]);
+
   return (
     <div className="data-table--padded" style={{ height: isFullLength ? '100%' : '' }}>
       {Boolean(rowData.length) || canEdit ? (
@@ -661,7 +687,7 @@ const DataTable = ({
       )}
     </div>
   );
-};
+});
 
 export { DataTableProps };
 export default DataTable;
