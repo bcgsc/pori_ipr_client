@@ -41,6 +41,8 @@ import { GridApi } from '@ag-grid-community/core';
 import { KbMatchesMoveDialogContext, KbMatchesMoveDialogContextType, useKbMatches } from '@/context/KbMatchesMoveDialogContext/KbmatchesMoveDialogContext';
 import { ErrorMixin, RecordConflictError } from '@/services/errors/errors';
 import { useLocation } from 'react-router-dom';
+import ConfirmContext from '@/context/ConfirmContext';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import { coalesceEntries, getBucketKey } from './coalesce';
 
@@ -161,6 +163,8 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
   const [destinationTable, setDestinationTable] = useState<KbMatchesDestinationTableType>('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedKbStatementIds, setSelectedKbStatementIds] = useState<string[]>(null);
+  const { isSigned } = useContext(ConfirmContext);
+  const { showConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     if (selectedRows) {
@@ -195,12 +199,20 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       const results = await Promise.allSettled(
         uniqueVariants.map(async ({ variant: { ident: variantIdent }, variantType }) => {
           try {
-            await api.post(`/reports/${reportId}/variants/set-summary-table`, {
+            const saveVariant = api.post(`/reports/${reportId}/variants/set-summary-table`, {
               variantIdent,
               variantType,
               rapidReportTableTag: destTable,
               kbStatementIds,
-            }).request();
+            });
+
+            if (isSigned) {
+              showConfirmDialog(saveVariant);
+              setIsUpdating(true);
+            } else {
+              await saveVariant.request();
+              setIsUpdating(false);
+            }
           } catch (e) {
             if (e instanceof RecordConflictError && e.content.data) {
               // Fallback to PUT
@@ -229,8 +241,12 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       return results;
     },
     onSuccess: () => {
-      snackbar.success('Moved Variants, refetching ...');
-      onConfirm(true);
+      if (isSigned) {
+        setIsUpdating(false);
+      } else {
+        snackbar.success('Moved Variants, refetching ...');
+        onConfirm(true);
+      }
     },
     onError: (e: { message?: string }) => {
       snackbar.error(`Unable to move Kb statements, ${e.message ?? e}`);
