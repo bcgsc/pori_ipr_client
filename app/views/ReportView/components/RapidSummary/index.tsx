@@ -63,7 +63,6 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
       }
     }
   });
-
   return iprRelevanceDict;
 };
 
