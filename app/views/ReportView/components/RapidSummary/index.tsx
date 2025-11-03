@@ -34,7 +34,9 @@ import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
 import './index.scss';
-import { UNSPECIFIED_EVIDENCE_LEVEL } from './common';
+import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
+
+const ANALYST_DISABLED = 'analyst disabled';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -113,13 +115,18 @@ const filterRestrictedRelevance = (
   kbMatchedStatements: kbMatchedStatements.filter(({ relevance: statementRelevance }) => !restrictedRelList.includes(statementRelevance)),
 }));
 
+type ProcessedTherapeuticAssociationRapidVariantType = RapidVariantType & {
+  potentialClinicalAssociation: string;
+  relevanceKey: string;
+};
+
 /**
  * Splits variants data by relevance, adds extra fields for display purposes
  * potentialClinicalAssociation - shows treatment list
  * @param variant variant
  * @returns processed variants with extra params
  */
-const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
+const processPotentialClinicalAssociation = (variant: RapidVariantType): ProcessedTherapeuticAssociationRapidVariantType[] => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
     const filteredKbMatches = filterRestrictedRelevance(filterNoTableAndByRelevance(variant.ident, variant.variantType, kbMatches, relevanceKey));
     const iprEvidenceDict = splitIprEvidenceLevels(filteredKbMatches);
@@ -150,7 +157,7 @@ const processPotentialClinicalAssociation = (variant: RapidVariantType) => Objec
   })
   .filter(({ relevanceKey }) => !RESTRICTED_RELEVANCE_LIST.includes(relevanceKey));
 
-const splitVariantsByRelevance = (data: RapidVariantType[]): RapidVariantType[] => {
+const splitVariantsByRelevance = (data: RapidVariantType[]): ProcessedTherapeuticAssociationRapidVariantType[] => {
   const returnData = [];
   data.forEach((variant) => {
     returnData.push(...processPotentialClinicalAssociation(variant));
@@ -190,7 +197,7 @@ const RapidSummary = ({
   }
 
   const [signatures, setSignatures] = useState<SignatureType | null>();
-  const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<RapidVariantType[] | null>();
+  const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<ProcessedTherapeuticAssociationRapidVariantType[] | null>();
   const [cancerRelevanceResults, setCancerRelevanceResults] = useState<RapidVariantType[] | null>();
   const [unknownSignificanceResults, setUnknownSignificanceResults] = useState<RapidVariantType[] | null>();
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
@@ -199,7 +206,7 @@ const RapidSummary = ({
   const [msi, setMsi] = useState<MsiType>();
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
   const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
-  const [editData, setEditData] = useState();
+  const [editData, setEditData] = useState<RapidVariantType>();
 
   const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>([]);
   const [showMatchedTumourEditDialog, setShowMatchedTumourEditDialog] = useState(false);
@@ -479,18 +486,56 @@ const RapidSummary = ({
 
   let therapeuticAssociationSection;
   if (therapeuticAssociationResults?.length > 0) {
-    const filteredOutEmpty = therapeuticAssociationResults.filter(
-      ({ kbMatches }) => Array.isArray(kbMatches)
+    // Variant level noTable
+    const variantLevelEmptyVariants = therapeuticAssociationResults
+      .filter(({ observedVariantAnnotation: ova }) => ova?.annotations?.rapidReportTableTag === 'noTable');
+
+    const variantsHasTable = therapeuticAssociationResults
+      .filter(({ observedVariantAnnotation: ova }) => ova?.annotations?.rapidReportTableTag !== 'noTable');
+
+    // KbMatchStatement level noTable (all of them)
+    // Requires analyst to disable on front-page
+    const statementLevelEmptyVariants = variantsHasTable
+      .filter((variant, index, arr) => {
+        const uuid = extractUUID(variant.ident);
+        return arr.findIndex((v) => extractUUID(v.ident) === uuid) === index;
+      })
+      .filter((variant) => {
+        const { ident, variantType } = variant;
+        const varIdent = extractUUID(ident);
+
+        const isAllEmpty = variant.kbMatches.every((kbM) => kbM.kbMatchedStatements.every((stmt) => {
+          const noTableMap = stmt.kbData.rapidReportTableTag?.noTable;
+          return noTableMap?.[variantType]?.includes(varIdent) ?? false;
+        }));
+
+        return isAllEmpty;
+      })
+      .map((variant) => ({
+        ...variant,
+        potentialClinicalAssociation: ANALYST_DISABLED,
+      }));
+    const crossedOutVariants = [...statementLevelEmptyVariants, ...variantLevelEmptyVariants];
+
+    const filteredOutEmpty = variantsHasTable
+      .filter(
+        ({ kbMatches }) => Array.isArray(kbMatches)
         && kbMatches.length > 0
         && kbMatches.some(
           ({ kbMatchedStatements }) => Array.isArray(kbMatchedStatements) && kbMatchedStatements.length > 0,
         ),
-    );
+      );
 
+    // Piggy-back added-in attributes to filter out relevance rows where empty
+    // Only shown variants where there's at least one treatment
+    const printData = filteredOutEmpty.filter(({ relevanceKey, potentialClinicalAssociation }) => relevanceKey.length !== potentialClinicalAssociation.length);
+
+    // Show valid variants first, then the variants that are disabled
+    const webData = [...printData, ...crossedOutVariants];
     if (isPrint) {
       therapeuticAssociationSection = (
         <PrintTable
-          data={filteredOutEmpty}
+          data={printData}
           columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
           collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
           fullWidth
@@ -501,12 +546,13 @@ const RapidSummary = ({
         <>
           <DataTable
             columnDefs={therapeuticAssociationColDefs}
-            rowData={filteredOutEmpty}
+            rowData={webData}
             canEdit={canEdit}
             collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'Actions']}
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
+            getRowClass={({ data }) => (data.potentialClinicalAssociation === ANALYST_DISABLED ? 'strikeout' : '')} // Decoration for crossed out
           />
           <RapidVariantEditDialog
             open={showMatchedTumourEditDialog}
