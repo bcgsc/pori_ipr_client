@@ -36,7 +36,7 @@ import TumourSummary from '../TumourSummary';
 import './index.scss';
 import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
 
-const CLINICIAN_DISABLED = 'clinician disabled';
+const ANALYST_DISABLED = 'analyst disabled';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -514,7 +514,7 @@ const RapidSummary = ({
       })
       .map((variant) => ({
         ...variant,
-        potentialClinicalAssociation: CLINICIAN_DISABLED,
+        potentialClinicalAssociation: ANALYST_DISABLED,
       }));
     const crossedOutVariants = [...statementLevelEmptyVariants, ...variantLevelEmptyVariants];
 
@@ -553,7 +553,7 @@ const RapidSummary = ({
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
-            getRowClass={({ data }) => (data.potentialClinicalAssociation === CLINICIAN_DISABLED ? 'strikeout' : '')} // Decoration for crossed out
+            getRowClass={({ data }) => (data.potentialClinicalAssociation === ANALYST_DISABLED ? 'strikeout' : '')} // Decoration for crossed out
           />
           <RapidVariantEditDialog
             open={showMatchedTumourEditDialog}
