@@ -45,14 +45,6 @@ const columnDefs: ColDef[] = [
     tooltipValueGetter: basicTooltipValueGetter,
   },
   {
-    headerName: 'Evidence Level',
-    colId: 'evidenceLevel',
-    field: 'evidenceLevel',
-    cellRendererFramework: ArrayCell('evidenceLevel', false),
-    hide: true,
-    maxWidth: 300,
-  },
-  {
     headerName: 'IPR Evidence Level',
     colId: 'iprEvidenceLevel',
     field: 'iprEvidenceLevel',
@@ -101,6 +93,14 @@ const columnDefs: ColDef[] = [
       }
       return '';
     },
+    maxWidth: 300,
+  },
+  {
+    headerName: 'Evidence Level',
+    colId: 'evidenceLevel',
+    field: 'evidenceLevel',
+    cellRendererFramework: ArrayCell('evidenceLevel', false),
+    hide: false,
     maxWidth: 300,
   },
   {
