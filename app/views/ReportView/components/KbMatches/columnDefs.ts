@@ -49,7 +49,7 @@ const columnDefs: ColDef[] = [
     colId: 'evidenceLevel',
     field: 'evidenceLevel',
     cellRendererFramework: ArrayCell('evidenceLevel', false),
-    hide: false,
+    hide: true,
     maxWidth: 300,
   },
   {
