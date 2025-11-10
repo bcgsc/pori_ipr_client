@@ -2,7 +2,7 @@ import React from 'react';
 import {
   render, screen, waitFor, fireEvent, within,
 } from '@testing-library/react';
-
+import { MemoryRouter } from 'react-router-dom';
 import { ReportOverview, ReportOverviewProps } from '..';
 
 jest.mock('@/services/api');
@@ -11,8 +11,6 @@ jest.mock('@/services/SnackbarUtils');
 const defaultReportOverviewProps: ReportOverviewProps = {
   isPrint: false,
   canEditReportAppendix: false,
-  isNewTemplate: false,
-  templateId: '123456-uuid',
   templateSpecificText: 'template text',
   reportId: '7890-uuid',
   reportSpecificText: 'report text',
@@ -31,10 +29,12 @@ describe('ReportOverview', () => {
 
   test('Show a fab button to edit report appendix if is editable', () => {
     const { getByText } = render(
-      <ReportOverview
-        {...defaultReportOverviewProps}
-        canEditReportAppendix
-      />,
+      <MemoryRouter>
+        <ReportOverview
+          {...defaultReportOverviewProps}
+          canEditReportAppendix
+        />
+      </MemoryRouter>,
     );
     const buttonEl = getByText("Add text to this report's appendix");
     expect(buttonEl).not.toBeDisabled();
@@ -54,13 +54,15 @@ describe('ReportOverview', () => {
 
   test('Does not show a fab button if record is in print mode', async () => {
     const { queryByRole, getByText } = render(
-      <ReportOverview
-        {...defaultReportOverviewProps}
-        canEditReportAppendix
-        isPrint
-        reportSpecificText={'Sir, this is a wendy\'s'}
-        templateSpecificText={'Madam, this is a wendy\'s'}
-      />,
+      <MemoryRouter>
+        <ReportOverview
+          {...defaultReportOverviewProps}
+          canEditReportAppendix
+          isPrint
+          reportSpecificText={'Sir, this is a wendy\'s'}
+          templateSpecificText={'Madam, this is a wendy\'s'}
+        />
+      </MemoryRouter>,
     );
     await waitFor(() => { expect(queryByRole('button')).toBeNull(); });
     expect(getByText('Sir, this is a wendy\'s')).toBeInTheDocument();
@@ -69,10 +71,12 @@ describe('ReportOverview', () => {
 
   test('Opens a dialog to edit report appendix text when fab is clicked', async () => {
     const { getByRole, queryByRole, getByText } = render(
-      <ReportOverview
-        {...defaultReportOverviewProps}
-        canEditReportAppendix
-      />,
+      <MemoryRouter>
+        <ReportOverview
+          {...defaultReportOverviewProps}
+          canEditReportAppendix
+        />
+      </MemoryRouter>,
     );
 
     await waitFor(() => {
