@@ -11,6 +11,7 @@ import { useQuery } from 'react-query';
 
 const useReports = (states) => useQuery({
   queryKey: ['reports'],
+  staleTime: Infinity,
   queryFn: async () => {
     const resp = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
     return resp;
