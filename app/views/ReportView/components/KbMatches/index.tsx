@@ -308,7 +308,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
     );
 
     return getRapidSummaryDestinationTables().map(({ label, value }) => {
-      const isTherapeutic = value === 'therapeutic';
+      const isTherapeutic = value === 'therapeuticAssociation';
       const shouldDisable = isTherapeutic && !selectedCategories.has('therapeutic');
 
       return (
