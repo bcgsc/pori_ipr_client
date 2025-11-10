@@ -185,7 +185,7 @@ type IPRWYSIWYGEditorProps = {
   /**
    * Prompts a confirm popup when user is middle of editing, but navigates away
    */
-  alertLeave: boolean;
+  alertLeave?: boolean;
   text: string;
   isOpen: boolean;
   // Returns null if nothing is edited
@@ -195,7 +195,7 @@ type IPRWYSIWYGEditorProps = {
 };
 
 const IPRWYSIWYGEditor = ({
-  alertLeave,
+  alertLeave = false,
   text,
   isOpen,
   onClose,
