@@ -36,6 +36,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import GermlineIcon from '@/statics/images/germline_icon.svg';
 import SidebarContext from '@/context/SidebarContext';
 import useResource from '@/hooks/useResource';
+import GscLogo from '@/statics/images/gsclogo.svg';
 
 import './index.scss';
 
@@ -307,6 +308,11 @@ const Sidebar = (): JSX.Element => {
           <Divider />
           {adminSection}
         </List>
+        <div className="sidebar__footer">
+          <ListItem>
+            <GscLogo />
+          </ListItem>
+        </div>
       </div>
     ),
     [handleSidebarClose, nestedReportsSection, germlineReportsSection, sidebarMaximized, pathname, adminSection],
