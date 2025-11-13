@@ -4,12 +4,13 @@ import React, {
 import {
   Typography,
 } from '@mui/material';
-import DemoDescription from '@/components/DemoDescription';
+import { useMutation } from 'react-query';
 
+import DemoDescription from '@/components/DemoDescription';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
 import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
@@ -20,10 +21,12 @@ import getMostCurrentObj from '@/utils/getMostCurrentObj';
 import {
   TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, MsiType, KbMatchType, KbMatchedStatementType,
   RecordDefaults,
+  AnyVariant,
 } from '@/common';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
@@ -190,11 +193,12 @@ const RapidSummary = ({
   printVersion = null,
 }: RapidSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { setIsSigned } = useContext(ConfirmContext);
+  const { isSigned, setIsSigned } = useContext(ConfirmContext);
   let { canEdit } = useReport();
   if (report.state === 'completed') {
     canEdit = false;
   }
+  const { showConfirmDialog } = useConfirmDialog();
 
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<ProcessedTherapeuticAssociationRapidVariantType[] | null>();
@@ -455,6 +459,38 @@ const RapidSummary = ({
     tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
   ]);
 
+  const { mutate: deleteVariantMutation } = useMutation({
+    mutationFn: async ({ reportIdent, variant }: {
+      reportIdent: ReportType['ident'],
+      variant: AnyVariant,
+    }) => {
+      const uniqueStatementIdents = [...new Set(variant.kbMatches.flatMap((m) => m.kbMatchedStatements.map((s) => s.ident)))];
+      const deleteVariant = api.post(`/reports/${reportIdent}/variants/set-summary-table`, {
+        variantIdent: extractUUID(variant.ident),
+        variantType: variant.variantType,
+        rapidReportTableTag: 'noTable',
+        kbStatementIds: uniqueStatementIdents,
+      });
+      if (isSigned) {
+        await showConfirmDialog(deleteVariant, true, 'Variant Removed');
+      } else {
+        await deleteVariant.request();
+      }
+    },
+    onSuccess: () => {
+      if (!isSigned) {
+        snackbar.success('Variant removed');
+      }
+    },
+    onError: (err) => {
+      snackbar.error(`Failed to remove variant ${err}`);
+    },
+  });
+
+  const handleVariantDelete = useCallback((data) => {
+    deleteVariantMutation({ reportIdent: report.ident, variant: data });
+  }, [deleteVariantMutation, report?.ident]);
+
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
     setSignatures(updatedSignature);
@@ -548,6 +584,8 @@ const RapidSummary = ({
             columnDefs={therapeuticAssociationColDefs}
             rowData={webData}
             canEdit={canEdit}
+            canDelete={canEdit}
+            onDelete={handleVariantDelete}
             collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'Actions']}
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
@@ -585,6 +623,8 @@ const RapidSummary = ({
     } else {
       cancerRelevanceSection = (
         <DataTable
+          canDelete={canEdit}
+          onDelete={handleVariantDelete}
           columnDefs={cancerRelevanceColDefs}
           rowData={cancerRelevanceResults}
           collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
