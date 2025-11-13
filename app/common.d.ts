@@ -159,6 +159,8 @@ type VariantTypeMap<T extends AnyVariantType> = {
   'sigv': SignatureVariantType;
 }[T];
 
+type AnyVariant = VariantTypeMap[keyof VariantTypeMap];
+
 type RapidReportTableTagKey =
   | 'therapeutic'
   | 'cancerRelevance'
@@ -420,6 +422,7 @@ export {
   VariantTextType,
   UserType,
   TemplateType,
+  AnyVariant,
   AnyVariantType,
   GroupType,
   UserProjectsType,

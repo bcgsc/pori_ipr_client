@@ -14,7 +14,7 @@ const textDict = {
 const useConfirmDialog = () => {
   const { report } = useContext(ReportContext);
 
-  const showDialog = useCallback((calls, waitForConfirmation = false) => {
+  const showDialog = useCallback((calls, waitForConfirmation = false, confirmText = 'Task completed, refreshing...') => {
     const callPromises = Array.isArray(calls) ? calls : [calls];
 
     const renderDialog = (handleClose: (removeSignatures: boolean) => void) => {
@@ -36,7 +36,7 @@ const useConfirmDialog = () => {
         if (removeSignatures) {
           try {
             await Promise.all(callPromises.map((promise) => promise.request()));
-            snackbar.success('Task completed, refreshing...');
+            snackbar.success(confirmText);
             window.location.reload();
           } catch (e) {
             snackbar.error(`Error: ${e}`);
@@ -61,7 +61,7 @@ const useConfirmDialog = () => {
         if (removeSignatures) {
           try {
             await Promise.all(callPromises.map((promise) => promise.request()));
-            snackbar.success('Task completed, refreshing...');
+            snackbar.success(confirmText);
             window.location.reload();
             resolve(true);
           } catch (e) {
