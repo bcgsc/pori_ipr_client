@@ -1,22 +1,11 @@
 import startCase from '@/utils/startCase';
 
-const getUniqueKeyVariants = (arr) => {
+const getUniqueVariants = (arr, key) => {
   const mapObj = new Map();
   arr.forEach((v) => {
-    const prevValue = mapObj.get(v.geneVariant);
+    const prevValue = mapObj.get(v[key]);
     if (!prevValue || prevValue.type === 'new') {
-      mapObj.set(v.geneVariant, v);
-    }
-  });
-  return [...mapObj.values()];
-};
-
-const getUniqueKbVariants = (arr) => {
-  const mapObj = new Map();
-  arr.forEach((v) => {
-    const prevValue = mapObj.get(v.kbVariant);
-    if (!prevValue || prevValue.type === 'new') {
-      mapObj.set(v.kbVariant, v);
+      mapObj.set(v[key], v);
     }
   });
   return [...mapObj.values()];
@@ -24,10 +13,10 @@ const getUniqueKbVariants = (arr) => {
 
 function searchReportsColumns(report, analyst, reviewer, bioinformatician) {
   return {
-    matchedKeyVariant: report?.genomicAlterationsIdentified ? getUniqueKeyVariants(report?.genomicAlterationsIdentified).map((v) => v.geneVariant).join(', ') : null,
-    matchedKbVariant: report?.kbMatches ? getUniqueKbVariants(report?.kbMatches).map((v) => v.kbVariant).join(', ') : null,
-    matchedSmallMutation: report?.smallMutations ? getUniqueKbVariants(report?.smallMutations).map((v) => v.displayName).join(', ') : null,
-    matchedStructuralVariant: report?.structuralVariants ? getUniqueKbVariants(report?.structuralVariants).map((v) => v.displayName).join(', ') : null,
+    matchedKeyVariant: report?.genomicAlterationsIdentified ? getUniqueVariants(report?.genomicAlterationsIdentified, 'geneVariant').map((v) => v.geneVariant).join(', ') : null,
+    matchedKbVariant: report?.kbMatches ? getUniqueVariants(report?.kbMatches, 'kbVariant').map((v) => v.kbVariant).join(', ') : null,
+    matchedSmallMutation: report?.smallMutations ? getUniqueVariants(report?.smallMutations, 'displayName').map((v) => v.displayName).join(', ') : null,
+    matchedStructuralVariant: report?.structuralVariants ? getUniqueVariants(report?.structuralVariants, 'displayName').map((v) => v.displayName).join(', ') : null,
     matchedTherapeuticTarget: report?.therapeuticTarget ? report?.therapeuticTarget.map((t) => t.therapy).join(', ') : null,
     matchedTherapeuticTargetContext: report?.therapeuticTarget ? report?.therapeuticTarget.map((t) => t.context).join(', ') : null,
     patientID: report.patientId,

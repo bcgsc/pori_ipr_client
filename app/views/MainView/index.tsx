@@ -42,38 +42,19 @@ const AdminView = lazy(() => import('../AdminView'));
 const LinkOutView = lazy(() => import('../LinkOutView'));
 const TemplateView = lazy(() => import('../TemplateView'));
 const ProjectsView = lazy(() => import('../ProjectsView'));
+const VariantTextView = lazy(() => import('../VariantTextView'));
 
-function formatTime(seconds) {
+const formatTime = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = seconds % 60;
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-}
+};
 
-const CountDown = memo(({ startingTime }: {
-  startingTime: number;
-}) => {
-  const [seconds, setSeconds] = useState(0);
-  useEffect(() => {
-    setSeconds(startingTime);
-  }, [startingTime]);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setSeconds((s) => {
-        if (s > 0) {
-          return s - 1;
-        }
-        clearInterval(intervalId);
-        return 0;
-      });
-    }, 1000); // countdown interval of 1 second
-
-    return () => clearInterval(intervalId); // cleanup on unmount
-  }, [startingTime]);
-
-  return <span>{formatTime(seconds)}</span>;
-});
+/**
+ * @param {string} props.startingTime seconds to start counting down from
+ */
+const CountDown = memo(({ startingTime }: { startingTime: number }) => <span>{formatTime(startingTime)}</span>);
 
 // What fraction of TIME ELAPSED should the user be notified of expiring token
 const TIMEOUT_FRACTION = 0.9;
@@ -89,35 +70,69 @@ const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: Timeou
   // Seconds in which to show in the countdown component
   const [countDown, setCountDown] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const timerRef = useRef(null);
+  const workerRef = useRef<Worker | null>(null);
+  const expireEpochRef = useRef<number | null>(null);
 
   // Refresh token everytime user navigates the page, much cleaner than if they did ANY action
   useEffect(() => {
     const refresh = async () => {
-      if (keycloak.authenticated) {
+      if (keycloak.authenticated && keycloak.token) {
         await keycloak.updateToken(Number.MAX_SAFE_INTEGER);
-        setAuthorizationToken(() => keycloak.token);
+        setAuthorizationToken(() => keycloak.token as string);
       }
     };
     refresh();
   }, [locationKey, setAuthorizationToken]);
 
-  // First load is untracked, until authorizationToken changes
   useEffect(() => {
-    if (authorizationToken) {
-      // Ms in which token will expire
-      const minTimeToExpire = Math.min(keycloak.tokenParsed.exp, keycloak.refreshTokenParsed.exp) * 1000;
+    if (authorizationToken && keycloak.tokenParsed && keycloak.refreshTokenParsed) {
+      const expireEpoch = Math.min(Number(keycloak.tokenParsed.exp), Number(keycloak.refreshTokenParsed.exp)) * 1000;
+      const modalTime = expireEpoch - Date.now();
+      const showModalAt = Date.now() + modalTime * TIMEOUT_FRACTION;
+      expireEpochRef.current = expireEpoch;
 
-      const timeToShowModal = (minTimeToExpire - Date.now()) * TIMEOUT_FRACTION;
-
-      timerRef.current = setTimeout(() => {
+      const timeoutMs = showModalAt - Date.now();
+      if (timeoutMs <= 0) {
         setIsOpen(true);
-        setCountDown(toInteger((minTimeToExpire - Date.now()) / 1000));
-      }, timeToShowModal);
+        setCountDown(toInteger((expireEpoch - Date.now()) / 1000));
+        return undefined;
+      }
+
+      const worker = new Worker(new URL('@/workers/TimeoutWorker.js', import.meta.url));
+      workerRef.current = worker;
+      worker.postMessage({ targetEpochTime: expireEpoch });
+      worker.onmessage = ({ data }) => {
+        if (data.expired) {
+          setCountDown(0);
+        } else {
+          setCountDown(data.remaining);
+        }
+      };
+
+      const showTimeout = setTimeout(() => setIsOpen(true), timeoutMs);
+
+      const handleVisibility = () => {
+        if (document.visibilityState === 'visible' && expireEpochRef.current) {
+          const now = Date.now();
+          const remaining = expireEpochRef.current - now;
+          if (remaining <= 0) {
+            setCountDown(0);
+            setIsOpen(true);
+          } else {
+            setCountDown(toInteger(remaining / 1000));
+          }
+        }
+      };
+
+      document.addEventListener('visibilitychange', handleVisibility);
+
+      return () => {
+        clearTimeout(showTimeout);
+        worker.terminate();
+        document.removeEventListener('visibilitychange', handleVisibility);
+      };
     }
-    return () => {
-      if (timerRef.current) { clearTimeout(timerRef.current); }
-    };
+    return undefined;
   }, [authorizationToken]);
 
   const handleClose = useCallback((_evt, reason) => {
@@ -139,7 +154,7 @@ const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: Timeou
   }, [setAuthorizationToken]);
 
   return (
-    <Dialog open={open} onClose={handleClose} onBackdropClick={null}>
+    <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Session Timeout Notification</DialogTitle>
       <DialogContent>
         <p>
@@ -169,15 +184,15 @@ const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: Timeou
 const Main = (): JSX.Element => {
   const [authorizationToken, setAuthorizationToken] = useState('');
   const [userDetails, setUserDetails] = useState<SecurityContextType['userDetails']>({
-    firstName: null,
-    lastName: null,
-    username: null,
+    firstName: '',
+    lastName: '',
+    username: '',
     groups: [],
-    email: null,
+    email: '',
     deletedAt: null,
     lastLogin: null,
     projects: [],
-    type: null,
+    type: '',
   });
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
@@ -232,11 +247,12 @@ const Main = (): JSX.Element => {
                   <AuthenticatedRoute component={ReportView} path="/report/:ident" />
                   <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
                   <AuthenticatedRoute component={CondensedPrintView} path="/condensedLayoutPrint/:ident" showNav={false} onToggleNav={setIsNavVisible} />
-                  <AuthenticatedRoute germlineRequired component={GermlineView} path="/germline" />
+                  <AuthenticatedRoute requiredAccess="germlineAccess" component={GermlineView} path="/germline" />
                   <AuthenticatedRoute component={ProjectsView} path="/projects" />
-                  <AuthenticatedRoute appendixEditorRequired component={AdminView} path="/admin/appendices" />
-                  <AuthenticatedRoute managerRequired component={AdminView} path="/admin" />
-                  <AuthenticatedRoute templateEditorRequired component={TemplateView} path="/template" />
+                  <AuthenticatedRoute requiredAccess="variantTextEditAccess" component={VariantTextView} path="/variant-text" />
+                  <AuthenticatedRoute requiredAccess="appendixEditAccess" component={AdminView} path="/admin/appendices" />
+                  <AuthenticatedRoute requiredAccess="managerAccess" component={AdminView} path="/admin" />
+                  <AuthenticatedRoute requiredAccess="templateEditAccess" component={TemplateView} path="/template" />
                 </Switch>
               </Suspense>
             </section>

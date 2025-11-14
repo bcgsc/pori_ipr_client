@@ -1,4 +1,10 @@
-.reports-table__container {
-  flex: 1;
-  height: 100%;
+.reports-table {
+  &__container {
+    flex: 1;
+    height: 100%;
+  }
+
+  &__fab {
+    float: right;
+  }
 }

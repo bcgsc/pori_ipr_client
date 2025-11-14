@@ -83,3 +83,8 @@ const TemplateView = (): JSX.Element => {
 };
 
 export default TemplateView;
+export {
+  TemplateView,
+  fetchTemplates,
+  deleteTemplate,
+};

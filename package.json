@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "ipr-client",
-  "version": "7.1.1",
+  "version": "7.2.0",
   "keywords": [],
   "license": "GPL-3.0",
   "sideEffects": false,
@@ -142,6 +142,7 @@
     "use-debounce": "^9.0.4",
     "uuid": "^10.0.0",
     "webpack": "^5.88.2",
-    "webpack-merge": "~5.9.0"
+    "webpack-merge": "~5.9.0",
+    "worker-loader": "^3.0.8"
   }
 }

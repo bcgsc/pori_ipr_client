@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   IconButton,
@@ -19,8 +19,8 @@ type SectionType = {
 };
 
 type ReportSidebarProps = {
-  allSections: SectionType[]; // Array of objects
-  visibleSections: string[]; // Array of strings
+  allSections: SectionType[];
+  visibleSections: string[];
   isSidebarVisible: boolean;
 };
 
@@ -34,9 +34,15 @@ const ReportSidebar = (props: ReportSidebarProps) => {
   const { report } = useContext(ReportContext);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handlePrintMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const showAllPrintOptions = (report?.template?.name !== 'rapid' && report?.template?.name !== 'genomic');
+
+  const handlePrintMenuOpen = useCallback((event) => {
+    if (!showAllPrintOptions) {
+      window.open(`/condensedLayoutPrint/${report.ident}`, '_blank', 'noopener,noreferrer');
+    } else {
+      setAnchorEl(event.currentTarget);
+    }
+  }, [showAllPrintOptions, report.ident]);
 
   const handlePrintMenuClose = () => {
     setAnchorEl(null);
@@ -56,33 +62,35 @@ const ReportSidebar = (props: ReportSidebarProps) => {
           <IconButton onClick={handlePrintMenuOpen}>
             <PrintIcon />
           </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handlePrintMenuClose}
-          >
-            <MenuItem>
-              <Link
-                to={{ pathname: `/print/${report.ident}` }}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="report-sidebar__list-link"
-              >
-                <Typography>Standard Layout</Typography>
-              </Link>
-            </MenuItem>
-            <MenuItem>
-              <Link
-                to={{ pathname: `/condensedLayoutPrint/${report.ident}` }}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="report-sidebar__list-link"
-              >
-                <Typography>Condensed Layout</Typography>
-              </Link>
-            </MenuItem>
-          </Menu>
+          {showAllPrintOptions && (
+            <Menu
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handlePrintMenuClose}
+            >
+              <MenuItem>
+                <Link
+                  to={{ pathname: `/condensedLayoutPrint/${report.ident}` }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="report-sidebar__list-link"
+                >
+                  <Typography>Condensed Layout</Typography>
+                </Link>
+              </MenuItem>
+              <MenuItem>
+                <Link
+                  to={{ pathname: `/print/${report.ident}` }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="report-sidebar__list-link"
+                >
+                  <Typography>Standard Layout</Typography>
+                </Link>
+              </MenuItem>
+            </Menu>
+          )}
         </ListItem>
         {allSections.map((section) => (
           <React.Fragment key={section.name}>

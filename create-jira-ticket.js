@@ -13,19 +13,51 @@ function createJiraTicket() {
       'Content-Type': 'application/json',
     },
   };
+  const formattedTitle = `IPR Client ${process.env.PR_TITLE}`;
+  let formattedDesc = '';
+
+  const body = process.env.PR_DESCRIPTION;
+  const lines = body.split('\n').map((l) => l.trim()).filter(Boolean);
+
+  let section = '';
+  const tables = {};
+
+  for (let line of lines) {
+    if (line.startsWith('###')) {
+      line = '';
+    } else if (line.startsWith('**')) {
+      section = line.replace(/\*\*/g, '').trim();
+      tables[section] = [];
+    } else if (line.startsWith('[[')) {
+      const match = line.match(/\[\[(?<title>[A-Z]+-\d+)\]\([^)]+\)\]\s*-\s*(?<description>.+)/);
+      if (match?.groups) {
+        const { title, description } = match.groups;
+        tables[section].push({ title, description });
+      }
+    }
+  }
+
+  for (const [sectionName, items] of Object.entries(tables)) {
+    formattedDesc += `| *${sectionName}* | *Need Review* | *Status* | *Reviewer* | *Description* |\n`;
+    for (const { title, description } of items) {
+      formattedDesc += `| ${title} |  |  |  | ${description} |\n`;
+    }
+  }
 
   const issueData = JSON.stringify({
     fields: {
       project: {
         key: process.env.JIRA_PROJECT_NAME,
       },
-      summary: process.env.PR_TITLE,
-      description: process.env.PR_DESCRIPTION,
+      summary: formattedTitle,
+      description: formattedDesc,
       issuetype: {
         name: process.env.JIRA_ISSUE_TYPE,
       },
     },
   });
+
+  console.log('Writing issue: \n', issueData);
 
   const req = https.request(options, (res) => {
     res.setEncoding('utf8');

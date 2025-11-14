@@ -13,7 +13,7 @@ const kbMStatementGeneValueGetter = (params) => {
           geneName.push('tmb');
         }
         if (kbMatch?.variantType === 'sigv') {
-          geneName.push(kbMatch?.variant?.displayName);
+          geneName.push(kbMatch?.variant?.signatureName);
         }
         if (kbMatch?.variant?.gene) {
           geneName.push(kbMatch?.variant?.gene.name);
@@ -39,7 +39,7 @@ const kbMStatementGeneValueGetter = (params) => {
       return 'tmb';
     }
     if (kbMatch?.variantType === 'sigv') {
-      return kbMatch?.variant?.displayName;
+      return kbMatch?.variant?.signatureName;
     }
     if (kbMatch?.variant?.gene) {
       return kbMatch?.variant?.gene?.name;

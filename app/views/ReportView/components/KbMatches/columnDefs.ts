@@ -4,6 +4,7 @@ import kbMStatementsGeneValueGetter from '@/utils/kbMatchStatementsGeneValueGett
 import kbMatchStatementsKnownVarValueGetter from '@/utils/kbMatchStatementsKnownVarValueGetter';
 import kbMatchStatementsObsVarValueGetter from '@/utils/kbMatchStatementsObsVarValueGetter';
 import { ColDef } from '@ag-grid-community/core';
+import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
 
 const columnDefs: ColDef[] = [
   {
@@ -21,6 +22,8 @@ const columnDefs: ColDef[] = [
     valueGetter: kbMatchStatementsKnownVarValueGetter,
     hide: false,
     maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
   },
   {
     headerName: 'Observed Variants',
@@ -28,6 +31,8 @@ const columnDefs: ColDef[] = [
     valueGetter: kbMatchStatementsObsVarValueGetter,
     hide: false,
     maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
   },
   {
     headerName: 'Cancer Type',
@@ -35,6 +40,17 @@ const columnDefs: ColDef[] = [
     field: 'disease',
     hide: false,
     cellRendererFramework: ArrayCell('disease', false),
+    maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
+  },
+  {
+    headerName: 'IPR Evidence Level',
+    colId: 'iprEvidenceLevel',
+    field: 'iprEvidenceLevel',
+    cellRendererFramework: ArrayCell('iprEvidenceLevel', false),
+    hide: false,
+    maxWidth: 300,
   },
   {
     headerName: 'Association',
@@ -42,6 +58,7 @@ const columnDefs: ColDef[] = [
     field: 'relevance',
     cellRendererFramework: ArrayCell('relevance', false),
     hide: false,
+    maxWidth: 300,
   },
   {
     headerName: 'Context',
@@ -49,6 +66,9 @@ const columnDefs: ColDef[] = [
     field: 'context',
     cellRendererFramework: ArrayCell('context', false),
     hide: false,
+    maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
   },
   {
     headerName: 'PMID',
@@ -56,6 +76,9 @@ const columnDefs: ColDef[] = [
     field: 'reference',
     cellRendererFramework: ArrayCell('reference', true),
     hide: false,
+    maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
   },
   {
     headerName: 'Recruitment Status',
@@ -70,13 +93,7 @@ const columnDefs: ColDef[] = [
       }
       return '';
     },
-  },
-  {
-    headerName: 'Category',
-    colId: 'category',
-    field: 'category',
-    cellRendererFramework: ArrayCell('category', false),
-    hide: true,
+    maxWidth: 300,
   },
   {
     headerName: 'Evidence Level',
@@ -84,13 +101,14 @@ const columnDefs: ColDef[] = [
     field: 'evidenceLevel',
     cellRendererFramework: ArrayCell('evidenceLevel', false),
     hide: false,
+    maxWidth: 300,
   },
   {
-    headerName: 'IPR Evidence Level',
-    colId: 'iprEvidenceLevel',
-    field: 'iprEvidenceLevel',
-    cellRendererFramework: ArrayCell('iprEvidenceLevel', false),
-    hide: false,
+    headerName: 'Category',
+    colId: 'category',
+    field: 'category',
+    cellRendererFramework: ArrayCell('category', false),
+    hide: true,
   },
   {
     headerName: 'Matched Cancer',
@@ -152,6 +170,7 @@ const columnDefs: ColDef[] = [
     colId: 'externalSource',
     cellRenderer: 'CivicCellRenderer',
     hide: false,
+    maxWidth: 300,
   }, {
     headerName: 'External Statement ID',
     field: 'externalStatementId',
