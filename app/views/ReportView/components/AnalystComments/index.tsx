@@ -224,6 +224,7 @@ const AnalystComments = ({
                 <EditIcon />
               </Fab>
               <IPRWYSIWYGEditor
+                alertLeave
                 isOpen={isEditorOpen}
                 text={comments}
                 title="Edit Comments"

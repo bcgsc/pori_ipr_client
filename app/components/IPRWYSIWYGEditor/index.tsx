@@ -1,6 +1,7 @@
 import React, {
   forwardRef, useCallback, useEffect,
   useMemo,
+  useState,
 } from 'react';
 import {
   Button,
@@ -24,11 +25,26 @@ import {
   Code,
   FormatBold, FormatClear, FormatItalic, FormatListBulleted, FormatListNumbered, FormatQuote, FormatStrikethrough, FormatUnderlined, Redo, Undo,
 } from '@mui/icons-material';
+import { Prompt } from 'react-router-dom';
 
 const extensions = [
   StarterKit,
   Underline,
 ];
+
+const usePageLeaveWarning = (enabled) => {
+  const handler = (e) => {
+    e.preventDefault();
+    e.returnValue = ''; // Required for Chrome
+    return '';
+  };
+  useEffect(() => {
+    if (!enabled) return;
+
+    window.addEventListener('beforeunload', handler);
+  }, [enabled]);
+  return () => window.removeEventListener('beforeunload', handler);
+};
 
 const MenuBarButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
   (props, ref) => <ToggleButton ref={ref} {...props} size="small" />,
@@ -166,6 +182,10 @@ const MenuBar = ({
 };
 
 type IPRWYSIWYGEditorProps = {
+  /**
+   * Prompts a confirm popup when user is middle of editing, but navigates away
+   */
+  alertLeave?: boolean;
   text: string;
   isOpen: boolean;
   // Returns null if nothing is edited
@@ -175,14 +195,23 @@ type IPRWYSIWYGEditorProps = {
 };
 
 const IPRWYSIWYGEditor = ({
+  alertLeave = false,
   text,
   isOpen,
   onClose,
   onSave,
   title = 'IPR WYSIWYG Editor',
 }: IPRWYSIWYGEditorProps): JSX.Element => {
+  const [isDirty, setIsDirty] = useState<boolean>(false);
+
+  const shouldWarnWhenUseLeave = alertLeave && isOpen && isDirty;
+  usePageLeaveWarning(shouldWarnWhenUseLeave);
+
   const editor = useEditor({
     extensions,
+    onUpdate: () => {
+      setIsDirty(true);
+    },
   });
 
   useEffect(() => {
@@ -200,6 +229,7 @@ const IPRWYSIWYGEditor = ({
   const handleOnSave = useCallback(() => {
     if (editor) {
       onSave(editor.isEmpty ? '' : editor.getHTML());
+      setIsDirty(false);
     }
   }, [editor, onSave]);
 
@@ -217,18 +247,24 @@ const IPRWYSIWYGEditor = ({
   }, [onSave, handleOnSave]);
 
   return (
-    <Dialog fullWidth maxWidth="lg" open={isOpen}>
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContent>
-        <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
-        <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleOnClose}>Close</Button>
-        {saveButton}
-        <Button color="secondary" onClick={handleOnSaveClose}>Save and Close</Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      <Dialog fullWidth maxWidth="lg" open={isOpen}>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogContent>
+          <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
+          <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleOnClose}>Close</Button>
+          {saveButton}
+          <Button color="secondary" onClick={handleOnSaveClose}>Save and Close</Button>
+        </DialogActions>
+      </Dialog>
+      <Prompt
+        when={shouldWarnWhenUseLeave}
+        message="You have unsaved changes. Leave anyway?"
+      />
+    </>
   );
 };
 
