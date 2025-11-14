@@ -65,6 +65,7 @@ const RAPID_TABLE_TITLE_MAP = {
   therapeuticAssociation: 'Variants with Clinical Evidence for Treatment in This Tumour Type',
   cancerRelevance: 'Variants with Cancer Relevance',
   unknownSignificance: 'Variants of Uncertain Significance',
+  noTable: 'Do not display in summary (removes whole variant)',
 };
 
 const SHOW_NATIVE_CONTEXT_TABLES = ['targetedSomaticGenes', 'targetedGermlineGenes'];
