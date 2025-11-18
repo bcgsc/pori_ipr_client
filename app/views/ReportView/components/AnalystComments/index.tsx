@@ -21,7 +21,7 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 
 import './index.scss';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 
 const DEFAULT_SIGNATURE_TYPES = [
   { signatureType: 'author' },
@@ -84,6 +84,7 @@ const AnalystComments = ({
   const commentsQuery = useComments(report);
   const signaturesQuery = useSignatures(report);
   const signatureTypesQuery = useSignatureTypes(report);
+  const queryClient = useQueryClient();
 
   const isApiLoading = commentsQuery.isLoading || signaturesQuery.isLoading || signatureTypesQuery.isLoading;
   const isError = commentsQuery.isError || signaturesQuery.isError || signatureTypesQuery.isError;
@@ -145,6 +146,7 @@ const AnalystComments = ({
         if (isSigned) {
           const isResolved = await showConfirmDialog(commentCall, true);
           if (isResolved) {
+            await queryClient.refetchQueries({ queryKey: ['report-comments', report?.ident] });
             snackbar.success('Comment updated');
           }
         } else {
@@ -157,6 +159,7 @@ const AnalystComments = ({
               },
             }),
           );
+          await queryClient.refetchQueries({ queryKey: ['report-comments', report?.ident] });
           snackbar.success('Comment updated');
           if (shouldCloseEditor) {
             setIsEditorOpen(false);
@@ -166,7 +169,7 @@ const AnalystComments = ({
         snackbar.error(`Error saving edit: ${e.message ?? e}`);
       }
     },
-    [report, isSigned, showConfirmDialog],
+    [report, isSigned, showConfirmDialog, queryClient],
   );
 
   const handleEditorSave = useCallback(

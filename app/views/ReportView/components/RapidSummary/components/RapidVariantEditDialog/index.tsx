@@ -22,9 +22,7 @@ import { Box } from '@mui/system';
 import { cloneDeep } from 'lodash';
 import { RapidVariantType } from '../../types';
 import { getVariantRelevanceDict, RESTRICTED_RELEVANCE_LIST } from '../../utils';
-import { UNSPECIFIED_EVIDENCE_LEVEL } from '../../common';
-
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from '../../common';
 
 const condenseMatches = (matches: KbMatchedStatementType[]) => {
   const grouped: Record<string, Record<string, KbMatchedStatementType[]>> = {};
@@ -53,9 +51,7 @@ const condenseMatches = (matches: KbMatchedStatementType[]) => {
 const separateNoTable = (groupedData, variantIdent, variantType) => {
   const noTable = {};
   const hasTable = {};
-  const trimmedVariantIdent = UUID_REGEX.test(variantIdent)
-    ? variantIdent
-    : variantIdent.split('-').slice(0, 5).join('-');
+  const trimmedVariantIdent = extractUUID(variantIdent);
 
   Object.entries(groupedData).forEach(([context, iprLevels]) => {
     Object.entries(iprLevels).forEach(([iprLevel, entries]) => {
@@ -191,7 +187,7 @@ const KbMatchesTable = ({
     return Object.entries(sortedStatements)
       .sort(([relevance1], [relevance2]) => (relevance1 > relevance2 ? 1 : -1)) // Sorts by relevance alphabetically
       .map(([relevance, matches]: [relevance: string, matches: KbMatchedStatementType[]]) => {
-        // Only grab matches that is specific to this relevance
+      // Only grab matches that is specific to this relevance
         const relevanceMatches = matches.filter((m) => m.relevance === relevance);
         // Condenses kbmatchStatements via drug name
         const condensedMatches = condenseMatches(relevanceMatches);
@@ -319,13 +315,7 @@ const RapidVariantEditDialog = ({
 
         if (fields.includes(FIELDS.kbMatches) && data?.kbMatches && editData?.kbMatches) {
           // strip the context-related tag that has been added to the ident for coalescing
-          const variantIdent = (() => {
-            const lastHyphenIndex = data.ident.lastIndexOf('-');
-            if (lastHyphenIndex === -1) return data.ident;
-
-            const uuid = data.ident.slice(0, lastHyphenIndex);
-            return UUID_REGEX.test(uuid) ? uuid : data.ident;
-          })();
+          const variantIdent = extractUUID(data.ident);
           noTableSet.forEach((ident) => {
             calls.push(api.post(`/reports/${report.ident}/variants/set-statement-summary-table`, {
               variantIdent,
@@ -369,7 +359,7 @@ const RapidVariantEditDialog = ({
     if (!data || !data.ident) { return; }
     const { variantType, ident: variantIdent } = data;
     // Find all kbMatches with that ident
-    const trimmedVariantIdent = UUID_REGEX.test(variantIdent) ? variantIdent : variantIdent.split('-').slice(0, 5).join('-');
+    const trimmedVariantIdent = extractUUID(variantIdent);
     const updatedKbMatches = data?.kbMatches.map((kbMatch: KbMatchType) => {
       const statementsToToggle = kbMatch.kbMatchedStatements
         .map((stmt) => {

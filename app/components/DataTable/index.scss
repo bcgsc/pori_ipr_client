@@ -41,6 +41,10 @@
   &__action {
     margin: 0 8px;
   }
+
+  .strikeout > .ag-cell {
+    text-decoration: line-through;
+  }
 }
 
 .cell-wrap-text {

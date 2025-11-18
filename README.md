@@ -74,7 +74,8 @@ In addition, make sure that the code that is being added is linted using the rul
 
 | IPR Client | IPR API | GraphKB API |
 |------------|---------|-------------|
-| v7.1.2     | ~v8.2.1 | ~v3.16.0    |
+| v7.2.0     | ~v8.3.0 | ~v3.16.0    |
+| v7.1.2     | ~v8.2.0 | ~v3.16.0    |
 | v7.1.1     | ~v8.2.0 | ~v3.15.0    |
 | v7.1.0     | ~v8.2.0 | ~v3.15.0    |
 | v7.0.2     | ~v8.1.0 | ~v3.15.0    |
