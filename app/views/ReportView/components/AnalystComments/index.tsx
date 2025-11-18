@@ -108,7 +108,8 @@ const AnalystComments = ({
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
     setSignatures(updatedSignature);
-  }, [setIsSigned]);
+    await queryClient.refetchQueries({ queryKey: ['report-signatures', report?.ident] });
+  }, [setIsSigned, queryClient]);
 
   const handleEditorStart = () => {
     setIsEditorOpen(true);
