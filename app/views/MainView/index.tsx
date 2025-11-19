@@ -26,6 +26,7 @@ import { keycloak, logout } from '@/services/management/auth';
 import './index.scss';
 import { Box } from '@mui/system';
 import { toInteger } from 'lodash';
+import SearchParamsContext, { SearchParamsType } from '@/context/SearchParamsContext';
 
 const LoginView = lazy(() => import('../LoginView'));
 const TermsView = lazy(() => import('../TermsView'));
@@ -196,6 +197,7 @@ const Main = (): JSX.Element => {
   });
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
+  const [searchParams, setSearchParams] = useState<SearchParamsType[]>([]);
 
   const secContextVal = useMemo<SecurityContextType>(() => ({
     authorizationToken, setAuthorizationToken, userDetails, setUserDetails,
@@ -205,58 +207,64 @@ const Main = (): JSX.Element => {
     sidebarMaximized, setSidebarMaximized,
   }), [sidebarMaximized, setSidebarMaximized]);
 
+  const searchParamsContextValue = useMemo(() => ({
+    searchParams, setSearchParams,
+  }), [searchParams, setSearchParams]);
+
   return (
     <SecurityContext.Provider value={secContextVal}>
       <ResourceContextProvider>
         <SidebarContext.Provider value={sideBarContextVal}>
-          <div>
-            <section className={`${isNavVisible ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
-              {isNavVisible ? (
-                <>
-                  <NavBar />
-                  <Sidebar />
-                </>
-              ) : null}
-              <Suspense fallback={(
-                <Box
-                  sx={{
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                  }}
+          <SearchParamsContext.Provider value={searchParamsContextValue}>
+            <div>
+              <section className={`${isNavVisible ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
+                {isNavVisible ? (
+                  <>
+                    <NavBar />
+                    <Sidebar />
+                  </>
+                ) : null}
+                <Suspense fallback={(
+                  <Box
+                    sx={{
+                      position: 'fixed',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                  >
+                    <CircularProgress color="secondary" />
+                  </Box>
+                )}
                 >
-                  <CircularProgress color="secondary" />
-                </Box>
-              )}
-              >
-                <TimeoutModal authorizationToken={authorizationToken} setAuthorizationToken={setAuthorizationToken} />
-                <Switch>
-                  <Route component={LoginView} path="/login" />
-                  <Route component={LinkOutView} path="/graphkb" />
-                  <Route path="/" exact>
-                    <Redirect to={{ pathname: '/reports' }} />
-                  </Route>
-                  <AuthenticatedRoute component={TermsView} path="/terms" />
-                  <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
-                  <AuthenticatedRoute exact component={ReportsSearchView} path="/search/result" />
-                  <AuthenticatedRoute component={ReportsView} path="/reports" />
-                  <AuthenticatedRoute component={MyReportsView} path="/my-reports" />
-                  <AuthenticatedRoute component={SearchView} path="/search" />
-                  <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
-                  <AuthenticatedRoute component={ReportView} path="/report/:ident" />
-                  <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
-                  <AuthenticatedRoute component={CondensedPrintView} path="/condensedLayoutPrint/:ident" showNav={false} onToggleNav={setIsNavVisible} />
-                  <AuthenticatedRoute requiredAccess="germlineAccess" component={GermlineView} path="/germline" />
-                  <AuthenticatedRoute component={ProjectsView} path="/projects" />
-                  <AuthenticatedRoute requiredAccess="variantTextEditAccess" component={VariantTextView} path="/variant-text" />
-                  <AuthenticatedRoute requiredAccess="appendixEditAccess" component={AdminView} path="/admin/appendices" />
-                  <AuthenticatedRoute requiredAccess="managerAccess" component={AdminView} path="/admin" />
-                  <AuthenticatedRoute requiredAccess="templateEditAccess" component={TemplateView} path="/template" />
-                </Switch>
-              </Suspense>
-            </section>
-          </div>
+                  <TimeoutModal authorizationToken={authorizationToken} setAuthorizationToken={setAuthorizationToken} />
+                  <Switch>
+                    <Route component={LoginView} path="/login" />
+                    <Route component={LinkOutView} path="/graphkb" />
+                    <Route path="/" exact>
+                      <Redirect to={{ pathname: '/reports' }} />
+                    </Route>
+                    <AuthenticatedRoute component={TermsView} path="/terms" />
+                    <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
+                    <AuthenticatedRoute exact component={ReportsSearchView} path="/search/result" />
+                    <AuthenticatedRoute component={ReportsView} path="/reports" />
+                    <AuthenticatedRoute component={MyReportsView} path="/my-reports" />
+                    <AuthenticatedRoute component={SearchView} path="/search" />
+                    <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
+                    <AuthenticatedRoute component={ReportView} path="/report/:ident" />
+                    <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
+                    <AuthenticatedRoute component={CondensedPrintView} path="/condensedLayoutPrint/:ident" showNav={false} onToggleNav={setIsNavVisible} />
+                    <AuthenticatedRoute requiredAccess="germlineAccess" component={GermlineView} path="/germline" />
+                    <AuthenticatedRoute component={ProjectsView} path="/projects" />
+                    <AuthenticatedRoute requiredAccess="variantTextEditAccess" component={VariantTextView} path="/variant-text" />
+                    <AuthenticatedRoute requiredAccess="appendixEditAccess" component={AdminView} path="/admin/appendices" />
+                    <AuthenticatedRoute requiredAccess="managerAccess" component={AdminView} path="/admin" />
+                    <AuthenticatedRoute requiredAccess="templateEditAccess" component={TemplateView} path="/template" />
+                  </Switch>
+                </Suspense>
+              </section>
+            </div>
+          </SearchParamsContext.Provider>
         </SidebarContext.Provider>
       </ResourceContextProvider>
     </SecurityContext.Provider>

@@ -20,6 +20,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import SearchDescription from './components/SearchDescription';
 import React, { useCallback, useEffect, useState } from 'react';
+import { SearchParamsType } from '@/context/SearchParamsContext';
 import {
   MIN_KEYWORD_LENGTH,
   DEFAULT_THRESHOLD,
@@ -27,12 +28,6 @@ import {
   NUMPAD_ENTER_KEY,
   BACKSPACE_KEY,
 } from '@/constants';
-
-type SearchKeyType = {
-  category: string;
-  keyword: string;
-  threshold: number;
-};
 
 // Custom css to alter select dropdown border radius
 const useStyles = makeStyles({
@@ -47,7 +42,7 @@ const useStyles = makeStyles({
 });
 
 const SearchView = () => {
-  const [searchKey, setSearchKey] = useState<SearchKeyType[]>([]);
+  const [searchParams, setSearchParams] = useState<SearchParamsType[]>([]);
   const [searchThreshold, setSearchThreshold] = useState(DEFAULT_THRESHOLD);
   const [searchCategory, setSearchCategory] = useState('keyVariant');
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -59,17 +54,17 @@ const SearchView = () => {
 
   // Calls submit function
   const handleSubmit = useCallback(() => {
-    if (!searchKey) {
+    if (!searchParams) {
       setSearchErrorMessage('Please enter a search keyword');
       return;
     }
     const searchUrl: string[] = [];
-    searchKey.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
+    searchParams.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
     history.push({
       pathname: '/search/result',
       search: encodeURIComponent(`searchParams=${searchUrl.join('')}`),
     });
-  }, [searchKey, history, encodeURIComponent]);
+  }, [searchParams, history, encodeURIComponent]);
 
   // Validate threshold value
   useEffect(() => {
@@ -113,33 +108,33 @@ const SearchView = () => {
     setSearchErrorMessage('');
     if (code === BACKSPACE_KEY && !target.value) {
       // Delete the last entry
-      setSearchKey((currData) => currData.slice(0, -1));
+      setSearchParams((currData) => currData.slice(0, -1));
     }
     if (code === ENTER_KEY || code === NUMPAD_ENTER_KEY) {
       // Allow user to press enter to submit search when there is no new character being entered for new keyword
-      if (searchKey.length > 0 && !target.value) {
+      if (searchParams.length > 0 && !target.value) {
         setSearchErrorMessage('');
         const searchUrl: string[] = [];
-        searchKey.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
+        searchParams.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
         history.push({
           pathname: '/search/result',
           search: encodeURIComponent(`searchParams=${searchUrl.join('')}`),
         });
       }
       // Validate value
-      if ((searchKey.length < 1 && target.value.length < MIN_KEYWORD_LENGTH ) || (searchKey.length > 0 && target.value.length > 0 && target.value.length < MIN_KEYWORD_LENGTH)) {
+      if ((searchParams.length < 1 && target.value.length < MIN_KEYWORD_LENGTH ) || (searchParams.length > 0 && target.value.length > 0 && target.value.length < MIN_KEYWORD_LENGTH)) {
         setSearchErrorMessage(`Must have 1 or more terms of at least ${MIN_KEYWORD_LENGTH} characters`);
       } else {
         setSearchErrorMessage('');
         // Add new entry
-        setSearchKey((currData) => [...currData, {
+        setSearchParams((currData) => [...currData, {
           category: searchCategory,
           keyword: searchKeyword,
           threshold: searchThreshold,
-        } as SearchKeyType]);
+        } as SearchParamsType]);
       }
     }
-  }, [searchKey, searchCategory, searchKeyword, searchThreshold]);
+  }, [searchParams, searchCategory, searchKeyword, searchThreshold]);
 
   const handleOpen = useCallback(() => {
     setShowDialog(true);
@@ -148,7 +143,7 @@ const SearchView = () => {
   const handleClose = useCallback(() => {
     setShowDialog(false);
   }, []);
-
+  
   return (
     <div className="search-view">
       <div className="search-view__bar">
@@ -213,7 +208,7 @@ const SearchView = () => {
             multiple
             options={[]}
             freeSolo
-            value={searchKey}
+            value={searchParams}
             disableClearable
             sx={{
               '& fieldset': {
@@ -226,7 +221,7 @@ const SearchView = () => {
               width: '100%',
             }}
             limitTags={4}
-            renderTags={(value) => value.map(({ category, keyword, threshold }: SearchKeyType, index: number) => (
+            renderTags={(value) => value.map(({ category, keyword, threshold }: SearchParamsType, index: number) => (
               <Chip
                 variant="outlined"
                 // eslint-disable-next-line react/no-array-index-key
@@ -243,7 +238,7 @@ const SearchView = () => {
                 error={Boolean(searchErrorMessage)}
                 onChange={handleKeywordChange}
                 onKeyDown={handleKeyDown}
-                placeholder={searchKey.length < 1 ? 'After inputting a keyword, press enter to add search chip. Press backspace to delete.' : ''}
+                placeholder={searchParams.length < 1 ? 'After inputting a keyword, press enter to add search chip. Press backspace to delete.' : ''}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -254,7 +249,7 @@ const SearchView = () => {
                           color="primary"
                           size="large"
                           onClick={handleSubmit}
-                          disabled={searchKey.length < 1 || !!searchErrorMessage || !!thresholdErrorMessage}
+                          disabled={searchParams.length < 1 || !!searchErrorMessage || !!thresholdErrorMessage}
                           type="submit"
                           sx={{
                             display: 'flex',
