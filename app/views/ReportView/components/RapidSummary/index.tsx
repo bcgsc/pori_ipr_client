@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback, useMemo,
+  useState, useEffect, useContext, useCallback, useMemo, useRef,
 } from 'react';
 import {
   Typography,
@@ -11,7 +11,7 @@ import {
 import DemoDescription from '@/components/DemoDescription';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
-import DataTable from '@/components/DataTable';
+import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
 import ReportContext, { ReportType } from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
@@ -47,6 +47,11 @@ const DEFAULT_SIGNATURES: Partial<SignatureUserType>[] = [
   { signatureType: 'reviewer' },
   { signatureType: 'creator' },
 ];
+enum RAPID_SUMMARY_TABLE {
+  THERAPEUTIC_ASSOCIATION = 'therapeuticAssociation',
+  CANCER_RELEVANCE = 'cancerRelevance',
+  UNKNOWN_SIGNIFICANCE = 'unknownSignificance',
+}
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -95,7 +100,7 @@ const filterNoTableAndByRelevance = (
 
         // get the current tag
         // (using this tag as the default because an untagged stmt is treated the same way)
-        let currentTag = 'therapeuticAssociation';
+        let currentTag = RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION;
         const rapidReportDict = kbData?.rapidReportTableTag || {};
 
         if (Object.keys(rapidReportDict).length > 0) {
@@ -105,11 +110,11 @@ const filterNoTableAndByRelevance = (
               ? variantTypesDict[variantType]
               : [];
             if (variantIdentList.includes(variantIdent)) {
-              currentTag = key;
+              currentTag = key as RAPID_SUMMARY_TABLE;
             }
           }
         }
-        if (currentTag === 'therapeuticAssociation') {
+        if (currentTag === RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION) {
           return true;
         }
         return false;
@@ -212,6 +217,9 @@ const RapidSummary = ({
   const [editData, setEditData] = useState<RapidVariantType>();
   const [showMatchedTumourEditDialog, setShowMatchedTumourEditDialog] = useState(false);
 
+  const therapeuticAssocTableRef = useRef<DataTableImperativeHandle>();
+  const cancerRelTableRef = useRef<DataTableImperativeHandle>();
+
   const reportIdent = report?.ident;
   const templateIdent = report?.template?.ident;
 
@@ -238,9 +246,9 @@ const RapidSummary = ({
       },
 
       {
-        queryKey: ['therapeuticAssociation', reportIdent],
+        queryKey: [RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION, reportIdent],
         queryFn: (): Promise<RapidVariantType[]> => api
-          .get(`/reports/${reportIdent}/variants?rapidTable=therapeuticAssociation`)
+          .get(`/reports/${reportIdent}/variants?rapidTable=${RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION}`)
           .request(),
         select: (rows: RapidVariantType[]) => splitVariantsByRelevance(rows),
         enabled: !!reportIdent,
@@ -249,9 +257,9 @@ const RapidSummary = ({
       },
 
       {
-        queryKey: ['cancerRelevance', reportIdent],
+        queryKey: [RAPID_SUMMARY_TABLE.CANCER_RELEVANCE, reportIdent],
         queryFn: (): Promise<RapidVariantType[]> => api
-          .get(`/reports/${reportIdent}/variants?rapidTable=cancerRelevance`)
+          .get(`/reports/${reportIdent}/variants?rapidTable=${RAPID_SUMMARY_TABLE.CANCER_RELEVANCE}`)
           .request(),
         enabled: !!reportIdent,
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
@@ -259,9 +267,9 @@ const RapidSummary = ({
       },
 
       {
-        queryKey: ['unknownSignificance', reportIdent],
+        queryKey: [RAPID_SUMMARY_TABLE.UNKNOWN_SIGNIFICANCE, reportIdent],
         queryFn: (): Promise<RapidVariantType[]> => api
-          .get(`/reports/${reportIdent}/variants?rapidTable=unknownSignificance`)
+          .get(`/reports/${reportIdent}/variants?rapidTable=${RAPID_SUMMARY_TABLE.UNKNOWN_SIGNIFICANCE}`)
           .request(),
         enabled: !!reportIdent,
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
@@ -459,10 +467,14 @@ const RapidSummary = ({
     tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
   ]);
 
-  const { mutate: deleteVariantMutation } = useMutation({
-    mutationFn: async ({ reportId, variant }: {
+  /**
+   * Deletes a whole variant from the first two rapid summary tables, can be expanded to 3rd
+   */
+  const { mutate: deleteVariantMutation, isLoading: isVariantDeleting } = useMutation({
+    mutationFn: async ({ reportId, variant, rapidSummaryTable }: {
       reportId: ReportType['ident'],
       variant: AnyVariant,
+      rapidSummaryTable: RAPID_SUMMARY_TABLE,
     }) => {
       const uniqueStatementIdents = [...new Set(variant.kbMatches.flatMap((m) => m.kbMatchedStatements.map((s) => s.ident)))];
       const deleteVariant = api.post(`/reports/${reportId}/variants/set-summary-table`, {
@@ -471,24 +483,54 @@ const RapidSummary = ({
         rapidReportTableTag: 'noTable',
         kbStatementIds: uniqueStatementIdents,
       });
+
+      if (
+        rapidSummaryTable === RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION
+        && therapeuticAssocTableRef.current
+      ) {
+        therapeuticAssocTableRef?.current.showLoading();
+      }
+      if (
+        rapidSummaryTable === RAPID_SUMMARY_TABLE.CANCER_RELEVANCE
+        && cancerRelTableRef.current
+      ) {
+        cancerRelTableRef.current.showLoading();
+      }
+
       if (isSigned) {
         await showConfirmDialog(deleteVariant, true, 'Variant Removed');
       } else {
         await deleteVariant.request();
       }
     },
-    onSuccess: () => {
+    onSuccess: async (_data, { rapidSummaryTable }) => {
       if (!isSigned) {
         snackbar.success('Variant removed');
       }
+      queryClient.refetchQueries({ queryKey: ['report-signatures', reportIdent] });
+      await queryClient.refetchQueries({ queryKey: [rapidSummaryTable, reportIdent] });
     },
     onError: (err) => {
       snackbar.error(`Failed to remove variant ${err}`);
     },
+    onSettled: (_data, _err, { rapidSummaryTable }) => {
+      if (
+        rapidSummaryTable === RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION
+        && therapeuticAssocTableRef.current
+      ) {
+        therapeuticAssocTableRef?.current.hideLoading();
+      }
+      if (
+        rapidSummaryTable === RAPID_SUMMARY_TABLE.CANCER_RELEVANCE
+        && cancerRelTableRef.current
+      ) {
+        cancerRelTableRef.current.hideLoading();
+      }
+    },
   });
 
-  const handleVariantDelete = useCallback((data) => {
-    deleteVariantMutation({ reportId: report.ident, variant: data });
+  const handleVariantDelete = useCallback((rapidSummaryTable: RAPID_SUMMARY_TABLE) => (data) => {
+    deleteVariantMutation({ reportId: report.ident, variant: data, rapidSummaryTable });
   }, [deleteVariantMutation, report?.ident]);
 
   const handleSign = useCallback(async (signed: boolean) => {
@@ -507,7 +549,7 @@ const RapidSummary = ({
     if (newData) {
       // Call API again to get updated data
       try {
-        await queryClient.refetchQueries({ queryKey: ['therapeuticAssociation', reportIdent] });
+        await queryClient.refetchQueries({ queryKey: [RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION, reportIdent] });
         setShowMatchedTumourEditDialog(false);
       } catch (e) {
         snackbar.error(`Refetching of therapeutic association data failed: ${e.message ? e.message : e}`);
@@ -578,11 +620,12 @@ const RapidSummary = ({
       therapeuticAssociationSection = (
         <>
           <DataTable
+            ref={therapeuticAssocTableRef}
             columnDefs={therapeuticAssociationColDefs}
             rowData={webData}
             canEdit={canEdit}
             canDelete={canEdit}
-            onDelete={handleVariantDelete}
+            onDelete={handleVariantDelete(RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION)}
             collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'Actions']}
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
@@ -620,8 +663,9 @@ const RapidSummary = ({
     } else {
       cancerRelevanceSection = (
         <DataTable
+          ref={cancerRelTableRef}
           canDelete={canEdit}
-          onDelete={handleVariantDelete}
+          onDelete={handleVariantDelete(RAPID_SUMMARY_TABLE.CANCER_RELEVANCE)}
           columnDefs={cancerRelevanceColDefs}
           rowData={cancerRelevanceResults}
           collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
