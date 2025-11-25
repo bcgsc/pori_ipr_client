@@ -3,7 +3,7 @@ import { SearchParamsType, SearchParamsContextType } from './types';
 
 const SearchParamsContext = React.createContext<SearchParamsContextType>({
   searchParams: null,
-  setSearchParams: () => {},
+  setSearchParams: () => {[]},
 });
 
 export default SearchParamsContext;

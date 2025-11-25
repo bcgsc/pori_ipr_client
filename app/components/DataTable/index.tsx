@@ -12,19 +12,12 @@ import {
 import cloneDeep from 'lodash/cloneDeep';
 import useGrid from '@/hooks/useGrid';
 import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Fab,
   IconButton,
   Menu,
   MenuItem,
   Typography,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
@@ -43,7 +36,7 @@ import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
-import SearchDescription from '@/views/SearchView/components/SearchDescription';
+import QueryEditDialog from './components/QueryEditDialog';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
@@ -241,7 +234,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
   const [showReorder, setShowReorder] = useState(false);
   const [columnWithNames, setColumnWithNames] = useState<Column[] | ColumnPickerProps['columns']>([]);
-  const [showQueryEditDialog, setShowQueryEditDialog] = useState<boolean>(false);
 
   const defaultColDef = useMemo(() => ({
     sortable: !showReorder,
@@ -515,14 +507,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     setMenuAnchor(null);
   }, [handleTSVExport, onAdd, tableType, toggleReorder]);
 
-  const handleQueryEdit = useCallback(() => {
-    setShowQueryEditDialog(true);
-  }, []);
-
-  const handleCloseQueryEdit = useCallback(() => {
-    setShowQueryEditDialog(false);
-  }, []);
-
   const handlePaginationChanged = useCallback((params) => {
     const {
       api, newData, newPage, columnApi,
@@ -566,46 +550,15 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
   return (
     <div className="data-table" style={{ height: isFullLength ? '100%' : '' }}>
-      {Boolean(rowData.length) || canEdit ? (
+      {Boolean(rowData.length) || canEdit || isSearch ? (
         <>
           <div className="data-table__header-container">
             {titleText && (<Typography variant="h3" className="data-table__header">{titleText}</Typography>)}
             <div>
               {isSearch && (
-                <>
-                  <span className="data-table__action">
-                    <Button
-                      variant="outlined"
-                      color="inherit"
-                      size="large"
-                      onClick={handleQueryEdit}
-                      style={{
-                        color: "grey",
-                        backgroundColor: "white",
-                        borderRadius: 10,
-                        padding: '4px 8px',
-                      }}
-                    >
-                      <ManageSearchIcon sx={{ marginRight: '4px' }} />
-                      Edit Query
-                    </Button>
-                  </span>
-                  <Dialog open={showQueryEditDialog} onClose={handleCloseQueryEdit} maxWidth="md" fullWidth>
-                    <DialogTitle>
-                      <Typography variant="h3" color="primary">
-                        Edit Query
-                      </Typography>
-                    </DialogTitle>
-                    <DialogContent>
-                      <SearchDescription />
-                    </DialogContent>
-                    <DialogActions>
-                      <Button color="secondary" onClick={handleCloseQueryEdit}>
-                        Close
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
-                </>
+                <span className="data-table__action">
+                  <QueryEditDialog />
+                </span>
               )}
               {(canAdd || canToggleColumns || canExport || canReorder) && (
               <span className="data-table__action">

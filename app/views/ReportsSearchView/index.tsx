@@ -6,7 +6,6 @@ import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import searchReportsColumns from '@/utils/searchReportsColumns';
 import searchColumnDefs from '@/components/ReportsTable/searchColumnDefs';
-import SearchParamsContext from '@/context/SearchParamsContext';
 
 import '../ReportsView/index.scss';
 import './index.scss';
@@ -18,16 +17,13 @@ const ReportsSearchView = ({
   setIsLoading,
 }: ReportsSearchViewProps): JSX.Element => {
   const { search } = useLocation();
-  const searchParamsTest = decodeURIComponent(search);
+  const searchParams = decodeURIComponent(search);
   const [rowData, setRowData] = useState([]);
-  const { searchParams } = useContext(SearchParamsContext);
 
   useEffect(() => {
-    console.log(searchParams);
-
     const getData = async () => {
       try {
-        const { reports } = await api.get(`/reports${searchParamsTest}`).request();
+        const { reports } = await api.get(`/reports${searchParams}`).request();
 
         setRowData(reports.map((report) => {
           const [analyst] = report.users

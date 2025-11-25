@@ -17,11 +17,12 @@ import {
 import { makeStyles } from '@mui/styles';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import SearchDescription from './components/SearchDescription';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import React, { useCallback, useEffect, useState } from 'react';
 import { SearchParamsType } from '@/context/SearchParamsContext';
 import useSearchParams from '@/hooks/useSearchParams';
+
+import './index.scss';
 
 import {
   MIN_KEYWORD_LENGTH,
@@ -43,30 +44,14 @@ const useStyles = makeStyles({
   },
 });
 
-const SearchView = () => {
+const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]) => void }) => {
   const { searchParams, setSearchParams } = useSearchParams();
   const [searchThreshold, setSearchThreshold] = useState(DEFAULT_THRESHOLD);
   const [searchCategory, setSearchCategory] = useState('keyVariant');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const history = useHistory();
   const [searchErrorMessage, setSearchErrorMessage] = useState('');
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
-  const [showDialog, setShowDialog] = useState<boolean>(false);
   const customCss = useStyles();
-
-  // Calls submit function
-  const handleSubmit = useCallback(() => {
-    if (!searchParams) {
-      setSearchErrorMessage('Please enter a search keyword');
-      return;
-    }
-    const searchUrl: string[] = [];
-    searchParams.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
-    history.push({
-      pathname: '/search/result',
-      search: encodeURIComponent(`searchParams=${searchUrl.join('')}`),
-    });
-  }, [searchParams, history]);
 
   // Validate threshold value
   useEffect(() => {
@@ -106,13 +91,24 @@ const SearchView = () => {
     }
   }, [searchKeyword]);
 
-  const handleKeyDown = useCallback(({ code, target }) => {
+  // Calls submit function
+  const handleSubmit = useCallback(() => {
+    if (!searchParams) {
+      setSearchErrorMessage('Please enter a search keyword');
+      return;
+    }
+    onSuccess(searchParams);
+  }, [searchParams, onSuccess]);
+
+  const handleKeyDown = useCallback((e) => {
+    const { code, target } = e;
     setSearchErrorMessage('');
     if (code === BACKSPACE_KEY && !target.value) {
       // Delete the last entry
       setSearchParams((currData) => currData.slice(0, -1));
     }
     if (code === ENTER_KEY || code === NUMPAD_ENTER_KEY) {
+      e.preventDefault();
       // Allow user to press enter to submit search when there is no new character being entered for new keyword
       if (searchParams.length > 0 && !target.value) {
         setSearchErrorMessage('');
@@ -139,20 +135,12 @@ const SearchView = () => {
       ]);
       setSearchKeyword('');
     }
-  }, [searchParams, searchCategory, searchKeyword, searchThreshold]);
-
-  const handleOpen = useCallback(() => {
-    setShowDialog(true);
-  }, []);
-
-  const handleClose = useCallback(() => {
-    setShowDialog(false);
-  }, []);
+  }, [searchParams, searchCategory, searchKeyword, searchThreshold, handleSubmit]);
   
   return (
-    <div className="search-view">
-      <div className="search-view__bar">
-        <div className="search-view__category-select">
+    <div className="query-edit-dialog-search">
+      <div className="query-edit-dialog-search__bar">
+        <div className="query-edit-dialog-search__category-select">
           <FormControl classes={{ root: customCss.categoryBorder }} style={{ height: '100%' }}>
             <Select
               value={searchCategory}
@@ -180,7 +168,7 @@ const SearchView = () => {
             </Select>
           </FormControl>
         </div>
-        <div className="search-view__threshold-input">
+        <div className="query-edit-dialog-search__threshold-input">
           <TextField
             InputLabelProps={{ shrink: true }}
             variant="outlined"
@@ -208,7 +196,7 @@ const SearchView = () => {
             }}
           />
         </div>
-        <div className="search-view__keyword-input">
+        <div className="query-edit-dialog-search__keyword-input">
           <Autocomplete
             multiple
             options={[]}
@@ -275,52 +263,81 @@ const SearchView = () => {
             )}
           />
         </div>
-        <Button
-          variant="contained"
-          color="inherit"
-          size="large"
-          onClick={handleOpen}
-          sx={{
-            display: 'flex',
-            padding: '8px',
-            marginLeft: '12px',
-            marginTop: '8px',
-            marginBottom: '8px',
-            minHeight: 0,
-            minWidth: '40px',
-            borderRadius: '25px',
-          }}
-        >
-          <QuestionMarkIcon />
-        </Button>
       </div>
-      <div className="error-dialog">
+      <div className="query-edit-dialog-search__error-dialog">
         <Typography variant="subtitle2" color="error">
           {searchErrorMessage}
         </Typography>
       </div>
-      <div className="error-dialog">
+      <div className="query-edit-dialog-search__error-dialog">
         <Typography variant="subtitle2" color="error">
           {thresholdErrorMessage}
         </Typography>
       </div>
-      <Dialog open={showDialog} onClose={handleClose} maxWidth="md" fullWidth>
-        <DialogTitle>
-          <Typography variant="h3" color="primary">
-            Search Feature Details
-          </Typography>
-        </DialogTitle>
-        <DialogContent>
-          <SearchDescription />
-        </DialogContent>
-        <DialogActions>
-          <Button color="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 };
 
-export default SearchView;
+const QueryEditDialog = () => {
+  const [showQueryEditDialog, setShowQueryEditDialog] = useState<boolean>(false);
+  const history = useHistory();
+
+  const openQueryEdit = useCallback(() => {
+    setShowQueryEditDialog(true);
+  }, []);
+
+  const closeQueryEdit = useCallback(() => {
+    setShowQueryEditDialog(false);
+  }, []);
+
+  const handleQueryEdit = useCallback((searchParams) => {
+    closeQueryEdit();
+
+    if (searchParams) {
+      const searchUrl = searchParams
+        .map((key) => `[${key.category}|${key.keyword}|${key.threshold}]`)
+        .join('');
+      history.replace({
+        pathname: '/search/result',
+        search: encodeURIComponent(`searchParams=${searchUrl}`),
+      });
+    }
+  }, [history]);
+
+  return (
+    <>
+      <span className="query-edit-dialog__action">
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={openQueryEdit}
+          style={{
+            borderRadius: 10,
+            padding: '4px 8px',
+          }}
+        >
+          <ManageSearchIcon sx={{ marginRight: '4px' }} />
+          Edit Query
+        </Button>
+      </span>
+      <Dialog open={showQueryEditDialog} onClose={closeQueryEdit} maxWidth="lg" fullWidth>
+        <DialogTitle>
+          <Typography variant="h3" color="primary">
+            Edit Query
+          </Typography>
+        </DialogTitle>
+        <DialogContent >
+          <SearchBar onSuccess={handleQueryEdit}/>
+        </DialogContent>
+        <DialogActions>
+          <Button color="secondary" onClick={closeQueryEdit}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+}
+
+export default QueryEditDialog;
