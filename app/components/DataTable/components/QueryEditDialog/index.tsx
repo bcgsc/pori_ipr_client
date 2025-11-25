@@ -13,6 +13,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  CircularProgress,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { useHistory } from 'react-router-dom';
@@ -278,7 +279,7 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
   );
 };
 
-const QueryEditDialog = () => {
+const QueryEditDialog = ({isApiLoading}) => {
   const [showQueryEditDialog, setShowQueryEditDialog] = useState<boolean>(false);
   const history = useHistory();
 
@@ -297,7 +298,7 @@ const QueryEditDialog = () => {
       const searchUrl = searchParams
         .map((key) => `[${key.category}|${key.keyword}|${key.threshold}]`)
         .join('');
-      history.replace({
+      history.push({
         pathname: '/search/result',
         search: encodeURIComponent(`searchParams=${searchUrl}`),
       });
@@ -312,12 +313,17 @@ const QueryEditDialog = () => {
           color="primary"
           size="large"
           onClick={openQueryEdit}
+          disabled={isApiLoading}
           style={{
             borderRadius: 10,
             padding: '4px 8px',
           }}
         >
-          <ManageSearchIcon sx={{ marginRight: '4px' }} />
+          {
+            isApiLoading 
+              ? <CircularProgress sx={{ marginRight: '4px' }} /> 
+              : <ManageSearchIcon sx={{ marginRight: '4px' }} />
+          }
           Edit Query
         </Button>
       </span>

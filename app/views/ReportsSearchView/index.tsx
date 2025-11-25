@@ -1,31 +1,41 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from '@/services/api';
-import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import searchReportsColumns from '@/utils/searchReportsColumns';
 import searchColumnDefs from '@/components/ReportsTable/searchColumnDefs';
+import { useQuery } from 'react-query';
+import { ReportType } from '@/context/ReportContext';
 
 import '../ReportsView/index.scss';
 import './index.scss';
 
 type ReportsSearchViewProps = WithLoadingInjectedProps;
 
+/**
+ * Report table containing all searched reports
+ */
 const ReportsSearchView = ({
   isLoading,
   setIsLoading,
 }: ReportsSearchViewProps): JSX.Element => {
   const { search } = useLocation();
-  const searchParams = decodeURIComponent(search);
-  const [rowData, setRowData] = useState([]);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const { reports } = await api.get(`/reports${searchParams}`).request();
+  const searchParams = useMemo(() => {
+    return decodeURIComponent(search);
+  }, [decodeURIComponent, search]);
 
-        setRowData(reports.map((report) => {
+  const { data: reportsData, isFetching: isApiLoading } = useQuery(
+    `/reports${searchParams}`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      retry: 1,
+      enabled: Boolean(searchParams),
+      select: (response) => {
+        const reports = response.reports.map((report: ReportType) => {
           const [analyst] = report.users
             .filter((u) => u.role === 'analyst' && !u.deletedAt)
             .map((u) => u.user);
@@ -38,35 +48,36 @@ const ReportsSearchView = ({
             .filter((u) => u.role === 'bioinformatician')
             .map((u) => u.user);
 
-          const reportData = report;
+          const cleanedReport = report;
 
-          if (!report.patientInformation) {
-            reportData.patientInformation = {};
+          if (!cleanedReport.patientInformation) {
+            cleanedReport.patientInformation = null;
           }
 
           return (
-            searchReportsColumns(reportData, analyst, reviewer, bioinformatician)
+            searchReportsColumns(cleanedReport, analyst, reviewer, bioinformatician)
           );
-        }));
-      } catch (err) {
-        snackbar.error(`Network error: ${err}`);
-      } finally {
+        });
         setIsLoading(false);
+        return reports;
+      },
+      onError: (err: any) => {
+        snackbar.error(`API error: ${err.message}`)
       }
-    };
-    getData();
-  }, [search, setIsLoading, searchParams]);
+    },
+  );
 
   if (isLoading) { return null; }
 
   return (
     <div className="reports-table">
       <DataTable
-        rowData={rowData}
+        rowData={reportsData}
         columnDefs={searchColumnDefs}
         titleText="Matched Reports"
         isFullLength
         isSearch
+        isApiLoading={isApiLoading}
       />
     </div>
   );

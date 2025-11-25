@@ -164,6 +164,8 @@ type DataTableCustomProps = {
   isPaginated?: boolean;
   /* Whether the data table is being used to display search results for reports by variant */
   isSearch?: boolean;
+  /* Whether the data for table is being loaded */
+  isApiLoading?: boolean;
   /* Callback function when add is called */
   onAdd?: (row: Record<string, unknown>) => void;
   /* Callback function when delete is called */
@@ -210,6 +212,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   isPaginated = true,
   isPrint,
   isSearch = false,
+  isApiLoading = false,
   onAdd,
   onDelete,
   onEdit,
@@ -557,7 +560,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
             <div>
               {isSearch && (
                 <span className="data-table__action">
-                  <QueryEditDialog />
+                  <QueryEditDialog isApiLoading={isApiLoading}/>
                 </span>
               )}
               {(canAdd || canToggleColumns || canExport || canReorder) && (

@@ -44,6 +44,7 @@ type RecordDefaults = {
   ident: string;
   updatedAt: string | null;
   createdAt: string | null;
+  deletedAt: string | null;
 };
 
 type UserGroupMemberType = {
