@@ -310,7 +310,7 @@ const QueryEditDialog = ({isApiLoading}) => {
       const searchUrl = searchParams
         .map((key) => `[${key.category}|${key.keyword}|${key.threshold}]`)
         .join('');
-      history.replace({
+      history.push({
         pathname: '/search/result',
         search: encodeURIComponent(`searchParams=${searchUrl}`),
       });
@@ -318,7 +318,7 @@ const QueryEditDialog = ({isApiLoading}) => {
         queryKey: [`/reports?searchParams=${searchUrl}`]
       });
     }
-  }, [history, queryClient]);
+  }, [history, queryClient, closeQueryEdit]);
 
   return (
     <>

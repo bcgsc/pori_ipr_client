@@ -64,7 +64,7 @@ const SearchView = () => {
     }
     const searchUrl: string[] = [];
     searchParams.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
-    history.replace({
+    history.push({
       pathname: '/search/result',
       search: encodeURIComponent(`searchParams=${searchUrl.join('')}`),
     });
