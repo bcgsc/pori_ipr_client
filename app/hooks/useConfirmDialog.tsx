@@ -3,6 +3,9 @@ import ReportContext from '@/context/ReportContext';
 import React, { useCallback, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import snackbar from '@/services/SnackbarUtils';
+import { ApiCall, ApiCallSet } from '@/services/api';
+import { CircularProgress, Dialog, DialogContent } from '@mui/material';
+import { Box } from '@mui/system';
 
 const textDict = {
   probe: 'Making this change will cause signatures to be removed. Do you want to proceed?',
@@ -31,11 +34,26 @@ const useConfirmDialog = () => {
       );
     };
 
+    const renderLoadingDialog = () => {
+      ReactDOM.render(
+        <Dialog open PaperProps={{ sx: { p: 2 } }}>
+          <DialogContent>
+            <Box display="flex" alignItems="center" justifyContent="center" p={2}>
+              <CircularProgress />
+            </Box>
+          </DialogContent>
+        </Dialog>,
+        document.getElementById('alert-dialog'),
+      );
+    };
+
     if (!waitForConfirmation) {
       const handleClose = async (removeSignatures = false) => {
+        ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
         if (removeSignatures) {
+          renderLoadingDialog();
           try {
-            await Promise.all(callPromises.map((promise) => promise.request()));
+            await Promise.all(callPromises.map((promise) => ((promise instanceof ApiCall || promise instanceof ApiCallSet) ? promise.request() : promise)));
             snackbar.success(confirmText);
             window.location.reload();
           } catch (e) {
@@ -43,8 +61,6 @@ const useConfirmDialog = () => {
           } finally {
             ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
           }
-        } else {
-          ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
         }
       };
 
@@ -57,16 +73,18 @@ const useConfirmDialog = () => {
     return new Promise<boolean>((resolve, reject) => {
       const handleClose = async (removeSignatures = false) => {
         ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
-
         if (removeSignatures) {
           try {
-            await Promise.all(callPromises.map((promise) => promise.request()));
+            renderLoadingDialog();
+            await Promise.all(callPromises.map((promise) => ((promise instanceof ApiCall || promise instanceof ApiCallSet) ? promise.request() : promise)));
             snackbar.success(confirmText);
             window.location.reload();
             resolve(true);
           } catch (e) {
             snackbar.error(`Error: ${e}`);
             reject(e);
+          } finally {
+            ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
           }
         } else {
           resolve(false); // user cancelled
@@ -75,7 +93,7 @@ const useConfirmDialog = () => {
 
       renderDialog(handleClose);
     });
-  }, [report]);
+  }, [report?.template.name]);
 
   return {
     showConfirmDialog: showDialog,
