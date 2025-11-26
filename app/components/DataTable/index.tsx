@@ -564,42 +564,42 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
                 </span>
               )}
               {(canAdd || canToggleColumns || canExport || canReorder) && (
-              <span className="data-table__action">
-                <IconButton
-                  onClick={(event) => setMenuAnchor(event.currentTarget)}
-                  className="data-table__icon-button"
-                  size="large"
-                >
-                  <MoreHorizIcon />
-                </IconButton>
-                <Menu
-                  anchorEl={menuAnchor}
-                  open={Boolean(menuAnchor)}
-                  onClose={() => setMenuAnchor(null)}
-                >
-                  {canAdd && (
-                  <MenuItem onClick={() => handleMenuItemClick('add')}>
-                    {addText || 'Add row'}
-                  </MenuItem>
-                  )}
-                  {canToggleColumns && (
-                  <MenuItem onClick={() => handleMenuItemClick('toggle')}>
-                    Toggle Columns
-                  </MenuItem>
-                  )}
-                  {canExport && (
-                  <MenuItem onClick={() => handleMenuItemClick('export')}>
-                    Export to TSV
-                  </MenuItem>
-                  )}
-                  {canReorder && (
-                  <MenuItem onClick={() => handleMenuItemClick('reorder')}>
-                    Reorder Rows
-                  </MenuItem>
-                  )}
-                  {additionalTableMenuItems && additionalTableMenuItems(gridApi)}
-                </Menu>
-              </span>
+                <span className="data-table__action">
+                  <IconButton
+                    onClick={(event) => setMenuAnchor(event.currentTarget)}
+                    className="data-table__icon-button"
+                    size="large"
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={menuAnchor}
+                    open={Boolean(menuAnchor)}
+                    onClose={() => setMenuAnchor(null)}
+                  >
+                    {canAdd && (
+                    <MenuItem onClick={() => handleMenuItemClick('add')}>
+                      {addText || 'Add row'}
+                    </MenuItem>
+                    )}
+                    {canToggleColumns && (
+                    <MenuItem onClick={() => handleMenuItemClick('toggle')}>
+                      Toggle Columns
+                    </MenuItem>
+                    )}
+                    {canExport && (
+                    <MenuItem onClick={() => handleMenuItemClick('export')}>
+                      Export to TSV
+                    </MenuItem>
+                    )}
+                    {canReorder && (
+                    <MenuItem onClick={() => handleMenuItemClick('reorder')}>
+                      Reorder Rows
+                    </MenuItem>
+                    )}
+                    {additionalTableMenuItems && additionalTableMenuItems(gridApi)}
+                  </Menu>
+                </span>
               )}
             </div>
           </div>

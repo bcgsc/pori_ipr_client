@@ -32,6 +32,7 @@ import {
   NUMPAD_ENTER_KEY,
   BACKSPACE_KEY,
 } from '@/constants';
+import { useQueryClient } from 'react-query';
 
 // Custom css to alter select dropdown border radius
 const useStyles = makeStyles({
@@ -282,6 +283,7 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
 const QueryEditDialog = ({isApiLoading}) => {
   const [showQueryEditDialog, setShowQueryEditDialog] = useState<boolean>(false);
   const history = useHistory();
+  const queryClient = useQueryClient();
 
   const openQueryEdit = useCallback(() => {
     setShowQueryEditDialog(true);
@@ -298,9 +300,12 @@ const QueryEditDialog = ({isApiLoading}) => {
       const searchUrl = searchParams
         .map((key) => `[${key.category}|${key.keyword}|${key.threshold}]`)
         .join('');
-      history.push({
+      history.replace({
         pathname: '/search/result',
         search: encodeURIComponent(`searchParams=${searchUrl}`),
+      });
+      queryClient.refetchQueries({
+        queryKey: [`/reports?searchParams=${searchUrl}`]
       });
     }
   }, [history]);

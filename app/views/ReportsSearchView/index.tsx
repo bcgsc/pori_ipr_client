@@ -31,7 +31,7 @@ const ReportsSearchView = ({
     `/reports${searchParams}`,
     async ({ queryKey: [route] }) => await api.get(route).request(),
     {
-      staleTime: Infinity,
+      staleTime: 0,
       retry: 1,
       enabled: Boolean(searchParams),
       select: (response) => {
@@ -58,10 +58,13 @@ const ReportsSearchView = ({
             searchReportsColumns(cleanedReport, analyst, reviewer, bioinformatician)
           );
         });
-        setIsLoading(false);
         return reports;
       },
+      onSettled: () => {
+        setIsLoading(false);
+      },
       onError: (err: any) => {
+        setIsLoading(false);
         snackbar.error(`API error: ${err.message}`)
       }
     },
