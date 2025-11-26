@@ -15,7 +15,7 @@ import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
 import ReportContext, { ReportType } from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
-import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
+import SignatureCard from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import capitalize from 'lodash/capitalize';
@@ -29,6 +29,8 @@ import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
+import useSignatures from '@/hooks/useSignatures';
+import { useSignatureTypes } from '@/hooks/useSignatureTypes';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
@@ -42,12 +44,8 @@ import './index.scss';
 import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
 
 const ANALYST_DISABLED = 'analyst disabled';
-const DEFAULT_SIGNATURES: Partial<SignatureUserType>[] = [
-  { signatureType: 'author' },
-  { signatureType: 'reviewer' },
-  { signatureType: 'creator' },
-];
-enum RAPID_SUMMARY_TABLE {
+
+enum RapidSummaryTable {
   THERAPEUTIC_ASSOCIATION = 'therapeuticAssociation',
   CANCER_RELEVANCE = 'cancerRelevance',
   UNKNOWN_SIGNIFICANCE = 'unknownSignificance',
@@ -100,7 +98,7 @@ const filterNoTableAndByRelevance = (
 
         // get the current tag
         // (using this tag as the default because an untagged stmt is treated the same way)
-        let currentTag = RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION;
+        let currentTag = RapidSummaryTable.THERAPEUTIC_ASSOCIATION;
         const rapidReportDict = kbData?.rapidReportTableTag || {};
 
         if (Object.keys(rapidReportDict).length > 0) {
@@ -110,11 +108,11 @@ const filterNoTableAndByRelevance = (
               ? variantTypesDict[variantType]
               : [];
             if (variantIdentList.includes(variantIdent)) {
-              currentTag = key as RAPID_SUMMARY_TABLE;
+              currentTag = key as RapidSummaryTable;
             }
           }
         }
-        if (currentTag === RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION) {
+        if (currentTag === RapidSummaryTable.THERAPEUTIC_ASSOCIATION) {
           return true;
         }
         return false;
@@ -206,6 +204,8 @@ const RapidSummary = ({
 }: RapidSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
+  const { data: signatures } = useSignatures(report);
+  const { data: signatureTypes } = useSignatureTypes(report);
   let { canEdit } = useReport();
   if (report.state === 'completed') {
     canEdit = false;
@@ -221,11 +221,9 @@ const RapidSummary = ({
   const cancerRelTableRef = useRef<DataTableImperativeHandle>();
 
   const reportIdent = report?.ident;
-  const templateIdent = report?.template?.ident;
 
   const queries = useQueries<
   [
-    UseQueryResult<SignatureType>,
     UseQueryResult<RapidVariantType[]>,
     UseQueryResult<RapidVariantType[]>,
     UseQueryResult<RapidVariantType[]>,
@@ -233,22 +231,13 @@ const RapidSummary = ({
     UseQueryResult<MsiType>,
     UseQueryResult<ImmuneType | undefined>,
     UseQueryResult<MicrobialType[]>,
-    UseQueryResult<Partial<SignatureUserType>[]>,
   ]
   >(
     [
       {
-        queryKey: ['signatures', reportIdent],
-        queryFn: (): Promise<SignatureType> => api.get(`/reports/${reportIdent}/signatures`).request(),
-        enabled: !!reportIdent,
-        onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
-        refetchOnMount: 'always',
-      },
-
-      {
-        queryKey: [RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION, reportIdent],
+        queryKey: [RapidSummaryTable.THERAPEUTIC_ASSOCIATION, reportIdent],
         queryFn: (): Promise<RapidVariantType[]> => api
-          .get(`/reports/${reportIdent}/variants?rapidTable=${RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION}`)
+          .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.THERAPEUTIC_ASSOCIATION}`)
           .request(),
         select: (rows: RapidVariantType[]) => splitVariantsByRelevance(rows),
         enabled: !!reportIdent,
@@ -257,9 +246,9 @@ const RapidSummary = ({
       },
 
       {
-        queryKey: [RAPID_SUMMARY_TABLE.CANCER_RELEVANCE, reportIdent],
+        queryKey: [RapidSummaryTable.CANCER_RELEVANCE, reportIdent],
         queryFn: (): Promise<RapidVariantType[]> => api
-          .get(`/reports/${reportIdent}/variants?rapidTable=${RAPID_SUMMARY_TABLE.CANCER_RELEVANCE}`)
+          .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.CANCER_RELEVANCE}`)
           .request(),
         enabled: !!reportIdent,
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
@@ -267,9 +256,9 @@ const RapidSummary = ({
       },
 
       {
-        queryKey: [RAPID_SUMMARY_TABLE.UNKNOWN_SIGNIFICANCE, reportIdent],
+        queryKey: [RapidSummaryTable.UNKNOWN_SIGNIFICANCE, reportIdent],
         queryFn: (): Promise<RapidVariantType[]> => api
-          .get(`/reports/${reportIdent}/variants?rapidTable=${RAPID_SUMMARY_TABLE.UNKNOWN_SIGNIFICANCE}`)
+          .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.UNKNOWN_SIGNIFICANCE}`)
           .request(),
         enabled: !!reportIdent,
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
@@ -317,16 +306,6 @@ const RapidSummary = ({
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
         refetchOnMount: 'always',
       },
-
-      {
-        queryKey: ['signatureTypes', templateIdent],
-        queryFn: (): Promise<SignatureUserType[]> => api.get(`/templates/${templateIdent}/signature-types`).request(),
-        select: (rows: SignatureUserType[]): Partial<SignatureUserType>[] => (rows.length === 0
-          ? DEFAULT_SIGNATURES
-          : rows),
-        enabled: !!templateIdent,
-        onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
-      },
     ],
   );
 
@@ -345,7 +324,6 @@ const RapidSummary = ({
   });
 
   const [
-    { data: signatures },
     { data: therapeuticAssociationResults },
     { data: cancerRelevanceResults },
     { data: unknownSignificanceResults },
@@ -353,7 +331,6 @@ const RapidSummary = ({
     { data: msi },
     { data: tCellCd8 },
     { data: microbial },
-    { data: signatureTypes },
   ] = queries;
 
   const isLoadingFromQueries = queries.some((q) => q.isLoading);
@@ -470,11 +447,11 @@ const RapidSummary = ({
   /**
    * Deletes a whole variant from the first two rapid summary tables, can be expanded to 3rd
    */
-  const { mutate: deleteVariantMutation, isLoading: isVariantDeleting } = useMutation({
+  const { mutate: deleteVariantMutation } = useMutation({
     mutationFn: async ({ reportId, variant, rapidSummaryTable }: {
       reportId: ReportType['ident'],
       variant: AnyVariant,
-      rapidSummaryTable: RAPID_SUMMARY_TABLE,
+      rapidSummaryTable: RapidSummaryTable,
     }) => {
       const uniqueStatementIdents = [...new Set(variant.kbMatches.flatMap((m) => m.kbMatchedStatements.map((s) => s.ident)))];
       const deleteVariant = api.post(`/reports/${reportId}/variants/set-summary-table`, {
@@ -485,13 +462,13 @@ const RapidSummary = ({
       });
 
       if (
-        rapidSummaryTable === RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION
+        rapidSummaryTable === RapidSummaryTable.THERAPEUTIC_ASSOCIATION
         && therapeuticAssocTableRef.current
       ) {
         therapeuticAssocTableRef?.current.showLoading();
       }
       if (
-        rapidSummaryTable === RAPID_SUMMARY_TABLE.CANCER_RELEVANCE
+        rapidSummaryTable === RapidSummaryTable.CANCER_RELEVANCE
         && cancerRelTableRef.current
       ) {
         cancerRelTableRef.current.showLoading();
@@ -515,13 +492,13 @@ const RapidSummary = ({
     },
     onSettled: (_data, _err, { rapidSummaryTable }) => {
       if (
-        rapidSummaryTable === RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION
+        rapidSummaryTable === RapidSummaryTable.THERAPEUTIC_ASSOCIATION
         && therapeuticAssocTableRef.current
       ) {
         therapeuticAssocTableRef?.current.hideLoading();
       }
       if (
-        rapidSummaryTable === RAPID_SUMMARY_TABLE.CANCER_RELEVANCE
+        rapidSummaryTable === RapidSummaryTable.CANCER_RELEVANCE
         && cancerRelTableRef.current
       ) {
         cancerRelTableRef.current.hideLoading();
@@ -529,7 +506,7 @@ const RapidSummary = ({
     },
   });
 
-  const handleVariantDelete = useCallback((rapidSummaryTable: RAPID_SUMMARY_TABLE) => (data) => {
+  const handleVariantDelete = useCallback((rapidSummaryTable: RapidSummaryTable) => (data) => {
     deleteVariantMutation({ reportId: report.ident, variant: data, rapidSummaryTable });
   }, [deleteVariantMutation, report?.ident]);
 
@@ -549,7 +526,7 @@ const RapidSummary = ({
     if (newData) {
       // Call API again to get updated data
       try {
-        await queryClient.refetchQueries({ queryKey: [RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION, reportIdent] });
+        await queryClient.refetchQueries({ queryKey: [RapidSummaryTable.THERAPEUTIC_ASSOCIATION, reportIdent] });
         setShowMatchedTumourEditDialog(false);
       } catch (e) {
         snackbar.error(`Refetching of therapeutic association data failed: ${e.message ? e.message : e}`);
@@ -625,7 +602,7 @@ const RapidSummary = ({
             rowData={webData}
             canEdit={canEdit}
             canDelete={canEdit}
-            onDelete={handleVariantDelete(RAPID_SUMMARY_TABLE.THERAPEUTIC_ASSOCIATION)}
+            onDelete={handleVariantDelete(RapidSummaryTable.THERAPEUTIC_ASSOCIATION)}
             collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'Actions']}
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
@@ -665,7 +642,7 @@ const RapidSummary = ({
         <DataTable
           ref={cancerRelTableRef}
           canDelete={canEdit}
-          onDelete={handleVariantDelete(RAPID_SUMMARY_TABLE.CANCER_RELEVANCE)}
+          onDelete={handleVariantDelete(RapidSummaryTable.CANCER_RELEVANCE)}
           columnDefs={cancerRelevanceColDefs}
           rowData={cancerRelevanceResults}
           collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
