@@ -139,6 +139,15 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
     }
   }, [searchParams, searchCategory, searchKeyword, searchThreshold, handleSubmit]);
   
+  const handleDeleteSearchKey = useCallback((idx) => {
+    setSearchParams((currData) => {
+      const nextData = [...currData];
+      nextData.splice(idx, 1);
+      return nextData;
+    });
+    setSearchErrorMessage('');
+  }, []);
+
   return (
     <div className="query-edit-dialog-search">
       <div className="query-edit-dialog-search__bar">
@@ -223,6 +232,7 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
                 key={`${keyword}-${index}`}
                 label={`${category} | ${keyword} | ${threshold}`}
                 sx={{ marginRight: '5px' }}
+                onDelete={() => handleDeleteSearchKey(index)}
               />
             ))}
             renderInput={(params) => (
@@ -308,7 +318,7 @@ const QueryEditDialog = ({isApiLoading}) => {
         queryKey: [`/reports?searchParams=${searchUrl}`]
       });
     }
-  }, [history]);
+  }, [history, queryClient]);
 
   return (
     <>

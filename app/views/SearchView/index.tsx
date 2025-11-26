@@ -30,6 +30,7 @@ import {
   NUMPAD_ENTER_KEY,
   BACKSPACE_KEY,
 } from '@/constants';
+import { useQueryClient } from 'react-query';
 
 // Custom css to alter select dropdown border radius
 const useStyles = makeStyles({
@@ -53,6 +54,7 @@ const SearchView = () => {
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const customCss = useStyles();
+  const queryClient = useQueryClient();
 
   // Calls submit function
   const handleSubmit = useCallback(() => {
@@ -62,11 +64,14 @@ const SearchView = () => {
     }
     const searchUrl: string[] = [];
     searchParams.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
-    history.push({
+    history.replace({
       pathname: '/search/result',
       search: encodeURIComponent(`searchParams=${searchUrl.join('')}`),
     });
-  }, [searchParams, history]);
+    queryClient.refetchQueries({
+      queryKey: [`/reports?searchParams=${searchUrl.join('')}`]
+    });
+  }, [searchParams, history, queryClient]);
 
   // Validate threshold value
   useEffect(() => {
@@ -147,6 +152,15 @@ const SearchView = () => {
 
   const handleClose = useCallback(() => {
     setShowDialog(false);
+  }, []);
+
+  const handleDeleteSearchKey = useCallback((idx) => {
+    setSearchParams((currData) => {
+      const nextData = [...currData];
+      nextData.splice(idx, 1);
+      return nextData;
+    });
+    setSearchErrorMessage('');
   }, []);
   
   return (
@@ -233,6 +247,7 @@ const SearchView = () => {
                 key={`${keyword}-${index}`}
                 label={`${category} | ${keyword} | ${threshold}`}
                 sx={{ marginRight: '5px' }}
+                onDelete={() => handleDeleteSearchKey(index)}
               />
             ))}
             renderInput={(params) => (

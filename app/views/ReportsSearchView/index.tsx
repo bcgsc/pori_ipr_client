@@ -8,6 +8,8 @@ import searchReportsColumns from '@/utils/searchReportsColumns';
 import searchColumnDefs from '@/components/ReportsTable/searchColumnDefs';
 import { useQuery } from 'react-query';
 import { ReportType } from '@/context/ReportContext';
+import useSearchParams from '@/hooks/useSearchParams';
+import { SearchParamsType } from '@/context/SearchParamsContext';
 
 import '../ReportsView/index.scss';
 import './index.scss';
@@ -22,18 +24,34 @@ const ReportsSearchView = ({
   setIsLoading,
 }: ReportsSearchViewProps): JSX.Element => {
   const { search } = useLocation();
+  const { searchParams, setSearchParams } = useSearchParams();
 
-  const searchParams = useMemo(() => {
+  const searchParamsUrl = useMemo(() => {
     return decodeURIComponent(search);
   }, [decodeURIComponent, search]);
 
+  const parseSearchParamsFromUrl = (searchParamsUrl: string) => {
+    const params: SearchParamsType[] = [];
+    const regex = /\[([^|]+)\|([^|]+)\|([^]+?)\]/g;
+    let match = [];
+  
+    while ((match = regex.exec(searchParamsUrl)) !== null) {
+      params.push({
+        category: match[1],
+        keyword: match[2],
+        threshold: match[3],
+      });
+    }
+  
+    return params;
+  }
+
   const { data: reportsData, isFetching: isApiLoading } = useQuery(
-    `/reports${searchParams}`,
+    `/reports${searchParamsUrl}`,
     async ({ queryKey: [route] }) => await api.get(route).request(),
     {
       staleTime: 0,
-      retry: 1,
-      enabled: Boolean(searchParams),
+      enabled: Boolean(searchParamsUrl),
       select: (response) => {
         const reports = response.reports.map((report: ReportType) => {
           const [analyst] = report.users
@@ -62,9 +80,13 @@ const ReportsSearchView = ({
       },
       onSettled: () => {
         setIsLoading(false);
+
+        // Re-populating context using url without having to store search params in local storage
+        if (!searchParams || !searchParams.length) {
+          setSearchParams(parseSearchParamsFromUrl(searchParamsUrl));
+        }
       },
       onError: (err: any) => {
-        setIsLoading(false);
         snackbar.error(`API error: ${err.message}`)
       }
     },
