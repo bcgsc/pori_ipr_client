@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext, useCallback, useMemo,
+  useEffect, useState, useContext, useCallback, useMemo, useRef,
 } from 'react';
 import {
   Typography,
@@ -24,6 +24,9 @@ import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 
 import './index.scss';
 import { useQuery, useQueryClient } from 'react-query';
+import { Editor } from '@tiptap/react';
+
+const AUTO_SAVE_INTERVAL = 30 * 1000; // Autosaves per 30s
 
 const useComments = (report?: ReportType) => useQuery({
   queryKey: ['report-comments', report?.ident],
@@ -57,6 +60,7 @@ const AnalystComments = ({
   const { canEdit } = useReport();
   const { showConfirmDialog } = useConfirmDialog();
 
+  const editorRef = useRef<{ editor: Editor, isDirty: boolean | null }>();
   const [comments, setComments] = useState('');
   const [signatures, setSignatures] = useState<SignatureType>();
   const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>(DEFAULT_SIGNATURE_TYPES);
@@ -76,7 +80,9 @@ const AnalystComments = ({
         commentsQuery.error || signaturesQuery.error || signatureTypesQuery.error
       }`);
     }
+  }, [commentsQuery.error, isError, signatureTypesQuery.error, signaturesQuery.error]);
 
+  useEffect(() => {
     if (!isApiLoading) {
       setComments(commentsQuery.data);
       setSignatures(signaturesQuery.data);
@@ -84,7 +90,36 @@ const AnalystComments = ({
       setIsComponentLoading(false);
       if (loadedDispatch) loadedDispatch({ type: 'analyst-comments' });
     }
-  }, [setIsComponentLoading, isApiLoading, isError, commentsQuery.data, signaturesQuery.data, signatureTypesQuery.data, loadedDispatch, commentsQuery.error, signaturesQuery.error, signatureTypesQuery.error]);
+  }, [setIsComponentLoading, isApiLoading, isError, commentsQuery.data, signaturesQuery.data, signatureTypesQuery.data, loadedDispatch]);
+
+  // Try to load previously unsaved analyst comments
+  useEffect(() => {
+    if (isEditorOpen && !isApiLoading) {
+      const savedComments = sessionStorage.getItem(`${report.ident}-analyst_comments`);
+      if (savedComments) {
+        snackbar.info('Loaded previously unsaved analyst comments');
+        sessionStorage.removeItem(`${report.ident}-analyst_comments`);
+        editorRef.current.editor.commands.setContent(savedComments);
+      }
+    }
+  }, [isApiLoading, isEditorOpen, report.ident]);
+
+  // Intervally saves in-edit analyst comments
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const editor = editorRef.current?.editor;
+      const isDirty = editorRef.current?.isDirty;
+      if (!editor) return;
+
+      // When user is actively editing
+      if (isEditorOpen && isDirty) {
+        snackbar.info('Autosaving editing analyst comment');
+        sessionStorage.setItem(`${report.ident}-analyst_comments`, editorRef.current.editor.getHTML());
+      }
+    }, AUTO_SAVE_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [isEditorOpen, report.ident]);
 
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
@@ -154,13 +189,21 @@ const AnalystComments = ({
   );
 
   const handleEditorSave = useCallback(
-    (editedComments?: string) => handleEditorAction(editedComments, false),
-    [handleEditorAction],
+    (editedComments?: string) => {
+      // Clear sessionStoarge because the user already saved
+      sessionStorage.removeItem(`${report.ident}-analyst_comments`);
+      return handleEditorAction(editedComments, false);
+    },
+    [handleEditorAction, report.ident],
   );
 
   const handleEditorClose = useCallback(
-    (editedComments?: string) => handleEditorAction(editedComments, true),
-    [handleEditorAction],
+    (editedComments?: string) => {
+      // Clear sessionStoarge because the user decided to not save
+      sessionStorage.removeItem(`${report.ident}-analyst_comments`);
+      return handleEditorAction(editedComments, true);
+    },
+    [handleEditorAction, report.ident],
   );
 
   const signatureSection = useMemo(() => signatureTypes.map((sigType) => {
@@ -205,6 +248,7 @@ const AnalystComments = ({
                 <EditIcon />
               </Fab>
               <IPRWYSIWYGEditor
+                ref={editorRef}
                 alertLeave
                 isOpen={isEditorOpen}
                 text={comments}
