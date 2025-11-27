@@ -31,6 +31,7 @@ export type SignatureCardProps = {
   onClick: (isSigned: boolean, updatedSignature: SignatureType) => void;
   type: string;
   isPrint?: boolean;
+  disabled?: boolean;
 };
 
 const SignatureCard = ({
@@ -39,6 +40,7 @@ const SignatureCard = ({
   onClick,
   type,
   isPrint = false,
+  disabled = false,
 }: SignatureCardProps): JSX.Element => {
   const { reportAssignmentAccess: canAddSignatures } = useResource();
   const { canEdit, report, setReport } = useReport();
@@ -207,6 +209,7 @@ const SignatureCard = ({
             startIcon={<GestureIcon />}
             color="inherit"
             size="small"
+            disabled={disabled}
           >
             Sign
           </Button>
@@ -227,6 +230,7 @@ const SignatureCard = ({
           <IconButton
             size="small"
             onClick={handleRevoke}
+            disabled={disabled}
           >
             <RemoveCircleIcon />
           </IconButton>
