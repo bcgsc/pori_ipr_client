@@ -384,7 +384,12 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleOnClose}>Cancel</Button>
+        <Button
+          onClick={handleOnClose}
+          disabled={isUpdating || !destinationTable || !selectedKbStatementIds}
+        >
+          Cancel
+        </Button>
         <Button
           disabled={isUpdating || !destinationTable || !selectedKbStatementIds}
           variant="contained"
