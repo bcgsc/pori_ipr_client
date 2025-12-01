@@ -105,10 +105,10 @@ const AnalystComments = ({
     }
   }, [setIsComponentLoading, isApiLoading, isError, commentsQuery.data, signaturesQuery.data, signatureTypesQuery.data, loadedDispatch, commentsQuery.error, signaturesQuery.error, signatureTypesQuery.error]);
 
-  const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
+  const handleSign = useCallback(async (signed: boolean) => {
     setIsSigned(signed);
-    setSignatures(updatedSignature);
-  }, [setIsSigned]);
+    await queryClient.refetchQueries({ queryKey: ['report-signatures', report?.ident] });
+  }, [report?.ident, setIsSigned, queryClient]);
 
   const handleEditorStart = () => {
     setIsEditorOpen(true);
@@ -195,6 +195,7 @@ const AnalystComments = ({
         title={capitalize(title)}
         type={sigType.signatureType}
         isPrint={isPrint}
+        disabled={isApiLoading}
       />
     );
   }), [isPrint, handleSign, signatures, signatureTypes]);
