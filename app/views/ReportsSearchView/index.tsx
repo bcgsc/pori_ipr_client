@@ -3,26 +3,21 @@ import { useLocation } from 'react-router-dom';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
-import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import searchReportsColumns from '@/utils/searchReportsColumns';
 import searchColumnDefs from '@/components/ReportsTable/searchColumnDefs';
 import { useQuery } from 'react-query';
 import { ReportType } from '@/context/ReportContext';
 import useSearchParams from '@/hooks/useSearchParams';
 import { SearchParamsType } from '@/context/SearchParamsContext';
+import { CircularProgress } from '@mui/material';
 
 import '../ReportsView/index.scss';
 import './index.scss';
 
-type ReportsSearchViewProps = WithLoadingInjectedProps;
-
 /**
  * Report table containing all searched reports
  */
-const ReportsSearchView = ({
-  isLoading,
-  setIsLoading,
-}: ReportsSearchViewProps): JSX.Element => {
+const ReportsSearchView = (): JSX.Element => {
   const { search } = useLocation();
   const { searchParams, setSearchParams } = useSearchParams();
 
@@ -79,7 +74,7 @@ const ReportsSearchView = ({
         return reports;
       },
       onSettled: () => {
-        setIsLoading(false);
+        // setIsLoading(false);
 
         // Re-populating context using url without having to store search params in local storage
         if (!searchParams || !searchParams.length) {
@@ -92,7 +87,9 @@ const ReportsSearchView = ({
     },
   );
 
-  if (isLoading) { return null; }
+  if (isApiLoading) {
+    return <div className='centered'><CircularProgress /></div>
+  }
 
   return (
     <div className="reports-table">
@@ -108,4 +105,4 @@ const ReportsSearchView = ({
   );
 };
 
-export default withLoading(ReportsSearchView);
+export default ReportsSearchView;
