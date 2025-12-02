@@ -12,8 +12,11 @@ const getMicbSiteIntegrationStatusLabel = (species: string, integrationStatus: s
 };
 
 const getMicbSiteSummary = (microbial) => {
+  if (!microbial || microbial.length === undefined) {
+    return 'Not detected';
+  }
   if (
-    microbial?.length < 1
+    microbial.length < 1
     || (microbial.length === 1 && microbial.find(({ species }) => species.toLowerCase() === 'none'))
   ) {
     return 'Not detected';

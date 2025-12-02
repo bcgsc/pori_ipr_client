@@ -10,5 +10,5 @@ export type SignatureType = ({
 } & RecordDefaults) | null;
 
 export type SignatureUserType = {
-  signatureType: null | string;
+  signatureType: 'author' | 'reviewer' | 'creator' | string | null;
 } & RecordDefaults;
