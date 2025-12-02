@@ -53,7 +53,7 @@ const ACTIONS_COLDEF = {
   hide: false,
   sortable: false,
   suppressMenu: true,
-  minWidth: 88,
+  minWidth: 132,
 };
 
 const therapeuticAssociationColDefs = [

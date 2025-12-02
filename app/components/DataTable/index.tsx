@@ -122,8 +122,27 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
   return nextColDefs;
 };
 
+const LoadingOverlay = () => (
+  <div
+    style={{
+      width: '100%',
+      height: '100%',
+      background: 'rgba(255,255,255,0.6)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      pointerEvents: 'all', // Captures agGrid v25 bug where clicks go through
+      zIndex: 999,
+    }}
+  >
+    Loading…
+  </div>
+);
+
 export type DataTableImperativeHandle = {
   goToEntry: (ident: string) => void;
+  hideLoading: () => void;
+  showLoading: () => void;
 };
 
 type DataTableCustomProps = {
@@ -548,6 +567,8 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
           rowNode.setSelected(true);
         }, 50);
       },
+      showLoading: () => gridApi.showLoadingOverlay(),
+      hideLoading: () => gridApi.hideOverlay(),
     };
   }, [gridApi]);
 
@@ -640,6 +661,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
               noRowsOverlayComponent="NoRowsOverlay"
+              loadingOverlayComponent="LoadingOverlay"
               gridOptions={{
                 // For when table is too short and the popup menus get cut-off
                 popupParent: document.querySelector('body'),
@@ -663,6 +685,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
                 HTMLCellRenderer,
                 ToolTip,
                 Launch: LaunchCell,
+                LoadingOverlay,
               }}
               suppressAnimationFrame
               suppressRowTransform={Boolean(collapseColumnFields)}

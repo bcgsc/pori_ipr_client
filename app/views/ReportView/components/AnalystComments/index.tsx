@@ -11,6 +11,8 @@ import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import useReport from '@/hooks/useReport';
+import useSignatures from '@/hooks/useSignatures';
+import { useSignatureTypes, DEFAULT_SIGNATURE_TYPES } from '@/hooks/useSignatureTypes';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext, { ReportType } from '@/context/ReportContext';
 import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
@@ -23,12 +25,6 @@ import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import './index.scss';
 import { useQuery, useQueryClient } from 'react-query';
 
-const DEFAULT_SIGNATURE_TYPES = [
-  { signatureType: 'author' },
-  { signatureType: 'reviewer' },
-  { signatureType: 'creator' },
-] as SignatureUserType[];
-
 const useComments = (report?: ReportType) => useQuery({
   queryKey: ['report-comments', report?.ident],
   enabled: Boolean(report),
@@ -40,21 +36,6 @@ const useComments = (report?: ReportType) => useQuery({
         allowedAttributes: { '*': ['style'] },
       })
       : null;
-  },
-});
-
-const useSignatures = (report?: ReportType) => useQuery({
-  queryKey: ['report-signatures', report?.ident],
-  enabled: Boolean(report),
-  queryFn: () => api.get(`/reports/${report!.ident}/signatures`).request(),
-});
-
-const useSignatureTypes = (report?: ReportType) => useQuery({
-  queryKey: ['signature-types', report?.template.ident],
-  enabled: Boolean(report?.template?.ident),
-  queryFn: async () => {
-    const resp = await api.get(`/templates/${report!.template.ident}/signature-types`).request();
-    return resp?.length === 0 ? DEFAULT_SIGNATURE_TYPES : resp;
   },
 });
 

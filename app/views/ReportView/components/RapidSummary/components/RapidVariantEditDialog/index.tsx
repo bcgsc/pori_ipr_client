@@ -450,7 +450,7 @@ const RapidVariantEditDialog = ({
         {kbMatchesField}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleDialogClose}>
+        <Button onClick={handleDialogClose} disabled={isApiCalling}>
           Close
         </Button>
         <AsyncButton isLoading={isApiCalling} color="secondary" onClick={handleSave}>
