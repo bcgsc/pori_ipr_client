@@ -1,5 +1,7 @@
 /* eslint-disable max-classes-per-file */
 class ErrorMixin extends Error {
+  content: Record<string, unknown>;
+
   constructor(content) {
     let message;
 
@@ -14,7 +16,7 @@ class ErrorMixin extends Error {
     this.content = content;
     this.name = this.constructor.name;
 
-    if (Error.captureStackTraceError && CONFIG.MISC.ENV !== 'PRODUCTION') {
+    if (Error.captureStackTrace && CONFIG.MISC.ENV !== 'PRODUCTION') {
       Error.captureStackTrace(this);
     }
   }

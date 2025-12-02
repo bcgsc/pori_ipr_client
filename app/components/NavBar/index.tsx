@@ -90,7 +90,6 @@ const NavBar = (): JSX.Element => {
               vertical: 'bottom',
               horizontal: 'center',
             }}
-            getContentAnchorEl={null}
             open={Boolean(anchorEl)}
             onClose={handleCloseMenu}
           >

@@ -8,13 +8,15 @@ const keycloak = new Keycloak({
   url: window._env_.KEYCLOAK_URL,
 });
 
-const getReferrerUri = () => localStorage.getItem(CONFIG.STORAGE.REFERRER);
-
+/**
+ * Get and Set referrerUri is for when KeyCloak redirects on init when a direct report is accessed
+ */
+const getReferrerUri = () => sessionStorage.getItem(CONFIG.STORAGE.REFERRER);
 const setReferrerUri = (uri) => {
   if (uri === null) {
-    localStorage.removeItem(CONFIG.STORAGE.REFERRER);
+    sessionStorage.removeItem(CONFIG.STORAGE.REFERRER);
   } else {
-    localStorage.setItem(CONFIG.STORAGE.REFERRER, uri);
+    sessionStorage.setItem(CONFIG.STORAGE.REFERRER, uri);
   }
 };
 
@@ -72,7 +74,7 @@ const login = async (referrerUri = null) => {
   checkLoginIframe: true breaks for some users in chrome causing an infinite loop
   see: https://szoradi-balazs.medium.com/keycloak-login-infinite-loop-9005bcd9a915
   */
-  if (!keycloak.authenticated === undefined || !keycloak.authenticated) {
+  if (keycloak.authenticated === undefined) {
     await keycloak.init({
       onLoad: 'login-required',
       checkLoginIframe: false,

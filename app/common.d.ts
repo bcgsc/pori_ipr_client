@@ -34,6 +34,9 @@ declare global {
       KEYCLOAK: string;
       DATABASE_TYPE: string;
     },
+    MISC: {
+      ENV: 'DEVELOPMENT' | 'STAGING' | 'PRODUCTION' | 'LOCAL',
+    },
   };
 }
 
@@ -156,6 +159,14 @@ type VariantTypeMap<T extends AnyVariantType> = {
   'sigv': SignatureVariantType;
 }[T];
 
+type RapidReportTableTagKey =
+  | 'therapeutic'
+  | 'cancerRelevance'
+  | 'unknownSig'
+  | 'noTable';
+
+type RapidReportTableTag = Partial<Record<RapidReportTableTagKey, Partial<Record<AnyVariantType, string[]>>>>;
+
 type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
   kbMatchedStatements: KbMatchedStatementType[];
   kbStatementId: string;
@@ -175,12 +186,12 @@ type KbMatchedStatementType<T extends KbMatchType = KbMatchType> = {
   externalStatementId: string;
   inferred: boolean;
   iprEvidenceLevel: string;
-  kbData: {
+  kbData: Partial<{
     inferred: boolean;
     recruitment_status: string;
     kbmatchTag: string | null;
-    rapidReportTableTag: 'therapeutic' | 'cancerRelevance' | 'unknownSig' | 'noTable';
-  } | null;
+    rapidReportTableTag: RapidReportTableTag,
+  }> | null;
   kbMatches: T[];
   kbStatementId: string;
   matchedCancer: boolean;
@@ -311,6 +322,7 @@ type TmburType = {
   cdsSnvs: number,
   cdsSnvTmb: number;
   comments: string;
+  displayName: string;
   genomeSnvTmb: number;
   genomeIndelTmb: number;
   germline?: string | null;
@@ -393,6 +405,13 @@ type MicrobialType = {
   microbialHidden: boolean;
 } & RecordDefaults;
 
+type UserNotificationType = {
+  ident: string;
+  eventType: string;
+  template: Partial<TemplateType>
+  project: Partial<ProjectType>;
+};
+
 export {
   RecordDefaults,
   ShortReportType,
@@ -420,4 +439,5 @@ export {
   MutationBurdenType,
   ImmuneType,
   MicrobialType,
+  UserNotificationType,
 };

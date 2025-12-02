@@ -16,7 +16,7 @@ import { UserType } from '@/common';
 import useReport from '@/hooks/useReport';
 import useResource from '@/hooks/useResource';
 import useSecurity from '@/hooks/useSecurity';
-import { formatDate } from '@/utils/date';
+import { formatDate, formatDateWithoutTime } from '@/utils/date';
 import { SignatureType } from './types';
 
 import './index.scss';
@@ -31,6 +31,7 @@ export type SignatureCardProps = {
   onClick: (isSigned: boolean, updatedSignature: SignatureType) => void;
   type: string;
   isPrint?: boolean;
+  disabled?: boolean;
 };
 
 const SignatureCard = ({
@@ -39,6 +40,7 @@ const SignatureCard = ({
   onClick,
   type,
   isPrint = false,
+  disabled = false,
 }: SignatureCardProps): JSX.Element => {
   const { reportAssignmentAccess: canAddSignatures } = useResource();
   const { canEdit, report, setReport } = useReport();
@@ -124,19 +126,23 @@ const SignatureCard = ({
   const renderDate = useMemo(() => {
     if (signatures?.ident) {
       let formattedDate = '';
+      let formattedDateWithoutTime = '';
       if (type === 'author' && signatures.authorSignedAt) {
         formattedDate = formatDate(signatures.authorSignedAt, true);
+        formattedDateWithoutTime = formatDateWithoutTime(signatures.authorSignedAt, true);
       }
       if (type === 'reviewer' && signatures.reviewerSignedAt) {
         formattedDate = formatDate(signatures.reviewerSignedAt, true);
+        formattedDateWithoutTime = formatDateWithoutTime(signatures.reviewerSignedAt, true);
       }
       if (type === 'creator' && signatures.creatorSignedAt) {
         formattedDate = formatDate(signatures.creatorSignedAt, true);
+        formattedDateWithoutTime = formatDateWithoutTime(signatures.creatorSignedAt, true);
       }
       if (isPrint) {
         return (
           <Typography variant="body2" display="inline">
-            {formattedDate}
+            {formattedDateWithoutTime}
           </Typography>
         );
       }
@@ -150,7 +156,7 @@ const SignatureCard = ({
   }, [signatures, type, isPrint]);
 
   if (isPrint && !userSignature) {
-    return null
+    return null;
   }
 
   if (isPrint && userSignature) {
@@ -203,6 +209,7 @@ const SignatureCard = ({
             startIcon={<GestureIcon />}
             color="inherit"
             size="small"
+            disabled={disabled}
           >
             Sign
           </Button>
@@ -223,6 +230,7 @@ const SignatureCard = ({
           <IconButton
             size="small"
             onClick={handleRevoke}
+            disabled={disabled}
           >
             <RemoveCircleIcon />
           </IconButton>

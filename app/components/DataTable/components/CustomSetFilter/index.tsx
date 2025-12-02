@@ -15,6 +15,8 @@ export default class CustomSetFilter implements IFilterComp {
 
   eSelectAllCheckbox!: HTMLInputElement;
 
+  textFilterValue: string = '';
+
   init(params: IFilterParams) {
     this.filterParams = params;
     this.uniqueValues.clear();
@@ -30,9 +32,12 @@ export default class CustomSetFilter implements IFilterComp {
     // Collect unique values for this column
     params.api.forEachNode((node) => {
       const value = params.valueGetter(node);
-      const valueArr = value.split(', ');
-      if (valueArr !== undefined && valueArr !== null) {
-        valueArr.forEach((val: string) => allValues.add(val.toString()));
+      if (value !== undefined && value !== null) {
+        if (Array.isArray(value)) {
+          value.forEach((val: string) => allValues.add(val));
+        } else {
+          allValues.add(value);
+        }
       }
     });
 
@@ -49,7 +54,6 @@ export default class CustomSetFilter implements IFilterComp {
     this.gui.classList.add('matches-filter');
     this.gui.innerHTML = `
       <div class="custom-filter">
-        <div id="filterHeader">Matches Filter</div>
         <div id="selectAllWrapper">
           <input type="checkbox" id="selectAllCheckbox" />
           <label for="selectAllCheckbox" id="selectAllLabel">(Select All)</label>
@@ -57,6 +61,17 @@ export default class CustomSetFilter implements IFilterComp {
         <div id="checkboxContainer"></div>
       </div>
     `;
+
+    // "Text Filter" logic
+    const textInput = document.createElement('input');
+    textInput.type = 'text';
+    textInput.placeholder = 'Search text...';
+    textInput.classList.add('text-filter-input');
+    textInput.addEventListener('input', (event) => {
+      this.textFilterValue = (event.target as HTMLInputElement).value;
+      this.filterParams.filterChangedCallback();
+    });
+    this.gui.prepend(textInput); // Add to top of GUI
 
     // "Select All" checkbox logic
     this.eSelectAllCheckbox = this.gui.querySelector('#selectAllCheckbox') as HTMLInputElement;
@@ -124,26 +139,45 @@ export default class CustomSetFilter implements IFilterComp {
 
   // Logic to check if the row passes the filter based on selected values
   doesFilterPass(params: IDoesFilterPassParams) {
-    const { node } = params;
-    const value = this.filterParams.valueGetter(node).toString();
-    return Array.from(this.selectedValues).some((item) => value.split(', ').includes(item));
-  }
+    const value = this.filterParams.valueGetter(params.node).toString();
+  
+    const matchesText = this.textFilterValue
+      ? value.toLowerCase().includes(this.textFilterValue.toLowerCase())
+      : true;
+  
+    const matchesCheckbox = this.selectedValues.size > 0
+      ? Array.from(this.selectedValues).some((item) => value.includes(item))
+      : true;
+  
+    return matchesText && matchesCheckbox;
+  }  
 
   isFilterActive() {
-    return this.selectedValues.size > 0;
-  }
+    return this.selectedValues.size > 0 || !!this.textFilterValue;
+  }  
 
   getModel() {
     if (!this.isFilterActive()) {
       return null;
     }
-
-    return { values: Array.from(this.selectedValues) };
+  
+    return {
+      values: Array.from(this.selectedValues),
+      text: this.textFilterValue,
+    };
   }
-
-  setModel(model) {
-    if (model && model.values) {
-      this.selectedValues = new Set(model.values);
+  
+  setModel(model: any) {
+    if (model) {
+      this.selectedValues = new Set(model.values || []);
+      this.textFilterValue = model.text || '';
+  
+      // Sync UI
+      const textInput = this.gui.querySelector('.text-filter-input') as HTMLInputElement;
+      if (textInput) {
+        textInput.value = this.textFilterValue;
+      }
+  
       this.updateCheckboxes();
     }
   }
@@ -154,7 +188,7 @@ export default class CustomSetFilter implements IFilterComp {
     checkboxes.forEach((checkbox) => {
       const { value } = checkbox;
       // eslint-disable-next-line no-param-reassign
-      checkbox.checked = Array.from(this.selectedValues).some((item) => value.split(', ').includes(item));
+      checkbox.checked = Array.from(this.selectedValues).some((item) => value.includes(item));
     });
 
     // Update "Select All" checkbox state

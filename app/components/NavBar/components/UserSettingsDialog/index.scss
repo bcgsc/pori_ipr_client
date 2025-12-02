@@ -1,11 +1,15 @@
-.dialog-title {
-  padding: 32px 32px 16px;
-}
-
-.dialog-form {
-  padding: 16px 8px 0;
-}
-
-.test-noti-button {
-  padding-bottom: 16px;
+.user-profile {
+  .MuiAccordionSummary-root {
+    min-height: fit-content;
+    padding: 0;
+  }
+  .MuiAccordionSummary-contentGutters {
+    margin: 0;
+  }
+  .MuiAccordionDetails-root {
+    padding: 0;
+    .Mui-expanded {
+      margin: 0;
+    }
+  }
 }

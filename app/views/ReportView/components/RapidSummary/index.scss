@@ -31,6 +31,10 @@
     grid-gap: 1rem;
     margin: 1rem 0;
   }
+
+  .strikeout .ag-cell[col-id="Actions"] {
+    text-decoration: none;
+  }
 }
 
 .rapid-summary--print {

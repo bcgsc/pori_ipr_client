@@ -1,6 +1,8 @@
 import { ApiCall } from './ApiCall';
 import { CallOptionsType } from './types';
 
+type ApiCallPayload = BodyInit | Record<string, unknown>;
+
 const get = (
   endpoint: string,
   callOptions?: CallOptionsType,
@@ -13,7 +15,7 @@ const get = (
 
 const post = (
   endpoint: string,
-  payload: BodyInit | Record<string, unknown>,
+  payload: ApiCallPayload,
   callOptions?: CallOptionsType,
   formData?: boolean,
 ): ApiCall => {
@@ -31,7 +33,7 @@ const post = (
 
 const del = (
   endpoint: string,
-  payload: BodyInit | Record<string, unknown>,
+  payload: ApiCallPayload,
   callOptions?: CallOptionsType,
   formData?: boolean,
 ): ApiCall => {
@@ -57,7 +59,7 @@ const del = (
 
 const put = (
   endpoint: string,
-  payload: BodyInit | Record<string, unknown>,
+  payload: ApiCallPayload,
   callOptions?: CallOptionsType,
   formData?: boolean,
 ): ApiCall => {
@@ -82,3 +84,6 @@ export default {
 
 export { ApiCall };
 export { default as ApiCallSet } from './ApiCallSet';
+export type {
+  ApiCallPayload,
+};

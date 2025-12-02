@@ -1,5 +1,7 @@
 import { sampleColumnDefs } from '../../common';
 
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
 /**
  * @param row KbMatch data
  * @returns correct genomic event to be displayed
@@ -8,13 +10,13 @@ const getGenomicEvent = ({ data }) => {
   const {
     gene, proteinChange, variantType, kbCategory, displayName,
   } = data;
-  if (displayName) {
-    return displayName;
-  }
-
   if (variantType === 'cnv') {
     const { cnvState } = data;
     return `${gene.name} ${cnvState}`;
+  }
+
+  if (displayName) {
+    return displayName;
   }
 
   if (variantType === 'sv') {
@@ -45,6 +47,7 @@ const getGenomicEvent = ({ data }) => {
 const ACTIONS_COLDEF = {
   headerName: 'Actions',
   colId: 'Actions',
+  field: 'Actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   hide: false,
@@ -97,12 +100,13 @@ const therapeuticAssociationColDefs = [
       }
       return '';
     },
+    comparator: collator.compare,
     hide: false,
   },
   {
     headerName: 'Comments',
     field: 'comments',
-    hide: false,
+    hide: true,
   },
   {
     headerName: 'Potential Clinical Association',
@@ -159,12 +163,13 @@ const cancerRelevanceColDefs = [
       }
       return '';
     },
+    comparator: collator.compare,
     hide: false,
   },
   {
     headerName: 'Comments',
     field: 'comments',
-    hide: false,
+    hide: true,
   },
   {
     ...ACTIONS_COLDEF,
