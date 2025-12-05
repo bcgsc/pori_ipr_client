@@ -14,6 +14,7 @@ type ImageProps = {
   isZoomable?: boolean;
   /** Style to apply to img tag */
   imgStyle?: React.ComponentPropsWithoutRef<'img'>['style'];
+  zoomStyle?: React.ComponentPropsWithoutRef<'img'>['style'];
 };
 
 const Image = ({
@@ -30,6 +31,7 @@ const Image = ({
   showCaption = false,
   isZoomable = true,
   imgStyle = {},
+  zoomStyle = {},
 }: ImageProps): JSX.Element => {
   const [isZoomed, setIsZoomed] = useState(false);
 
@@ -98,6 +100,7 @@ const Image = ({
                 src={`data:image/${format};base64,${data}`}
                 alt={title}
                 key={key}
+                style={zoomStyle}
               />
               {showCaption && caption && (
               <Typography className="image__caption" variant="caption">

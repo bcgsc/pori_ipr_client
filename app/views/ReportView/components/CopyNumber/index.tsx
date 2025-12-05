@@ -47,7 +47,7 @@ const INFO_BUBBLES = {
 
 const CHR_LEGEND = 'legend';
 const CHRS = Array.from({ length: 24 }, (_, i) => `chr${i + 1}`).join(',');
-const CHR_IMG_HEIGHT = 375;
+const CHR_IMG_HEIGHT = 375 / 2;
 
 type CopyNumberProps = WithLoadingInjectedProps;
 
@@ -226,7 +226,7 @@ const CopyNumber = ({
         <section className="copy-number__montage">
           <Image height={CHR_IMG_HEIGHT} image={legend} />
           {
-          images.map((img) => <Image height={CHR_IMG_HEIGHT} image={img} key={`${img.key}`} />)
+            images.map((img) => <Image height={CHR_IMG_HEIGHT} image={img} key={`${img.key}`} zoomStyle={{ width: '-webkit-fill-available' }} />)
         }
         </section>
       );
