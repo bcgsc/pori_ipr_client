@@ -1,8 +1,8 @@
 import React, {
-  useEffect, useState, useReducer, useMemo, lazy,
+  useEffect, useState, useReducer, useMemo, lazy, useCallback,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Previewer } from 'pagedjs';
 
@@ -20,6 +20,7 @@ import getImageDataURI from '@/utils/getImageDataURI';
 import { SummaryProps } from '@/commonComponents';
 
 import SplitRowSpanHandler from '@/handlers/splitRowSpanHandler';
+import TableOverflowHandler from '@/handlers/tableOverflowHandler';
 import Summary from '../ReportView/components/Summary';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
@@ -164,6 +165,10 @@ const Print = ({
   });
   const [template, setTemplate] = useState<TemplateType>(null);
   const [isPrintDialogShown, setIsPrintDialogShown] = useState(false);
+  const paged = useMemo(() => {
+    const p = new Previewer();
+    return p;
+  }, []);
 
   useEffect(() => {
     if (!report) {
@@ -232,15 +237,15 @@ const Print = ({
   }), [report, setReport]);
 
   useEffect(() => {
+    const allSectionsLoaded = Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section));
     if (
       reportSectionsLoaded
       && template?.sections.length
-      && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section))
+      && allSectionsLoaded
       && !isPrintDialogShown
     ) {
       const showPrint = async () => {
-        const paged = new Previewer();
-        paged.registerHandlers(SplitRowSpanHandler);
+        await paged.registerHandlers(TableOverflowHandler, SplitRowSpanHandler);
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
         let templateName = report.template.name;
         if (templateName === 'probe') {
@@ -278,7 +283,7 @@ const Print = ({
       };
       showPrint();
     }
-  }, [isPrintDialogShown, report, reportSectionsLoaded, template]);
+  }, [isPrintDialogShown, paged, report, reportSectionsLoaded, template]);
 
   return (
     <ReportContext.Provider value={reportContextValue}>
