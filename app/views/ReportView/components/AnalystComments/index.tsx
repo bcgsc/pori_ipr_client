@@ -97,7 +97,7 @@ const AnalystComments = ({
     if (isEditorOpen && !isApiLoading) {
       const savedComments = sessionStorage.getItem(`${report.ident}-analyst_comments`);
       if (savedComments) {
-        snackbar.info('Loaded previously unsaved analyst comments');
+        snackbar.info('Loaded previously unsaved analyst comments, please remember to save.');
         sessionStorage.removeItem(`${report.ident}-analyst_comments`);
         editorRef.current.editor.commands.setContent(savedComments);
       }
@@ -113,7 +113,6 @@ const AnalystComments = ({
 
       // When user is actively editing
       if (isEditorOpen && isDirty) {
-        snackbar.info('Autosaving editing analyst comment');
         sessionStorage.setItem(`${report.ident}-analyst_comments`, editorRef.current.editor.getHTML());
       }
     }, AUTO_SAVE_INTERVAL);
