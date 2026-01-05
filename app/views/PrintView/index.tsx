@@ -1,8 +1,8 @@
 import React, {
-  useEffect, useState, useReducer, useMemo, lazy, useCallback,
+  useEffect, useState, useReducer, useMemo, lazy,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Previewer } from 'pagedjs';
 
