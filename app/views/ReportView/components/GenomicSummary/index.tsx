@@ -63,7 +63,7 @@ const GenomicSummary = ({
 
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
 
-  const {data: microbialData} = useQuery(
+  const {data: microbialData, isError: microbialError} = useQuery(
     `/reports/${report.ident}/summary/microbial`,
     async ({ queryKey: [route] }) => await api.get(route).request(),
     {
@@ -79,7 +79,7 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: primaryComparatorData} = useQuery(
+  const {data: primaryComparatorData, isError: primaryComparatorError} = useQuery(
     `/reports/${report.ident}/comparators`,
     async ({ queryKey: [route] }) => await api.get(route).request(),
     {
@@ -95,7 +95,7 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: signaturesData} = useQuery(
+  const {data: signaturesData, isError: signaturesError} = useQuery(
     `/reports/${report.ident}/mutation-signatures`,
     async ({ queryKey: [route] }) => await api.get(route).request(),
     {
@@ -111,7 +111,7 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: tCellCd8Data} = useQuery(
+  const {data: tCellCd8Data, isError: tCellCd8Error} = useQuery(
     `/reports/${report.ident}/immune-cell-types`,
     async ({ queryKey: [route] }) => await api.get(route).request(),
     {
@@ -127,7 +127,7 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: primaryBurdenData} = useQuery(
+  const {data: primaryBurdenData, isError: primaryBurdenError} = useQuery(
     `/reports/${report.ident}/mutation-burden`,
     async ({ queryKey: [route] }) => await api.get(route).request(),
     {
@@ -143,7 +143,7 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: msiData} = useQuery(
+  const {data: msiData, isError: msiError} = useQuery(
     `/reports/${report.ident}/msi`,
     async ({ queryKey: [route] }) => await api.get(route).request(),
     {
@@ -163,7 +163,7 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: tmburMutBurData} = useQuery(
+  const {data: tmburMutBurData, isError: tmburMutBurError} = useQuery(
     `/reports/${report.ident}/tmbur-mutation-burden`,
     async ({ queryKey: [route] }) => await api.get(route).request(),
     {
@@ -181,36 +181,31 @@ const GenomicSummary = ({
   
   useEffect(() => {
     if (report) {
-      try {
-        if (microbialData) {
-          setMicrobial(microbialData);
-        }
-        if (primaryComparatorData) {
-          setPrimaryComparator(primaryComparatorData);
-        }
-        if (signaturesData) {
-          setSignatures(signaturesData);
-        }
-        if (tCellCd8Data) {
-          setTCellCd8(tCellCd8Data);
-        }
-        if (primaryBurdenData) {
-          setPrimaryBurden(primaryBurdenData);
-        }
-        if (msiData) {
-          setMsi(msiData);
-        }
-        if (tmburMutBurData) {
-          setTmburMutBur(tmburMutBurData);
-        }
-        if (loadedDispatch) {
-          loadedDispatch({ type: 'summary-genomic' });
-        }
-      } catch (err) {
-        snackbar.error(`Network error: ${err?.message ?? err}`);
-      } finally {
-        setIsLoading(false);
+      if (microbialData) {
+        setMicrobial(microbialData);
       }
+      if (primaryComparatorData) {
+        setPrimaryComparator(primaryComparatorData);
+      }
+      if (signaturesData) {
+        setSignatures(signaturesData);
+      }
+      if (tCellCd8Data) {
+        setTCellCd8(tCellCd8Data);
+      }
+      if (primaryBurdenData) {
+        setPrimaryBurden(primaryBurdenData);
+      }
+      if (msiData) {
+        setMsi(msiData);
+      }
+      if (tmburMutBurData) {
+        setTmburMutBur(tmburMutBurData);
+      }
+      if (loadedDispatch) {
+        loadedDispatch({ type: 'summary-genomic' });
+      }
+      setIsLoading(false);
     }
   }, [
     report,
@@ -387,7 +382,7 @@ const GenomicSummary = ({
     }
   }, [setReport]);
 
-  if (isLoading || !report || !tumourSummary) {
+  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || tmburMutBurError) {
     return null;
   }
 

@@ -95,7 +95,9 @@ const TumourSummaryEdit = ({
         )
       );
     }
-  
+  }, [microbial]);
+
+  useEffect(() => {
     if (report) {
       setNewReportData({
         tumourContent: report.tumourContent,
@@ -104,7 +106,9 @@ const TumourSummaryEdit = ({
         genomeTmb: report.genomeTmb,
       });
     }
-  
+  }, [report]);
+
+  useEffect(() => {
     if (tCellCd8) {
       setNewTCellCd8Data({
         score: tCellCd8.score,
@@ -115,7 +119,9 @@ const TumourSummaryEdit = ({
         pedsScoreComment: tCellCd8.pedsScoreComment,
       });
     }
-  
+  }, [tCellCd8]);
+
+  useEffect(() => {
     if (mutationBurden) {
       setNewMutationBurdenData({
         role: mutationBurden.role,
@@ -124,7 +130,9 @@ const TumourSummaryEdit = ({
         svBurdenHidden: mutationBurden.svBurdenHidden,
       });
     }
-  
+  }, [mutationBurden]);
+
+  useEffect(() => {
     if (tmburMutBur) {
       setNewTmburMutData({
         genomeSnvTmb: tmburMutBur.genomeSnvTmb,
@@ -135,15 +143,16 @@ const TumourSummaryEdit = ({
         msiScore: tmburMutBur.msiScore,
       });
     }
-  
+  }, [tmburMutBur]);
+
+  useEffect(() => {
     if (msi) {
       setNewMsiData({
         score: msi.score,
       });
     }
-  }, [microbial, report, tCellCd8, mutationBurden, tmburMutBur, msi]);
+  }, [msi]);
   
-
   const handleReportChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
