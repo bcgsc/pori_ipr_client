@@ -147,7 +147,7 @@ const ReportView = (): JSX.Element => {
         {error ? (
           <div className="error-centered">
             <Typography color="error" gutterBottom variant="h2">Error: Cannot access report</Typography>
-            <Typography paragraph>An Error occurred while accessing the report. please logout and try again or contact your administrator if the problem persists</Typography>
+            <Typography paragraph>An error occurred while accessing the report. please logout and try again or contact your administrator if the problem persists</Typography>
             <Typography paragraph>{error}</Typography>
           </div>
         ) : null}
