@@ -53,6 +53,7 @@ type ReportType = {
   projects?: ProjectType[];
   reportVersion: string;
   sampleInfo: SampleInfoType[];
+  seqQC: SeqQCType[];
   state: string;
   subtyping: string;
   template: TemplateType;

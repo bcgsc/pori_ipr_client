@@ -78,6 +78,12 @@ const PatientInformation = ({
               label: 'Biopsy Collection Date',
               value: report?.sampleInfo?.find((info) => info.sample === 'Tumour')?.collectionDate,
             },
+            {
+              label: 'Data Type',
+              value: report?.seqQC?.filter((item) => item.Sample?.startsWith('Tumour'))
+                .map((item) => item.Sample.replace(/^Tumour\s+/i, ''))
+                .join(' and '),
+            },
           ]);
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
