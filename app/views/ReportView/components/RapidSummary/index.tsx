@@ -337,7 +337,9 @@ const RapidSummary = ({
   const rapidSummarySectionsLoaded = isTherapAssocSuccess && isCancerRelSuccess && isUnknownSigSuccess && isMsiSuccess && isTCellCd8Success && isMicrobialSuccess;
 
   useEffect(() => {
-    setIsLoading(isLoadingFromQueries);
+    if (!isLoadingFromQueries) {
+      setIsLoading(false);
+    }
   }, [isLoadingFromQueries, setIsLoading]);
 
   useEffect(() => {
@@ -446,10 +448,10 @@ const RapidSummary = ({
   ]);
 
   useEffect(() => {
-    if (loadedDispatch && rapidSummarySectionsLoaded) {
+    if (loadedDispatch && rapidSummarySectionsLoaded && !isLoadingFromQueries) {
       loadedDispatch({ type: 'summary-rapid' });
     }
-  }, [rapidSummarySectionsLoaded, loadedDispatch]);
+  }, [rapidSummarySectionsLoaded, isLoadingFromQueries, loadedDispatch]);
 
   /**
    * Deletes a whole variant from the first two rapid summary tables, can be expanded to 3rd
