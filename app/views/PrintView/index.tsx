@@ -37,6 +37,8 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'summary':
       return { ...state, summary: true };
+    case 'summary-rapid':
+      return { ...state, summary: true };
     case 'summary-genomic':
       return { ...state, summary: true };
     case 'summary-tgr':
