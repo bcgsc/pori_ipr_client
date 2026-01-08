@@ -1,6 +1,11 @@
 @import '../../styles/variables';
 @import '../../styles/theme.module';
 
+.print,
+.condensedLayout {
+  max-width: $print-width;
+}
+
 .print {
   &__logo {
     width: 100%;

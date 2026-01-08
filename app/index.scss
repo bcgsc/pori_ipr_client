@@ -175,7 +175,7 @@ $print-cell-padding-right: 8px;
     break-inside: avoid;
 
     & td {
-      padding: 0 $print-cell-padding-right 0 0;
+      padding: 3px $print-cell-padding-right 3px 0;
       page-break-inside: avoid;
       overflow-wrap: break-word;
       break-inside: avoid;
