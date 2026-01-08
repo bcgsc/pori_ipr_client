@@ -3,3 +3,13 @@
 .reports-table {
   height: calc(100% - #{$navbar-size});
 }
+
+.centered {
+  flex-grow: 1;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+}
