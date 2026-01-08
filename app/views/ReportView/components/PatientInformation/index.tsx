@@ -55,6 +55,10 @@ const PatientInformation = ({
               value: formatDate(report.createdAt),
             },
             {
+              label: 'Biopsy Date',
+              value: report?.sampleInfo?.find((info) => info.sample === 'Tumour')?.collectionDate,
+            },
+            {
               label: 'Case Type',
               value: report.patientInformation.caseType,
             },
