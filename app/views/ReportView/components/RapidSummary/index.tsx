@@ -446,7 +446,7 @@ const RapidSummary = ({
   ]);
 
   useEffect(() => {
-    if (rapidSummarySectionsLoaded) {
+    if (loadedDispatch && rapidSummarySectionsLoaded) {
       loadedDispatch({ type: 'summary-rapid' });
     }
   }, [rapidSummarySectionsLoaded, loadedDispatch]);
