@@ -141,7 +141,7 @@ const ReportView = (): JSX.Element => {
   }, [report, setReport, adminAccess, reportEditAccess, userIdent]);
   const isSignedValue = useMemo(() => ({ isSigned, setIsSigned }), [isSigned, setIsSigned]);
 
-  if (!report) {
+  if (!report && error) {
     return (
       <div>
         {error ? (
