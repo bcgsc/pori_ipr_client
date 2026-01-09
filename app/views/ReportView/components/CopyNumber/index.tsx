@@ -226,8 +226,20 @@ const CopyNumber = ({
         <section className="copy-number__montage">
           <Image height={CHR_IMG_HEIGHT} image={legend} />
           {
-            images.map((img) => <Image height={CHR_IMG_HEIGHT} image={img} key={`${img.key}`} zoomStyle={{ width: '-webkit-fill-available' }} />)
-        }
+            images.map((img) => (
+              <Image
+                height={CHR_IMG_HEIGHT}
+                image={img}
+                key={`${img.key}`}
+                zoomStyle={{
+                  minWidth: '100%',
+                  maxWidth: '90vw',
+                  minHeight: '100%',
+                  maxHeight: '85vh',
+                }}
+              />
+            ))
+          }
         </section>
       );
     }
@@ -278,7 +290,7 @@ const CopyNumber = ({
               ))}
             </>
           )}
-          <Typography variant="h3" className="copy-number__title">Copy Number &amp; LOH</Typography>
+          <Typography variant="h3" className="copy-number__title">Copy Number & LOH</Typography>
           {imagesSection}
         </>
       )}

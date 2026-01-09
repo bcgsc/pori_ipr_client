@@ -87,13 +87,11 @@ const Image = ({
             onClick={handleZoom}
             type="button"
           >
-            <div
-              className="image__dialog-button"
-            >
+            <div className="image__dialog-button">
               {showTitle && title && (
-              <Typography variant="h3">
-                {title}
-              </Typography>
+                <Typography variant="h3">
+                  {title}
+                </Typography>
               )}
               <img
                 className={`image__data ${isZoomable && isZoomed ? 'image__zoom--out' : ''}`}
@@ -103,9 +101,9 @@ const Image = ({
                 style={zoomStyle}
               />
               {showCaption && caption && (
-              <Typography className="image__caption" variant="caption">
-                {caption}
-              </Typography>
+                <Typography className="image__caption" variant="caption">
+                  {caption}
+                </Typography>
               )}
             </div>
           </button>
