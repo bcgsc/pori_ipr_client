@@ -163,13 +163,13 @@ const Therapeutic = ({
           setter((prevVal) => [...prevVal, newData]);
         }
         snackbar.success('Row updated');
+        // Update state to reflect new data after entry deleted
+        getData();
       }
-      setEditData(null);
-
-      // Update state to reflect new data after entry deleted
-      getData();
     } catch (err) {
       snackbar.error(`Error, row not updated: ${err}`);
+    } finally {
+      setEditData(null);
     }
   }, [chemoresistanceData, getData, therapeuticData]);
 
