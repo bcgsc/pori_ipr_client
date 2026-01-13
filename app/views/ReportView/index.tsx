@@ -21,6 +21,7 @@ import useSecurity from '@/hooks/useSecurity';
 import Summary from './components/Summary';
 import allSections from './sections';
 import './index.scss';
+import { useQuery } from 'react-query';
 
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
@@ -60,29 +61,43 @@ const ReportView = (): JSX.Element => {
   const [isProbe, setIsProbe] = useState(false);
   const [isSigned, setIsSigned] = useState(false);
 
-  useEffect(() => {
-    if (!report) {
-      const getReport = async () => {
-        try {
-          const resp = await api.get(`/reports/${params.ident}`).request();
-          const templatesResp = await api.get('/templates').request();
-          setReport(resp);
-          if (resp.template.name === 'probe') {
-            setIsProbe(true);
-          } else {
-            setIsProbe(false);
-          }
-          const template = templatesResp.find((templ) => templ.name === resp.template.name);
-          setVisibleSections(template?.sections);
-        } catch (getReportErr) {
-          snackbar.error(`Cannot access report ${params.ident}, reason: ${getReportErr?.message} `);
-          history.push('/reports');
-        }
-      };
+  const { data: reportData } = useQuery(
+    `/reports/${params.ident}`,
+    async ({ queryKey: [route] }) => api.get(route).request(),
+    {
+      staleTime: Infinity,
+      retry: 1,
+      select: (response) => response,
+      onError: (err: any) => {
+        snackbar.error(`Cannot access report ${params.ident}: ${err?.content?.error?.message}`);
+        history.push('/reports');
+      } 
+    },
+  );
 
-      getReport();
+  const { data: templateData } = useQuery(
+    '/templates',
+    async ({ queryKey: [route] }) => api.get(route).request(),
+    {
+      staleTime: Infinity,
+      select: (response) => response,
+    },
+  );
+
+  useEffect(() => {
+    if (reportData) {
+      setReport(reportData);
     }
-  }, [history, params.ident, report]);
+    if (report) {
+      if (report.template.name === 'probe') {
+        setIsProbe(true);
+      } else {
+        setIsProbe(false);
+      }
+      const template = templateData.find((templ) => templ.name === report.template.name);
+      setVisibleSections(template?.sections);
+    }
+  }, [reportData, templateData]);
 
   /* External users should only be allowed to access certain states
      Send them back to /reports if the report state isn't allowed */
@@ -135,6 +150,7 @@ const ReportView = (): JSX.Element => {
       canEdit, report, setReport,
     });
   }, [report, setReport, adminAccess, reportEditAccess, userIdent]);
+
   const isSignedValue = useMemo(() => ({ isSigned, setIsSigned }), [isSigned, setIsSigned]);
 
   if (!report) { return null; }
