@@ -85,6 +85,7 @@ const GeneViewer = ({
             data: graph.data,
             key: graph.ident,
             format: 'png',
+            title: 'Expression Density Graph',
           } as ImageType));
           setGeneData(resp);
           setImages(imagesResp);
