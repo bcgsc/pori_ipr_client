@@ -170,8 +170,7 @@ const AddEditUserDialog = ({
       snackbar.success(`Successfully added user ${username} to GraphKb`);
     },
     onError: (err: ErrorMixin) => {
-      const { error } = err.toJSON();
-      snackbar.error(`Cannot add user to GraphKb: ${error.message}`);
+      snackbar.error(`Cannot add user to GraphKb: ${err.message}`);
     },
   });
 
