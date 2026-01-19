@@ -57,7 +57,9 @@ $readable-min: 300px;
 
 $content-max: 960px;
 
-$print-width: 8.5in;
+// Make sure these are the same as index.css under app
+$print-margins: 0.4in;
+$print-width: calc(9in - $print-margins * 2);
 
 $transition-fast: 0.2s;
 $transition-normal: 0.3s;
