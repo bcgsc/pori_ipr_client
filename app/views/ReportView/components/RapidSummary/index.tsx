@@ -399,6 +399,12 @@ const RapidSummary = ({
             : null,
         },
         {
+            term: 'HRD Score',
+            value: report.hrdScore !== null
+              ? `${report.hrdScore}`
+              : null,
+          },
+        {
           term: 'Preliminary CAPTIV-8 Score',
           value: report.captiv8Score !== null
             ? `${report.captiv8Score}`
