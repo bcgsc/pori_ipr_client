@@ -42,6 +42,7 @@ type ReportType = {
   createdBy?: UserType;
   expression_matrix: string;
   genomeTmb?: number;
+  hrdScore?: number;
   kbDiseaseMatch: string;
   kbVersion: string;
   m1m2Score: number;
