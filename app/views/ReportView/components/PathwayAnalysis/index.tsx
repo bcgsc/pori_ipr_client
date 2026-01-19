@@ -11,6 +11,7 @@ import { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import PageBreak from '@/components/PageBreak';
 import PathwayImageType from './types';
 import Legend from './components/Legend';
 import Pathway from './components/Pathway';
@@ -99,6 +100,7 @@ const PathwayAnalysis = ({
             isPrint={isPrint}
             onChange={handlePathwayChange}
           />
+          {isPrint && <PageBreak />}
           <Legend
             initialLegend={legend}
             type={pathwayImage?.legend}

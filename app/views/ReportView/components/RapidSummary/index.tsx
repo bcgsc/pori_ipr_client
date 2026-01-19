@@ -324,19 +324,22 @@ const RapidSummary = ({
   });
 
   const [
-    { data: therapeuticAssociationResults },
-    { data: cancerRelevanceResults },
-    { data: unknownSignificanceResults },
+    { data: therapeuticAssociationResults, isSuccess: isTherapAssocSuccess },
+    { data: cancerRelevanceResults, isSuccess: isCancerRelSuccess },
+    { data: unknownSignificanceResults, isSuccess: isUnknownSigSuccess },
     { data: tmburMutBur },
-    { data: msi },
-    { data: tCellCd8 },
-    { data: microbial },
+    { data: msi, isSuccess: isMsiSuccess },
+    { data: tCellCd8, isSuccess: isTCellCd8Success },
+    { data: microbial, isSuccess: isMicrobialSuccess },
   ] = queries;
 
   const isLoadingFromQueries = queries.some((q) => q.isLoading);
+  const rapidSummarySectionsLoaded = isTherapAssocSuccess && isCancerRelSuccess && isUnknownSigSuccess && isMsiSuccess && isTCellCd8Success && isMicrobialSuccess;
 
   useEffect(() => {
-    setIsLoading(isLoadingFromQueries);
+    if (!isLoadingFromQueries) {
+      setIsLoading(false);
+    }
   }, [isLoadingFromQueries, setIsLoading]);
 
   useEffect(() => {
@@ -449,6 +452,12 @@ const RapidSummary = ({
     tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
     tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
   ]);
+
+  useEffect(() => {
+    if (loadedDispatch && rapidSummarySectionsLoaded && !isLoadingFromQueries) {
+      loadedDispatch({ type: 'summary-rapid' });
+    }
+  }, [rapidSummarySectionsLoaded, isLoadingFromQueries, loadedDispatch]);
 
   /**
    * Deletes a whole variant from the first two rapid summary tables, can be expanded to 3rd
