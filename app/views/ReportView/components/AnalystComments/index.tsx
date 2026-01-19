@@ -221,7 +221,7 @@ const AnalystComments = ({
         disabled={isApiLoading}
       />
     );
-  }), [isPrint, handleSign, signatures, signatureTypes]);
+  }), [signatureTypes, isPrint, handleSign, signatures, isApiLoading]);
 
   return (
     <div className={isPrint ? 'analyst-comments--print' : 'analyst-comments'}>
@@ -261,6 +261,7 @@ const AnalystComments = ({
           {comments ? (
             <div
               className="analyst-comments__user-text inner-html"
+              // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{ __html: comments }}
             />
           ) : (
