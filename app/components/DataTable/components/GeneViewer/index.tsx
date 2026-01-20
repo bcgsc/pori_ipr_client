@@ -22,6 +22,8 @@ import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/colum
 import expressionColumnDefs from '@/views/ReportView/components/Expression/columnDefs';
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
 import { ColDef } from '@ag-grid-community/core';
+import Image from '@/components/Image';
+import ImageType from '@/components/Image/types';
 import { GeneViewerType } from './types';
 
 import KbMatchesActionCellRenderer from '../KbMatchesActionCellRenderer';
@@ -68,6 +70,7 @@ const GeneViewer = ({
   const [isOpen, setIsOpen] = useState(false);
   const [geneData, setGeneData] = useState<GeneViewerType>();
   const [tabValue, setTabValue] = useState(0);
+  const [images, setImages] = useState<ImageType[]>([]);
 
   const handleTabChange = useCallback((_event, newValue: number) => {
     setTabValue(newValue);
@@ -78,7 +81,14 @@ const GeneViewer = ({
       const getData = async () => {
         try {
           const resp = await api.get(`/reports/${report.ident}/gene-viewer/${gene}`).request();
+          const imagesResp = resp.expDensityGraph.map((graph) => ({
+            data: graph.data,
+            key: graph.ident,
+            format: 'png',
+            title: 'Expression Density Graph',
+          } as ImageType));
           setGeneData(resp);
+          setImages(imagesResp);
         } catch {
           // DEVSU-2482 Show table with no rows to show instead of snackbar error for genes that do not exist in report's profile
           setGeneData(nullGeneViewerResp);
@@ -180,11 +190,11 @@ const GeneViewer = ({
             {tabValue === 4 && (
             <div className="tab--center">
               {geneData.expDensityGraph.map((graph) => (
-                <img
-                  key={graph.ident}
-                  src={`data:image/png;base64,${graph.data}`}
-                  alt="Expression Density Graph"
-                />
+                <div className="image-container">
+                  <Image
+                    image={images.find((img) => img.key === graph.ident)}
+                  />
+                </div>
               ))}
             </div>
             )}

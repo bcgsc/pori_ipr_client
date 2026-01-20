@@ -8,7 +8,13 @@
 
 .tab {
   &--center {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 12px 0 0;
   }
+}
+
+.image-container {
+  max-width: 25%;
 }

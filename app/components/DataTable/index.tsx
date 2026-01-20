@@ -545,7 +545,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     if (visibleColumns.length > 0) {
       return visibleColumns;
     }
-    return columnWithNames.filter((col) => col.isVisible()).map((col) => col.getColId());
+    return columnWithNames.filter((col) => col.isVisible()).map((col) => col.getColId()).concat('actions');
   }, [columnWithNames, visibleColumns]);
 
   useImperativeHandle(forwardedRef, () => {
@@ -581,7 +581,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
             <div>
               {isSearch && (
                 <span className="data-table__action">
-                  <QueryEditDialog isApiLoading={isApiLoading}/>
+                  <QueryEditDialog isApiLoading={isApiLoading} />
                 </span>
               )}
               {(canAdd || canToggleColumns || canExport || canReorder) && (

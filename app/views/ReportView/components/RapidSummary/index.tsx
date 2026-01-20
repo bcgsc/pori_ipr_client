@@ -42,6 +42,7 @@ import TumourSummary from '../TumourSummary';
 
 import './index.scss';
 import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
+import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
 
 const ANALYST_DISABLED = 'analyst disabled';
 
@@ -261,6 +262,7 @@ const RapidSummary = ({
           .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.UNKNOWN_SIGNIFICANCE}`)
           .request(),
         enabled: !!reportIdent,
+        select: (data: RapidVariantType[]) => deepRemoveDuplicate(data),
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
         refetchOnMount: 'always',
       },
@@ -324,19 +326,22 @@ const RapidSummary = ({
   });
 
   const [
-    { data: therapeuticAssociationResults },
-    { data: cancerRelevanceResults },
-    { data: unknownSignificanceResults },
+    { data: therapeuticAssociationResults, isSuccess: isTherapAssocSuccess },
+    { data: cancerRelevanceResults, isSuccess: isCancerRelSuccess },
+    { data: unknownSignificanceResults, isSuccess: isUnknownSigSuccess },
     { data: tmburMutBur },
-    { data: msi },
-    { data: tCellCd8 },
-    { data: microbial },
+    { data: msi, isSuccess: isMsiSuccess },
+    { data: tCellCd8, isSuccess: isTCellCd8Success },
+    { data: microbial, isSuccess: isMicrobialSuccess },
   ] = queries;
 
   const isLoadingFromQueries = queries.some((q) => q.isLoading);
+  const rapidSummarySectionsLoaded = isTherapAssocSuccess && isCancerRelSuccess && isUnknownSigSuccess && isMsiSuccess && isTCellCd8Success && isMicrobialSuccess;
 
   useEffect(() => {
-    setIsLoading(isLoadingFromQueries);
+    if (!isLoadingFromQueries) {
+      setIsLoading(false);
+    }
   }, [isLoadingFromQueries, setIsLoading]);
 
   useEffect(() => {
@@ -396,6 +401,12 @@ const RapidSummary = ({
             : null,
         },
         {
+            term: 'HRD Score',
+            value: report.hrdScore !== null
+              ? `${report.hrdScore}`
+              : null,
+          },
+        {
           term: 'Preliminary CAPTIV-8 Score',
           value: report.captiv8Score !== null
             ? `${report.captiv8Score}`
@@ -443,6 +454,12 @@ const RapidSummary = ({
     tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
     tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
   ]);
+
+  useEffect(() => {
+    if (loadedDispatch && rapidSummarySectionsLoaded && !isLoadingFromQueries) {
+      loadedDispatch({ type: 'summary-rapid' });
+    }
+  }, [rapidSummarySectionsLoaded, isLoadingFromQueries, loadedDispatch]);
 
   /**
    * Deletes a whole variant from the first two rapid summary tables, can be expanded to 3rd
