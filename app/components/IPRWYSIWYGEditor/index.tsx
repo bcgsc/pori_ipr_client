@@ -1,5 +1,6 @@
 import React, {
   forwardRef, useCallback, useEffect,
+  useImperativeHandle,
   useMemo,
   useState,
 } from 'react';
@@ -39,11 +40,11 @@ const usePageLeaveWarning = (enabled) => {
     return '';
   };
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) return undefined;
 
     window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
   }, [enabled]);
-  return () => window.removeEventListener('beforeunload', handler);
 };
 
 const MenuBarButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
@@ -194,14 +195,14 @@ type IPRWYSIWYGEditorProps = {
   title?: string;
 };
 
-const IPRWYSIWYGEditor = ({
+const IPRWYSIWYGEditor = forwardRef(({
   alertLeave = false,
   text,
   isOpen,
   onClose,
   onSave,
   title = 'IPR WYSIWYG Editor',
-}: IPRWYSIWYGEditorProps): JSX.Element => {
+}: IPRWYSIWYGEditorProps, editorRef): JSX.Element => {
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
   const shouldWarnWhenUseLeave = alertLeave && isOpen && isDirty;
@@ -214,6 +215,8 @@ const IPRWYSIWYGEditor = ({
     },
   });
 
+  useImperativeHandle(editorRef, () => ({ editor, isDirty, setIsDirty }), [editor, isDirty, setIsDirty]);
+
   useEffect(() => {
     if (editor && text) {
       editor.commands.setContent(text);
@@ -224,19 +227,21 @@ const IPRWYSIWYGEditor = ({
     if (editor) {
       onClose(editor.isEmpty ? '' : editor.getHTML());
     }
+    setIsDirty(false);
   }, [editor, onClose]);
 
   const handleOnSave = useCallback(() => {
     if (editor) {
       onSave(editor.isEmpty ? '' : editor.getHTML());
-      setIsDirty(false);
     }
+    setIsDirty(false);
   }, [editor, onSave]);
 
   const handleOnClose = useCallback(() => {
-    onClose(null);
     // Reset the editor text, since we don't deal with the state in React
     editor.commands.setContent(text);
+    onClose(null);
+    setIsDirty(false);
   }, [onClose, editor, text]);
 
   const saveButton = useMemo(() => {
@@ -266,7 +271,7 @@ const IPRWYSIWYGEditor = ({
       />
     </>
   );
-};
+});
 
 export default IPRWYSIWYGEditor;
 export { IPRWYSIWYGEditorProps, MenuBar };
