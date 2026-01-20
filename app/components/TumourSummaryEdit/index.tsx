@@ -28,6 +28,7 @@ import {
 } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import { getMicbSiteIntegrationStatusLabel } from '@/utils/getMicbSiteIntegrationStatusLabel';
+import { useQueryClient } from 'react-query';
 
 const MICB_SITE_STEPS = {
   yes: 'no',
@@ -83,11 +84,16 @@ const TumourSummaryEdit = ({
   const [tmburMutDirty, setTmburMutDirty] = useState(false);
   const [msiDirty, setMsiDirty] = useState(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (microbial) {
       // Note: filter out any placeholder 'none's, it gives a false positive to the front-end code
-      setNewMicrobialData(cloneDeep(microbial).filter(({ species }) => species.toLowerCase() !== 'none'));
+      setNewMicrobialData(
+        cloneDeep(microbial).filter(
+          ({ species }) => species.toLowerCase() !== 'none'
+        )
+      );
     }
   }, [microbial]);
 
@@ -147,7 +153,7 @@ const TumourSummaryEdit = ({
       });
     }
   }, [msi]);
-
+  
   const handleReportChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
@@ -360,6 +366,27 @@ const TumourSummaryEdit = ({
           }
 
           snackbar.success('Successfully updated Tumour Summary');
+          queryClient.refetchQueries({
+            queryKey: [`/reports/${report.ident}/summary/microbial`]
+          });
+          queryClient.refetchQueries({
+            queryKey: [`/reports/${report.ident}/comparators`]
+          });
+          queryClient.refetchQueries({
+            queryKey: [`/reports/${report.ident}/mutation-signatures`]
+          });
+          queryClient.refetchQueries({
+            queryKey: [`/reports/${report.ident}/mutation-burden`]
+          });
+          queryClient.refetchQueries({
+            queryKey: [`/reports/${report.ident}/immune-cell-types`]
+          });
+          queryClient.refetchQueries({
+            queryKey: [`/reports/${report.ident}/msi`]
+          });
+          queryClient.refetchQueries({
+            queryKey: [`/reports/${report.ident}/tmbur-mutation-burden`]
+          });
           onEditClose(
             true,
             microbialDirty ? microbialResp : null,
@@ -393,6 +420,7 @@ const TumourSummaryEdit = ({
     newMsiData,
     isSigned,
     newMicrobialData,
+    queryClient,
     microbial,
     report?.ident,
     tCellCd8?.ident,
