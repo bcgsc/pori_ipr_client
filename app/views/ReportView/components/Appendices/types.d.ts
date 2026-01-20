@@ -28,6 +28,7 @@ type TcgaType = {
 type ComparatorType = {
   analysisRole: string;
   createdAt: string;
+  deletedAt: string;
   description: string | null;
   ident: string;
   name: string;
