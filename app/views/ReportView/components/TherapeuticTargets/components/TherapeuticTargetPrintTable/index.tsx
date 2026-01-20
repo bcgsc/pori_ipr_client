@@ -1,4 +1,6 @@
-import React, { useMemo } from 'react';
+import React, {
+  useLayoutEffect, useMemo, useRef, useState,
+} from 'react';
 import { ColDef } from '@ag-grid-community/core';
 import { TherapeuticDataTableType } from '../../types';
 
@@ -78,6 +80,11 @@ type TherapeuticTargetPrintTableProps = {
 };
 
 const TherapeuticTargetPrintTable = ({ data, columnDefs: rawColumnDefs, coalesce }: TherapeuticTargetPrintTableProps) => {
+  const tableRef = useRef<HTMLTableElement>(null);
+  const [colWidths, setColWidths] = useState<number[] | null>(
+    () => rawColumnDefs.filter(({ hide }) => !hide).map(({ width }) => width),
+  );
+
   const columnDefs = useMemo(() => rawColumnDefs.filter(({ colId, field, hide }) => {
     if (hide) return false;
     if (colId) return !COLUMNDEFS_TO_IGNORE.includes(colId);
@@ -85,14 +92,87 @@ const TherapeuticTargetPrintTable = ({ data, columnDefs: rawColumnDefs, coalesce
     return true;
   }), [rawColumnDefs]);
 
-  const sortedData = [...data].sort((a, b) => a.rank - b.rank);
-  const spanMap = mergeCells(sortedData, columnDefs, coalesce);
+  useLayoutEffect(() => {
+    if (!data?.length) { return undefined; }
+    if (!tableRef.current || colWidths.some((w) => w > 0)) return undefined;
 
-  if (!spanMap) return null;
+    const table = tableRef.current;
+    const row = table.tBodies[0]?.rows[0];
+    if (!row) return undefined;
+
+    const ro = new ResizeObserver((observerEntries) => {
+      const [{ target }] = observerEntries;
+      const { cells } = target as HTMLTableRowElement;
+      let remainingWidth = Number(target.getBoundingClientRect().width.toFixed(2));
+      const widths = Array.from(cells).map((cell) => {
+        const cellWidth = Number(cell.getBoundingClientRect().width.toFixed(2));
+        remainingWidth -= cellWidth;
+        return cellWidth;
+      });
+      widths[widths.length - 1] += Number(remainingWidth.toFixed(2));
+
+      if (widths.every((w) => w > 0)) {
+        setColWidths(widths);
+        ro.disconnect();
+      }
+    });
+
+    ro.observe(row);
+
+    return () => ro.disconnect();
+  }, [colWidths, tableRef, data]);
+
+  const tableRows = useMemo(() => {
+    const sortedData = [...data].sort((a, b) => a.rank - b.rank);
+    const spanMap = mergeCells(sortedData, columnDefs, coalesce);
+
+    if (!spanMap || !sortedData?.length) {
+      return (
+        <td colSpan={columnDefs.length}>No data available</td>
+      );
+    }
+
+    return sortedData.map((row, rowIndex) => (
+      <tr className="print-table__row" key={row.ident || rowIndex}>
+        {columnDefs.map((colDef, colIndex) => {
+          const cellValue = getCellValue(row, colDef);
+          const spanKey = `${rowIndex}-${colDef.colId || colDef.field || colDef.headerName}`;
+          const span = spanMap[spanKey];
+          if (colWidths[colIndex] > 0) {
+            return (
+              <td
+                key={spanKey + colIndex.toString()}
+                rowSpan={span && span > 1 ? span : undefined}
+                style={span === 0 ? { display: 'none' } : undefined}
+                width={colWidths[colIndex]}
+              >
+                {cellValue}
+              </td>
+            );
+          }
+          return (
+            <td
+              key={spanKey + colIndex.toString()}
+              rowSpan={span && span > 1 ? span : undefined}
+              style={span === 0 ? { display: 'none' } : undefined}
+            >
+              {cellValue}
+            </td>
+          );
+        })}
+      </tr>
+    ));
+  }, [coalesce, columnDefs, data, colWidths]);
 
   return (
     <div className="print-table__container">
-      <table className="print-table therapeutic-targets__table" style={{ borderCollapse: 'collapse', width: '100%' }}>
+      <table
+        ref={tableRef}
+        className="print-table therapeutic-targets__table"
+        style={{
+          width: '100%',
+        }}
+      >
         <thead className="print-table__header">
           <tr>
             {columnDefs.map((col) => (
@@ -103,24 +183,7 @@ const TherapeuticTargetPrintTable = ({ data, columnDefs: rawColumnDefs, coalesce
           </tr>
         </thead>
         <tbody>
-          {sortedData.map((row, rowIndex) => (
-            <tr className="print-table__row" key={row.ident || rowIndex}>
-              {columnDefs.map((colDef, colIndex) => {
-                const cellValue = getCellValue(row, colDef);
-                const spanKey = `${rowIndex}-${colDef.colId || colDef.field || colDef.headerName}`;
-                const span = spanMap[spanKey];
-                return (
-                  <td
-                    key={spanKey + colIndex.toString()}
-                    rowSpan={span && span > 1 ? span : undefined}
-                    style={span === 0 ? { display: 'none' } : undefined}
-                  >
-                    {cellValue}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
+          {tableRows}
         </tbody>
       </table>
     </div>
