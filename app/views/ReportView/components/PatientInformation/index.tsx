@@ -86,7 +86,7 @@ const PatientInformation = ({
               label: 'Data Type',
               value: report?.seqQC?.filter((item) => item.Sample?.startsWith('Tumour'))
                 .map((item) => item.Sample.replace(/^Tumour\s+/i, ''))
-                .join(' and '),
+                .join(', '),
             },
           ]);
         } catch (err) {
