@@ -92,7 +92,7 @@ const Login = (props: RouteChildrenProps): JSX.Element => {
       {error ? (
         <div className="auth-centered">
           <Typography color="error" gutterBottom variant="h2">Error Authenticating</Typography>
-          <Typography paragraph>An Error occurred while authenticating. please logout and try again or contact your administrator if the problem persists</Typography>
+          <Typography paragraph>An error occurred while authenticating. please logout and try again or contact your administrator if the problem persists</Typography>
           <Typography paragraph>{error}</Typography>
         </div>
       ) : null}

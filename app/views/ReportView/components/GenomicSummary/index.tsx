@@ -30,6 +30,7 @@ import TumourSummary from '../TumourSummary';
 import {
   defaultComparator, defaultImmune, defaultMsi, defaultMutationBurden, defaultTmbur,
 } from './defaultStates';
+import { useQuery } from 'react-query';
 
 type GenomicSummaryProps = {
   loadedDispatch?: SummaryProps['loadedDispatch'];
@@ -56,79 +57,168 @@ const GenomicSummary = ({
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>(defaultMutationBurden);
   const [msi, setMsi] = useState<MsiType>(defaultMsi);
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>(defaultTmbur);
-
   const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>(defaultImmune);
   const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>(defaultComparator);
 
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
 
+  const {data: microbialData, isError: microbialError} = useQuery(
+    `/reports/${report.ident}/summary/microbial`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response;
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('microbial call error');
+      },
+    },
+  );
+
+  const {data: primaryComparatorData, isError: primaryComparatorError} = useQuery(
+    `/reports/${report.ident}/comparators`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)');
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('comparators call error');
+      },
+    },
+  );
+
+  const {data: signaturesData, isError: signaturesError} = useQuery(
+    `/reports/${report.ident}/mutation-signatures`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response;
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('mutation signatures call error');
+      },
+    },
+  );
+
+  const {data: tCellCd8Data, isError: tCellCd8Error} = useQuery(
+    `/reports/${report.ident}/immune-cell-types`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response.find(({ cellType }) => cellType === 'T cells CD8');
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('immune cell types call error');
+      },
+    },
+  );
+
+  const {data: primaryBurdenData, isError: primaryBurdenError} = useQuery(
+    `/reports/${report.ident}/mutation-burden`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response.find((entry: Record<string, unknown>) => entry.role === 'primary');
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('mutation burden call error');
+      },
+    },
+  );
+
+  const {data: msiData, isError: msiError} = useQuery(
+    `/reports/${report.ident}/msi`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        if (response.length) {
+          return response[0];
+        } else {
+          return null;
+        }
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('msi call error');
+      },
+    },
+  );
+
+  const {data: tmburMutBurData, isError: tmburMutBurError} = useQuery(
+    `/reports/${report.ident}/tmbur-mutation-burden`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response;
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('tmbur mutation burden call error');
+      },
+    },
+  );
+  
   useEffect(() => {
     if (report) {
-      const getData = async () => {
-        try {
-          const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/summary/microbial`),
-            api.get(`/reports/${report.ident}/comparators`),
-            api.get(`/reports/${report.ident}/mutation-signatures`),
-            api.get(`/reports/${report.ident}/mutation-burden`),
-            api.get(`/reports/${report.ident}/immune-cell-types`),
-            api.get(`/reports/${report.ident}/msi`),
-          ]);
-
-          const [
-            microbialResp,
-            comparatorsResp,
-            signaturesResp,
-            burdenResp,
-            immuneResp,
-            msiResp,
-          ] = await apiCalls.request() as [
-            MicrobialType[],
-            ComparatorType[],
-            MutationSignatureType[],
-            MutationBurdenType[],
-            ImmuneType[],
-            MsiType[],
-          ];
-
-          try {
-            const tmburResp = await api.get(`/reports/${report.ident}/tmbur-mutation-burden`).request();
-            if (tmburResp) {
-              setTmburMutBur(tmburResp);
-            }
-          } catch (e) {
-            // tmbur does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
-            // eslint-disable-next-line no-console
-            console.error('tmbur-mutation-burden call error', e?.message);
-          }
-
-          setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
-          setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
-          setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
-          setSignatures(signaturesResp);
-
-          if (microbialResp) {
-            setMicrobial(microbialResp);
-          }
-
-          if (msiResp.length) {
-            setMsi(msiResp[0]);
-          }
-
-          if (loadedDispatch) {
-            loadedDispatch({ type: 'summary-genomic' });
-          }
-        } catch (err) {
-          snackbar.error(`Network error: ${err?.message ?? err}`);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      getData();
+      if (microbialData) {
+        setMicrobial(microbialData);
+      }
+      if (primaryComparatorData) {
+        setPrimaryComparator(primaryComparatorData);
+      }
+      if (signaturesData) {
+        setSignatures(signaturesData);
+      }
+      if (tCellCd8Data) {
+        setTCellCd8(tCellCd8Data);
+      }
+      if (primaryBurdenData) {
+        setPrimaryBurden(primaryBurdenData);
+      }
+      if (msiData) {
+        setMsi(msiData);
+      }
+      if (tmburMutBurData) {
+        setTmburMutBur(tmburMutBurData);
+      }
+      if (loadedDispatch) {
+        loadedDispatch({ type: 'summary-genomic' });
+      }
+      setIsLoading(false);
     }
-  }, [loadedDispatch, report, setIsLoading, isPrint]);
+  }, [
+    report,
+    microbialData,
+    primaryComparatorData,
+    signaturesData,
+    tCellCd8Data,
+    primaryBurdenData,
+    msiData,
+    tmburMutBurData,
+    loadedDispatch,
+    setIsLoading,
+  ]);
 
   useEffect(() => {
     if (report) {
@@ -232,6 +322,12 @@ const GenomicSummary = ({
             value: null,
           },
           {
+            term: 'HRD Score',
+            value: report.hrdScore !== null
+              ? `${report.hrdScore}`
+              : null,
+          },
+          {
             term: `SV Burden${isPrint ? '*' : ''}`,
             value: null,
           },
@@ -292,7 +388,7 @@ const GenomicSummary = ({
     }
   }, [setReport]);
 
-  if (isLoading || !report || !tumourSummary) {
+  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || tmburMutBurError) {
     return null;
   }
 
