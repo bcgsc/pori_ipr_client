@@ -42,6 +42,7 @@ import TumourSummary from '../TumourSummary';
 
 import './index.scss';
 import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
+import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
 
 const ANALYST_DISABLED = 'analyst disabled';
 
@@ -261,6 +262,7 @@ const RapidSummary = ({
           .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.UNKNOWN_SIGNIFICANCE}`)
           .request(),
         enabled: !!reportIdent,
+        select: (data: RapidVariantType[]) => deepRemoveDuplicate(data),
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
         refetchOnMount: 'always',
       },
