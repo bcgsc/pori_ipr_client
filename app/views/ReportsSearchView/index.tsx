@@ -13,6 +13,7 @@ import { CircularProgress } from '@mui/material';
 
 import '../ReportsView/index.scss';
 import './index.scss';
+import { ErrorMixin } from '@/services/errors/errors';
 
 /**
  * Report table containing all searched reports
@@ -21,29 +22,28 @@ const ReportsSearchView = (): JSX.Element => {
   const { search } = useLocation();
   const { searchParams, setSearchParams } = useSearchParams();
 
-  const searchParamsUrl = useMemo(() => {
-    return decodeURIComponent(search);
-  }, [decodeURIComponent, search]);
+  const searchParamsUrl = useMemo(() => decodeURIComponent(search), [search]);
 
-  const parseSearchParamsFromUrl = (searchParamsUrl: string) => {
+  const parseSearchParamsFromUrl = (paramsUrl: string) => {
     const params: SearchParamsType[] = [];
     const regex = /\[([^|]+)\|([^|]+)\|([^]+?)\]/g;
     let match = [];
-  
-    while ((match = regex.exec(searchParamsUrl)) !== null) {
+
+    // eslint-disable-next-line no-cond-assign
+    while ((match = regex.exec(paramsUrl)) !== null) {
       params.push({
         category: match[1],
         keyword: match[2],
         threshold: match[3],
       });
     }
-  
+
     return params;
-  }
+  };
 
   const { data: reportsData, isFetching: isApiLoading } = useQuery(
     `/reports${searchParamsUrl}`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: 0,
       enabled: Boolean(searchParamsUrl),
@@ -81,14 +81,14 @@ const ReportsSearchView = (): JSX.Element => {
           setSearchParams(parseSearchParamsFromUrl(searchParamsUrl));
         }
       },
-      onError: (err: any) => {
-        snackbar.error(`API error: ${err.message}`)
-      }
+      onError: (err: ErrorMixin) => {
+        snackbar.error(`API error: ${err.message}`);
+      },
     },
   );
 
   if (isApiLoading) {
-    return <div className='centered'><CircularProgress /></div>
+    return <div className="centered"><CircularProgress /></div>;
   }
 
   return (
