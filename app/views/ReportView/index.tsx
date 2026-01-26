@@ -21,7 +21,6 @@ import useSecurity from '@/hooks/useSecurity';
 import Summary from './components/Summary';
 import allSections from './sections';
 import './index.scss';
-import { useQuery } from 'react-query';
 
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
@@ -62,43 +61,32 @@ const ReportView = (): JSX.Element => {
   const [isSigned, setIsSigned] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: reportData } = useQuery(
-    `/reports/${params.ident}`,
-    async ({ queryKey: [route] }) => api.get(route).request(),
-    {
-      staleTime: Infinity,
-      retry: 1,
-      select: (response) => response,
-      onError: (err: any) => {
-        snackbar.error(`Cannot access report ${params.ident}: ${err?.content?.error?.message}`);
-        history.push('/reports');
-      } 
-    },
-  );
-
-  const { data: templateData } = useQuery(
-    '/templates',
-    async ({ queryKey: [route] }) => api.get(route).request(),
-    {
-      staleTime: Infinity,
-      select: (response) => response,
-    },
-  );
-
   useEffect(() => {
-    if (reportData) {
-      setReport(reportData);
+    if (!report) {
+      const getReport = async () => {
+        try {
+          const resp = await api.get(`/reports/${params.ident}`).request();
+          const templatesResp = await api.get('/templates').request();
+          setReport(resp);
+          if (resp.template.name === 'probe') {
+            setIsProbe(true);
+          } else {
+            setIsProbe(false);
+          }
+          const template = templatesResp.find((templ) => templ.name === resp.template.name);
+          setVisibleSections(template?.sections);
+        } catch (err) {
+          const message = `Cannot access report ${params.ident}: ${err?.content?.error?.message}. Redirecting to Reports view.`;
+          snackbar.error(message);
+          setError(message);
+          const redirect = () => history.push('/reports');
+          setTimeout(redirect, 3000);
+        }
+      };
+
+      getReport();
     }
-    if (report) {
-      if (report.template.name === 'probe') {
-        setIsProbe(true);
-      } else {
-        setIsProbe(false);
-      }
-      const template = templateData.find((templ) => templ.name === report.template.name);
-      setVisibleSections(template?.sections);
-    }
-  }, [reportData, templateData]);
+  }, [history, params.ident, report]);
 
   /* External users should only be allowed to access certain states
      Send them back to /reports if the report state isn't allowed */
