@@ -14,10 +14,16 @@ const getNestedValue = (obj: ICellRendererParams['data'], path: string): any[] =
   return acc && acc[key] !== undefined ? acc[key] : [];
 }, obj);
 
-const RenderArrayCell = (fieldPath: string, isLink: boolean = false): (cellParams: Partial<ICellRendererParams>) => JSX.Element => {
+const RenderArrayCell = (fieldPath: string, isLink: boolean = false, useValue: boolean = false): (cellParams: Partial<ICellRendererParams>) => JSX.Element => {
   if (isLink) {
-    return function ArrayCell({ data }: ICellRendererParams) {
-      const fieldData = getNestedValue(data, fieldPath) || [];
+    return function ArrayCell(params : ICellRendererParams) {
+      const { data, value } = params;
+      let fieldData = [];
+      if (useValue) {
+        fieldData = value;
+      } else {
+        fieldData = getNestedValue(data, fieldPath);
+      }
       const cellData = Array.isArray(fieldData) ? [...fieldData].sort() : [fieldData];
 
       const firstVal = cellData[0]?.replace(/(pmid:)|(#)/, '');
@@ -27,6 +33,9 @@ const RenderArrayCell = (fieldPath: string, isLink: boolean = false): (cellParam
 
       if (firstVal?.match(/^\d+$/)) {
         link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
+        validLink = true;
+      } else if (firstVal?.match(/^nct\d+$/)) {
+        link = `https://clinicaltrials.gov/study/${firstVal}`;
         validLink = true;
       } else if (urlRegex.test(firstVal)) {
         validLink = true;
