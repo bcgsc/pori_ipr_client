@@ -269,16 +269,18 @@ const GenomicSummary = ({
       setTumourSummary(() => {
         // Check if genomeTmb (new version) exists
         const { genomeTmb } = report;
-        const {
-          tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb,
-        } = tmburMutBur;
-        let tmbDisplayValue = genomeTmb?.toFixed(2) || (genomeSnvTmb + genomeIndelTmb).toFixed(2);
-
-        // AdjustedTmb will still overwrite
+        const { tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb } = tmburMutBur;
+        
+        let tmbDisplayValue = 'No data available';
+        
         if (tmbHidden) {
           tmbDisplayValue = null;
         } else if (adjustedTmb != null) {
           tmbDisplayValue = adjustedTmb.toFixed(2);
+        } else if (genomeTmb) {
+          tmbDisplayValue = genomeTmb.toFixed(2);
+        } else if (genomeSnvTmb && genomeIndelTmb) {
+          tmbDisplayValue = (genomeSnvTmb + genomeIndelTmb).toFixed(2);
         }
 
         return ([
