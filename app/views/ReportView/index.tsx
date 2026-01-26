@@ -155,6 +155,10 @@ const ReportView = (): JSX.Element => {
     );
   }
 
+  if (!reportValue) {
+    return null;
+  }
+
   return (
     <ReportContext.Provider value={reportValue}>
       <ConfirmContext.Provider value={isSignedValue}>
