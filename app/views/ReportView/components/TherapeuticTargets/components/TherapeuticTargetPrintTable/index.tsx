@@ -128,7 +128,11 @@ const TherapeuticTargetPrintTable = ({ data, columnDefs: rawColumnDefs, coalesce
 
     if (!spanMap || !sortedData?.length) {
       return (
-        <td colSpan={columnDefs.length}>No data available</td>
+        <tr className="print-table__row">
+          <td colSpan={columnDefs.length} align="center">
+            No data available
+          </td>
+        </tr>
       );
     }
 
