@@ -79,8 +79,7 @@ const ReportView = (): JSX.Element => {
           const message = `Cannot access report ${params.ident}: ${err?.content?.error?.message}. Redirecting to Reports view.`;
           snackbar.error(message);
           setError(message);
-          const redirect = () => history.push('/reports');
-          setTimeout(redirect, 3000);
+          setTimeout(() => history.push('/reports'), 3000);
         }
       };
 
