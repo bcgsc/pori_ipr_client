@@ -31,6 +31,8 @@ import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import useSignatures from '@/hooks/useSignatures';
 import { useSignatureTypes } from '@/hooks/useSignatureTypes';
+import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
+
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
@@ -42,7 +44,6 @@ import TumourSummary from '../TumourSummary';
 
 import './index.scss';
 import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
-import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
 
 const ANALYST_DISABLED = 'analyst disabled';
 
@@ -395,17 +396,32 @@ const RapidSummary = ({
           value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour')?.pathoTc ?? ''}`,
         },
         {
-          term: 'M1M2 Score',
-          value: report.m1m2Score !== null
-            ? `${report.m1m2Score}`
+          term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
+          value: tmbDisplayValue,
+        },
+        {
+          term: 'Adjusted TMB Comment',
+          value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+        },
+        {
+          term: 'MSI Score',
+          value: `${msiScore} (MSI Status: ${msiScore < 20 ? 'MSS' : 'MSI'})`,
+        },
+        {
+          term: 'HRD Score',
+          value: report.hrdScore !== null
+            ? `${report.hrdScore}`
             : null,
         },
         {
-            term: 'HRD Score',
-            value: report.hrdScore !== null
-              ? `${report.hrdScore}`
-              : null,
-          },
+          term: 'HLA (Normal)',
+          value: null,
+        },
+        {
+          term:
+            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+          value: tCell,
+        },
         {
           term: 'Preliminary CAPTIV-8 Score',
           value: report.captiv8Score !== null
@@ -417,9 +433,10 @@ const RapidSummary = ({
           value: getMicbSiteSummary(microbial),
         },
         {
-          term:
-            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
-          value: tCell,
+          term: 'M1M2 Score',
+          value: report.m1m2Score !== null
+            ? `${report.m1m2Score}`
+            : null,
         },
         {
           term: 'Pediatric CD8+ T Cell Comment',
@@ -434,25 +451,15 @@ const RapidSummary = ({
           term: 'SV Burden (POG Average)',
           value: svBurden,
         },
-        {
-          term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
-          value: tmbDisplayValue,
-        },
-        {
-          term: 'Adjusted TMB Comment',
-          value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
-        },
-        {
-          term: 'MSI Score',
-          value: `${msiScore} (MSI Status: ${msiScore < 20 ? 'MSS' : 'MSI'})`,
-        },
       ]);
     });
   }, [
-    microbial, primaryBurden, tmburMutBur, tCellCd8, msi, msi?.score,
-    report.m1m2Score, report.sampleInfo, report.tumourContent, report?.genomeTmb, report.captiv8Score,
-    tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
-    tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
+    microbial, primaryBurden,
+    msi, msi?.score,
+    report?.m1m2Score, report?.sampleInfo, report?.tumourContent, report?.genomeTmb, report?.captiv8Score, report?.hrdScore,
+    tCellCd8, tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment,
+    tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
+    tmburMutBur, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
   ]);
 
   useEffect(() => {
