@@ -381,16 +381,18 @@ const RapidSummary = ({
     setTumourSummary(() => {
       // Check if genomeTmb (new version) exists
       const { genomeTmb } = report;
-      const { tmbHidden, adjustedTmb } = tmburMutBur;
       
       let tmbDisplayValue = 'No data available';
       
-      if (tmbHidden) {
-        tmbDisplayValue = null;
-      } else if (adjustedTmb != null) {
-        tmbDisplayValue = adjustedTmb.toFixed(2);
-      } else if (genomeTmb) {
-        tmbDisplayValue = genomeTmb.toFixed(2);
+      if (tmburMutBur) {
+        const { tmbHidden, adjustedTmb } = tmburMutBur;
+        if (tmbHidden) {
+          tmbDisplayValue = null;
+        } else if (adjustedTmb != null) {
+          tmbDisplayValue = adjustedTmb.toFixed(2);
+        } else if (genomeTmb) {
+          tmbDisplayValue = genomeTmb.toFixed(2);
+        }
       }
 
       return ([

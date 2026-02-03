@@ -269,18 +269,20 @@ const GenomicSummary = ({
       setTumourSummary(() => {
         // Check if genomeTmb (new version) exists
         const { genomeTmb } = report;
-        const { tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb } = tmburMutBur;
-        
+
         let tmbDisplayValue = 'No data available';
-        
-        if (tmbHidden) {
-          tmbDisplayValue = null;
-        } else if (adjustedTmb != null) {
-          tmbDisplayValue = adjustedTmb.toFixed(2);
-        } else if (genomeTmb) {
-          tmbDisplayValue = genomeTmb.toFixed(2);
-        } else if (genomeSnvTmb && genomeIndelTmb) {
-          tmbDisplayValue = (genomeSnvTmb + genomeIndelTmb).toFixed(2);
+
+        if (tmburMutBur) {
+          const { tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb } = tmburMutBur;
+          if (tmbHidden) {
+            tmbDisplayValue = null;
+          } else if (adjustedTmb != null) {
+            tmbDisplayValue = adjustedTmb.toFixed(2);
+          } else if (genomeTmb) {
+            tmbDisplayValue = genomeTmb.toFixed(2);
+          } else if (genomeSnvTmb && genomeIndelTmb) {
+            tmbDisplayValue = (genomeSnvTmb + genomeIndelTmb).toFixed(2);
+          }
         }
 
         return ([
@@ -428,7 +430,7 @@ const GenomicSummary = ({
                 printVersion={printVersion}
                 report={report}
                 tCellCd8={tCellCd8}
-                tmburMutBur={tmburMutBur}
+                tmburMutBur={tmburMutBur ?? null}
                 tumourSummary={tumourSummary}
               />
             )}
@@ -464,7 +466,7 @@ const GenomicSummary = ({
               printVersion={printVersion}
               report={report}
               tCellCd8={tCellCd8}
-              tmburMutBur={tmburMutBur}
+              tmburMutBur={tmburMutBur ?? null}
               tumourSummary={tumourSummary}
             />
           )}
