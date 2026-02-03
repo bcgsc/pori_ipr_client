@@ -178,7 +178,8 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
               <MenuItem value="smallMutation">Small Mutation</MenuItem>
               <MenuItem value="structuralVariant">Structural Variant</MenuItem>
               <MenuItem value="mutationSignature">Mutation Signature</MenuItem>
-              <MenuItem value="msiStatus">MSI Status</MenuItem>
+              {// DEVSU-2824 postponing MSI status search until hardcoded thresholds are reworked
+              /* <MenuItem value="msiStatus">MSI Status</MenuItem> */}
             </Select>
           </FormControl>
         </div>
@@ -186,7 +187,7 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
           <TextField
             InputLabelProps={{ shrink: true }}
             variant="outlined"
-            disabled={searchCategory === 'msiStatus'}
+            // disabled={searchCategory === 'msiStatus'}
             error={Boolean(thresholdErrorMessage)}
             onChange={handleThresholdChange}
             value={searchThreshold}

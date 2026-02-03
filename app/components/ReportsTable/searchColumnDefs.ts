@@ -55,10 +55,11 @@ const searchColumnDefs: ColDef[] = [{
   field: 'matchedMutationSignature',
   filter: CustomSetFilter,
 },
-{
-  headerName: 'MSI Score',
-  field: 'matchedMsiScore',
-},
+// DEVSU-2824 postponing MSI status search until hardcoded thresholds are reworked
+// {
+//   headerName: 'MSI Score',
+//   field: 'matchedMsiScore',
+// },
 {
   headerName: 'Patient ID',
   field: 'patientID',

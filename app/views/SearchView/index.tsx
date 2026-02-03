@@ -62,13 +62,14 @@ const SearchView = () => {
       setSearchErrorMessage('Please enter a search keyword');
       return;
     }
-    // Validate that msi status input are either MSI or MSS
-    if (searchParams.some((param) => param.category === 'msiStatus')) {
-      if (searchParams.some((param) => param.keyword.toLowerCase() !== 'msi') && searchParams.some((param) => param.keyword.toLowerCase() !== 'mss')) {
-        setSearchErrorMessage('Please enter valid status (MSI or MSS)');
-        return;
-      }
-    }
+    // DEVSU-2824 postponing MSI status search until hardcoded thresholds are reworked
+    // // Validate that msi status input are either MSI or MSS
+    // if (searchParams.some((param) => param.category === 'msiStatus')) {
+    //   if (searchParams.some((param) => param.keyword.toLowerCase() !== 'msi') && searchParams.some((param) => param.keyword.toLowerCase() !== 'mss')) {
+    //     setSearchErrorMessage('Please enter valid status (MSI or MSS)');
+    //     return;
+    //   }
+    // }
     const searchUrl: string[] = [];
     searchParams.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
     history.push({
@@ -199,7 +200,7 @@ const SearchView = () => {
               <MenuItem value="smallMutation">Small Mutation</MenuItem>
               <MenuItem value="structuralVariant">Structural Variant</MenuItem>
               <MenuItem value="mutationSignature">Mutation Signature</MenuItem>
-              <MenuItem value="msiStatus">MSI Status</MenuItem>
+              {/* <MenuItem value="msiStatus">MSI Status</MenuItem> */}
             </Select>
           </FormControl>
         </div>
@@ -207,7 +208,7 @@ const SearchView = () => {
           <TextField
             InputLabelProps={{ shrink: true }}
             variant="outlined"
-            disabled={searchCategory === 'msiStatus'}
+            // disabled={searchCategory === 'msiStatus'}
             error={Boolean(thresholdErrorMessage)}
             onChange={handleThresholdChange}
             value={searchThreshold}

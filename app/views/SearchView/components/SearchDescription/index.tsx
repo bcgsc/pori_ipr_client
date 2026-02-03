@@ -46,10 +46,11 @@ const searchFeaturesDescription = () => {
         <b>Category - Mutation Signature:</b> Search for reports with at least 1 matching clinically relevant mutation signature. Query columns 'signature' and 'selected' in 'Mutation Signatures' table.
       </Typography>
       <br />
-      <Typography variant="subtitle1" color="inherit">
+      {// DEVSU-2824 postponing MSI status search until hardcoded thresholds are reworked
+      /* <Typography variant="subtitle1" color="inherit">
         <b>Category - MSI Status:</b> Search for reports with either MSI or MSS status. Use keyword 'MSI' or 'MSS'. Query columns 'score' in 'Reports MSI' table and validate against a set threshold. The GSC's threshold for microsatellite instability is 20 or larger.
       </Typography>
-      <br />
+      <br /> */}
       <Typography variant="subtitle1" color="inherit">
         <b>Matching Threshold:</b> The matching threshold defines how closely a search keyword must match a value, using a scale from 0 to 1. 
         A threshold of 1 requires an exact match, while lower values allow for partial similarity. If no threshold is set, the default is 0.8.
