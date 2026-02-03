@@ -671,7 +671,6 @@ const TumourSummaryEdit = ({
         label="Pediatric CD8+ T Cell Score"
         value={newTCellCd8Data?.pedsScore ?? null}
         name="pedsScore"
-        disabled={report.patientInformation.caseType !== 'Pediatric'}
         onChange={handlePedsCd8tChange}
         variant="outlined"
         fullWidth
@@ -682,7 +681,6 @@ const TumourSummaryEdit = ({
         label="Pediatric CD8+ T Cell Percentile"
         value={newTCellCd8Data?.pedsPercentile ?? null}
         name="pedsPercentile"
-        disabled={report.patientInformation.caseType !== 'Pediatric'}
         onChange={handlePedsCd8tChange}
         variant="outlined"
         fullWidth
