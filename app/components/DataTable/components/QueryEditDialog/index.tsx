@@ -155,6 +155,7 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
           <FormControl classes={{ root: customCss.categoryBorder }} style={{ height: '100%' }}>
             <Select
               value={searchCategory}
+              defaultValue={searchCategory}
               onChange={handleCategoryChange}
               displayEmpty
               style={{
@@ -176,6 +177,8 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
               <MenuItem value="therapeuticTarget">Therapeutic Target</MenuItem>
               <MenuItem value="smallMutation">Small Mutation</MenuItem>
               <MenuItem value="structuralVariant">Structural Variant</MenuItem>
+              <MenuItem value="mutationSignature">Mutation Signature</MenuItem>
+              <MenuItem value="msiStatus">MSI Status</MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -183,10 +186,11 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
           <TextField
             InputLabelProps={{ shrink: true }}
             variant="outlined"
+            disabled={searchCategory === 'msiStatus'}
             error={Boolean(thresholdErrorMessage)}
             onChange={handleThresholdChange}
             value={searchThreshold}
-            defaultValue={DEFAULT_THRESHOLD}
+            defaultValue={searchThreshold}
             placeholder="0.8"
             onKeyDown={handleKeyDown}
             inputProps={{

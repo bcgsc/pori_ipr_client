@@ -51,6 +51,15 @@ const searchColumnDefs: ColDef[] = [{
   filter: CustomSetFilter,
 },
 {
+  headerName: 'Mutation Signature',
+  field: 'matchedMutationSignature',
+  filter: CustomSetFilter,
+},
+{
+  headerName: 'MSI Score',
+  field: 'matchedMsiScore',
+},
+{
   headerName: 'Patient ID',
   field: 'patientID',
   comparator: collator.compare,
