@@ -45,6 +45,10 @@ const INFO_BUBBLES = {
   lowExp: 'Copy number losses in known tumour supressor genes which are also lowly expressed.',
 };
 
+const CHR_LEGEND = 'legend';
+const CHRS = Array.from({ length: 24 }, (_, i) => `chr${i + 1}`).join(',');
+const CHR_IMG_HEIGHT = 375 / 2;
+
 type CopyNumberProps = WithLoadingInjectedProps;
 
 const CopyNumber = ({
@@ -55,6 +59,7 @@ const CopyNumber = ({
   const { canEdit } = useReport();
   const theme = useTheme();
   const [images, setImages] = useState<ImageType[]>([]);
+  const [legend, setLegend] = useState<ImageType>([]);
   const [circos, setCircos] = useState<ImageType>();
   const [cnvs, setCnvs] = useState<CopyNumberType[]>([]);
   const [groupedCnvs, setGroupedCnvs] = useState({
@@ -82,9 +87,11 @@ const CopyNumber = ({
         try {
           const apiCalls = new ApiCallSet([
             api.get(`/reports/${report.ident}/copy-variants`),
-            api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`),
+            api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos`),
+            api.get(`/reports/${report.ident}/image/retrieve/${CHR_LEGEND},${CHRS}`),
+            api.get(`/reports/${report.ident}/image/retrieve/cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`),
           ]);
-          const [cnvsResp, imagesResp] = await apiCalls.request() as [CopyNumberType[], ImageType[]];
+          const [cnvsResp, [circosResp], newImagesResp, oldImagesResp] = await apiCalls.request() as [CopyNumberType[], ImageType[], ImageType[], ImageType[]];
 
           if (cnvsResp?.length) {
             const nextVisible = [];
@@ -108,12 +115,18 @@ const CopyNumber = ({
             setVisibleCols((prevVal) => [...prevVal, ...nextVisible]);
           }
 
-          const circosIndex = imagesResp.findIndex((img) => img.key === 'cnvLoh.circos');
-          const [circosResp] = imagesResp.splice(circosIndex, 1);
+          let imagesResp = oldImagesResp;
+          let legendResp;
+          if (newImagesResp.length > 0) {
+            imagesResp = newImagesResp;
+            const legendIndex = imagesResp.findIndex((img) => img.key === 'legend');
+            legendResp = imagesResp.splice(legendIndex, 1);
+          }
 
           setCnvs(cnvsResp);
           setCircos(circosResp);
           setImages(imagesResp);
+          setLegend(legendResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
@@ -204,6 +217,49 @@ const CopyNumber = ({
 
   const handleVisibleColsChange = (change) => setVisibleCols(change);
 
+  const imagesSection = useMemo(() => {
+    if (images.length === 0) {
+      return <Typography align="center">No Copy Number &amp; LOH Plots Available</Typography>;
+    }
+    if (images.length > 6) {
+      return (
+        <section className="copy-number__montage">
+          <Image height={CHR_IMG_HEIGHT} image={legend} />
+          {
+            images.map((img) => (
+              <Image
+                height={CHR_IMG_HEIGHT}
+                image={img}
+                key={`${img.key}`}
+                zoomStyle={{
+                  minWidth: '100%',
+                  maxWidth: '90vw',
+                  minHeight: '100%',
+                  maxHeight: '85vh',
+                }}
+              />
+            ))
+          }
+        </section>
+      );
+    }
+    // Old logic
+    return (
+      <div className="copy-number__graphs">
+        {[...Array(5).keys()].map((index) => (
+          <React.Fragment key={index + 1}>
+            <Image
+              image={images.find((img) => img.key === `cnv.${index + 1}`)}
+            />
+            <Image
+              image={images.find((img) => img.key === `loh.${index + 1}`)}
+            />
+          </React.Fragment>
+        ))}
+      </div>
+    );
+  }, [images, legend]);
+
   return (
     <div className="copy-number">
       <Typography variant="h3">Copy Number Analyses</Typography>
@@ -248,23 +304,8 @@ const CopyNumber = ({
               ))}
             </>
           )}
-          <Typography variant="h3" className="copy-number__title">Copy Number &amp; LOH</Typography>
-          {images.length ? (
-            <div className="copy-number__graphs">
-              {[...Array(5).keys()].map((index) => (
-                <React.Fragment key={index + 1}>
-                  <Image
-                    image={images.find((img) => img.key === `cnv.${index + 1}`)}
-                  />
-                  <Image
-                    image={images.find((img) => img.key === `loh.${index + 1}`)}
-                  />
-                </React.Fragment>
-              ))}
-            </div>
-          ) : (
-            <Typography align="center">No Copy Number &amp; LOH Plots Available</Typography>
-          )}
+          <Typography variant="h3" className="copy-number__title">Copy Number & LOH</Typography>
+          {imagesSection}
         </>
       )}
     </div>
