@@ -675,6 +675,7 @@ const TumourSummaryEdit = ({
         variant="outlined"
         fullWidth
         type="number"
+        helperText="Pediatric fields may not be applicable to adult cases."
       />
       <TextField
         className="tumour-dialog__number-field"
