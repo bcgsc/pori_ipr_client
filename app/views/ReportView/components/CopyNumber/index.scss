@@ -1,3 +1,5 @@
+$montage-padding: 8px;
+
 .copy-number {
   padding: 16px;
   
@@ -14,6 +16,13 @@
   }
 
   &__title {
-    padding: 16px;
+    padding: $montage-padding;
+  }
+
+  &__montage {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: $montage-padding;
   }
 }

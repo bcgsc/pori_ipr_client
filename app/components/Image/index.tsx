@@ -14,6 +14,7 @@ type ImageProps = {
   isZoomable?: boolean;
   /** Style to apply to img tag */
   imgStyle?: React.ComponentPropsWithoutRef<'img'>['style'];
+  zoomStyle?: React.ComponentPropsWithoutRef<'img'>['style'];
 };
 
 const Image = ({
@@ -30,6 +31,7 @@ const Image = ({
   showCaption = false,
   isZoomable = true,
   imgStyle = {},
+  zoomStyle = {},
 }: ImageProps): JSX.Element => {
   const [isZoomed, setIsZoomed] = useState(false);
 
@@ -85,24 +87,23 @@ const Image = ({
             onClick={handleZoom}
             type="button"
           >
-            <div
-              className="image__dialog-button"
-            >
+            <div className="image__dialog-button">
               {showTitle && title && (
-              <Typography variant="h3">
-                {title}
-              </Typography>
+                <Typography variant="h3">
+                  {title}
+                </Typography>
               )}
               <img
                 className={`image__data ${isZoomable && isZoomed ? 'image__zoom--out' : ''}`}
                 src={`data:image/${format};base64,${data}`}
                 alt={title}
                 key={key}
+                style={zoomStyle}
               />
               {showCaption && caption && (
-              <Typography className="image__caption" variant="caption">
-                {caption}
-              </Typography>
+                <Typography className="image__caption" variant="caption">
+                  {caption}
+                </Typography>
               )}
             </div>
           </button>
