@@ -77,7 +77,7 @@ const columnDefs: ColDef[] = [
     valueGetter: (params) => {
       const { data: { externalSource, externalStatementId, reference } } = params;
       return externalSource === 'clinicaltrials.gov'
-        ? externalStatementId
+        ? externalStatementId?.toUpperCase()
         : reference;
     },
     cellRendererFramework: ArrayCell('reference', true, true),
