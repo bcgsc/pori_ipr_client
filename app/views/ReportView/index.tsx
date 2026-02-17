@@ -75,10 +75,11 @@ const ReportView = (): JSX.Element => {
           }
           const template = templatesResp.find((templ) => templ.name === resp.template.name);
           setVisibleSections(template?.sections);
-        } catch (getReportErr) {
-          const message = `Cannot access report ${params.ident}, reason: ${getReportErr?.message}; ${getReportErr?.content?.error?.message} `;
+        } catch (err) {
+          const message = `Cannot access report ${params.ident}: ${err?.content?.error?.message}. Redirecting to Reports view.`;
           snackbar.error(message);
           setError(message);
+          setTimeout(() => history.push('/reports'), 3000);
         }
       };
 
@@ -139,6 +140,7 @@ const ReportView = (): JSX.Element => {
       canEdit, report, setReport,
     });
   }, [report, setReport, adminAccess, reportEditAccess, userIdent]);
+
   const isSignedValue = useMemo(() => ({ isSigned, setIsSigned }), [isSigned, setIsSigned]);
 
   if (!report && error) {

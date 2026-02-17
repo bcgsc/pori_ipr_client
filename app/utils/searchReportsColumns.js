@@ -12,6 +12,7 @@ const getUniqueVariants = (arr, key) => {
 };
 
 function searchReportsColumns(report, analyst, reviewer, bioinformatician) {
+  const relevantMutationSignatures = report?.mutationSignature ? report?.mutationSignature.filter((m) => m.selected) : [];
   return {
     matchedKeyVariant: report?.genomicAlterationsIdentified ? getUniqueVariants(report?.genomicAlterationsIdentified, 'geneVariant').map((v) => v.geneVariant).join(', ') : null,
     matchedKbVariant: report?.kbMatches ? getUniqueVariants(report?.kbMatches, 'kbVariant').map((v) => v.kbVariant).join(', ') : null,
@@ -19,6 +20,8 @@ function searchReportsColumns(report, analyst, reviewer, bioinformatician) {
     matchedStructuralVariant: report?.structuralVariants ? getUniqueVariants(report?.structuralVariants, 'displayName').map((v) => v.displayName).join(', ') : null,
     matchedTherapeuticTarget: report?.therapeuticTarget ? report?.therapeuticTarget.map((t) => t.therapy).join(', ') : null,
     matchedTherapeuticTargetContext: report?.therapeuticTarget ? report?.therapeuticTarget.map((t) => t.context).join(', ') : null,
+    matchedMutationSignature: relevantMutationSignatures.length ? relevantMutationSignatures.map((m) => m.signature).join(', ') : null,
+    matchedMsiScore: report?.msi ? report?.msi[0]?.score : null,
     patientID: report.patientId,
     analysisBiopsy: report.biopsyName,
     reportType: report.template.name === 'probe' ? 'Targeted Gene' : startCase(report.template.name),

@@ -74,8 +74,6 @@ const ReportsSearchView = (): JSX.Element => {
         return reports;
       },
       onSettled: () => {
-        // setIsLoading(false);
-
         // Re-populating context using url without having to store search params in local storage
         if (!searchParams || !searchParams.length) {
           setSearchParams(parseSearchParamsFromUrl(searchParamsUrl));
