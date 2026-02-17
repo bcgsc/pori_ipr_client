@@ -40,6 +40,7 @@ type ReportType = {
   biopsyName?: string;
   captiv8Score: number;
   createdBy?: UserType;
+  dataType: string;
   expression_matrix: string;
   genomeTmb?: number;
   hrdScore?: number;
