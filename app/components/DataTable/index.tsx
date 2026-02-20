@@ -36,6 +36,7 @@ import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
+import QueryEditDialog from './components/QueryEditDialog';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
@@ -121,8 +122,27 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
   return nextColDefs;
 };
 
+const LoadingOverlay = () => (
+  <div
+    style={{
+      width: '100%',
+      height: '100%',
+      background: 'rgba(255,255,255,0.6)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      pointerEvents: 'all', // Captures agGrid v25 bug where clicks go through
+      zIndex: 999,
+    }}
+  >
+    Loading…
+  </div>
+);
+
 export type DataTableImperativeHandle = {
   goToEntry: (ident: string) => void;
+  hideLoading: () => void;
+  showLoading: () => void;
 };
 
 type DataTableCustomProps = {
@@ -163,6 +183,8 @@ type DataTableCustomProps = {
   isPaginated?: boolean;
   /* Whether the data table is being used to display search results for reports by variant */
   isSearch?: boolean;
+  /* Whether the data for table is being loaded */
+  isApiLoading?: boolean;
   /* Callback function when add is called */
   onAdd?: (row: Record<string, unknown>) => void;
   /* Callback function when delete is called */
@@ -209,6 +231,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   isPaginated = true,
   isPrint,
   isSearch = false,
+  isApiLoading = false,
   onAdd,
   onDelete,
   onEdit,
@@ -522,7 +545,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     if (visibleColumns.length > 0) {
       return visibleColumns;
     }
-    return columnWithNames.filter((col) => col.isVisible()).map((col) => col.getColId());
+    return columnWithNames.filter((col) => col.isVisible()).map((col) => col.getColId()).concat('actions');
   }, [columnWithNames, visibleColumns]);
 
   useImperativeHandle(forwardedRef, () => {
@@ -544,53 +567,60 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
           rowNode.setSelected(true);
         }, 50);
       },
+      showLoading: () => gridApi.showLoadingOverlay(),
+      hideLoading: () => gridApi.hideOverlay(),
     };
   }, [gridApi]);
 
   return (
     <div className="data-table" style={{ height: isFullLength ? '100%' : '' }}>
-      {Boolean(rowData.length) || canEdit ? (
+      {Boolean(rowData.length) || canEdit || isSearch ? (
         <>
           <div className="data-table__header-container">
             {titleText && (<Typography variant="h3" className="data-table__header">{titleText}</Typography>)}
             <div>
+              {isSearch && (
+                <span className="data-table__action">
+                  <QueryEditDialog isApiLoading={isApiLoading} />
+                </span>
+              )}
               {(canAdd || canToggleColumns || canExport || canReorder) && (
-              <span className="data-table__action">
-                <IconButton
-                  onClick={(event) => setMenuAnchor(event.currentTarget)}
-                  className="data-table__icon-button"
-                  size="large"
-                >
-                  <MoreHorizIcon />
-                </IconButton>
-                <Menu
-                  anchorEl={menuAnchor}
-                  open={Boolean(menuAnchor)}
-                  onClose={() => setMenuAnchor(null)}
-                >
-                  {canAdd && (
-                  <MenuItem onClick={() => handleMenuItemClick('add')}>
-                    {addText || 'Add row'}
-                  </MenuItem>
-                  )}
-                  {canToggleColumns && (
-                  <MenuItem onClick={() => handleMenuItemClick('toggle')}>
-                    Toggle Columns
-                  </MenuItem>
-                  )}
-                  {canExport && (
-                  <MenuItem onClick={() => handleMenuItemClick('export')}>
-                    Export to TSV
-                  </MenuItem>
-                  )}
-                  {canReorder && (
-                  <MenuItem onClick={() => handleMenuItemClick('reorder')}>
-                    Reorder Rows
-                  </MenuItem>
-                  )}
-                  {additionalTableMenuItems && additionalTableMenuItems(gridApi)}
-                </Menu>
-              </span>
+                <span className="data-table__action">
+                  <IconButton
+                    onClick={(event) => setMenuAnchor(event.currentTarget)}
+                    className="data-table__icon-button"
+                    size="large"
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={menuAnchor}
+                    open={Boolean(menuAnchor)}
+                    onClose={() => setMenuAnchor(null)}
+                  >
+                    {canAdd && (
+                    <MenuItem onClick={() => handleMenuItemClick('add')}>
+                      {addText || 'Add row'}
+                    </MenuItem>
+                    )}
+                    {canToggleColumns && (
+                    <MenuItem onClick={() => handleMenuItemClick('toggle')}>
+                      Toggle Columns
+                    </MenuItem>
+                    )}
+                    {canExport && (
+                    <MenuItem onClick={() => handleMenuItemClick('export')}>
+                      Export to TSV
+                    </MenuItem>
+                    )}
+                    {canReorder && (
+                    <MenuItem onClick={() => handleMenuItemClick('reorder')}>
+                      Reorder Rows
+                    </MenuItem>
+                    )}
+                    {additionalTableMenuItems && additionalTableMenuItems(gridApi)}
+                  </Menu>
+                </span>
               )}
             </div>
           </div>
@@ -631,6 +661,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
               noRowsOverlayComponent="NoRowsOverlay"
+              loadingOverlayComponent="LoadingOverlay"
               gridOptions={{
                 // For when table is too short and the popup menus get cut-off
                 popupParent: document.querySelector('body'),
@@ -654,6 +685,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
                 HTMLCellRenderer,
                 ToolTip,
                 Launch: LaunchCell,
+                LoadingOverlay,
               }}
               suppressAnimationFrame
               suppressRowTransform={Boolean(collapseColumnFields)}

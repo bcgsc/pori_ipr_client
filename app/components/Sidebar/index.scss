@@ -141,4 +141,13 @@
   &__link {
     padding: 12px 0 12px 15px;
   }
+
+  &__footer {
+    align-content: center;
+    bottom: 0;
+    height: 57px;
+    width: 57px;
+    position: fixed;
+    top: auto;
+  }
 }

@@ -5,13 +5,15 @@ import useGrid from '@/hooks/useGrid';
 import { ReportType } from '@/context/ReportContext';
 import LaunchCell from '@/components/LaunchCell';
 import NoRowsOverlay from '@/components/DataTable/components/NoRowsOverlay';
-import { getDate } from '../../utils/date';
 import { ToolTip } from '@/components/DataTable/components/ToolTip';
-import columnDefs from './columnDefs';
 
 import './index.scss';
 import { Fab } from '@mui/material';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import { GridOptions } from '@ag-grid-community/core';
+import { useHistory } from 'react-router-dom';
+import columnDefs from './columnDefs';
+import { getDate } from '../../utils/date';
 
 /**
  * Report table containing all reports
@@ -21,12 +23,15 @@ type ReportsTableProps = {
   rowData: ReportType[];
 };
 
-const ReportsTableComponent = ({ rowData }: ReportsTableProps): JSX.Element => {
+const ReportsTableComponent = ({
+  rowData = [],
+}: ReportsTableProps): JSX.Element => {
   const {
     gridApi,
     colApi,
     onGridReady,
   } = useGrid();
+  const history = useHistory();
 
   const onGridSizeChanged = useCallback((params) => {
     const MEDIUM_SCREEN_WIDTH_LOWER = 992;
@@ -44,6 +49,10 @@ const ReportsTableComponent = ({ rowData }: ReportsTableProps): JSX.Element => {
     resizable: true,
     filter: true,
   };
+
+  const handleOnRowDoubleClicked = useCallback<GridOptions['onRowDoubleClicked']>((row) => {
+    history.push(`/report/${row.node.data?.reportIdent}/summary`);
+  }, [history]);
 
   const handleTSVExport = useCallback(() => {
     const date = getDate();
@@ -74,16 +83,16 @@ const ReportsTableComponent = ({ rowData }: ReportsTableProps): JSX.Element => {
           variant="extended"
           size="small"
           style={{
-            position: "fixed",
+            position: 'fixed',
             bottom: 4,
             right: 360,
-            color: "grey",
-            backgroundColor: "white",
+            color: 'grey',
+            backgroundColor: 'white',
             borderRadius: 5,
-            boxShadow: "none",
+            boxShadow: 'none',
           }}
         >
-          <SaveAltIcon sx={{ mr: 1 }}/>
+          <SaveAltIcon sx={{ mr: 1 }} />
           Export to TSV
         </Fab>
       )}
@@ -98,11 +107,12 @@ const ReportsTableComponent = ({ rowData }: ReportsTableProps): JSX.Element => {
         }}
         onGridReady={onGridReady}
         onGridSizeChanged={onGridSizeChanged}
+        onRowDoubleClicked={handleOnRowDoubleClicked}
         noRowsOverlayComponent="NoRowsOverlay"
         pagination
         paginationAutoPageSize
         rowData={rowData}
-        rowSelection="single" 
+        rowSelection="single"
       />
     </div>
   );

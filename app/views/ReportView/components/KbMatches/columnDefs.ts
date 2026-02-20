@@ -71,10 +71,16 @@ const columnDefs: ColDef[] = [
     tooltipValueGetter: basicTooltipValueGetter,
   },
   {
-    headerName: 'PMID',
+    headerName: 'External Source',
     colId: 'reference',
     field: 'reference',
-    cellRendererFramework: ArrayCell('reference', true),
+    valueGetter: (params) => {
+      const { data: { externalSource, externalStatementId, reference } } = params;
+      return externalSource === 'clinicaltrials.gov'
+        ? externalStatementId
+        : reference;
+    },
+    cellRendererFramework: ArrayCell('reference', true, true),
     hide: false,
     maxWidth: 300,
     tooltipComponent: 'ToolTip',

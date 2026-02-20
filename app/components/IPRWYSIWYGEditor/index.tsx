@@ -1,6 +1,8 @@
 import React, {
   forwardRef, useCallback, useEffect,
+  useImperativeHandle,
   useMemo,
+  useState,
 } from 'react';
 import {
   Button,
@@ -24,11 +26,26 @@ import {
   Code,
   FormatBold, FormatClear, FormatItalic, FormatListBulleted, FormatListNumbered, FormatQuote, FormatStrikethrough, FormatUnderlined, Redo, Undo,
 } from '@mui/icons-material';
+import { Prompt } from 'react-router-dom';
 
 const extensions = [
   StarterKit,
   Underline,
 ];
+
+const usePageLeaveWarning = (enabled) => {
+  const handler = (e) => {
+    e.preventDefault();
+    e.returnValue = ''; // Required for Chrome
+    return '';
+  };
+  useEffect(() => {
+    if (!enabled) return undefined;
+
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [enabled]);
+};
 
 const MenuBarButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
   (props, ref) => <ToggleButton ref={ref} {...props} size="small" />,
@@ -166,6 +183,10 @@ const MenuBar = ({
 };
 
 type IPRWYSIWYGEditorProps = {
+  /**
+   * Prompts a confirm popup when user is middle of editing, but navigates away
+   */
+  alertLeave?: boolean;
   text: string;
   isOpen: boolean;
   // Returns null if nothing is edited
@@ -174,16 +195,27 @@ type IPRWYSIWYGEditorProps = {
   title?: string;
 };
 
-const IPRWYSIWYGEditor = ({
+const IPRWYSIWYGEditor = forwardRef(({
+  alertLeave = false,
   text,
   isOpen,
   onClose,
   onSave,
   title = 'IPR WYSIWYG Editor',
-}: IPRWYSIWYGEditorProps): JSX.Element => {
+}: IPRWYSIWYGEditorProps, editorRef): JSX.Element => {
+  const [isDirty, setIsDirty] = useState<boolean>(false);
+
+  const shouldWarnWhenUseLeave = alertLeave && isOpen && isDirty;
+  usePageLeaveWarning(shouldWarnWhenUseLeave);
+
   const editor = useEditor({
     extensions,
+    onUpdate: () => {
+      setIsDirty(true);
+    },
   });
+
+  useImperativeHandle(editorRef, () => ({ editor, isDirty, setIsDirty }), [editor, isDirty, setIsDirty]);
 
   useEffect(() => {
     if (editor && text) {
@@ -195,18 +227,21 @@ const IPRWYSIWYGEditor = ({
     if (editor) {
       onClose(editor.isEmpty ? '' : editor.getHTML());
     }
+    setIsDirty(false);
   }, [editor, onClose]);
 
   const handleOnSave = useCallback(() => {
     if (editor) {
       onSave(editor.isEmpty ? '' : editor.getHTML());
     }
+    setIsDirty(false);
   }, [editor, onSave]);
 
   const handleOnClose = useCallback(() => {
-    onClose(null);
     // Reset the editor text, since we don't deal with the state in React
     editor.commands.setContent(text);
+    onClose(null);
+    setIsDirty(false);
   }, [onClose, editor, text]);
 
   const saveButton = useMemo(() => {
@@ -217,20 +252,26 @@ const IPRWYSIWYGEditor = ({
   }, [onSave, handleOnSave]);
 
   return (
-    <Dialog fullWidth maxWidth="lg" open={isOpen}>
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContent>
-        <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
-        <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleOnClose}>Close</Button>
-        {saveButton}
-        <Button color="secondary" onClick={handleOnSaveClose}>Save and Close</Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      <Dialog fullWidth maxWidth="lg" open={isOpen}>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogContent>
+          <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
+          <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleOnClose}>Close</Button>
+          {saveButton}
+          <Button color="secondary" onClick={handleOnSaveClose}>Save and Close</Button>
+        </DialogActions>
+      </Dialog>
+      <Prompt
+        when={shouldWarnWhenUseLeave}
+        message="You have unsaved changes. Leave anyway?"
+      />
+    </>
   );
-};
+});
 
 export default IPRWYSIWYGEditor;
 export { IPRWYSIWYGEditorProps, MenuBar };

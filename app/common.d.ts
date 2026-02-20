@@ -44,6 +44,7 @@ type RecordDefaults = {
   ident: string;
   updatedAt: string | null;
   createdAt: string | null;
+  deletedAt: string | null;
 };
 
 type UserGroupMemberType = {
@@ -158,6 +159,8 @@ type VariantTypeMap<T extends AnyVariantType> = {
   'tmb': TmburType;
   'sigv': SignatureVariantType;
 }[T];
+
+type AnyVariant = VariantTypeMap[keyof VariantTypeMap];
 
 type RapidReportTableTagKey =
   | 'therapeutic'
@@ -420,6 +423,7 @@ export {
   VariantTextType,
   UserType,
   TemplateType,
+  AnyVariant,
   AnyVariantType,
   GroupType,
   UserProjectsType,

@@ -1,31 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from '@/services/api';
-import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import searchReportsColumns from '@/utils/searchReportsColumns';
 import searchColumnDefs from '@/components/ReportsTable/searchColumnDefs';
+import { useQuery } from 'react-query';
+import { ReportType } from '@/context/ReportContext';
+import useSearchParams from '@/hooks/useSearchParams';
+import { SearchParamsType } from '@/context/SearchParamsContext';
+import { CircularProgress } from '@mui/material';
 
 import '../ReportsView/index.scss';
 import './index.scss';
+import { ErrorMixin } from '@/services/errors/errors';
 
-type ReportsSearchViewProps = WithLoadingInjectedProps;
-
-const ReportsSearchView = ({
-  isLoading,
-  setIsLoading,
-}: ReportsSearchViewProps): JSX.Element => {
+/**
+ * Report table containing all searched reports
+ */
+const ReportsSearchView = (): JSX.Element => {
   const { search } = useLocation();
-  const searchParams = decodeURIComponent(search);
-  const [rowData, setRowData] = useState([]);
+  const { searchParams, setSearchParams } = useSearchParams();
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const { reports } = await api.get(`/reports${searchParams}`).request();
+  const searchParamsUrl = useMemo(() => decodeURIComponent(search), [search]);
 
-        setRowData(reports.map((report) => {
+  const parseSearchParamsFromUrl = (paramsUrl: string) => {
+    const params: SearchParamsType[] = [];
+    const regex = /\[([^|]+)\|([^|]+)\|([^]+?)\]/g;
+    let match = [];
+
+    // eslint-disable-next-line no-cond-assign
+    while ((match = regex.exec(paramsUrl)) !== null) {
+      params.push({
+        category: match[1],
+        keyword: match[2],
+        threshold: match[3],
+      });
+    }
+
+    return params;
+  };
+
+  const { data: reportsData, isFetching: isApiLoading } = useQuery(
+    `/reports${searchParamsUrl}`,
+    async ({ queryKey: [route] }) => api.get(route).request(),
+    {
+      staleTime: 0,
+      enabled: Boolean(searchParamsUrl),
+      select: (response) => {
+        const reports = response.reports.map((report: ReportType) => {
           const [analyst] = report.users
             .filter((u) => u.role === 'analyst' && !u.deletedAt)
             .map((u) => u.user);
@@ -38,38 +61,46 @@ const ReportsSearchView = ({
             .filter((u) => u.role === 'bioinformatician')
             .map((u) => u.user);
 
-          const reportData = report;
+          const cleanedReport = report;
 
-          if (!report.patientInformation) {
-            reportData.patientInformation = {};
+          if (!cleanedReport.patientInformation) {
+            cleanedReport.patientInformation = null;
           }
 
           return (
-            searchReportsColumns(reportData, analyst, reviewer, bioinformatician)
+            searchReportsColumns(cleanedReport, analyst, reviewer, bioinformatician)
           );
-        }));
-      } catch (err) {
-        snackbar.error(`Network error: ${err}`);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getData();
-  }, [search, setIsLoading]);
+        });
+        return reports;
+      },
+      onSettled: () => {
+        // Re-populating context using url without having to store search params in local storage
+        if (!searchParams || !searchParams.length) {
+          setSearchParams(parseSearchParamsFromUrl(searchParamsUrl));
+        }
+      },
+      onError: (err: ErrorMixin) => {
+        snackbar.error(`API error: ${err.message}`);
+      },
+    },
+  );
 
-  if (isLoading) { return null; }
+  if (isApiLoading) {
+    return <div className="centered"><CircularProgress /></div>;
+  }
 
   return (
     <div className="reports-table">
       <DataTable
-        rowData={rowData}
+        rowData={reportsData}
         columnDefs={searchColumnDefs}
         titleText="Matched Reports"
         isFullLength
         isSearch
+        isApiLoading={isApiLoading}
       />
     </div>
   );
 };
 
-export default withLoading(ReportsSearchView);
+export default ReportsSearchView;

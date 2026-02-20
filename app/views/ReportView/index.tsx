@@ -8,7 +8,7 @@ import {
   Switch, Route, useRouteMatch, useParams, useHistory,
 } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-
+import { Typography } from '@mui/material';
 import { SecurityContext } from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
@@ -59,6 +59,7 @@ const ReportView = (): JSX.Element => {
   const [visibleSections, setVisibleSections] = useState([]);
   const [isProbe, setIsProbe] = useState(false);
   const [isSigned, setIsSigned] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!report) {
@@ -74,9 +75,11 @@ const ReportView = (): JSX.Element => {
           }
           const template = templatesResp.find((templ) => templ.name === resp.template.name);
           setVisibleSections(template?.sections);
-        } catch (getReportErr) {
-          snackbar.error(`Cannot access report ${params.ident}, reason: ${getReportErr?.message} `);
-          history.push('/reports');
+        } catch (err) {
+          const message = `Cannot access report ${params.ident}: ${err?.content?.error?.message}. Redirecting to Reports view.`;
+          snackbar.error(message);
+          setError(message);
+          setTimeout(() => history.push('/reports'), 3000);
         }
       };
 
@@ -89,12 +92,14 @@ const ReportView = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       if (unreviewedStates.includes(report.state) && !unreviewedAccess) {
-        snackbar.error('User does not have access to this report; it is unreviewed');
-        history.push('/reports');
+        const message = 'User does not have access to this report; it is unreviewed';
+        snackbar.error(message);
+        setError(message);
       }
       if (nonproductionStates.includes(report.state) && !nonproductionAccess) {
-        snackbar.error('User does not have access to this report; it is nonproduction');
-        history.push('/reports');
+        const message = 'User does not have access to this report; it is nonproduction';
+        snackbar.error(message);
+        setError(message);
       }
     }
   }, [report, unreviewedAccess, unreviewedStates, nonproductionAccess, nonproductionStates, history]);
@@ -135,9 +140,26 @@ const ReportView = (): JSX.Element => {
       canEdit, report, setReport,
     });
   }, [report, setReport, adminAccess, reportEditAccess, userIdent]);
+
   const isSignedValue = useMemo(() => ({ isSigned, setIsSigned }), [isSigned, setIsSigned]);
 
-  if (!report) { return null; }
+  if (!report && error) {
+    return (
+      <div>
+        {error ? (
+          <div className="error-centered">
+            <Typography color="error" gutterBottom variant="h2">Error: Cannot access report</Typography>
+            <Typography paragraph>An error occurred while accessing the report. please logout and try again or contact your administrator if the problem persists</Typography>
+            <Typography paragraph>{error}</Typography>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (!reportValue) {
+    return null;
+  }
 
   return (
     <ReportContext.Provider value={reportValue}>
@@ -148,10 +170,10 @@ const ReportView = (): JSX.Element => {
           <div className="report__content-container">
             {Boolean(report) && (
               <ReportToolbar
-                diagnosis={report.patientInformation.diagnosis}
-                patientId={report.patientId}
-                type={report.template.name}
-                state={report.state}
+                diagnosis={report?.patientInformation?.diagnosis}
+                patientId={report?.patientId}
+                type={report?.template.name}
+                state={report?.state}
                 isSidebarVisible={isSidebarVisible}
                 onSidebarToggle={setIsSidebarVisible}
               />
