@@ -5,7 +5,7 @@ import {
   CircularProgress,
   Button,
 } from '@mui/material';
-import { ReportType } from '@/context/ReportContext';
+import { ReportType } from '@/common';
 
 import './index.scss';
 import { useDebounce } from 'use-debounce';

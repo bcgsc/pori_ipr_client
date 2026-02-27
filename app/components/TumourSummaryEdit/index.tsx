@@ -22,7 +22,7 @@ import AsyncButton from '@/components/AsyncButton';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import './index.scss';
-import { ReportType } from '@/context/ReportContext';
+import { ReportType } from '@/common';
 import {
   ImmuneType, MicrobialType, MsiType, MutationBurdenType, TmburType,
 } from '@/common';
@@ -91,8 +91,8 @@ const TumourSummaryEdit = ({
       // Note: filter out any placeholder 'none's, it gives a false positive to the front-end code
       setNewMicrobialData(
         cloneDeep(microbial).filter(
-          ({ species }) => species.toLowerCase() !== 'none'
-        )
+          ({ species }) => species.toLowerCase() !== 'none',
+        ),
       );
     }
   }, [microbial]);
@@ -153,7 +153,7 @@ const TumourSummaryEdit = ({
       });
     }
   }, [msi]);
-  
+
   const handleReportChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
@@ -237,6 +237,10 @@ const TumourSummaryEdit = ({
   }, []);
 
   const handleClose = useCallback(async (isSaved) => {
+    if (!isSaved) {
+      onEditClose(false);
+      return undefined;
+    }
     let callSet = null;
     if (!!newTmburMutData?.adjustedTmb && !newTmburMutData?.adjustedTmbComment) {
       snackbar.warning('Please add a comment on the adjusted TMB');
@@ -339,71 +343,60 @@ const TumourSummaryEdit = ({
         try {
           await callSet.request();
 
-          let microbialResp = null;
-          let immuneResp = null;
-          let tmburMutResp = null;
-          let msiResp = null;
-          let mutationBurdenResp = null;
-          let reportResp = null;
-
           if (microbialDirty) {
-            microbialResp = await api.get(`/reports/${report.ident}/summary/microbial`).request();
+            queryClient.refetchQueries({
+              queryKey: ['report', report.ident, 'microbial-summary'],
+            });
           }
+
           if (tCellCd8Dirty) {
-            immuneResp = await api.get(`/reports/${report.ident}/immune-cell-types`).request();
+            queryClient.refetchQueries({
+              queryKey: ['report', report.ident, 'immune-cell-types'],
+            });
           }
+
           if (tmburMutDirty) {
-            tmburMutResp = await api.get(`/reports/${report.ident}/tmbur-mutation-burden`).request();
+            queryClient.refetchQueries({
+              queryKey: ['report', report.ident, 'tmbur-mutation-burden'],
+            });
           }
+
           if (msiDirty) {
-            msiResp = await api.get(`/reports/${report.ident}/msi`).request();
+            queryClient.refetchQueries({
+              queryKey: ['report', report.ident, 'msi'],
+            });
           }
+
           if (mutationBurdenDirty) {
-            mutationBurdenResp = await api.get(`/reports/${report.ident}/mutation-burden`).request();
+            queryClient.refetchQueries({
+              queryKey: ['report', report.ident, 'mutation-burden'],
+            });
           }
+
           if (reportDirty) {
-            reportResp = await api.get(`/reports/${report.ident}`).request();
+            queryClient.refetchQueries({
+              queryKey: ['report', report.ident],
+            });
           }
+
+          // Always refetch comparators and signatures
+          queryClient.refetchQueries({
+            queryKey: ['report', report.ident, 'comparators'],
+          });
+
+          queryClient.refetchQueries({
+            queryKey: ['report', report.ident, 'signatures'],
+          });
 
           snackbar.success('Successfully updated Tumour Summary');
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/summary/microbial`]
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/comparators`]
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/mutation-signatures`]
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/mutation-burden`]
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/immune-cell-types`]
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/msi`]
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/tmbur-mutation-burden`]
-          });
-          onEditClose(
-            true,
-            microbialDirty ? microbialResp : null,
-            reportDirty ? reportResp : null,
-            tCellCd8Dirty ? immuneResp.find(({ cellType }) => cellType === 'T cells CD8') : null,
-            mutationBurdenDirty ? mutationBurdenResp.find((mb) => mb.role === 'primary') : null,
-            tmburMutDirty ? tmburMutResp : null,
-            msiDirty ? msiResp : null,
-          );
+
+          onEditClose(true);
         } catch (callSetError) {
           snackbar.error(`Error updating Tumour Summary: ${callSetError?.message}`);
         } finally {
           setIsApiCalling(false);
         }
       }
-    } else {
-      onEditClose(false);
     }
     return () => callSet.abort();
   }, [
@@ -805,8 +798,6 @@ const TumourSummaryEdit = ({
       />
     </>
   ), [
-    newTmburMutData?.genomeSnvTmb,
-    newTmburMutData?.genomeIndelTmb,
     newTmburMutData?.adjustedTmb,
     newTmburMutData?.adjustedTmbComment,
     newTmburMutData?.tmbHidden,
@@ -817,7 +808,8 @@ const TumourSummaryEdit = ({
 
   const msiSection = useMemo(() => (
     <>
-      {msi && 
+      {msi
+        && (
         <TextField
           className="tumour-dialog__number-field"
           label="MSI Score"
@@ -827,9 +819,10 @@ const TumourSummaryEdit = ({
           variant="outlined"
           fullWidth
           type="number"
-        /> 
-      }
-      {!msi && tmburMutBur &&
+        />
+        )}
+      {!msi && tmburMutBur
+        && (
         <TextField
           className="tumour-dialog__number-field"
           label="MSI Score"
@@ -840,9 +833,11 @@ const TumourSummaryEdit = ({
           fullWidth
           type="number"
         />
-      }
+        )}
     </>
   ), [
+    msi,
+    tmburMutBur,
     newMsiData?.score,
     newTmburMutData?.msiScore,
     handleMsiScoreChange,

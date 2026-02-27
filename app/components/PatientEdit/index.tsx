@@ -17,7 +17,7 @@ import AsyncButton from '@/components/AsyncButton';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import './index.scss';
-import { ReportType } from '@/context/ReportContext';
+import { ReportType } from '@/common';
 
 const PatientEditField = ({
   value, onChange, label, name,
