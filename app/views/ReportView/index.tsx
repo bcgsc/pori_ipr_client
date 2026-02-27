@@ -202,9 +202,9 @@ const ReportView = (): JSX.Element => {
                     render={(routeProps) => (
                       <Summary
                         {...routeProps}
-                        templateName={report.template.name}
+                        templateName={contextReport.template.name}
                         isPrint={false}
-                        report={report}
+                        report={contextReport}
                         canEdit={reportValue.canEdit}
                         visibleSections={visibleSections}
                       />
@@ -217,7 +217,7 @@ const ReportView = (): JSX.Element => {
                     <AnalystComments
                       {...routeProps}
                       print={false}
-                      report={report}
+                      report={contextReport}
                       canEdit={reportValue.canEdit}
                       setIsSigned={setIsSigned}
                       isSigned={isSigned}
@@ -239,13 +239,13 @@ const ReportView = (): JSX.Element => {
                 />
                 <Route
                   render={(routeProps) => (
-                    <Discussion {...routeProps} print={false} report={report} canEdit={reportValue.canEdit} />
+                    <Discussion {...routeProps} print={false} report={contextReport} canEdit={reportValue.canEdit} />
                   )}
                   path={`${path}/discussion`}
                 />
                 <Route
                   render={(routeProps) => (
-                    <Microbial {...routeProps} print={false} report={report} canEdit={reportValue.canEdit} />
+                    <Microbial {...routeProps} print={false} report={contextReport} canEdit={reportValue.canEdit} />
                   )}
                   path={`${path}/microbial`}
                 />
@@ -269,19 +269,19 @@ const ReportView = (): JSX.Element => {
                 />
                 <Route
                   render={(routeProps) => (
-                    <SmallMutations {...routeProps} print={false} theme={theme} report={report} canEdit={reportValue.canEdit} />
+                    <SmallMutations {...routeProps} print={false} theme={theme} report={contextReport} canEdit={reportValue.canEdit} />
                   )}
                   path={`${path}/small-mutations`}
                 />
                 <Route
                   render={(routeProps) => (
-                    <CopyNumber {...routeProps} print={false} theme={theme} report={report} canEdit={reportValue.canEdit} />
+                    <CopyNumber {...routeProps} print={false} theme={theme} report={contextReport} canEdit={reportValue.canEdit} />
                   )}
                   path={`${path}/copy-number`}
                 />
                 <Route
                   render={(routeProps) => (
-                    <StructuralVariants {...routeProps} print={false} theme={theme} report={report} canEdit={reportValue.canEdit} />
+                    <StructuralVariants {...routeProps} print={false} theme={theme} report={contextReport} canEdit={reportValue.canEdit} />
                   )}
                   path={`${path}/structural-variants`}
                 />
@@ -305,7 +305,7 @@ const ReportView = (): JSX.Element => {
                 </Route>
                 <Route
                   render={(routeProps) => (
-                    <Appendices {...routeProps} isPrint={false} theme={theme} isProbe={isProbe} report={report} />
+                    <Appendices {...routeProps} isPrint={false} theme={theme} isProbe={isProbe} report={contextReport} />
                   )}
                   path={`${path}/appendices`}
                 />
@@ -328,7 +328,7 @@ const ReportView = (): JSX.Element => {
                             {...routeProps}
                             print={false}
                             token={value.authorizationToken}
-                            report={report}
+                            report={contextReport}
                             canEdit={reportValue.canEdit}
                           />
                         )}
@@ -340,7 +340,7 @@ const ReportView = (): JSX.Element => {
                             {...routeProps}
                             print={false}
                             token={value.authorizationToken}
-                            report={report}
+                            report={contextReport}
                             canEdit={reportValue.canEdit}
                           />
                         )}
