@@ -12,12 +12,15 @@ import { Typography } from '@mui/material';
 import { SecurityContext } from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
-import ReportContext, { ReportType } from '@/context/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
-import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import useResource from '@/hooks/useResource';
 import useSecurity from '@/hooks/useSecurity';
+import { useReport, useReportSignatures, useTemplatesAll } from '@/queries/get';
+import { ReportType, TemplateType } from '@/common';
+import { SignatureType } from '@/components/SignatureCard';
+
 import Summary from './components/Summary';
 import allSections from './sections';
 import './index.scss';
@@ -54,38 +57,61 @@ const ReportView = (): JSX.Element => {
   } = useResource();
   const { userDetails: { ident: userIdent } } = useSecurity();
 
-  const [report, setReport] = useState<ReportType>(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [visibleSections, setVisibleSections] = useState([]);
-  const [isProbe, setIsProbe] = useState(false);
+  const [reportTemplateName, setReportTemplateName] = useState('');
   const [isSigned, setIsSigned] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!report) {
-      const getReport = async () => {
-        try {
-          const resp = await api.get(`/reports/${params.ident}`).request();
-          const templatesResp = await api.get('/templates').request();
-          setReport(resp);
-          if (resp.template.name === 'probe') {
-            setIsProbe(true);
-          } else {
-            setIsProbe(false);
-          }
-          const template = templatesResp.find((templ) => templ.name === resp.template.name);
-          setVisibleSections(template?.sections);
-        } catch (err) {
-          const message = `Cannot access report ${params.ident}: ${err?.content?.error?.message}. Redirecting to Reports view.`;
-          snackbar.error(message);
-          setError(message);
-          setTimeout(() => history.push('/reports'), 3000);
-        }
-      };
+  const { data: report, refetch } = useReport<ReportType>(
+    params.ident,
+    {
+      staleTime: Infinity,
+      enabled: Boolean(params.ident),
+      onError: (err) => {
+        const message = `Cannot access report ${params.ident}, reason: ${err?.message}`;
+        snackbar.error(message);
+        setError(message);
+      },
+      onSuccess: (rpt) => {
+        setReportTemplateName(rpt.template.name);
+      },
+    },
+  );
 
-      getReport();
+  const { data: templates } = useTemplatesAll<TemplateType[]>({
+    staleTime: Infinity,
+    enabled: Boolean(report?.template?.name),
+    onError: (err) => {
+      console.error('Unable to obtain templates', err);
+    },
+  });
+
+  useReportSignatures<SignatureType>(
+    report?.ident,
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report?.ident),
+      onError: (signaturesErr) => {
+        console.error('Unable to obtain report signatures', signaturesErr);
+      },
+      onSuccess: (sigs) => {
+        if (!sigs) { return; }
+        if (sigs.reviewerSignature?.ident || sigs.authorSignature?.ident) {
+          setIsSigned(true);
+        }
+      },
+    },
+  );
+
+  useEffect(() => {
+    if (templates) {
+      const targetTemplate = templates.find(
+        ({ name }) => name === reportTemplateName,
+      );
+      setVisibleSections(targetTemplate?.sections);
     }
-  }, [history, params.ident, report]);
+  }, [templates, reportTemplateName]);
 
   /* External users should only be allowed to access certain states
      Send them back to /reports if the report state isn't allowed */
@@ -104,21 +130,6 @@ const ReportView = (): JSX.Element => {
     }
   }, [report, unreviewedAccess, unreviewedStates, nonproductionAccess, nonproductionStates, history]);
 
-  useEffect(() => {
-    if (report) {
-      const getSignatures = async () => {
-        const req = api.get(`/reports/${params.ident}/signatures`);
-        const resp = await req.request();
-        if (resp && ((resp.reviewerSignature && resp.reviewerSignature.ident)
-          || (resp.authorSignature && resp.authorSignature.ident))) {
-          setIsSigned(true);
-        }
-      };
-
-      getSignatures();
-    }
-  }, [params.ident, report]);
-
   const reportValue = useMemo(() => {
     if (!report) { return null; }
     /**
@@ -131,15 +142,17 @@ const ReportView = (): JSX.Element => {
     if (!adminAccess && !reportEditAccess) {
       if (report.users && report.users.some(({ user: { ident: i } }) => i === userIdent)) {
         canEdit = true;
+      } else if ((report.state).toLocaleLowerCase() === 'completed') {
+        canEdit = false;
       } else {
         canEdit = false;
       }
     }
 
     return ({
-      canEdit, report, setReport,
+      canEdit, report, refetchReport: refetch, reportTemplateName,
     });
-  }, [report, setReport, adminAccess, reportEditAccess, userIdent]);
+  }, [report, reportTemplateName, adminAccess, reportEditAccess, userIdent, refetch]);
 
   const isSignedValue = useMemo(() => ({ isSigned, setIsSigned }), [isSigned, setIsSigned]);
 
@@ -157,9 +170,13 @@ const ReportView = (): JSX.Element => {
     );
   }
 
+  const isProbe = reportTemplateName === 'probe';
+
   if (!reportValue) {
     return null;
   }
+
+  const { report: contextReport } = reportValue;
 
   return (
     <ReportContext.Provider value={reportValue}>
@@ -168,12 +185,12 @@ const ReportView = (): JSX.Element => {
         <div id="alert-dialog" />
         <div className="report__container">
           <div className="report__content-container">
-            {Boolean(report) && (
+            {Boolean(contextReport) && (
               <ReportToolbar
-                diagnosis={report.patientInformation.diagnosis}
-                patientId={report.patientId}
-                type={report.template.name}
-                state={report.state}
+                diagnosis={contextReport.patientInformation.diagnosis}
+                patientId={contextReport.patientId}
+                type={contextReport.template.name}
+                state={contextReport.state}
                 isSidebarVisible={isSidebarVisible}
                 onSidebarToggle={setIsSidebarVisible}
               />

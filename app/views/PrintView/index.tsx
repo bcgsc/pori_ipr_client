@@ -10,8 +10,7 @@ import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
-import { ReportType } from '@/context/ReportContext/types';
-import { TemplateType } from '@/common';
+import { ReportType, TemplateType } from '@/common';
 import {
   REPORT_TYPE_TO_TITLE,
   REPORT_TYPE_TO_SUFFIX,

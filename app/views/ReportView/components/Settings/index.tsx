@@ -38,16 +38,8 @@ const Settings = ({
   isLoading,
   setIsLoading,
 }: SettingsProps): JSX.Element => {
-  const { report, canEdit: reportAllowEdit } = useReport();
+  const { report, canEdit } = useReport();
   const queryClient = useQueryClient();
-
-  /**
-   * If the report is completed, disable all fields except report state field on the front-end
-   */
-  let canEdit = reportAllowEdit;
-  if (report.state === 'completed') {
-    canEdit = false;
-  }
 
   const history = useHistory();
 
@@ -65,9 +57,13 @@ const Settings = ({
   const [showAddUserDialog, setShowAddUserDialog] = useState(false);
   const [showDeleteReportDialog, setShowDeleteReportDialog] = useState(false);
 
-  const { data: templates } = useTemplatesAll<TemplateType[]>({
-    onSettled: () => { setIsLoading(false); },
-  });
+  const { data: templates, isSuccess: isTemplatesSuccess } = useTemplatesAll<TemplateType[]>({});
+
+  useEffect(() => {
+    if (isTemplatesSuccess) {
+      setIsLoading(false);
+    }
+  }, [isTemplatesSuccess, setIsLoading]);
 
   const { mutate: deleteUser } = useMutation({
     mutationFn: (userIdent: string) => api.del(`/reports/${report.ident}/user/${userIdent}`, {}).request(),
@@ -228,7 +224,7 @@ const Settings = ({
               <FormControl variant="outlined">
                 <InputLabel id="settings-state">Report State</InputLabel>
                 <Select
-                  disabled={!reportAllowEdit}
+                  disabled={!canEdit}
                   labelId="settings-state"
                   label="Report State"
                   onChange={handleStateChange}
@@ -284,7 +280,7 @@ const Settings = ({
                 Delete Report
               </Button>
               <Button
-                disabled={!reportAllowEdit}
+                disabled={!canEdit}
                 color="secondary"
                 onClick={handleReportUpdate}
                 variant="outlined"
