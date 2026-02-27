@@ -2,6 +2,7 @@ import React, {
   useState, useEffect, useCallback,
 } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useMutation, useQueryClient } from 'react-query';
 import {
   Typography,
   TextField,
@@ -19,6 +20,10 @@ import useReport from '@/hooks/useReport';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { ReportType, TemplateType } from '@/common';
+import { queryKeys } from '@/queries/queryKeys';
+import { useTemplatesAll } from '@/queries/get';
+
 import ReportHistory from './components/ReportHistory';
 import AssociationCard from './components/AssociationCard';
 import AddUserCard from './components/AddUserCard';
@@ -27,21 +32,18 @@ import DeleteReportDialog from './components/DeleteReportDialog';
 
 import './index.scss';
 
-type SettingsProps = {
-  isProbe?: boolean;
-} & WithLoadingInjectedProps;
+type SettingsProps = WithLoadingInjectedProps;
 
 const Settings = ({
-  isProbe = false,
   isLoading,
   setIsLoading,
 }: SettingsProps): JSX.Element => {
-  const { report, setReport } = useReport();
-  const { canEdit: reportAllowEdit } = useReport();
+  const { report, canEdit: reportAllowEdit } = useReport();
+  const queryClient = useQueryClient();
 
   /**
- * If the report is completed, disable all fields except report state field on the front-end
- */
+   * If the report is completed, disable all fields except report state field on the front-end
+   */
   let canEdit = reportAllowEdit;
   if (report.state === 'completed') {
     canEdit = false;
@@ -49,8 +51,7 @@ const Settings = ({
 
   const history = useHistory();
 
-  const [templates, setTemplates] = useState([]);
-  const [selectedTemplate, setSelectedTemplate] = useState({ name: '', ident: '' });
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(null);
   const [selectedState, setSelectedState] = useState('');
   const [reportVersion, setReportVersion] = useState('');
   const [kbVersion, setKbVersion] = useState('');
@@ -64,25 +65,64 @@ const Settings = ({
   const [showAddUserDialog, setShowAddUserDialog] = useState(false);
   const [showDeleteReportDialog, setShowDeleteReportDialog] = useState(false);
 
-  useEffect(() => {
-    if (report) {
-      const getData = async () => {
-        try {
-          const templateResp = await api.get('/templates').request();
-          setTemplates(templateResp);
-        } catch (err) {
-          snackbar.error(`Network error: ${err}`);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      getData();
-    }
-  }, [report, setIsLoading]);
+  const { data: templates } = useTemplatesAll<TemplateType[]>({
+    onSettled: () => { setIsLoading(false); },
+  });
+
+  const { mutate: deleteUser } = useMutation({
+    mutationFn: (userIdent: string) => api.del(`/reports/${report.ident}/user/${userIdent}`, {}).request(),
+    onMutate: () => { setIsLoading(true); },
+    onSuccess: (_, userIdent) => {
+      queryClient.setQueryData<ReportType>(
+        queryKeys.reports.report(report.ident),
+        (prev) => (prev
+          ? {
+            ...prev,
+            users: prev.users.filter(
+              (user) => user.ident !== userIdent,
+            ),
+          }
+          : prev),
+      );
+      setIsLoading(false);
+      snackbar.success('User removed');
+    },
+    onSettled: () => { setIsLoading(false); },
+    onError: (err) => {
+      snackbar.error(`Error removing user: ${err}`);
+    },
+  });
+
+  const { mutate: updateReport } = useMutation(
+    async (updateFields: {
+      template?: string;
+      state?: string;
+      reportVersion?: string;
+      kbVersion?: string;
+      expression_matrix?: string;
+    }) => {
+      if (!report) throw new Error('Report not loaded');
+      const updated = await api.put(`/reports/${report.ident}`, updateFields).request();
+      return updated;
+    },
+    {
+      onMutate: () => { setIsLoading(true); },
+      onSuccess: () => {
+        // Refetch all relevant report queries using Option 2 keys
+        queryClient.refetchQueries({ queryKey: queryKeys.reports.report(report.ident) });
+        setIsLoading(false);
+        snackbar.success('Settings saved');
+      },
+      onSettled: () => { setIsLoading(false); },
+      onError: (err: Error) => {
+        snackbar.error(`Error saving settings: ${err?.message || err}`);
+      },
+    },
+  );
 
   useEffect(() => {
     if (report) {
-      setSelectedTemplate(report.template);
+      setSelectedTemplate(report.template.ident);
       setSelectedState(report.state);
       setReportVersion(report.reportVersion);
       setKbVersion(report.kbVersion);
@@ -91,11 +131,8 @@ const Settings = ({
     }
   }, [report]);
 
-  const handleTemplateChange = (event: SelectChangeEvent<{
-    name: string;
-    ident: string;
-  }>) => {
-    setSelectedTemplate(event.target.value as { name: string; ident: string; });
+  const handleTemplateChange = (event: SelectChangeEvent<string>) => {
+    setSelectedTemplate(event.target.value);
   };
 
   const handleStateChange = (event: SelectChangeEvent<string>) => {
@@ -103,20 +140,8 @@ const Settings = ({
   };
 
   const handleUserDelete = useCallback(async (ident: string) => {
-    try {
-      await api.del(
-        `/reports/${report.ident}/user/${ident}`,
-        {},
-      ).request();
-      setReport((prevVal) => ({
-        ...prevVal,
-        users: prevVal.users.filter((user) => user.ident !== ident),
-      }));
-      snackbar.success('User removed');
-    } catch (err) {
-      snackbar.error(`Error removing user: ${err}`);
-    }
-  }, [report, setReport]);
+    deleteUser(ident);
+  }, [deleteUser]);
 
   const handleReportUpdate = useCallback(async () => {
     const updateFields: {
@@ -127,8 +152,8 @@ const Settings = ({
       expression_matrix?: string;
     } = {};
 
-    if (report.template !== selectedTemplate) {
-      updateFields.template = selectedTemplate.name;
+    if (report.template.ident !== selectedTemplate) {
+      updateFields.template = templates?.find((t) => t.ident === selectedTemplate)?.name;
     }
     if (report.state !== selectedState) {
       updateFields.state = selectedState;
@@ -142,18 +167,11 @@ const Settings = ({
     if (report.expression_matrix !== matrixVersion) {
       updateFields.expression_matrix = matrixVersion;
     }
-
-    try {
-      const newReport = await api.put(
-        `/reports/${report.ident}`,
-        updateFields,
-      ).request();
-      setReport(newReport);
-      snackbar.success('Settings saved');
-    } catch (err) {
-      snackbar.error(`Error saving settings: ${err}`);
-    }
-  }, [kbVersion, matrixVersion, report, reportVersion, selectedState, selectedTemplate, setReport]);
+    updateReport(updateFields);
+  }, [
+    report.template, report.state, report.reportVersion, report.kbVersion, report.expression_matrix,
+    selectedTemplate, selectedState, reportVersion, kbVersion, matrixVersion, updateReport, templates,
+  ]);
 
   const handleReportDelete = useCallback(async (isDeleted: boolean) => {
     if (!isDeleted) {
@@ -196,12 +214,12 @@ const Settings = ({
                   labelId="settings-template"
                   label="Report Template"
                   onChange={handleTemplateChange}
-                  renderValue={(value) => value.name}
+                  renderValue={(ident) => templates?.find((t) => t.ident === ident)?.name ?? ''}
                   value={selectedTemplate}
                   variant="outlined"
                 >
-                  {templates.map((template) => (
-                    <MenuItem key={template.ident} value={template}>
+                  {templates?.map((template) => (
+                    <MenuItem key={template.ident} value={template.ident}>
                       {template.name}
                     </MenuItem>
                   ))}
@@ -281,36 +299,34 @@ const Settings = ({
           </div>
           <Divider />
           <ReportHistory />
-          {
-            <>
-              <Divider />
-              <div className="settings__user-associations">
-                <Typography variant="h3">Assigned Users</Typography>
-                <div className="settings__user-association-cards">
-                  {report.users.length ? (
-                    <>
-                      {report.users.sort(usersSort).map((user) => (
-                        <AssociationCard
-                          key={user.ident}
-                          user={user}
-                          onDelete={handleUserDelete}
-                        />
-                      ))}
-                    </>
-                  ) : (
-                    <div className="settings__user-associations--none">
-                      <Typography align="center">No users have been assigned</Typography>
-                    </div>
-                  )}
-                </div>
-                <AddUserCard onAdd={() => setShowAddUserDialog(true)} />
-                <AddUserDialog
-                  isOpen={showAddUserDialog}
-                  onAdd={() => setShowAddUserDialog(false)}
-                />
+          <>
+            <Divider />
+            <div className="settings__user-associations">
+              <Typography variant="h3">Assigned Users</Typography>
+              <div className="settings__user-association-cards">
+                {report.users.length ? (
+                  <>
+                    {report.users.sort(usersSort).map((user) => (
+                      <AssociationCard
+                        key={user.ident}
+                        user={user}
+                        onDelete={handleUserDelete}
+                      />
+                    ))}
+                  </>
+                ) : (
+                  <div className="settings__user-associations--none">
+                    <Typography align="center">No users have been assigned</Typography>
+                  </div>
+                )}
               </div>
-            </>
-          }
+              <AddUserCard onAdd={() => setShowAddUserDialog(true)} />
+              <AddUserDialog
+                isOpen={showAddUserDialog}
+                onAdd={() => setShowAddUserDialog(false)}
+              />
+            </div>
+          </>
         </>
       )}
     </div>
