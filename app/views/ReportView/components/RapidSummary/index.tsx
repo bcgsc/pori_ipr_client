@@ -386,14 +386,16 @@ const RapidSummary = ({
 
       let tmbDisplayValue = 'No data available';
 
+      if (genomeTmb) {
+        tmbDisplayValue = genomeTmb.toFixed(2);
+      }
+
       if (tmburMutBur) {
         const { tmbHidden, adjustedTmb } = tmburMutBur;
         if (tmbHidden) {
           tmbDisplayValue = null;
         } else if (adjustedTmb != null) {
           tmbDisplayValue = adjustedTmb.toFixed(2);
-        } else if (genomeTmb) {
-          tmbDisplayValue = genomeTmb.toFixed(2);
         }
       }
 
