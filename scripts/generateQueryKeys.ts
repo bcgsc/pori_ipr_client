@@ -1,5 +1,8 @@
 /* eslint-disable no-console */
 import fs from 'fs';
+import https from 'https';
+import http from 'http';
+import { URL } from 'url';
 import path from 'path';
 
 const DEFAULT_SWAGGER_URL = 'https://iprdev-api.bcgsc.ca/api/spec.json';
@@ -70,15 +73,27 @@ const buildFile = (grouped: Record<string, string[][]>): string => {
   return output;
 };
 
+const fetchJson = (urlStr: string): Promise<unknown> => new Promise((resolve, reject) => {
+  const parsedUrl = new URL(urlStr);
+  const client = parsedUrl.protocol === 'https:' ? https : http;
+  client.get(urlStr, (res) => {
+    if (res.statusCode !== 200) {
+      reject(new Error(`Failed to fetch spec (${res.statusCode})`));
+      res.resume();
+      return;
+    }
+    let data = '';
+    res.on('data', (chunk) => { data += chunk; });
+    res.on('end', () => {
+      try { resolve(JSON.parse(data)); } catch (e) { reject(e); }
+    });
+  }).on('error', reject);
+});
+
 const run = async (): Promise<void> => {
   console.log(`Fetching OpenAPI spec from ${SPEC_URL}...`);
 
-  const res = await fetch(SPEC_URL);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch spec (${res.status})`);
-  }
-
-  const spec = await res.json() as { paths?: Record<string, unknown> };
+  const spec = await fetchJson(SPEC_URL) as { paths?: Record<string, unknown> };
 
   if (!spec.paths) {
     throw new Error('Invalid spec: missing paths');
