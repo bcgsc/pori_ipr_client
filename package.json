@@ -30,7 +30,7 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "lint": "eslint app --config .eslintrc.js --ext .ts,.tsx,.jsx,.js --quiet",
-    "postinstall": "patch-package && npm run generate:querykeys && npm run generate:queryhooks",
+    "postinstall": "patch-package",
     "generate:querykeys": "tsx scripts/generateQueryKeys.ts && eslint app/queries/queryKeys.ts --config .eslintrc.js --fix",
     "generate:queryhooks": "tsx scripts/generateQueryHooks.ts && eslint app/queries/get.ts --config .eslintrc.js --fix"
   },
