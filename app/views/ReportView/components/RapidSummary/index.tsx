@@ -384,6 +384,10 @@ const RapidSummary = ({
       const { genomeTmb } = report;
       
       let tmbDisplayValue = 'No data available';
+
+      if (genomeTmb) {
+        tmbDisplayValue = genomeTmb.toFixed(2);
+      }
       
       if (tmburMutBur) {
         const { tmbHidden, adjustedTmb } = tmburMutBur;
@@ -391,11 +395,9 @@ const RapidSummary = ({
           tmbDisplayValue = null;
         } else if (adjustedTmb != null) {
           tmbDisplayValue = adjustedTmb.toFixed(2);
-        } else if (genomeTmb) {
-          tmbDisplayValue = genomeTmb.toFixed(2);
         }
       }
-
+      
       return ([
         {
           term: 'Pathology Tumour Content',
