@@ -66,7 +66,7 @@ const ReportView = (): JSX.Element => {
   const { data: report, refetch } = useReport<ReportType>(
     params.ident,
     {
-      staleTime: Infinity,
+      cacheTime: 0,
       enabled: Boolean(params.ident),
       onError: (err) => {
         const message = `Cannot access report ${params.ident}, reason: ${err?.message}`;
@@ -90,7 +90,7 @@ const ReportView = (): JSX.Element => {
   useReportSignatures<SignatureType>(
     report?.ident,
     {
-      staleTime: Infinity,
+      cacheTime: 0,
       enabled: Boolean(report?.ident),
       onError: (signaturesErr) => {
         console.error('Unable to obtain report signatures', signaturesErr);

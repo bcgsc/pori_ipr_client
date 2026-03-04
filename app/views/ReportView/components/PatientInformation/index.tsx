@@ -105,7 +105,6 @@ const PatientInformation = ({
 
     if (newReportData) {
       refetchReport();
-      // setReport((oldReport) => ({ ...oldReport, ...newReportData }));
     }
 
     if (newPatientData) {

@@ -6,7 +6,6 @@ import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Previewer } from 'pagedjs';
 
-import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
@@ -17,6 +16,7 @@ import {
 } from '@/constants';
 import getImageDataURI from '@/utils/getImageDataURI';
 import { SummaryProps } from '@/commonComponents';
+import { useReport, useTemplatesAll } from '@/queries/get';
 
 import SplitRowSpanHandler from '@/handlers/splitRowSpanHandler';
 import TableOverflowHandler from '@/handlers/tableOverflowHandler';
@@ -152,7 +152,12 @@ const Print = ({
     ident: string;
   }>();
   const theme = useTheme();
-  const [report, setReport] = useState<ReportType>(null);
+  const { data: report, refetch: refetchReport } = useReport<ReportType>(params.ident);
+  const { data: templates } = useTemplatesAll<TemplateType[]>();
+  const template = useMemo(
+    () => templates?.find((temp) => temp.name === report?.template?.name) ?? null,
+    [templates, report],
+  );
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
     summary: false,
     alterations: false,
@@ -164,26 +169,8 @@ const Print = ({
     slides: false,
     appendices: false,
   });
-  const [template, setTemplate] = useState<TemplateType>(null);
   const [isPrintDialogShown, setIsPrintDialogShown] = useState(false);
-  const paged = useMemo(() => {
-    const p = new Previewer();
-    return p;
-  }, []);
-
-  useEffect(() => {
-    if (!report) {
-      const getReport = async () => {
-        const reportResp = await api.get(`/reports/${params.ident}`, {}).request();
-        const templatesResp = await api.get('/templates', {}).request();
-
-        setTemplate(templatesResp.find((temp) => temp.name === reportResp.template.name));
-        setReport(reportResp);
-      };
-
-      getReport();
-    }
-  }, [params.ident, report]);
+  const paged = useMemo(() => new Previewer(), []);
 
   const renderSections = useMemo(() => {
     if (report && template) { // TODO remove checks on 'summary' and template name once data updated in prod
@@ -233,9 +220,10 @@ const Print = ({
 
   const reportContextValue = useMemo(() => ({
     canEdit: false,
-    report,
-    setReport,
-  }), [report, setReport]);
+    report: report ?? null,
+    reportTemplateName: report?.template?.name ?? '',
+    refetchReport,
+  }), [report, refetchReport]);
 
   useEffect(() => {
     const allSectionsLoaded = Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section));
