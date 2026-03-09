@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext, useCallback, useMemo,
+  useEffect, useState, useContext, useCallback, useMemo, useRef,
 } from 'react';
 import {
   Typography,
@@ -11,6 +11,8 @@ import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import useReport from '@/hooks/useReport';
+import useSignatures from '@/hooks/useSignatures';
+import { useSignatureTypes, DEFAULT_SIGNATURE_TYPES } from '@/hooks/useSignatureTypes';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext, { ReportType } from '@/context/ReportContext';
 import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
@@ -21,13 +23,10 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 
 import './index.scss';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
+import { Editor } from '@tiptap/react';
 
-const DEFAULT_SIGNATURE_TYPES = [
-  { signatureType: 'author' },
-  { signatureType: 'reviewer' },
-  { signatureType: 'creator' },
-] as SignatureUserType[];
+const AUTO_SAVE_INTERVAL = 30 * 1000; // Autosaves per 30s
 
 const useComments = (report?: ReportType) => useQuery({
   queryKey: ['report-comments', report?.ident],
@@ -40,21 +39,6 @@ const useComments = (report?: ReportType) => useQuery({
         allowedAttributes: { '*': ['style'] },
       })
       : null;
-  },
-});
-
-const useSignatures = (report?: ReportType) => useQuery({
-  queryKey: ['report-signatures', report?.ident],
-  enabled: Boolean(report),
-  queryFn: () => api.get(`/reports/${report!.ident}/signatures`).request(),
-});
-
-const useSignatureTypes = (report?: ReportType) => useQuery({
-  queryKey: ['signature-types', report?.template.ident],
-  enabled: Boolean(report?.template?.ident),
-  queryFn: async () => {
-    const resp = await api.get(`/templates/${report!.template.ident}/signature-types`).request();
-    return resp?.length === 0 ? DEFAULT_SIGNATURE_TYPES : resp;
   },
 });
 
@@ -76,6 +60,7 @@ const AnalystComments = ({
   const { canEdit } = useReport();
   const { showConfirmDialog } = useConfirmDialog();
 
+  const editorRef = useRef<{ editor: Editor, isDirty: boolean | null }>();
   const [comments, setComments] = useState('');
   const [signatures, setSignatures] = useState<SignatureType>();
   const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>(DEFAULT_SIGNATURE_TYPES);
@@ -84,6 +69,7 @@ const AnalystComments = ({
   const commentsQuery = useComments(report);
   const signaturesQuery = useSignatures(report);
   const signatureTypesQuery = useSignatureTypes(report);
+  const queryClient = useQueryClient();
 
   const isApiLoading = commentsQuery.isLoading || signaturesQuery.isLoading || signatureTypesQuery.isLoading;
   const isError = commentsQuery.isError || signaturesQuery.isError || signatureTypesQuery.isError;
@@ -94,7 +80,9 @@ const AnalystComments = ({
         commentsQuery.error || signaturesQuery.error || signatureTypesQuery.error
       }`);
     }
+  }, [commentsQuery.error, isError, signatureTypesQuery.error, signaturesQuery.error]);
 
+  useEffect(() => {
     if (!isApiLoading) {
       setComments(commentsQuery.data);
       setSignatures(signaturesQuery.data);
@@ -102,12 +90,40 @@ const AnalystComments = ({
       setIsComponentLoading(false);
       if (loadedDispatch) loadedDispatch({ type: 'analyst-comments' });
     }
-  }, [setIsComponentLoading, isApiLoading, isError, commentsQuery.data, signaturesQuery.data, signatureTypesQuery.data, loadedDispatch, commentsQuery.error, signaturesQuery.error, signatureTypesQuery.error]);
+  }, [setIsComponentLoading, isApiLoading, isError, commentsQuery.data, signaturesQuery.data, signatureTypesQuery.data, loadedDispatch]);
 
-  const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
+  // Try to load previously unsaved analyst comments
+  useEffect(() => {
+    if (isEditorOpen && !isApiLoading) {
+      const savedComments = localStorage.getItem(`${report.ident}-analyst_comments`);
+      if (savedComments) {
+        snackbar.info('Loaded previously unsaved analyst comments, please remember to save.');
+        localStorage.removeItem(`${report.ident}-analyst_comments`);
+        editorRef.current.editor.commands.setContent(savedComments);
+      }
+    }
+  }, [isApiLoading, isEditorOpen, report.ident]);
+
+  // Intervally saves in-edit analyst comments
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const editor = editorRef.current?.editor;
+      const isDirty = editorRef.current?.isDirty;
+      if (!editor) return;
+
+      // When user is actively editing
+      if (isEditorOpen && isDirty) {
+        localStorage.setItem(`${report.ident}-analyst_comments`, editorRef.current.editor.getHTML());
+      }
+    }, AUTO_SAVE_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [isEditorOpen, report.ident]);
+
+  const handleSign = useCallback(async (signed: boolean) => {
     setIsSigned(signed);
-    setSignatures(updatedSignature);
-  }, [setIsSigned]);
+    await queryClient.refetchQueries({ queryKey: ['report-signatures', report?.ident] });
+  }, [report?.ident, setIsSigned, queryClient]);
 
   const handleEditorStart = () => {
     setIsEditorOpen(true);
@@ -145,6 +161,7 @@ const AnalystComments = ({
         if (isSigned) {
           const isResolved = await showConfirmDialog(commentCall, true);
           if (isResolved) {
+            await queryClient.refetchQueries({ queryKey: ['report-comments', report?.ident] });
             snackbar.success('Comment updated');
           }
         } else {
@@ -157,6 +174,7 @@ const AnalystComments = ({
               },
             }),
           );
+          await queryClient.refetchQueries({ queryKey: ['report-comments', report?.ident] });
           snackbar.success('Comment updated');
           if (shouldCloseEditor) {
             setIsEditorOpen(false);
@@ -166,17 +184,25 @@ const AnalystComments = ({
         snackbar.error(`Error saving edit: ${e.message ?? e}`);
       }
     },
-    [report, isSigned, showConfirmDialog],
+    [report, isSigned, showConfirmDialog, queryClient],
   );
 
   const handleEditorSave = useCallback(
-    (editedComments?: string) => handleEditorAction(editedComments, false),
-    [handleEditorAction],
+    (editedComments?: string) => {
+      // Clear sessionStoarge because the user already saved
+      localStorage.removeItem(`${report.ident}-analyst_comments`);
+      return handleEditorAction(editedComments, false);
+    },
+    [handleEditorAction, report.ident],
   );
 
   const handleEditorClose = useCallback(
-    (editedComments?: string) => handleEditorAction(editedComments, true),
-    [handleEditorAction],
+    (editedComments?: string) => {
+      // Clear sessionStoarge because the user decided to not save
+      localStorage.removeItem(`${report.ident}-analyst_comments`);
+      return handleEditorAction(editedComments, true);
+    },
+    [handleEditorAction, report.ident],
   );
 
   const signatureSection = useMemo(() => signatureTypes.map((sigType) => {
@@ -192,9 +218,10 @@ const AnalystComments = ({
         title={capitalize(title)}
         type={sigType.signatureType}
         isPrint={isPrint}
+        disabled={isApiLoading}
       />
     );
-  }), [isPrint, handleSign, signatures, signatureTypes]);
+  }), [signatureTypes, isPrint, handleSign, signatures, isApiLoading]);
 
   return (
     <div className={isPrint ? 'analyst-comments--print' : 'analyst-comments'}>
@@ -221,6 +248,8 @@ const AnalystComments = ({
                 <EditIcon />
               </Fab>
               <IPRWYSIWYGEditor
+                ref={editorRef}
+                alertLeave
                 isOpen={isEditorOpen}
                 text={comments}
                 title="Edit Comments"
@@ -232,6 +261,7 @@ const AnalystComments = ({
           {comments ? (
             <div
               className="analyst-comments__user-text inner-html"
+              // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{ __html: comments }}
             />
           ) : (

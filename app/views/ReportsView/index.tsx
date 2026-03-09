@@ -8,9 +8,14 @@ import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';
 import { useQuery } from 'react-query';
+import { CircularProgress } from '@mui/material';
+
+import './index.scss';
 
 const useReports = (states) => useQuery({
   queryKey: ['reports'],
+  staleTime: Infinity,
+  cacheTime: Infinity,
   queryFn: async () => {
     const resp = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
     return resp;
@@ -67,7 +72,14 @@ const ReportsView = (): JSX.Element => {
   }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData, isApiLoading, reportsData]);
 
   return (
-    <ReportsTableComponent rowData={rowData} />
+    <>
+      {isApiLoading && 
+        <div className="circular-progress">
+          <CircularProgress />
+        </div>
+      }
+      {rowData && <ReportsTableComponent rowData={rowData} />}
+    </>
   );
 };
 

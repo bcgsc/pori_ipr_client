@@ -30,7 +30,10 @@ import TumourSummary from '../TumourSummary';
 import {
   defaultComparator, defaultImmune, defaultMsi, defaultMutationBurden, defaultTmbur,
 } from './defaultStates';
+
 import { HlaType } from '../Immune/types';
+import { useQuery } from 'react-query';
+
 
 type GenomicSummaryProps = {
   loadedDispatch?: SummaryProps['loadedDispatch'];
@@ -57,7 +60,6 @@ const GenomicSummary = ({
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>(defaultMutationBurden);
   const [msi, setMsi] = useState<MsiType>(defaultMsi);
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>(defaultTmbur);
-
   const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>(defaultImmune);
   const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>(defaultComparator);
@@ -66,8 +68,125 @@ const GenomicSummary = ({
 
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
 
+  const {data: microbialData, isError: microbialError} = useQuery(
+    `/reports/${report.ident}/summary/microbial`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response;
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('microbial call error');
+      },
+    },
+  );
+
+  const {data: primaryComparatorData, isError: primaryComparatorError} = useQuery(
+    `/reports/${report.ident}/comparators`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)');
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('comparators call error');
+      },
+    },
+  );
+
+  const {data: signaturesData, isError: signaturesError} = useQuery(
+    `/reports/${report.ident}/mutation-signatures`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response;
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('mutation signatures call error');
+      },
+    },
+  );
+
+  const {data: tCellCd8Data, isError: tCellCd8Error} = useQuery(
+    `/reports/${report.ident}/immune-cell-types`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response.find(({ cellType }) => cellType === 'T cells CD8');
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('immune cell types call error');
+      },
+    },
+  );
+
+  const {data: primaryBurdenData, isError: primaryBurdenError} = useQuery(
+    `/reports/${report.ident}/mutation-burden`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response.find((entry: Record<string, unknown>) => entry.role === 'primary');
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('mutation burden call error');
+      },
+    },
+  );
+
+  const {data: msiData, isError: msiError} = useQuery(
+    `/reports/${report.ident}/msi`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        if (response.length) {
+          return response[0];
+        } else {
+          return null;
+        }
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('msi call error');
+      },
+    },
+  );
+
+  const {data: tmburMutBurData, isError: tmburMutBurError} = useQuery(
+    `/reports/${report.ident}/tmbur-mutation-burden`,
+    async ({ queryKey: [route] }) => await api.get(route).request(),
+    {
+      staleTime: Infinity,
+      enabled: Boolean(report),
+      select: (response) => {
+        return response;
+      },
+      onError: () => {
+        // eslint-disable-next-line no-console
+        console.error('tmbur mutation burden call error');
+      },
+    },
+  );
+
   useEffect(() => {
     if (report) {
+<<<<<<< HEAD
       const getData = async () => {
         try {
           const apiCalls = new ApiCallSet([
@@ -144,8 +263,46 @@ const GenomicSummary = ({
       };
 
       getData();
+=======
+      if (microbialData) {
+        setMicrobial(microbialData);
+      }
+      if (primaryComparatorData) {
+        setPrimaryComparator(primaryComparatorData);
+      }
+      if (signaturesData) {
+        setSignatures(signaturesData);
+      }
+      if (tCellCd8Data) {
+        setTCellCd8(tCellCd8Data);
+      }
+      if (primaryBurdenData) {
+        setPrimaryBurden(primaryBurdenData);
+      }
+      if (msiData) {
+        setMsi(msiData);
+      }
+      if (tmburMutBurData) {
+        setTmburMutBur(tmburMutBurData);
+      }
+      if (loadedDispatch) {
+        loadedDispatch({ type: 'summary-genomic' });
+      }
+      setIsLoading(false);
+>>>>>>> 80ec1897027dc312ae033b0797ca42dc222ded4b
     }
-  }, [loadedDispatch, report, setIsLoading, isPrint]);
+  }, [
+    report,
+    microbialData,
+    primaryComparatorData,
+    signaturesData,
+    tCellCd8Data,
+    primaryBurdenData,
+    msiData,
+    tmburMutBurData,
+    loadedDispatch,
+    setIsLoading,
+  ]);
 
   useEffect(() => {
     if (report) {
@@ -196,16 +353,20 @@ const GenomicSummary = ({
       setTumourSummary(() => {
         // Check if genomeTmb (new version) exists
         const { genomeTmb } = report;
-        const {
-          tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb,
-        } = tmburMutBur;
-        let tmbDisplayValue = genomeTmb?.toFixed(2) || (genomeSnvTmb + genomeIndelTmb).toFixed(2);
 
-        // AdjustedTmb will still overwrite
-        if (tmbHidden) {
-          tmbDisplayValue = null;
-        } else if (adjustedTmb != null) {
-          tmbDisplayValue = adjustedTmb.toFixed(2);
+        let tmbDisplayValue = 'No data available';
+
+        if (tmburMutBur) {
+          const { tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb } = tmburMutBur;
+          if (tmbHidden) {
+            tmbDisplayValue = null;
+          } else if (adjustedTmb != null) {
+            tmbDisplayValue = adjustedTmb.toFixed(2);
+          } else if (genomeTmb) {
+            tmbDisplayValue = genomeTmb.toFixed(2);
+          } else if (genomeSnvTmb && genomeIndelTmb) {
+            tmbDisplayValue = (genomeSnvTmb + genomeIndelTmb).toFixed(2);
+          }
         }
 
         return ([
@@ -247,6 +408,12 @@ const GenomicSummary = ({
           {
             term: `HR Deficiency${isPrint ? '*' : ''}`,
             value: null,
+          },
+          {
+            term: 'HRD Score',
+            value: report.hrdScore !== null
+              ? `${report.hrdScore}`
+              : null,
           },
           {
             term: `SV Burden${isPrint ? '*' : ''}`,
@@ -316,7 +483,7 @@ const GenomicSummary = ({
     }
   }, [setReport]);
 
-  if (isLoading || !report || !tumourSummary) {
+  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError) {
     return null;
   }
 
@@ -354,7 +521,7 @@ const GenomicSummary = ({
                 printVersion={printVersion}
                 report={report}
                 tCellCd8={tCellCd8}
-                tmburMutBur={tmburMutBur}
+                tmburMutBur={tmburMutBur ?? null}
                 tumourSummary={tumourSummary}
               />
             )}
@@ -390,7 +557,7 @@ const GenomicSummary = ({
               printVersion={printVersion}
               report={report}
               tCellCd8={tCellCd8}
-              tmburMutBur={tmburMutBur}
+              tmburMutBur={tmburMutBur ?? null}
               tumourSummary={tumourSummary}
             />
           )}

@@ -1,6 +1,11 @@
 @import '../../styles/variables';
 @import '../../styles/theme.module';
 
+.print,
+.condensedLayout {
+  max-width: $print-width;
+}
+
 .print {
   &__logo {
     width: 100%;
@@ -11,8 +16,7 @@
     flex: 1 1 100%;
     justify-content: space-between;
     width: 100%;
-    padding: 1mm 0;
-    margin: 4mm 0;
+    padding: 5mm 0;
   }
 
   &__header-left {
@@ -39,8 +43,7 @@
   &__headers {
     display: flex;
     width: 100%;
-    padding: 1mm 0;
-    margin: 4mm 0;
+    padding: 5mm 0;
   }
 
   &__header-left {

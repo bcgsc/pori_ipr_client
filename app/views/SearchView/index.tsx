@@ -20,6 +20,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import SearchDescription from './components/SearchDescription';
 import React, { useCallback, useEffect, useState } from 'react';
+import { SearchParamsType } from '@/context/SearchParamsContext';
+import useSearchParams from '@/hooks/useSearchParams';
+
 import {
   MIN_KEYWORD_LENGTH,
   DEFAULT_THRESHOLD,
@@ -27,12 +30,7 @@ import {
   NUMPAD_ENTER_KEY,
   BACKSPACE_KEY,
 } from '@/constants';
-
-type SearchKeyType = {
-  category: string;
-  keyword: string;
-  threshold: number;
-};
+import { useQueryClient } from 'react-query';
 
 // Custom css to alter select dropdown border radius
 const useStyles = makeStyles({
@@ -47,7 +45,7 @@ const useStyles = makeStyles({
 });
 
 const SearchView = () => {
-  const [searchKey, setSearchKey] = useState<SearchKeyType[]>([]);
+  const { searchParams, setSearchParams } = useSearchParams();
   const [searchThreshold, setSearchThreshold] = useState(DEFAULT_THRESHOLD);
   const [searchCategory, setSearchCategory] = useState('keyVariant');
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -56,20 +54,32 @@ const SearchView = () => {
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const customCss = useStyles();
+  const queryClient = useQueryClient();
 
   // Calls submit function
   const handleSubmit = useCallback(() => {
-    if (!searchKey) {
+    if (!searchParams) {
       setSearchErrorMessage('Please enter a search keyword');
       return;
     }
+    // DEVSU-2824 postponing MSI status search until hardcoded thresholds are reworked
+    // // Validate that msi status input are either MSI or MSS
+    // if (searchParams.some((param) => param.category === 'msiStatus')) {
+    //   if (searchParams.some((param) => param.keyword.toLowerCase() !== 'msi') && searchParams.some((param) => param.keyword.toLowerCase() !== 'mss')) {
+    //     setSearchErrorMessage('Please enter valid status (MSI or MSS)');
+    //     return;
+    //   }
+    // }
     const searchUrl: string[] = [];
-    searchKey.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
+    searchParams.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
     history.push({
       pathname: '/search/result',
       search: encodeURIComponent(`searchParams=${searchUrl.join('')}`),
     });
-  }, [searchKey, history, encodeURIComponent]);
+    queryClient.refetchQueries({
+      queryKey: [`/reports?searchParams=${searchUrl.join('')}`]
+    });
+  }, [searchParams, history, queryClient]);
 
   // Validate threshold value
   useEffect(() => {
@@ -113,33 +123,36 @@ const SearchView = () => {
     setSearchErrorMessage('');
     if (code === BACKSPACE_KEY && !target.value) {
       // Delete the last entry
-      setSearchKey((currData) => currData.slice(0, -1));
+      setSearchParams((currData) => currData.slice(0, -1));
     }
     if (code === ENTER_KEY || code === NUMPAD_ENTER_KEY) {
       // Allow user to press enter to submit search when there is no new character being entered for new keyword
-      if (searchKey.length > 0 && !target.value) {
+      if (searchParams.length > 0 && !target.value) {
         setSearchErrorMessage('');
-        const searchUrl: string[] = [];
-        searchKey.forEach((key) => searchUrl.push(`[${key.category}|${key.keyword}|${key.threshold}]`));
-        history.push({
-          pathname: '/search/result',
-          search: encodeURIComponent(`searchParams=${searchUrl.join('')}`),
-        });
+        handleSubmit();
+        return;
       }
       // Validate value
-      if ((searchKey.length < 1 && target.value.length < MIN_KEYWORD_LENGTH ) || (searchKey.length > 0 && target.value.length > 0 && target.value.length < MIN_KEYWORD_LENGTH)) {
+      if (
+        (searchParams.length < 1 && target.value.length < MIN_KEYWORD_LENGTH) ||
+        (searchParams.length > 0 && target.value.length > 0 && target.value.length < MIN_KEYWORD_LENGTH)
+      ) {
         setSearchErrorMessage(`Must have 1 or more terms of at least ${MIN_KEYWORD_LENGTH} characters`);
-      } else {
-        setSearchErrorMessage('');
-        // Add new entry
-        setSearchKey((currData) => [...currData, {
+        return;
+      }
+      setSearchErrorMessage('');
+      // Add new entry
+      setSearchParams([
+        ...searchParams,
+        {
           category: searchCategory,
           keyword: searchKeyword,
           threshold: searchThreshold,
-        } as SearchKeyType]);
-      }
+        },
+      ]);
+      setSearchKeyword('');
     }
-  }, [searchKey, searchCategory, searchKeyword, searchThreshold]);
+  }, [searchParams, searchCategory, searchKeyword, searchThreshold]);
 
   const handleOpen = useCallback(() => {
     setShowDialog(true);
@@ -149,6 +162,15 @@ const SearchView = () => {
     setShowDialog(false);
   }, []);
 
+  const handleDeleteSearchKey = useCallback((idx) => {
+    setSearchParams((currData) => {
+      const nextData = [...currData];
+      nextData.splice(idx, 1);
+      return nextData;
+    });
+    setSearchErrorMessage('');
+  }, []);
+  
   return (
     <div className="search-view">
       <div className="search-view__bar">
@@ -177,6 +199,8 @@ const SearchView = () => {
               <MenuItem value="therapeuticTarget">Therapeutic Target</MenuItem>
               <MenuItem value="smallMutation">Small Mutation</MenuItem>
               <MenuItem value="structuralVariant">Structural Variant</MenuItem>
+              <MenuItem value="mutationSignature">Mutation Signature</MenuItem>
+              {/* <MenuItem value="msiStatus">MSI Status</MenuItem> */}
             </Select>
           </FormControl>
         </div>
@@ -184,6 +208,7 @@ const SearchView = () => {
           <TextField
             InputLabelProps={{ shrink: true }}
             variant="outlined"
+            // disabled={searchCategory === 'msiStatus'}
             error={Boolean(thresholdErrorMessage)}
             onChange={handleThresholdChange}
             value={searchThreshold}
@@ -213,7 +238,7 @@ const SearchView = () => {
             multiple
             options={[]}
             freeSolo
-            value={searchKey}
+            value={searchParams}
             disableClearable
             sx={{
               '& fieldset': {
@@ -226,13 +251,14 @@ const SearchView = () => {
               width: '100%',
             }}
             limitTags={4}
-            renderTags={(value) => value.map(({ category, keyword, threshold }: SearchKeyType, index: number) => (
+            renderTags={(value) => value.map(({ category, keyword, threshold }: SearchParamsType, index: number) => (
               <Chip
                 variant="outlined"
                 // eslint-disable-next-line react/no-array-index-key
                 key={`${keyword}-${index}`}
                 label={`${category} | ${keyword} | ${threshold}`}
                 sx={{ marginRight: '5px' }}
+                onDelete={() => handleDeleteSearchKey(index)}
               />
             ))}
             renderInput={(params) => (
@@ -243,7 +269,7 @@ const SearchView = () => {
                 error={Boolean(searchErrorMessage)}
                 onChange={handleKeywordChange}
                 onKeyDown={handleKeyDown}
-                placeholder={searchKey.length < 1 ? 'After inputting a keyword, press enter to add search chip. Press backspace to delete.' : ''}
+                placeholder={searchParams.length < 1 ? 'After inputting a keyword, press enter to add search chip. Press backspace to delete.' : ''}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -254,7 +280,7 @@ const SearchView = () => {
                           color="primary"
                           size="large"
                           onClick={handleSubmit}
-                          disabled={searchKey.length < 1 || !!searchErrorMessage || !!thresholdErrorMessage}
+                          disabled={searchParams.length < 1 || !!searchErrorMessage || !!thresholdErrorMessage}
                           type="submit"
                           sx={{
                             display: 'flex',

@@ -55,6 +55,10 @@ const PatientInformation = ({
               value: formatDate(report.createdAt),
             },
             {
+              label: 'Biopsy Date',
+              value: report?.sampleInfo?.find((info) => info.sample === 'Tumour')?.collectionDate,
+            },
+            {
               label: 'Case Type',
               value: report.patientInformation.caseType,
             },
@@ -73,14 +77,6 @@ const PatientInformation = ({
             {
               label: 'Gender',
               value: report.patientInformation.gender,
-            },
-            {
-              label: 'Biopsy Collection Date',
-              value: report?.sampleInfo?.find((info) => info.sample === 'Tumour')?.collectionDate,
-            },
-            {
-              label: 'Biopsy Type',
-              value: report?.sampleInfo?.find((info) => info.sample === 'Tumour')?.biopsyType,
             },
           ]);
         } catch (err) {

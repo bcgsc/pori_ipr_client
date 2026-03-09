@@ -44,6 +44,7 @@ type RecordDefaults = {
   ident: string;
   updatedAt: string | null;
   createdAt: string | null;
+  deletedAt: string | null;
 };
 
 type UserGroupMemberType = {
@@ -159,6 +160,16 @@ type VariantTypeMap<T extends AnyVariantType> = {
   'sigv': SignatureVariantType;
 }[T];
 
+type AnyVariant = VariantTypeMap[keyof VariantTypeMap];
+
+type RapidReportTableTagKey =
+  | 'therapeutic'
+  | 'cancerRelevance'
+  | 'unknownSig'
+  | 'noTable';
+
+type RapidReportTableTag = Partial<Record<RapidReportTableTagKey, Partial<Record<AnyVariantType, string[]>>>>;
+
 type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
   kbMatchedStatements: KbMatchedStatementType[];
   kbStatementId: string;
@@ -178,12 +189,12 @@ type KbMatchedStatementType<T extends KbMatchType = KbMatchType> = {
   externalStatementId: string;
   inferred: boolean;
   iprEvidenceLevel: string;
-  kbData: {
+  kbData: Partial<{
     inferred: boolean;
     recruitment_status: string;
     kbmatchTag: string | null;
-    rapidReportTableTag: 'therapeutic' | 'cancerRelevance' | 'unknownSig' | 'noTable';
-  } | null;
+    rapidReportTableTag: RapidReportTableTag,
+  }> | null;
   kbMatches: T[];
   kbStatementId: string;
   matchedCancer: boolean;
@@ -412,6 +423,7 @@ export {
   VariantTextType,
   UserType,
   TemplateType,
+  AnyVariant,
   AnyVariantType,
   GroupType,
   UserProjectsType,

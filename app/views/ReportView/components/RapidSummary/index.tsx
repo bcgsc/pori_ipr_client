@@ -1,85 +1,151 @@
 import React, {
-  useState, useEffect, useContext, useCallback, useMemo,
+  useState, useEffect, useContext, useCallback, useMemo, useRef,
 } from 'react';
 import {
   Typography,
 } from '@mui/material';
-import DemoDescription from '@/components/DemoDescription';
+import {
+  UseQueryResult, useMutation, useQueries, useQuery, useQueryClient,
+} from 'react-query';
 
-import api, { ApiCallSet } from '@/services/api';
+import DemoDescription from '@/components/DemoDescription';
+import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
-import DataTable from '@/components/DataTable';
-import ReportContext from '@/context/ReportContext';
+import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
-import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
+import SignatureCard from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import capitalize from 'lodash/capitalize';
-import orderBy from 'lodash/orderBy';
 import getMostCurrentObj from '@/utils/getMostCurrentObj';
 import {
-  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, MsiType, KbMatchType,
+  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, MsiType, KbMatchType, KbMatchedStatementType,
+  RecordDefaults,
+  AnyVariant,
 } from '@/common';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
+import useSignatures from '@/hooks/useSignatures';
+import { useSignatureTypes } from '@/hooks/useSignatureTypes';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
 import { RapidVariantEditDialog, FIELDS } from './components/RapidVariantEditDialog';
 import { RapidVariantType } from './types';
-import { getVariantRelevanceDict } from './utils';
+import { RESTRICTED_RELEVANCE_LIST, getVariantRelevanceDict } from './utils';
 import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
 import './index.scss';
+import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
+import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
+
+const ANALYST_DISABLED = 'analyst disabled';
+
+enum RapidSummaryTable {
+  THERAPEUTIC_ASSOCIATION = 'therapeuticAssociation',
+  CANCER_RELEVANCE = 'cancerRelevance',
+  UNKNOWN_SIGNIFICANCE = 'unknownSignificance',
+}
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
 
   kbMatches.forEach(({ kbMatchedStatements }) => {
     for (const statement of kbMatchedStatements) {
-      if (!iprRelevanceDict[statement.iprEvidenceLevel]) {
-        iprRelevanceDict[statement.iprEvidenceLevel] = new Set();
+      if (statement.iprEvidenceLevel) {
+        if (!iprRelevanceDict[statement.iprEvidenceLevel]) {
+          iprRelevanceDict[statement.iprEvidenceLevel] = new Set();
+        }
+      } else if (!iprRelevanceDict[UNSPECIFIED_EVIDENCE_LEVEL]) {
+        iprRelevanceDict[UNSPECIFIED_EVIDENCE_LEVEL] = new Set();
       }
     }
   });
 
-  orderBy(
-    kbMatches,
-    ['iprEvidenceLevel', 'context'],
-  ).forEach(({ kbMatchedStatements }: KbMatchType) => {
+  kbMatches.forEach(({ kbMatchedStatements }: KbMatchType) => {
     // Remove square brackets and add to dictionary
     for (const statement of kbMatchedStatements) {
       if (statement.iprEvidenceLevel && statement.context) {
         iprRelevanceDict[statement.iprEvidenceLevel].add(statement.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+      } else if (statement.context) {
+        iprRelevanceDict[UNSPECIFIED_EVIDENCE_LEVEL].add(statement.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
       }
     }
   });
-
   return iprRelevanceDict;
 };
 
-const filterNoTable = (kbMatches: KbMatchType[]) => kbMatches.map(({ kbMatchedStatements, ...rest }) => ({
+const filterNoTableAndByRelevance = (
+  variantIdent: RecordDefaults['ident'], // todo add uuid format check
+  variantType: RapidVariantType['variantType'], // todo add enum check
+  kbMatches: KbMatchType[],
+  relevance: KbMatchedStatementType['relevance'],
+): KbMatchType[] => kbMatches.map(({ kbMatchedStatements, ...rest }) => ({
   ...rest,
-  kbMatchedStatements: kbMatchedStatements.filter(
-    ({ kbData }) => !kbData || kbData.rapidReportTableTag !== 'noTable',
-  ),
+  kbMatchedStatements: kbMatchedStatements
+    .filter(
+      ({ relevance: statementRelevance }) => statementRelevance === relevance,
+    )
+    .filter(
+      ({ kbData }) => {
+        if (!kbData) return true;
+        // check if statement is tagged with 'noTable' or a nontherapeutic table;
+        // if so, hide it, otherwise display
+
+        // get the current tag
+        // (using this tag as the default because an untagged stmt is treated the same way)
+        let currentTag = RapidSummaryTable.THERAPEUTIC_ASSOCIATION;
+        const rapidReportDict = kbData?.rapidReportTableTag || {};
+
+        if (Object.keys(rapidReportDict).length > 0) {
+          for (const key of Object.keys(rapidReportDict)) {
+            const variantTypesDict = rapidReportDict[key] || {};
+            const variantIdentList = variantType in variantTypesDict
+              ? variantTypesDict[variantType]
+              : [];
+            if (variantIdentList.includes(variantIdent)) {
+              currentTag = key as RapidSummaryTable;
+            }
+          }
+        }
+        if (currentTag === RapidSummaryTable.THERAPEUTIC_ASSOCIATION) {
+          return true;
+        }
+        return false;
+      },
+    ),
 }));
 
-const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(
-  getVariantRelevanceDict(variant.kbMatches),
-)
+const filterRestrictedRelevance = (
+  kbMatches: KbMatchType[],
+  restrictedRelList: KbMatchedStatementType['relevance'][] = RESTRICTED_RELEVANCE_LIST,
+) => kbMatches.map(({ kbMatchedStatements, ...rest }) => ({
+  ...rest,
+  kbMatchedStatements: kbMatchedStatements.filter(({ relevance: statementRelevance }) => !restrictedRelList.includes(statementRelevance)),
+}));
+
+type ProcessedTherapeuticAssociationRapidVariantType = RapidVariantType & {
+  potentialClinicalAssociation: string;
+  relevanceKey: string;
+};
+
+/**
+ * Splits variants data by relevance, adds extra fields for display purposes
+ * potentialClinicalAssociation - shows treatment list
+ * @param variant variant
+ * @returns processed variants with extra params
+ */
+const processPotentialClinicalAssociation = (variant: RapidVariantType): ProcessedTherapeuticAssociationRapidVariantType[] => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
-    const iprEvidenceDict = splitIprEvidenceLevels(filterNoTable(kbMatches));
-
-    const sortedIprKeys = Object.keys(iprEvidenceDict).sort(
-      (a, b) => a.localeCompare(b),
-    );
-
+    const filteredKbMatches = filterRestrictedRelevance(filterNoTableAndByRelevance(variant.ident, variant.variantType, kbMatches, relevanceKey));
+    const iprEvidenceDict = splitIprEvidenceLevels(filteredKbMatches);
+    const sortedIprKeys = Object.keys(iprEvidenceDict).sort((a, b) => a.localeCompare(b));
     const drugToLevel = new Map();
-
     for (const iprLevel of sortedIprKeys) {
       const drugs = iprEvidenceDict[iprLevel];
       for (const drug of drugs) {
@@ -88,7 +154,6 @@ const processPotentialClinicalAssociation = (variant: RapidVariantType) => Objec
         }
       }
     }
-
     const combinedDrugList = [...drugToLevel.entries()]
       .sort(([drugA, levelA], [drugB, levelB]) => {
         const levelCmp = levelA.localeCompare(levelB);
@@ -97,15 +162,16 @@ const processPotentialClinicalAssociation = (variant: RapidVariantType) => Objec
       })
       .map(([drug, level]) => `${drug} (${level})`)
       .join(', ');
-
     return ({
       ...variant,
       ident: `${variant.ident}-${relevanceKey}`,
-      potentialClinicalAssociation: `${relevanceKey} to ${combinedDrugList}`,
+      potentialClinicalAssociation: `${relevanceKey}${combinedDrugList ? ` to ${combinedDrugList}` : ''}`,
+      relevanceKey, // For filtering out relevance not wanted to be displayed
     });
-  });
+  })
+  .filter(({ relevanceKey }) => !RESTRICTED_RELEVANCE_LIST.includes(relevanceKey));
 
-const splitVariantsByRelevance = (data: RapidVariantType[]): RapidVariantType[] => {
+const splitVariantsByRelevance = (data: RapidVariantType[]): ProcessedTherapeuticAssociationRapidVariantType[] => {
   const returnData = [];
   data.forEach((variant) => {
     returnData.push(...processPotentialClinicalAssociation(variant));
@@ -138,163 +204,145 @@ const RapidSummary = ({
   printVersion = null,
 }: RapidSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { setIsSigned } = useContext(ConfirmContext);
+  const { isSigned, setIsSigned } = useContext(ConfirmContext);
+  const { data: signatures } = useSignatures(report);
+  const { data: signatureTypes } = useSignatureTypes(report);
   let { canEdit } = useReport();
   if (report.state === 'completed') {
     canEdit = false;
   }
+  const { showConfirmDialog } = useConfirmDialog();
+  const queryClient = useQueryClient();
 
-  const [signatures, setSignatures] = useState<SignatureType | null>();
-  const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<RapidVariantType[] | null>();
-  const [cancerRelevanceResults, setCancerRelevanceResults] = useState<RapidVariantType[] | null>();
-  const [unknownSignificanceResults, setUnknownSignificanceResults] = useState<RapidVariantType[] | null>();
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
-  const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
-  const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
-  const [msi, setMsi] = useState<MsiType>();
-  const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
-  const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
-  const [editData, setEditData] = useState();
-
-  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>([]);
+  const [editData, setEditData] = useState<RapidVariantType>();
   const [showMatchedTumourEditDialog, setShowMatchedTumourEditDialog] = useState(false);
 
+  const therapeuticAssocTableRef = useRef<DataTableImperativeHandle>();
+  const cancerRelTableRef = useRef<DataTableImperativeHandle>();
+
+  const reportIdent = report?.ident;
+
+  const queries = useQueries<
+  [
+    UseQueryResult<RapidVariantType[]>,
+    UseQueryResult<RapidVariantType[]>,
+    UseQueryResult<RapidVariantType[]>,
+    UseQueryResult<TmburType>,
+    UseQueryResult<MsiType>,
+    UseQueryResult<ImmuneType | undefined>,
+    UseQueryResult<MicrobialType[]>,
+  ]
+  >(
+    [
+      {
+        queryKey: [RapidSummaryTable.THERAPEUTIC_ASSOCIATION, reportIdent],
+        queryFn: (): Promise<RapidVariantType[]> => api
+          .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.THERAPEUTIC_ASSOCIATION}`)
+          .request(),
+        select: (rows: RapidVariantType[]) => splitVariantsByRelevance(rows),
+        enabled: !!reportIdent,
+        onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
+        refetchOnMount: 'always',
+      },
+
+      {
+        queryKey: [RapidSummaryTable.CANCER_RELEVANCE, reportIdent],
+        queryFn: (): Promise<RapidVariantType[]> => api
+          .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.CANCER_RELEVANCE}`)
+          .request(),
+        enabled: !!reportIdent,
+        onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
+        refetchOnMount: 'always',
+      },
+
+      {
+        queryKey: [RapidSummaryTable.UNKNOWN_SIGNIFICANCE, reportIdent],
+        queryFn: (): Promise<RapidVariantType[]> => api
+          .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.UNKNOWN_SIGNIFICANCE}`)
+          .request(),
+        enabled: !!reportIdent,
+        select: (data: RapidVariantType[]) => deepRemoveDuplicate(data),
+        onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
+        refetchOnMount: 'always',
+      },
+
+      {
+        queryKey: ['tmbur', reportIdent],
+        queryFn: (): Promise<TmburType> => api.get(`/reports/${reportIdent}/tmbur-mutation-burden`).request(),
+        enabled: !!reportIdent,
+        retry: 1,
+        onError: !isPrint ? (err) => {
+          // Silent fail not found
+          if (err.content.status !== 404) {
+            snackbar.error(err.content?.error?.message);
+          }
+        } : undefined,
+        refetchOnMount: 'always',
+      },
+
+      {
+        queryKey: ['msi', reportIdent],
+        queryFn: (): Promise<MsiType[]> => api.get(`/reports/${reportIdent}/msi`).request(),
+        select: (rows: MsiType[]) => getMostCurrentObj(rows),
+        enabled: !!reportIdent,
+        onError: (err) => (!isPrint && err.content?.status !== 404
+          ? snackbar.error(err.content?.error?.message)
+          : undefined),
+        refetchOnMount: 'always',
+      },
+
+      {
+        queryKey: ['immune', reportIdent],
+        queryFn: (): Promise<ImmuneType[]> => api.get(`/reports/${reportIdent}/immune-cell-types`).request(),
+        select: (rows: ImmuneType[]) => rows.find(({ cellType }) => cellType === 'T cells CD8'),
+        enabled: !!reportIdent,
+        onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
+        refetchOnMount: 'always',
+      },
+
+      {
+        queryKey: ['microbial', reportIdent],
+        queryFn: (): Promise<MicrobialType[]> => api.get(`/reports/${reportIdent}/summary/microbial`).request(),
+        enabled: !!reportIdent,
+        onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
+        refetchOnMount: 'always',
+      },
+    ],
+  );
+
+  const {
+    data: primaryBurden,
+  } = useQuery<MutationBurdenType | null>({
+    queryKey: ['primaryBurden', reportIdent],
+    enabled: !!reportIdent,
+    queryFn: async () => {
+      const resp = await api.get(`/reports/${reportIdent}/mutation-burden`).request();
+      if (!resp.length || resp[0].qualitySvCount == null) return null;
+      return resp[0];
+    },
+    onError: (err: Error) => console.error('mutation-burden error', err?.message),
+    refetchOnMount: 'always',
+  });
+
+  const [
+    { data: therapeuticAssociationResults, isSuccess: isTherapAssocSuccess },
+    { data: cancerRelevanceResults, isSuccess: isCancerRelSuccess },
+    { data: unknownSignificanceResults, isSuccess: isUnknownSigSuccess },
+    { data: tmburMutBur },
+    { data: msi, isSuccess: isMsiSuccess },
+    { data: tCellCd8, isSuccess: isTCellCd8Success },
+    { data: microbial, isSuccess: isMicrobialSuccess },
+  ] = queries;
+
+  const isLoadingFromQueries = queries.some((q) => q.isLoading);
+  const rapidSummarySectionsLoaded = isTherapAssocSuccess && isCancerRelSuccess && isUnknownSigSuccess && isMsiSuccess && isTCellCd8Success && isMicrobialSuccess;
+
   useEffect(() => {
-    let apiCalls = null;
-    if (report?.ident) {
-      const getData = async () => {
-        try {
-          apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/signatures`),
-            api.get(`/reports/${report.ident}/variants?rapidTable=therapeuticAssociation`),
-            api.get(`/reports/${report.ident}/variants?rapidTable=cancerRelevance`),
-            api.get(`/reports/${report.ident}/variants?rapidTable=unknownSignificance`),
-            api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
-            api.get(`/reports/${report.ident}/msi`),
-            api.get(`/reports/${report.ident}/immune-cell-types`),
-            api.get(`/reports/${report.ident}/summary/microbial`),
-            api.get(`/templates/${report.template.ident}/signature-types`),
-          ]);
-          const [
-            signaturesResp,
-            therapeuticAssociationResp,
-            cancerRelevanceResp,
-            unknownSignificanceResp,
-            tmBurdenResp,
-            msiResp,
-            immuneResp,
-            microbialResp,
-            signatureTypesResp,
-          ] = await apiCalls.request(true) as [
-            PromiseSettledResult<SignatureType>,
-            PromiseSettledResult<RapidVariantType[]>,
-            PromiseSettledResult<RapidVariantType[]>,
-            PromiseSettledResult<RapidVariantType[]>,
-            PromiseSettledResult<TmburType>,
-            PromiseSettledResult<MsiType[]>,
-            PromiseSettledResult<ImmuneType[]>,
-            PromiseSettledResult<MicrobialType[]>,
-            PromiseSettledResult<SignatureUserType[]>,
-          ];
-
-          try {
-            const burdenResp = await api.get(`/reports/${report.ident}/mutation-burden`).request();
-            if (burdenResp[0].qualitySvCount == null) {
-              setPrimaryBurden(null);
-            } else {
-              setPrimaryBurden(burdenResp[0]);
-            }
-          } catch (e) {
-            // mutation burden does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
-            // eslint-disable-next-line no-console
-            console.error('mutation-burden call error', e?.message);
-          }
-
-          if (signaturesResp.status === 'fulfilled') {
-            setSignatures(signaturesResp.value);
-          } else if (!isPrint) {
-            snackbar.error(signaturesResp.reason?.content?.error?.message);
-          }
-
-          if (therapeuticAssociationResp.status === 'fulfilled') {
-            setTherapeuticAssociationResults(
-              splitVariantsByRelevance(therapeuticAssociationResp.value),
-            );
-          } else if (!isPrint) {
-            snackbar.error(therapeuticAssociationResp.reason?.content?.error?.message);
-          }
-
-          if (cancerRelevanceResp.status === 'fulfilled') {
-            setCancerRelevanceResults(cancerRelevanceResp.value);
-          } else if (!isPrint) {
-            snackbar.error(cancerRelevanceResp.reason?.content?.error?.message);
-          }
-
-          if (unknownSignificanceResp.status === 'fulfilled') {
-            setUnknownSignificanceResults(unknownSignificanceResp.value);
-          } else if (!isPrint) {
-            snackbar.error(unknownSignificanceResp.reason?.content?.error?.message);
-          }
-
-          if (tmBurdenResp.status === 'fulfilled') {
-            setTmburMutBur(tmBurdenResp.value);
-          } else if (!isPrint && tmBurdenResp.reason.content?.status !== 404) {
-            snackbar.error(tmBurdenResp.reason?.content?.error?.message);
-          }
-
-          if (msiResp.status === 'fulfilled') {
-            const msiVal = getMostCurrentObj(msiResp.value);
-            setMsi(msiVal);
-          } else if (!isPrint && msiResp.reason.content?.status !== 404) {
-            snackbar.error(msiResp.reason?.content?.error?.message);
-          }
-
-          if (immuneResp.status === 'fulfilled') {
-            setTCellCd8(immuneResp.value.find(({ cellType }) => cellType === 'T cells CD8'));
-          } else if (!isPrint) {
-            snackbar.error(immuneResp.reason?.content?.error?.message);
-          }
-
-          if (microbialResp.status === 'fulfilled') {
-            setMicrobial(microbialResp.value);
-          } else if (!isPrint) {
-            snackbar.error(microbialResp.reason?.content?.error?.message);
-          }
-
-          if (signatureTypesResp.status === 'fulfilled') {
-            if (signatureTypesResp.value?.length === 0) {
-              const defaultSigatureTypes = [
-                { signatureType: 'author' },
-                { signatureType: 'reviewer' },
-                { signatureType: 'creator' },
-              ] as SignatureUserType[];
-              setSignatureTypes(defaultSigatureTypes);
-            } else {
-              setSignatureTypes(signatureTypesResp.value);
-            }
-          } else if (!isPrint) {
-            snackbar.error(signatureTypesResp.reason?.content?.error?.message);
-          }
-        } catch (err) {
-          snackbar.error(`Unknown error: ${err}`);
-        } finally {
-          setIsLoading(false);
-          if (loadedDispatch) {
-            loadedDispatch({ type: 'summary-tgr' });
-          }
-        }
-        return apiCalls;
-      };
-
-      getData();
+    if (!isLoadingFromQueries) {
+      setIsLoading(false);
     }
-
-    return () => {
-      if (apiCalls) {
-        apiCalls.abort();
-      }
-    };
-  }, [loadedDispatch, report, setIsLoading, isPrint]);
+  }, [isLoadingFromQueries, setIsLoading]);
 
   useEffect(() => {
     // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
@@ -303,6 +351,7 @@ const RapidSummary = ({
     if (msi && msi.score !== null) {
       msiScore = msi.score;
     } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
+      // eslint-disable-next-line prefer-destructuring
       msiScore = tmburMutBur.msiScore;
     } else {
       msiScore = null;
@@ -330,20 +379,28 @@ const RapidSummary = ({
     }
 
     setTumourSummary(() => {
-      let tmbDisplayValue = report?.genomeTmb?.toFixed(2) || null;
+      // Check if genomeTmb (new version) exists
+      const { genomeTmb } = report;
+      
+      let tmbDisplayValue = 'No data available';
 
+      if (genomeTmb) {
+        tmbDisplayValue = genomeTmb.toFixed(2);
+      }
+      
       if (tmburMutBur) {
-        if (tmburMutBur.tmbHidden) {
+        const { tmbHidden, adjustedTmb } = tmburMutBur;
+        if (tmbHidden) {
           tmbDisplayValue = null;
-        } else if (tmburMutBur.adjustedTmb != null) {
-          tmbDisplayValue = tmburMutBur.adjustedTmb.toFixed(2);
+        } else if (adjustedTmb != null) {
+          tmbDisplayValue = adjustedTmb.toFixed(2);
         }
       }
-
+      
       return ([
         {
           term: 'Pathology Tumour Content',
-          value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour').pathoTc ?? ''}`,
+          value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour')?.pathoTc ?? ''}`,
         },
         {
           term: 'M1M2 Score',
@@ -351,6 +408,12 @@ const RapidSummary = ({
             ? `${report.m1m2Score}`
             : null,
         },
+        {
+            term: 'HRD Score',
+            value: report.hrdScore !== null
+              ? `${report.hrdScore}`
+              : null,
+          },
         {
           term: 'Preliminary CAPTIV-8 Score',
           value: report.captiv8Score !== null
@@ -363,13 +426,13 @@ const RapidSummary = ({
         },
         {
           term:
-          tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
           value: tCell,
         },
         {
           term: 'Pediatric CD8+ T Cell Comment',
           value:
-          tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
+            tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
         },
         {
           term: 'Mutation Burden',
@@ -400,10 +463,82 @@ const RapidSummary = ({
     tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
   ]);
 
-  const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
+  useEffect(() => {
+    if (loadedDispatch && rapidSummarySectionsLoaded && !isLoadingFromQueries) {
+      loadedDispatch({ type: 'summary-rapid' });
+    }
+  }, [rapidSummarySectionsLoaded, isLoadingFromQueries, loadedDispatch]);
+
+  /**
+   * Deletes a whole variant from the first two rapid summary tables, can be expanded to 3rd
+   */
+  const { mutate: deleteVariantMutation } = useMutation({
+    mutationFn: async ({ reportId, variant, rapidSummaryTable }: {
+      reportId: ReportType['ident'],
+      variant: AnyVariant,
+      rapidSummaryTable: RapidSummaryTable,
+    }) => {
+      const uniqueStatementIdents = [...new Set(variant.kbMatches.flatMap((m) => m.kbMatchedStatements.map((s) => s.ident)))];
+      const deleteVariant = api.post(`/reports/${reportId}/variants/set-summary-table`, {
+        variantIdent: extractUUID(variant.ident),
+        variantType: variant.variantType,
+        rapidReportTableTag: 'noTable',
+        kbStatementIds: uniqueStatementIdents,
+      });
+
+      if (
+        rapidSummaryTable === RapidSummaryTable.THERAPEUTIC_ASSOCIATION
+        && therapeuticAssocTableRef.current
+      ) {
+        therapeuticAssocTableRef?.current.showLoading();
+      }
+      if (
+        rapidSummaryTable === RapidSummaryTable.CANCER_RELEVANCE
+        && cancerRelTableRef.current
+      ) {
+        cancerRelTableRef.current.showLoading();
+      }
+
+      if (isSigned) {
+        await showConfirmDialog(deleteVariant, true, 'Variant Removed');
+      } else {
+        await deleteVariant.request();
+      }
+    },
+    onSuccess: async (_data, { rapidSummaryTable }) => {
+      if (!isSigned) {
+        snackbar.success('Variant removed');
+      }
+      queryClient.refetchQueries({ queryKey: ['report-signatures', reportIdent] });
+      await queryClient.refetchQueries({ queryKey: [rapidSummaryTable, reportIdent] });
+    },
+    onError: (err) => {
+      snackbar.error(`Failed to remove variant ${err}`);
+    },
+    onSettled: (_data, _err, { rapidSummaryTable }) => {
+      if (
+        rapidSummaryTable === RapidSummaryTable.THERAPEUTIC_ASSOCIATION
+        && therapeuticAssocTableRef.current
+      ) {
+        therapeuticAssocTableRef?.current.hideLoading();
+      }
+      if (
+        rapidSummaryTable === RapidSummaryTable.CANCER_RELEVANCE
+        && cancerRelTableRef.current
+      ) {
+        cancerRelTableRef.current.hideLoading();
+      }
+    },
+  });
+
+  const handleVariantDelete = useCallback((rapidSummaryTable: RapidSummaryTable) => (data) => {
+    deleteVariantMutation({ reportId: report.ident, variant: data, rapidSummaryTable });
+  }, [deleteVariantMutation, report?.ident]);
+
+  const handleSign = useCallback(async (signed: boolean) => {
     setIsSigned(signed);
-    setSignatures(updatedSignature);
-  }, [setIsSigned]);
+    queryClient.refetchQueries({ queryKey: ['report-signatures', reportIdent] });
+  }, [reportIdent, queryClient, setIsSigned]);
 
   const handleMatchedTumourEditStart = useCallback((rowData) => {
     setShowMatchedTumourEditDialog(true);
@@ -416,10 +551,7 @@ const RapidSummary = ({
     if (newData) {
       // Call API again to get updated data
       try {
-        const updateResp = await api.get(`/reports/${report.ident}/variants?rapidTable=therapeuticAssociation`).request();
-        setTherapeuticAssociationResults(
-          splitVariantsByRelevance(updateResp),
-        );
+        await queryClient.refetchQueries({ queryKey: [RapidSummaryTable.THERAPEUTIC_ASSOCIATION, reportIdent] });
         setShowMatchedTumourEditDialog(false);
       } catch (e) {
         snackbar.error(`Refetching of therapeutic association data failed: ${e.message ? e.message : e}`);
@@ -427,14 +559,60 @@ const RapidSummary = ({
     } else {
       setShowMatchedTumourEditDialog(false);
     }
-  }, [report.ident]);
+  }, [queryClient, reportIdent]);
 
   let therapeuticAssociationSection;
   if (therapeuticAssociationResults?.length > 0) {
+    // Variant level noTable
+    const variantLevelEmptyVariants = therapeuticAssociationResults
+      .filter(({ observedVariantAnnotation: ova }) => ova?.annotations?.rapidReportTableTag === 'noTable');
+
+    const variantsHasTable = therapeuticAssociationResults
+      .filter(({ observedVariantAnnotation: ova }) => ova?.annotations?.rapidReportTableTag !== 'noTable');
+
+    // KbMatchStatement level noTable (all of them)
+    // Requires analyst to disable on front-page
+    const statementLevelEmptyVariants = variantsHasTable
+      .filter((variant, index, arr) => {
+        const uuid = extractUUID(variant.ident);
+        return arr.findIndex((v) => extractUUID(v.ident) === uuid) === index;
+      })
+      .filter((variant) => {
+        const { ident, variantType } = variant;
+        const varIdent = extractUUID(ident);
+
+        const isAllEmpty = variant.kbMatches.every((kbM) => kbM.kbMatchedStatements.every((stmt) => {
+          const noTableMap = stmt.kbData.rapidReportTableTag?.noTable;
+          return noTableMap?.[variantType]?.includes(varIdent) ?? false;
+        }));
+
+        return isAllEmpty;
+      })
+      .map((variant) => ({
+        ...variant,
+        potentialClinicalAssociation: ANALYST_DISABLED,
+      }));
+    const crossedOutVariants = [...statementLevelEmptyVariants, ...variantLevelEmptyVariants];
+
+    const filteredOutEmpty = variantsHasTable
+      .filter(
+        ({ kbMatches }) => Array.isArray(kbMatches)
+        && kbMatches.length > 0
+        && kbMatches.some(
+          ({ kbMatchedStatements }) => Array.isArray(kbMatchedStatements) && kbMatchedStatements.length > 0,
+        ),
+      ) as ProcessedTherapeuticAssociationRapidVariantType[];
+
+    // Piggy-back added-in attributes to filter out relevance rows where empty
+    // Only shown variants where there's at least one treatment
+    const printData = filteredOutEmpty.filter(({ relevanceKey, potentialClinicalAssociation }) => relevanceKey.length !== potentialClinicalAssociation.length);
+
+    // Show valid variants first, then the variants that are disabled
+    const webData = [...printData, ...crossedOutVariants];
     if (isPrint) {
       therapeuticAssociationSection = (
         <PrintTable
-          data={therapeuticAssociationResults}
+          data={printData}
           columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
           collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
           fullWidth
@@ -444,16 +622,19 @@ const RapidSummary = ({
       therapeuticAssociationSection = (
         <>
           <DataTable
+            ref={therapeuticAssocTableRef}
             columnDefs={therapeuticAssociationColDefs}
-            rowData={therapeuticAssociationResults}
+            rowData={webData}
             canEdit={canEdit}
-            collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
+            canDelete={canEdit}
+            onDelete={handleVariantDelete(RapidSummaryTable.THERAPEUTIC_ASSOCIATION)}
+            collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'Actions']}
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
+            getRowClass={({ data }) => (data.potentialClinicalAssociation === ANALYST_DISABLED ? 'strikeout' : '')} // Decoration for crossed out
           />
           <RapidVariantEditDialog
-            rapidVariantTableType="therapeutic"
             open={showMatchedTumourEditDialog}
             fields={[FIELDS.kbMatches]}
             editData={editData}
@@ -484,6 +665,9 @@ const RapidSummary = ({
     } else {
       cancerRelevanceSection = (
         <DataTable
+          ref={cancerRelTableRef}
+          canDelete={canEdit}
+          onDelete={handleVariantDelete(RapidSummaryTable.CANCER_RELEVANCE)}
           columnDefs={cancerRelevanceColDefs}
           rowData={cancerRelevanceResults}
           collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
@@ -547,8 +731,8 @@ const RapidSummary = ({
         )}
         <div className="rapid-summary__signatures">
           {
-            signatureTypes.map((sigType) => {
-              let title = sigType.signatureType;
+            signatureTypes?.map((sigType) => {
+              let title: string = sigType.signatureType;
               if (sigType.signatureType === 'author') {
                 title = isPrint ? 'Manual Review' : 'Ready';
               }
@@ -608,31 +792,16 @@ const RapidSummary = ({
     if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData && !newMsiData)) {
       return;
     }
-
-    if (newMicrobialData) {
-      setMicrobial(newMicrobialData);
-    }
+    // Partial query keys to be refetched
+    const keysToRefetch = ['microbial', 'report', 'immune', 'primaryBurden', 'msi'];
+    queryClient.refetchQueries({
+      predicate: (q) => keysToRefetch.includes(q.queryKey[0] as string),
+    });
 
     if (newReportData) {
       setReport(newReportData);
     }
-
-    if (newTCellCd8Data) {
-      setTCellCd8(newTCellCd8Data);
-    }
-
-    if (newMutationBurdenData) {
-      setPrimaryBurden(newMutationBurdenData);
-    }
-
-    if (newTmBurMutBurData) {
-      setTmburMutBur(newTmBurMutBurData);
-    }
-
-    if (newMsiData) {
-      setMsi(getMostCurrentObj(newMsiData));
-    }
-  }, [setReport]);
+  }, [queryClient, setReport]);
 
   if (printVersion === 'condensedLayout') {
     return (
@@ -676,35 +845,35 @@ const RapidSummary = ({
           </Box>
         </Box>
         {report && therapeuticAssociationResults && (
-        <div className="rapid-summary__events">
-          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-            Variants with Clinical Evidence for Treatment in This Tumour Type
-          </Typography>
-          {therapeuticAssociationSection}
-        </div>
+          <div className="rapid-summary__events">
+            <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+              Variants with Clinical Evidence for Treatment in This Tumour Type
+            </Typography>
+            {therapeuticAssociationSection}
+          </div>
         )}
         {report && cancerRelevanceResults && (
-        <div className="rapid-summary__events">
-          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-            Variants with Cancer Relevance
-          </Typography>
-          {cancerRelevanceSection}
-        </div>
+          <div className="rapid-summary__events">
+            <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+              Variants with Cancer Relevance
+            </Typography>
+            {cancerRelevanceSection}
+          </div>
         )}
         {report && unknownSignificanceResults && (
-        <div className="rapid-summary__events">
-          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-            Variants of Uncertain Significance
-          </Typography>
-          {unknownSignificanceSection}
-        </div>
+          <div className="rapid-summary__events">
+            <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+              Variants of Uncertain Significance
+            </Typography>
+            {unknownSignificanceSection}
+          </div>
         )}
         {
-            isPrint ? reviewSignaturesSection : sampleInfoSection
-          }
+          isPrint ? reviewSignaturesSection : sampleInfoSection
+        }
         {
-            isPrint ? sampleInfoSection : reviewSignaturesSection
-          }
+          isPrint ? sampleInfoSection : reviewSignaturesSection
+        }
       </div>
     );
   }

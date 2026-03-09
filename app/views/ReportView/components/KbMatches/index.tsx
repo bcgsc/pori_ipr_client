@@ -41,6 +41,8 @@ import { GridApi } from '@ag-grid-community/core';
 import { KbMatchesMoveDialogContext, KbMatchesMoveDialogContextType, useKbMatches } from '@/context/KbMatchesMoveDialogContext/KbmatchesMoveDialogContext';
 import { ErrorMixin, RecordConflictError } from '@/services/errors/errors';
 import { useLocation } from 'react-router-dom';
+import ConfirmContext from '@/context/ConfirmContext';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import { coalesceEntries, getBucketKey } from './coalesce';
 
@@ -60,9 +62,10 @@ const KB_MATCHES_TITLE_MAP = {
 
 const RAPID_TABLE_TITLE_MAP = {
   // Should be therapeuticAssociation, but the tag in backend is looking for 'therapeutic'
-  therapeutic: 'Variants with Clinical Evidence for Treatment in This Tumour Type',
+  therapeuticAssociation: 'Variants with Clinical Evidence for Treatment in This Tumour Type',
   cancerRelevance: 'Variants with Cancer Relevance',
   unknownSignificance: 'Variants of Uncertain Significance',
+  noTable: 'Do not display in summary (removes whole variant)',
 };
 
 const SHOW_NATIVE_CONTEXT_TABLES = ['targetedSomaticGenes', 'targetedGermlineGenes'];
@@ -161,6 +164,8 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
   const [destinationTable, setDestinationTable] = useState<KbMatchesDestinationTableType>('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedKbStatementIds, setSelectedKbStatementIds] = useState<string[]>(null);
+  const { isSigned } = useContext(ConfirmContext);
+  const { showConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     if (selectedRows) {
@@ -184,7 +189,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
   const { mutate: addObservedVariantAnnotation } = useMutation({
     mutationFn: async ({ reportId, destTable, dataRows }: AddObservedVariantAnnotationFnType) => {
       const extractedVariants = dataRows.flatMap((item) => item.kbMatches);
-
+      const kbStatementIds = dataRows.flatMap((item) => item.ident);
       const seen = new Set();
       const uniqueVariants = extractedVariants.filter(({ variant: { ident } }) => {
         if (seen.has(ident)) return false;
@@ -195,13 +200,20 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       const results = await Promise.allSettled(
         uniqueVariants.map(async ({ variant: { ident: variantIdent }, variantType }) => {
           try {
-            await api.post(`/reports/${reportId}/observed-variant-annotations`, {
+            const saveVariant = api.post(`/reports/${reportId}/variants/set-summary-table`, {
               variantIdent,
               variantType,
-              annotations: {
-                rapidReportTableTag: destTable,
-              },
-            }).request();
+              rapidReportTableTag: destTable,
+              kbStatementIds,
+            });
+
+            if (isSigned) {
+              showConfirmDialog(saveVariant);
+              setIsUpdating(true);
+            } else {
+              await saveVariant.request();
+              setIsUpdating(false);
+            }
           } catch (e) {
             if (e instanceof RecordConflictError && e.content.data) {
               // Fallback to PUT
@@ -230,8 +242,12 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       return results;
     },
     onSuccess: () => {
-      snackbar.success('Moved Variants, refetching ...');
-      onConfirm(true);
+      if (isSigned) {
+        setIsUpdating(false);
+      } else {
+        snackbar.success('Moved Variants, refetching ...');
+        onConfirm(true);
+      }
     },
     onError: (e: { message?: string }) => {
       snackbar.error(`Unable to move Kb statements, ${e.message ?? e}`);
@@ -280,6 +296,29 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       return nextSelected;
     });
   }, []);
+
+  const renderKbMenuItems = () => getKbDestinationTables(moveKbMatchesTableName).map(({ label, value }) => (
+    <MenuItem key={value} value={value}>
+      {label}
+    </MenuItem>
+  ));
+
+  const renderRapidSummaryMenuItems = () => {
+    const selectedCategories = new Set(
+      selectedRows.flatMap(({ category }) => category),
+    );
+
+    return getRapidSummaryDestinationTables().map(({ label, value }) => {
+      const isTherapeutic = value === 'therapeuticAssociation';
+      const shouldDisable = isTherapeutic && !selectedCategories.has('therapeutic');
+
+      return (
+        <MenuItem key={value} value={value} disabled={shouldDisable}>
+          {label}
+        </MenuItem>
+      );
+    });
+  };
 
   return (
     <Dialog
@@ -339,23 +378,18 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
             label="Destination Table" // MUI requires both labelId and label to properly display
             value={destinationTable}
           >
-            {
-              destinationType === 'kbMatches'
-              && getKbDestinationTables(moveKbMatchesTableName).map(({ label, value }) => (
-                <MenuItem value={value} key={value}>{label}</MenuItem>
-              ))
-            }
-            {
-              destinationType === 'rapidSummary'
-              && getRapidSummaryDestinationTables().map(({ label, value }) => (
-                !Array.from(new Set(selectedRows.flatMap(({ category }) => category))).includes('therapeutic') && value === 'therapeutic' ? <MenuItem value={value} key={value} disabled>{label}</MenuItem> : <MenuItem value={value} key={value}>{label}</MenuItem>
-              ))
-            }
+            {destinationType === 'kbMatches' && renderKbMenuItems()}
+            {destinationType === 'rapidSummary' && renderRapidSummaryMenuItems()}
           </Select>
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleOnClose}>Cancel</Button>
+        <Button
+          onClick={handleOnClose}
+          disabled={isUpdating}
+        >
+          Cancel
+        </Button>
         <Button
           disabled={isUpdating || !destinationTable || !selectedKbStatementIds}
           variant="contained"
@@ -365,7 +399,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
           Save
         </Button>
       </DialogActions>
-      { isUpdating && <LinearProgress />}
+      {isUpdating && <LinearProgress />}
     </Dialog>
   );
 };
@@ -628,7 +662,7 @@ const KbMatches = ({
           setMoveKbMatchesDialogOpen(true);
         }}
       >
-        Add Selected to Rapid Summary
+        Add Selected Variant(s) to Rapid Summary Table
       </MenuItem>
     ) : null;
     return ([kbMatchesMoveOption, rapidMoveOption]);
@@ -768,23 +802,23 @@ const KbMatches = ({
             and those that have early clinical or preclinical evidence.
           </DemoDescription>
           {!isPrint && (
-          <div className="kb-matches__filter">
-            <TextField
-              label="Filter Table Text"
-              type="text"
-              variant="outlined"
-              value={filterText}
-              onChange={handleFilter}
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <FilterList color="action" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
+            <div className="kb-matches__filter">
+              <TextField
+                label="Filter Table Text"
+                type="text"
+                variant="outlined"
+                value={filterText}
+                onChange={handleFilter}
+                fullWidth
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <FilterList color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
           )}
           <div>
             {kbMatchedTables}
@@ -808,7 +842,7 @@ const KbMatches = ({
                 </MenuItem>
                 {
                   templateName === 'rapid'
-                  && <MenuItem onClick={handleMoveToRapidSummary}>Add to Rapid Summary Table</MenuItem>
+                  && <MenuItem onClick={handleMoveToRapidSummary}>Add Variant to Rapid Summary Table</MenuItem>
                 }
               </Menu>
             )}

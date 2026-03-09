@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "ipr-client",
-  "version": "7.1.0",
+  "version": "7.3.1",
   "keywords": [],
   "license": "GPL-3.0",
   "sideEffects": false,
@@ -29,7 +29,8 @@
     "analyze": "npm run env; webpack-dev-server --env ANALYZE=true --config ./config/webpack/webpack.prod.js",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "lint": "eslint app --config .eslintrc.js --ext .ts,.tsx,.jsx,.js --quiet"
+    "lint": "eslint app --config .eslintrc.js --ext .ts,.tsx,.jsx,.js --quiet",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@babel/core": "~7.22.15",
@@ -85,6 +86,7 @@
     "jest": "~29.6.4",
     "jest-environment-jsdom": "^29.6.4",
     "jest-junit": "~16.0.0",
+    "patch-package": "^8.0.1",
     "react-test-renderer": "~17.0.2",
     "sass": "~1.66.1",
     "sass-loader": "~13.3.2",
@@ -142,6 +144,7 @@
     "use-debounce": "^9.0.4",
     "uuid": "^10.0.0",
     "webpack": "^5.88.2",
-    "webpack-merge": "~5.9.0"
+    "webpack-merge": "~5.9.0",
+    "worker-loader": "^3.0.8"
   }
 }

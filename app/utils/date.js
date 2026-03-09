@@ -28,7 +28,19 @@ const formatDate = (date, long = false) => {
   return formattedDate;
 };
 
+const formatDateWithoutTime = (date, long = false) => {
+  const convertedDate = new Date(date);
+  const formattedDate = new Intl.DateTimeFormat('en-ca', {
+    month: long ? 'long' : '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+  }).format(convertedDate);
+
+  return formattedDate;
+};
+
 export {
   getDate,
   formatDate,
+  formatDateWithoutTime,
 };
