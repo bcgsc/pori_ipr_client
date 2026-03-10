@@ -43,6 +43,7 @@ import TumourSummary from '../TumourSummary';
 import './index.scss';
 import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
 import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
+import { HlaType } from '../Immune/types';
 
 const ANALYST_DISABLED = 'analyst disabled';
 
@@ -232,6 +233,7 @@ const RapidSummary = ({
     UseQueryResult<MsiType>,
     UseQueryResult<ImmuneType | undefined>,
     UseQueryResult<MicrobialType[]>,
+    UseQueryResult<HlaType[]>,
   ]
   >(
     [
@@ -308,6 +310,13 @@ const RapidSummary = ({
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
         refetchOnMount: 'always',
       },
+      {
+        queryKey: ['hla', reportIdent],
+        queryFn: (): Promise<HlaType[]> => api.get(`/reports/${reportIdent}/hla-types`).request(),
+        enabled: !!reportIdent,
+        onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
+        refetchOnMount: 'always',
+      },
     ],
   );
 
@@ -333,6 +342,7 @@ const RapidSummary = ({
     { data: msi, isSuccess: isMsiSuccess },
     { data: tCellCd8, isSuccess: isTCellCd8Success },
     { data: microbial, isSuccess: isMicrobialSuccess },
+    { data: hla },
   ] = queries;
 
   const isLoadingFromQueries = queries.some((q) => q.isLoading);
@@ -376,6 +386,14 @@ const RapidSummary = ({
       }
     } else {
       tCell = null;
+    }
+
+    let hlaNormal: null | string = null;
+    if (hla) {
+      const normal = hla.find((h) => h.pathology === 'normal');
+      if (normal) {
+        hlaNormal = `${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`;
+      }
     }
 
     setTumourSummary(() => {
@@ -453,6 +471,10 @@ const RapidSummary = ({
         {
           term: 'MSI Score',
           value: `${msiScore} (MSI Status: ${msiScore < 20 ? 'MSS' : 'MSI'})`,
+        },
+        {
+          term: 'HLA (normal)',
+          value: hlaNormal ?? null,
         },
       ]);
     });

@@ -352,6 +352,21 @@ type MsiType = {
   variantType: 'msi';
 } & RecordDefaults;
 
+type HlaType = {
+  library: string | null;
+  pathology: string | null;
+  protocol: string | null;
+  a1: string | null;
+  a2: string | null;
+  b1: string | null;
+  b2: string | null;
+  c1: string | null;
+  c2: string | null;
+  reads: number | null;
+  objective: number | null;
+} & RecordDefaults;
+
+
 type SignatureVariantType = {
   displayName: string | null;
   germline?: string | null;
