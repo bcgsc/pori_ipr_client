@@ -81,7 +81,7 @@ const columnDefs: ColDef[] = [
     tooltipValueGetter: basicTooltipValueGetter,
   },
   {
-    headerName: 'External Source Link',
+    headerName: 'Reference',
     colId: 'reference',
     field: 'reference',
     valueGetter: (params) => {
