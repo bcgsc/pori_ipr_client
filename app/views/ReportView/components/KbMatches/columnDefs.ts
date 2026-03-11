@@ -5,6 +5,7 @@ import kbMatchStatementsKnownVarValueGetter from '@/utils/kbMatchStatementsKnown
 import kbMatchStatementsObsVarValueGetter from '@/utils/kbMatchStatementsObsVarValueGetter';
 import { ColDef } from '@ag-grid-community/core';
 import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
+import kbMatchStatementsFlagValueGetter from '@/utils/kbMatchStatementsFlagValueGetter';
 
 const columnDefs: ColDef[] = [
   {
@@ -29,6 +30,15 @@ const columnDefs: ColDef[] = [
     headerName: 'Observed Variants',
     colId: 'variant',
     valueGetter: kbMatchStatementsObsVarValueGetter,
+    hide: false,
+    maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
+  },
+  {
+    headerName: 'Flags',
+    colId: 'flags',
+    valueGetter: kbMatchStatementsFlagValueGetter,
     hide: false,
     maxWidth: 300,
     tooltipComponent: 'ToolTip',
