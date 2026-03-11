@@ -413,7 +413,7 @@ const RapidSummary = ({
         },
         {
           term: 'MSI Score',
-          value: `${msiScore} (MSI Status: ${msiScore < 20 ? 'MSS' : 'MSI'})`,
+          value: `${msiScore} (${msiScore < 20 ? 'MSS' : 'MSI'})`,
         },
         {
           term: 'HRD Score',
