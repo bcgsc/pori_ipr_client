@@ -419,7 +419,7 @@ const RapidSummary = ({
           term: 'HRD Score',
           value: report.hrdScore !== null
             ? `${report.hrdScore}`
-            : null,
+            : 'No data available',
         },
         {
           term: 'HLA (Normal)',

@@ -293,13 +293,13 @@ const GenomicSummary = ({
             term: 'HRD Score',
             value: report.hrdScore !== null
               ? `${report.hrdScore}`
-              : null,
+              : 'No data available',
           },
           {
             term: 'HRDetect Score',
             value: report.hrdetectScore !== null
               ? `${report.hrdetectScore}`
-              : null,
+              : 'No data available',
           },
           {
             term: 'HLA (Normal)',
