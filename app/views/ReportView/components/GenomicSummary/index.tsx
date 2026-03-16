@@ -2,12 +2,12 @@ import React, {
   useEffect, useState, useContext,
   useCallback,
 } from 'react';
+import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { Box } from '@mui/material';
-import api, { ApiCallSet } from '@/services/api';
+import api from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
-import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
   TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType, MsiType,
@@ -30,7 +30,6 @@ import TumourSummary from '../TumourSummary';
 import {
   defaultComparator, defaultImmune, defaultMsi, defaultMutationBurden, defaultTmbur,
 } from './defaultStates';
-import { useQuery } from 'react-query';
 
 type GenomicSummaryProps = {
   loadedDispatch?: SummaryProps['loadedDispatch'];
@@ -63,15 +62,13 @@ const GenomicSummary = ({
 
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
 
-  const {data: microbialData, isError: microbialError} = useQuery(
+  const { data: microbialData, isError: microbialError } = useQuery(
     `/reports/${report.ident}/summary/microbial`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response;
-      },
+      select: (response) => response,
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('microbial call error');
@@ -79,15 +76,13 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: primaryComparatorData, isError: primaryComparatorError} = useQuery(
+  const { data: primaryComparatorData, isError: primaryComparatorError } = useQuery(
     `/reports/${report.ident}/comparators`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)');
-      },
+      select: (response) => response.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'),
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('comparators call error');
@@ -95,15 +90,13 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: signaturesData, isError: signaturesError} = useQuery(
+  const { data: signaturesData, isError: signaturesError } = useQuery(
     `/reports/${report.ident}/mutation-signatures`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response;
-      },
+      select: (response) => response,
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('mutation signatures call error');
@@ -111,15 +104,13 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: tCellCd8Data, isError: tCellCd8Error} = useQuery(
+  const { data: tCellCd8Data, isError: tCellCd8Error } = useQuery(
     `/reports/${report.ident}/immune-cell-types`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response.find(({ cellType }) => cellType === 'T cells CD8');
-      },
+      select: (response) => response.find(({ cellType }) => cellType === 'T cells CD8'),
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('immune cell types call error');
@@ -127,15 +118,13 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: primaryBurdenData, isError: primaryBurdenError} = useQuery(
+  const { data: primaryBurdenData, isError: primaryBurdenError } = useQuery(
     `/reports/${report.ident}/mutation-burden`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response.find((entry: Record<string, unknown>) => entry.role === 'primary');
-      },
+      select: (response) => response.find((entry: Record<string, unknown>) => entry.role === 'primary'),
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('mutation burden call error');
@@ -143,18 +132,17 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: msiData, isError: msiError} = useQuery(
+  const { data: msiData, isError: msiError } = useQuery(
     `/reports/${report.ident}/msi`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
       select: (response) => {
         if (response.length) {
           return response[0];
-        } else {
-          return null;
         }
+        return null;
       },
       onError: () => {
         // eslint-disable-next-line no-console
@@ -163,22 +151,20 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: tmburMutBurData, isError: tmburMutBurError} = useQuery(
+  const { data: tmburMutBurData, isError: tmburMutBurError } = useQuery(
     `/reports/${report.ident}/tmbur-mutation-burden`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response;
-      },
+      select: (response) => response,
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('tmbur mutation burden call error');
       },
     },
   );
-  
+
   useEffect(() => {
     if (report) {
       if (microbialData) {
@@ -262,16 +248,14 @@ const GenomicSummary = ({
         if (msi?.score >= 20) {
           msiStatus = 'MSI';
         }
-      } 
-      else if (tmburMutBur) {
+      } else if (tmburMutBur) {
         if (tmburMutBur?.msiScore < 20) {
           msiStatus = 'MSS';
         }
         if (tmburMutBur?.msiScore >= 20) {
           msiStatus = 'MSI';
         }
-      }
-      else {
+      } else {
         msiStatus = null;
       }
 
@@ -282,7 +266,9 @@ const GenomicSummary = ({
         let tmbDisplayValue = 'No data available';
 
         if (tmburMutBur) {
-          const { tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb } = tmburMutBur;
+          const {
+            tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb,
+          } = tmburMutBur;
           if (tmbHidden) {
             tmbDisplayValue = null;
           } else if (adjustedTmb != null) {
