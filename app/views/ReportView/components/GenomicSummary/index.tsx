@@ -262,7 +262,16 @@ const GenomicSummary = ({
         if (msi?.score >= 20) {
           msiStatus = 'MSI';
         }
-      } else {
+      } 
+      else if (tmburMutBur) {
+        if (tmburMutBur?.msiScore < 20) {
+          msiStatus = 'MSS';
+        }
+        if (tmburMutBur?.msiScore >= 20) {
+          msiStatus = 'MSI';
+        }
+      }
+      else {
         msiStatus = null;
       }
 
@@ -366,6 +375,7 @@ const GenomicSummary = ({
     newTCellCd8Data,
     newMutationBurdenData,
     newTmBurMutBurData,
+    newMsiData,
   ) => {
     if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
       return;
@@ -390,9 +400,13 @@ const GenomicSummary = ({
     if (newTmBurMutBurData) {
       setTmburMutBur(newTmBurMutBurData);
     }
+
+    if (newMsiData) {
+      setMsi(newMsiData);
+    }
   }, [setReport]);
 
-  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError) {
+  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || tmburMutBurError) {
     return null;
   }
 
@@ -431,6 +445,7 @@ const GenomicSummary = ({
                 report={report}
                 tCellCd8={tCellCd8}
                 tmburMutBur={tmburMutBur ?? null}
+                msi={msi ?? null}
                 tumourSummary={tumourSummary}
               />
             )}
@@ -467,6 +482,7 @@ const GenomicSummary = ({
               report={report}
               tCellCd8={tCellCd8}
               tmburMutBur={tmburMutBur ?? null}
+              msi={msi ?? null}
               tumourSummary={tumourSummary}
             />
           )}
