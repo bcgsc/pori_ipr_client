@@ -8,6 +8,7 @@ import useResource from '@/hooks/useResource';
 import { ReportType } from '@/common';
 import { useReportsAll } from '@/queries/get';
 import useSecurity from '@/hooks/useSecurity';
+import { CircularProgress } from '@mui/material';
 
 import './index.scss';
 
@@ -73,7 +74,14 @@ const MyReportsView = (): JSX.Element => {
   }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData, userDetails, isApiLoading, reportsData]);
 
   return (
-    <ReportsTableComponent rowData={rowData} />
+    <>
+      {isApiLoading && 
+        <div className="circular-progress">
+          <CircularProgress />
+        </div>
+      }
+      {rowData && <ReportsTableComponent rowData={rowData} />}
+    </>
   );
 };
 
