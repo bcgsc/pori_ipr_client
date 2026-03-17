@@ -64,7 +64,7 @@ const GenomicSummary = ({
 
   const { data: microbialData, isError: microbialError } = useQuery(
     `/reports/${report.ident}/summary/microbial`,
-    async ({ queryKey: [route] }) => api.get(route).request(),
+    async ({ queryKey: [route] }) => await api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
@@ -78,7 +78,7 @@ const GenomicSummary = ({
 
   const { data: primaryComparatorData, isError: primaryComparatorError } = useQuery(
     `/reports/${report.ident}/comparators`,
-    async ({ queryKey: [route] }) => api.get(route).request(),
+    async ({ queryKey: [route] }) => await api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
@@ -92,7 +92,7 @@ const GenomicSummary = ({
 
   const { data: signaturesData, isError: signaturesError } = useQuery(
     `/reports/${report.ident}/mutation-signatures`,
-    async ({ queryKey: [route] }) => api.get(route).request(),
+    async ({ queryKey: [route] }) => await api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
@@ -106,7 +106,7 @@ const GenomicSummary = ({
 
   const { data: tCellCd8Data, isError: tCellCd8Error } = useQuery(
     `/reports/${report.ident}/immune-cell-types`,
-    async ({ queryKey: [route] }) => api.get(route).request(),
+    async ({ queryKey: [route] }) => await api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
@@ -120,7 +120,7 @@ const GenomicSummary = ({
 
   const { data: primaryBurdenData, isError: primaryBurdenError } = useQuery(
     `/reports/${report.ident}/mutation-burden`,
-    async ({ queryKey: [route] }) => api.get(route).request(),
+    async ({ queryKey: [route] }) => await api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
@@ -134,7 +134,7 @@ const GenomicSummary = ({
 
   const { data: msiData, isError: msiError } = useQuery(
     `/reports/${report.ident}/msi`,
-    async ({ queryKey: [route] }) => api.get(route).request(),
+    async ({ queryKey: [route] }) => await api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
@@ -153,7 +153,7 @@ const GenomicSummary = ({
 
   const { data: tmburMutBurData, isError: tmburMutBurError } = useQuery(
     `/reports/${report.ident}/tmbur-mutation-burden`,
-    async ({ queryKey: [route] }) => api.get(route).request(),
+    async ({ queryKey: [route] }) => await api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
