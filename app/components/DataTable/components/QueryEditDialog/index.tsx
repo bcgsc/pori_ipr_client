@@ -15,7 +15,6 @@ import {
   DialogTitle,
   CircularProgress,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
@@ -34,18 +33,6 @@ import {
 } from '@/constants';
 import { useQueryClient } from 'react-query';
 
-// Custom css to alter select dropdown border radius
-const useStyles = makeStyles({
-  categoryBorder: {
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderTopLeftRadius: '25px',
-      borderBottomLeftRadius: '25px',
-      borderTopRightRadius: '0px',
-      borderBottomRightRadius: '0px',
-    },
-  },
-});
-
 const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]) => void }) => {
   const { searchParams, setSearchParams } = useSearchParams();
   const [searchThreshold, setSearchThreshold] = useState(DEFAULT_THRESHOLD);
@@ -53,8 +40,6 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
   const [searchKeyword, setSearchKeyword] = useState('');
   const [searchErrorMessage, setSearchErrorMessage] = useState('');
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
-  const customCss = useStyles();
-
   // Validate threshold value
   useEffect(() => {
     if (!searchThreshold) {
@@ -152,7 +137,17 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
     <div className="query-edit-dialog-search">
       <div className="query-edit-dialog-search__bar">
         <div className="query-edit-dialog-search__category-select">
-          <FormControl classes={{ root: customCss.categoryBorder }} style={{ height: '100%' }}>
+          <FormControl
+            sx={{
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderTopLeftRadius: '25px',
+                borderBottomLeftRadius: '25px',
+                borderTopRightRadius: '0px',
+                borderBottomRightRadius: '0px',
+              },
+            }}
+            style={{ height: '100%' }}
+          >
             <Select
               value={searchCategory}
               defaultValue={searchCategory}

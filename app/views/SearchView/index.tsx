@@ -14,7 +14,6 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
@@ -32,18 +31,6 @@ import {
 } from '@/constants';
 import { useQueryClient } from 'react-query';
 
-// Custom css to alter select dropdown border radius
-const useStyles = makeStyles({
-  categoryBorder: {
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderTopLeftRadius: '25px',
-      borderBottomLeftRadius: '25px',
-      borderTopRightRadius: '0px',
-      borderBottomRightRadius: '0px',
-    },
-  },
-});
-
 const SearchView = () => {
   const { searchParams, setSearchParams } = useSearchParams();
   const [searchThreshold, setSearchThreshold] = useState(DEFAULT_THRESHOLD);
@@ -53,7 +40,6 @@ const SearchView = () => {
   const [searchErrorMessage, setSearchErrorMessage] = useState('');
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const customCss = useStyles();
   const queryClient = useQueryClient();
 
   // Calls submit function
@@ -175,7 +161,17 @@ const SearchView = () => {
     <div className="search-view">
       <div className="search-view__bar">
         <div className="search-view__category-select">
-          <FormControl classes={{ root: customCss.categoryBorder }} style={{ height: '100%' }}>
+          <FormControl
+            sx={{
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderTopLeftRadius: '25px',
+                borderBottomLeftRadius: '25px',
+                borderTopRightRadius: '0px',
+                borderBottomRightRadius: '0px',
+              },
+            }}
+            style={{ height: '100%' }}
+          >
             <Select
               value={searchCategory}
               onChange={handleCategoryChange}
