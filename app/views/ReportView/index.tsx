@@ -170,10 +170,10 @@ const ReportView = (): JSX.Element => {
           <div className="report__content-container">
             {Boolean(report) && (
               <ReportToolbar
-                diagnosis={report.patientInformation.diagnosis}
-                patientId={report.patientId}
-                type={report.template.name}
-                state={report.state}
+                diagnosis={report?.patientInformation?.diagnosis}
+                patientId={report?.patientId}
+                type={report?.template.name}
+                state={report?.state}
                 isSidebarVisible={isSidebarVisible}
                 onSidebarToggle={setIsSidebarVisible}
               />
