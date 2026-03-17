@@ -52,8 +52,6 @@ const TumourSummary = ({
     newTmBurMutBurData?: TmburType,
     newMsiData?: MsiType,
     newHlaData?: HlaType[],
-    // newHlaNormalData?: HlaType,
-    // newHlaTumourData?: HlaType,
   ) => {
     setShowTumourSummaryEdit(false);
     onEditClose(
@@ -65,8 +63,6 @@ const TumourSummary = ({
       newTmBurMutBurData,
       newMsiData,
       newHlaData,
-      // newHlaNormalData,
-      // newHlaTumourData,
     );
   }, [onEditClose]);
 
