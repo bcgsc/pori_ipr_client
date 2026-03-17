@@ -86,7 +86,7 @@ const Reviews = (): JSX.Element => {
           defaultColDef={{
             resizable: true,
           }}
-          frameworkComponents={{
+          components={{
             deleteCell: DeleteCellRenderer,
           }}
         />

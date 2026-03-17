@@ -100,7 +100,7 @@ const ReportsTableComponent = ({
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         enableCellTextSelection
-        frameworkComponents={{
+        components={{
           Launch: LaunchCell,
           NoRowsOverlay,
           ToolTip,

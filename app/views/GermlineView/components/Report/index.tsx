@@ -223,7 +223,7 @@ const GermlineReport = ({
                     resizable: true,
                   },
                 }}
-                frameworkComponents={{
+                components={{
                   strikethroughCell: StrikethroughCell,
                   actionCell: RowActionCellRenderer,
                   linkOutCell: LinkoutCellRenderer,

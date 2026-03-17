@@ -3,7 +3,6 @@ import React, {
   useRef, useState, useEffect, useCallback, useContext, useMemo, forwardRef, useImperativeHandle,
 } from 'react';
 import { AgGridReact, AgGridReactProps } from '@ag-grid-community/react';
-import { AgGridReact as AgGridReactType } from '@ag-grid-community/react/lib/agGridReact';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
@@ -250,7 +249,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   const { report } = useContext(ReportContext);
 
   const gridDiv = useRef<HTMLDivElement>();
-  const gridRef = useRef<AgGridReactType>();
+  const gridRef = useRef<AgGridReact>();
 
   const [showPopover, setShowPopover] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
@@ -425,7 +424,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
         col.sortable = false;
         col.filter = false;
       });
-      gridApi.setSortModel([{ colId: 'rank', sort: 'asc' }]);
+      colApi.applyColumnState({ state: [{ colId: 'rank', sort: 'asc' }], defaultState: { sort: null } });
       gridApi.setColumnDefs(columnDefs);
 
       colApi.setColumnVisible('drag', true);
@@ -653,8 +652,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               paginationAutoPageSize={isFullLength}
               paginationPageSize={MAX_VISIBLE_ROWS}
               autoSizePadding={1}
-              immutableData={canReorder}
-              getRowNodeId={(data) => data.ident}
+              getRowId={(params) => params.data.ident as string}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
               enableCellTextSelection={!showReorder}
@@ -673,7 +671,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
                 tableType,
               }}
               tooltipShowDelay={0}
-              frameworkComponents={{
+              components={{
                 EnsemblCellRenderer,
                 CivicCellRenderer,
                 GeneCellRenderer,
@@ -690,7 +688,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               suppressAnimationFrame
               suppressRowTransform={Boolean(collapseColumnFields)}
               suppressColumnVirtualisation
-              disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
               onFirstDataRendered={onFirstDataRendered}
               onPaginationChanged={handlePaginationChanged}
               rowSelection={rowSelection}
