@@ -31,6 +31,7 @@ import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import useSignatures from '@/hooks/useSignatures';
 import { useSignatureTypes } from '@/hooks/useSignatureTypes';
+import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
@@ -42,7 +43,7 @@ import TumourSummary from '../TumourSummary';
 
 import './index.scss';
 import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
-import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
+
 import { HlaType } from '../Immune/types';
 
 const ANALYST_DISABLED = 'analyst disabled';
@@ -205,6 +206,7 @@ const RapidSummary = ({
   printVersion = null,
 }: RapidSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
+  const [hlaNormal, setHlaNormal] = useState<string>();
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
   const { data: signatures } = useSignatures(report);
   const { data: signatureTypes } = useSignatureTypes(report);
@@ -388,24 +390,23 @@ const RapidSummary = ({
       tCell = null;
     }
 
-    let hlaNormal: null | string = null;
     if (hla) {
       const normal = hla.find((h) => h.pathology === 'normal');
       if (normal) {
-        hlaNormal = `${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`;
+        setHlaNormal(`${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`);
       }
     }
 
     setTumourSummary(() => {
       // Check if genomeTmb (new version) exists
       const { genomeTmb } = report;
-      
+
       let tmbDisplayValue = 'No data available';
 
       if (genomeTmb) {
         tmbDisplayValue = genomeTmb.toFixed(2);
       }
-      
+
       if (tmburMutBur) {
         const { tmbHidden, adjustedTmb } = tmburMutBur;
         if (tmbHidden) {
@@ -414,7 +415,7 @@ const RapidSummary = ({
           tmbDisplayValue = adjustedTmb.toFixed(2);
         }
       }
-      
+
       return ([
         {
           term: 'Pathology Tumour Content',
@@ -427,11 +428,11 @@ const RapidSummary = ({
             : null,
         },
         {
-            term: 'HRD Score',
-            value: report.hrdScore !== null
-              ? `${report.hrdScore}`
-              : null,
-          },
+          term: 'HRD Score',
+          value: report.hrdScore !== null
+            ? `${report.hrdScore}`
+            : null,
+        },
         {
           term: 'Preliminary CAPTIV-8 Score',
           value: report.captiv8Score !== null
@@ -479,10 +480,10 @@ const RapidSummary = ({
       ]);
     });
   }, [
-    microbial, primaryBurden, tmburMutBur, tCellCd8, msi, msi?.score,
+    microbial, primaryBurden, tmburMutBur, tCellCd8, msi, msi?.score, hlaNormal,
     report.m1m2Score, report.sampleInfo, report.tumourContent, report?.genomeTmb, report.captiv8Score,
     tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
-    tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
+    tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, hla, report,
   ]);
 
   useEffect(() => {
@@ -810,12 +811,13 @@ const RapidSummary = ({
     newMutationBurdenData,
     newTmBurMutBurData,
     newMsiData,
+    newHlaData,
   ) => {
-    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData && !newMsiData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData && !newMsiData && !newHlaData)) {
       return;
     }
     // Partial query keys to be refetched
-    const keysToRefetch = ['microbial', 'report', 'immune', 'primaryBurden', 'msi'];
+    const keysToRefetch = ['microbial', 'report', 'immune', 'primaryBurden', 'msi', 'hla'];
     queryClient.refetchQueries({
       predicate: (q) => keysToRefetch.includes(q.queryKey[0] as string),
     });
@@ -823,7 +825,14 @@ const RapidSummary = ({
     if (newReportData) {
       setReport(newReportData);
     }
-  }, [queryClient, setReport]);
+
+    if (newHlaData) {
+      const normal = newHlaData.find((h) => h.pathology === 'normal');
+      if (normal) {
+        setHlaNormal(`${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`);
+      }
+    }
+  }, [queryClient, setReport, setHlaNormal]);
 
   if (printVersion === 'condensedLayout') {
     return (
@@ -861,6 +870,7 @@ const RapidSummary = ({
                 tCellCd8={tCellCd8}
                 tmburMutBur={tmburMutBur}
                 msi={msi}
+                hla={hla}
                 tumourSummary={tumourSummary}
               />
             )}
@@ -925,6 +935,7 @@ const RapidSummary = ({
               tCellCd8={tCellCd8}
               tmburMutBur={tmburMutBur}
               msi={msi}
+              hla={hla}
               tumourSummary={tumourSummary}
             />
           )}

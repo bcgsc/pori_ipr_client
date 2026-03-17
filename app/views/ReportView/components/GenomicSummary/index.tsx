@@ -4,16 +4,15 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Box } from '@mui/material';
-import api, { ApiCallSet } from '@/services/api';
+import api from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
-import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
   TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType, MsiType,
 } from '@/common';
 import useReport from '@/hooks/useReport';
-
+import { useQuery } from 'react-query';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { SummaryProps } from '@/commonComponents';
 import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
@@ -31,7 +30,6 @@ import {
   defaultComparator, defaultImmune, defaultMsi, defaultMutationBurden, defaultTmbur,
 } from './defaultStates';
 
-import { useQuery } from 'react-query';
 import { HlaType } from '../Immune/types';
 
 type GenomicSummaryProps = {
@@ -39,6 +37,11 @@ type GenomicSummaryProps = {
   isPrint: boolean;
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
+
+const isHlaEmpty = (hla?: HlaType | null): boolean => {
+  if (!hla) return true;
+  return (!hla.a1 || hla.a1 === '') && (!hla.a2 || hla.a2 === '') && (!hla.b1 || hla.b1 === '') && (!hla.b2 || hla.b2 === '') && (!hla.c1 || hla.c1 === '') && (!hla.c2 || hla.c2 === '');
+};
 
 const GenomicSummary = ({
   isPrint = false,
@@ -64,18 +67,17 @@ const GenomicSummary = ({
   const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>(defaultComparator);
   const [hlaNormal, setHlaNormal] = useState<string>();
   const [hlaTumour, setHlaTumour] = useState<string>();
+  const [hla, setHla] = useState<HlaType[]>();
 
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
 
-  const {data: microbialData, isError: microbialError} = useQuery(
+  const { data: microbialData, isError: microbialError } = useQuery(
     `/reports/${report.ident}/summary/microbial`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response;
-      },
+      select: (response) => response,
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('microbial call error');
@@ -83,15 +85,13 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: primaryComparatorData, isError: primaryComparatorError} = useQuery(
+  const { data: primaryComparatorData, isError: primaryComparatorError } = useQuery(
     `/reports/${report.ident}/comparators`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)');
-      },
+      select: (response) => response.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'),
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('comparators call error');
@@ -99,15 +99,13 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: signaturesData, isError: signaturesError} = useQuery(
+  const { data: signaturesData, isError: signaturesError } = useQuery(
     `/reports/${report.ident}/mutation-signatures`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response;
-      },
+      select: (response) => response,
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('mutation signatures call error');
@@ -115,15 +113,13 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: tCellCd8Data, isError: tCellCd8Error} = useQuery(
+  const { data: tCellCd8Data, isError: tCellCd8Error } = useQuery(
     `/reports/${report.ident}/immune-cell-types`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response.find(({ cellType }) => cellType === 'T cells CD8');
-      },
+      select: (response) => response.find(({ cellType }) => cellType === 'T cells CD8'),
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('immune cell types call error');
@@ -131,15 +127,13 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: primaryBurdenData, isError: primaryBurdenError} = useQuery(
+  const { data: primaryBurdenData, isError: primaryBurdenError } = useQuery(
     `/reports/${report.ident}/mutation-burden`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response.find((entry: Record<string, unknown>) => entry.role === 'primary');
-      },
+      select: (response) => response.find((entry: Record<string, unknown>) => entry.role === 'primary'),
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('mutation burden call error');
@@ -147,18 +141,17 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: msiData, isError: msiError} = useQuery(
+  const { data: msiData, isError: msiError } = useQuery(
     `/reports/${report.ident}/msi`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
       select: (response) => {
         if (response.length) {
           return response[0];
-        } else {
-          return null;
         }
+        return null;
       },
       onError: () => {
         // eslint-disable-next-line no-console
@@ -167,15 +160,13 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: tmburMutBurData, isError: tmburMutBurError} = useQuery(
+  const { data: tmburMutBurData, isError: tmburMutBurError } = useQuery(
     `/reports/${report.ident}/tmbur-mutation-burden`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response;
-      },
+      select: (response) => response,
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('tmbur mutation burden call error');
@@ -183,15 +174,13 @@ const GenomicSummary = ({
     },
   );
 
-  const {data: hlaData, isError: hlaError} = useQuery(
+  const { data: hlaData, isError: hlaError } = useQuery(
     `/reports/${report.ident}/hla-types`,
-    async ({ queryKey: [route] }) => await api.get(route).request(),
+    async ({ queryKey: [route] }) => api.get(route).request(),
     {
       staleTime: Infinity,
       enabled: Boolean(report),
-      select: (response) => {
-        return response;
-      },
+      select: (response) => response,
       onError: () => {
         // eslint-disable-next-line no-console
         console.error('tmbur mutation burden call error');
@@ -223,18 +212,19 @@ const GenomicSummary = ({
         setTmburMutBur(tmburMutBurData);
       }
       if (hlaData) {
-        const normal = hlaData.find((h) => h.pathology === 'normal');
-        const tumourDNA = hlaData.find((h) => h.pathology === 'diseased' && h.protocl === 'DNA');
-        const tumourRNA = hlaData.find((h) => h.pathology === 'diseased' && h.protocl === 'RNA');
+        setHla(hlaData);
+        const normal = hlaData.find((h) => h.pathology === 'normal' && !isHlaEmpty(h));
+        const tumourDNA = hlaData.find((h) => h.pathology === 'diseased' && h.protocol === 'DNA' && !isHlaEmpty(h));
+        const tumourRNA = hlaData.find((h) => h.pathology === 'diseased' && h.protocol === 'RNA' && !isHlaEmpty(h));
 
-        if (normal) {
-          setHlaNormal(`${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`);
-        }
-        if (tumourDNA) {
-          setHlaTumour(`${tumourDNA.a1} ${tumourDNA.a2} ${tumourDNA.b1} ${tumourDNA.b2} ${tumourDNA.c1} ${tumourDNA.c2}`);
-        } else if (tumourRNA) {
-          setHlaTumour(`${tumourRNA.a1} ${tumourRNA.a2} ${tumourRNA.b1} ${tumourRNA.b2} ${tumourRNA.c1} ${tumourRNA.c2}`);
-        }
+        setHlaNormal(normal
+          ? `${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`
+          : null);
+
+        const tumourHla = tumourDNA ?? tumourRNA;
+        setHlaTumour(tumourHla
+          ? `${tumourHla.a1} ${tumourHla.a2} ${tumourHla.b1} ${tumourHla.b2} ${tumourHla.c1} ${tumourHla.c2}`
+          : null);
       }
       if (loadedDispatch) {
         loadedDispatch({ type: 'summary-genomic' });
@@ -308,7 +298,9 @@ const GenomicSummary = ({
         let tmbDisplayValue = 'No data available';
 
         if (tmburMutBur) {
-          const { tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb } = tmburMutBur;
+          const {
+            tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb,
+          } = tmburMutBur;
           if (tmbHidden) {
             tmbDisplayValue = null;
           } else if (adjustedTmb != null) {
@@ -408,8 +400,10 @@ const GenomicSummary = ({
     newTCellCd8Data,
     newMutationBurdenData,
     newTmBurMutBurData,
+    newMsiData,
+    newHlaData,
   ) => {
-    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData && !newMsiData && !newHlaData)) {
       return;
     }
 
@@ -432,9 +426,29 @@ const GenomicSummary = ({
     if (newTmBurMutBurData) {
       setTmburMutBur(newTmBurMutBurData);
     }
+
+    if (newMsiData) {
+      setMsi(newMsiData);
+    }
+
+    if (newHlaData) {
+      setHla(newHlaData);
+      const normal = newHlaData.find((h) => h.pathology === 'normal' && !isHlaEmpty(h));
+      const tumourDNA = newHlaData.find((h) => h.pathology === 'diseased' && h.protocol === 'DNA' && !isHlaEmpty(h));
+      const tumourRNA = newHlaData.find((h) => h.pathology === 'diseased' && h.protocol === 'RNA' && !isHlaEmpty(h));
+
+      setHlaNormal(normal
+        ? `${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`
+        : null);
+
+      const tumourHla = tumourDNA ?? tumourRNA;
+      setHlaTumour(tumourHla
+        ? `${tumourHla.a1} ${tumourHla.a2} ${tumourHla.b1} ${tumourHla.b2} ${tumourHla.c1} ${tumourHla.c2}`
+        : null);
+    }
   }, [setReport]);
 
-  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError) {
+  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || tmburMutBurError || hlaError) {
     return null;
   }
 
@@ -474,6 +488,7 @@ const GenomicSummary = ({
                 tCellCd8={tCellCd8}
                 tmburMutBur={tmburMutBur ?? null}
                 tumourSummary={tumourSummary}
+                hla={hla}
               />
             )}
           </Box>
@@ -510,6 +525,7 @@ const GenomicSummary = ({
               tCellCd8={tCellCd8}
               tmburMutBur={tmburMutBur ?? null}
               tumourSummary={tumourSummary}
+              hla={hla}
             />
           )}
         </>

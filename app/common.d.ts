@@ -366,7 +366,6 @@ type HlaType = {
   objective: number | null;
 } & RecordDefaults;
 
-
 type SignatureVariantType = {
   displayName: string | null;
   germline?: string | null;
@@ -454,6 +453,7 @@ export {
   TumourSummaryType,
   TmburType,
   MsiType,
+  HlaType,
   SignatureVariantType,
   MutationBurdenType,
   ImmuneType,
