@@ -84,6 +84,7 @@ const Therapeutic = ({
     ident: null,
     createdAt: null,
     updatedAt: null,
+    deletedAt: null,
     type: null,
     rank: null,
     gene: null,
