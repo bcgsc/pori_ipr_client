@@ -31,6 +31,7 @@ import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import useSignatures from '@/hooks/useSignatures';
 import { useSignatureTypes } from '@/hooks/useSignatureTypes';
+import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
@@ -42,7 +43,8 @@ import TumourSummary from '../TumourSummary';
 
 import './index.scss';
 import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
-import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
+
+import { HlaType } from '../Immune/types';
 
 const ANALYST_DISABLED = 'analyst disabled';
 
@@ -204,6 +206,7 @@ const RapidSummary = ({
   printVersion = null,
 }: RapidSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
+  const [hlaNormal, setHlaNormal] = useState<string>();
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
   const { data: signatures } = useSignatures(report);
   const { data: signatureTypes } = useSignatureTypes(report);
@@ -232,6 +235,7 @@ const RapidSummary = ({
     UseQueryResult<MsiType>,
     UseQueryResult<ImmuneType | undefined>,
     UseQueryResult<MicrobialType[]>,
+    UseQueryResult<HlaType[]>,
   ]
   >(
     [
@@ -308,6 +312,13 @@ const RapidSummary = ({
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
         refetchOnMount: 'always',
       },
+      {
+        queryKey: ['hla', reportIdent],
+        queryFn: (): Promise<HlaType[]> => api.get(`/reports/${reportIdent}/hla-types`).request(),
+        enabled: !!reportIdent,
+        onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
+        refetchOnMount: 'always',
+      },
     ],
   );
 
@@ -333,6 +344,7 @@ const RapidSummary = ({
     { data: msi, isSuccess: isMsiSuccess },
     { data: tCellCd8, isSuccess: isTCellCd8Success },
     { data: microbial, isSuccess: isMicrobialSuccess },
+    { data: hla },
   ] = queries;
 
   const isLoadingFromQueries = queries.some((q) => q.isLoading);
@@ -378,16 +390,23 @@ const RapidSummary = ({
       tCell = null;
     }
 
+    if (hla) {
+      const normal = hla.find((h) => h.pathology === 'normal');
+      if (normal) {
+        setHlaNormal(`${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`);
+      }
+    }
+
     setTumourSummary(() => {
       // Check if genomeTmb (new version) exists
       const { genomeTmb } = report;
-      
+
       let tmbDisplayValue = 'No data available';
 
       if (genomeTmb) {
         tmbDisplayValue = genomeTmb.toFixed(2);
       }
-      
+
       if (tmburMutBur) {
         const { tmbHidden, adjustedTmb } = tmburMutBur;
         if (tmbHidden) {
@@ -396,7 +415,7 @@ const RapidSummary = ({
           tmbDisplayValue = adjustedTmb.toFixed(2);
         }
       }
-      
+
       return ([
         {
           term: 'Pathology Tumour Content',
@@ -409,11 +428,11 @@ const RapidSummary = ({
             : null,
         },
         {
-            term: 'HRD Score',
-            value: report.hrdScore !== null
-              ? `${report.hrdScore}`
-              : null,
-          },
+          term: 'HRD Score',
+          value: report.hrdScore !== null
+            ? `${report.hrdScore}`
+            : null,
+        },
         {
           term: 'Preliminary CAPTIV-8 Score',
           value: report.captiv8Score !== null
@@ -454,13 +473,17 @@ const RapidSummary = ({
           term: 'MSI Score',
           value: `${msiScore} (MSI Status: ${msiScore < 20 ? 'MSS' : 'MSI'})`,
         },
+        {
+          term: 'HLA (normal)',
+          value: hlaNormal ?? null,
+        },
       ]);
     });
   }, [
-    microbial, primaryBurden, tmburMutBur, tCellCd8, msi, msi?.score,
+    microbial, primaryBurden, tmburMutBur, tCellCd8, msi, msi?.score, hlaNormal,
     report.m1m2Score, report.sampleInfo, report.tumourContent, report?.genomeTmb, report.captiv8Score,
     tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
-    tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
+    tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, hla, report,
   ]);
 
   useEffect(() => {
@@ -788,12 +811,13 @@ const RapidSummary = ({
     newMutationBurdenData,
     newTmBurMutBurData,
     newMsiData,
+    newHlaData,
   ) => {
-    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData && !newMsiData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData && !newMsiData && !newHlaData)) {
       return;
     }
     // Partial query keys to be refetched
-    const keysToRefetch = ['microbial', 'report', 'immune', 'primaryBurden', 'msi'];
+    const keysToRefetch = ['microbial', 'report', 'immune', 'primaryBurden', 'msi', 'hla'];
     queryClient.refetchQueries({
       predicate: (q) => keysToRefetch.includes(q.queryKey[0] as string),
     });
@@ -801,7 +825,14 @@ const RapidSummary = ({
     if (newReportData) {
       setReport(newReportData);
     }
-  }, [queryClient, setReport]);
+
+    if (newHlaData) {
+      const normal = newHlaData.find((h) => h.pathology === 'normal');
+      if (normal) {
+        setHlaNormal(`${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`);
+      }
+    }
+  }, [queryClient, setReport, setHlaNormal]);
 
   if (printVersion === 'condensedLayout') {
     return (
@@ -839,6 +870,7 @@ const RapidSummary = ({
                 tCellCd8={tCellCd8}
                 tmburMutBur={tmburMutBur}
                 msi={msi}
+                hla={hla}
                 tumourSummary={tumourSummary}
               />
             )}
@@ -903,6 +935,7 @@ const RapidSummary = ({
               tCellCd8={tCellCd8}
               tmburMutBur={tmburMutBur}
               msi={msi}
+              hla={hla}
               tumourSummary={tumourSummary}
             />
           )}
