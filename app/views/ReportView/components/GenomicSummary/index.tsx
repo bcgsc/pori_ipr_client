@@ -2,7 +2,9 @@ import React, {
   useEffect, useState, useContext,
   useCallback,
 } from 'react';
+import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
+import useReport from '@/hooks/useReport';
 import { Box } from '@mui/material';
 import api from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
@@ -11,26 +13,19 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
   TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType, MsiType,
 } from '@/common';
-import useReport from '@/hooks/useReport';
-import { useQuery } from 'react-query';
+import { ComparatorType } from '../MutationBurden/types';
+import MutationSignatureType from '../MutationSignatures/types';
+import { HlaType } from '../Immune/types';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { SummaryProps } from '@/commonComponents';
 import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
-import {
-  ComparatorType,
-} from '../MutationBurden/types';
-import MutationSignatureType from '../MutationSignatures/types';
-
-import './index.scss';
-
 import PatientInformation from '../PatientInformation';
-
 import TumourSummary from '../TumourSummary';
 import {
   defaultComparator, defaultImmune, defaultMsi, defaultMutationBurden, defaultTmbur,
 } from './defaultStates';
 
-import { HlaType } from '../Immune/types';
+import './index.scss';
 
 type GenomicSummaryProps = {
   loadedDispatch?: SummaryProps['loadedDispatch'];
@@ -160,7 +155,7 @@ const GenomicSummary = ({
     },
   );
 
-  const { data: tmburMutBurData, isError: tmburMutBurError } = useQuery(
+  const { data: tmburMutBurData } = useQuery(
     `/reports/${report.ident}/tmbur-mutation-burden`,
     async ({ queryKey: [route] }) => api.get(route).request(),
     {
@@ -279,12 +274,21 @@ const GenomicSummary = ({
         sigs = 'Nothing of clinical relevance';
       }
 
+      // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
+      // Genomic report will now incorporate both sources to retain information in old reports and use updated msi score in future reports
       let msiStatus: null | string;
-      if (msi) {
+      if (msi && msi.score !== null) {
         if (msi?.score < 20) {
           msiStatus = 'MSS';
         }
         if (msi?.score >= 20) {
+          msiStatus = 'MSI';
+        }
+      } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
+        if (tmburMutBur?.msiScore < 20) {
+          msiStatus = 'MSS';
+        }
+        if (tmburMutBur?.msiScore >= 20) {
           msiStatus = 'MSI';
         }
       } else {
@@ -493,6 +497,7 @@ const GenomicSummary = ({
                 report={report}
                 tCellCd8={tCellCd8}
                 tmburMutBur={tmburMutBur ?? null}
+                msi={msi ?? null}
                 tumourSummary={tumourSummary}
                 hla={hla}
               />
@@ -530,6 +535,7 @@ const GenomicSummary = ({
               report={report}
               tCellCd8={tCellCd8}
               tmburMutBur={tmburMutBur ?? null}
+              msi={msi ?? null}
               tumourSummary={tumourSummary}
               hla={hla}
             />

@@ -1,6 +1,7 @@
 import React, {
   useState, useEffect, useCallback, useContext, useMemo,
 } from 'react';
+import { useQueryClient } from 'react-query';
 import {
   Dialog,
   DialogTitle,
@@ -21,15 +22,14 @@ import api, { ApiCallSet } from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';
 import AsyncButton from '@/components/AsyncButton';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-
-import './index.scss';
 import { ReportType } from '@/context/ReportContext';
 import {
   ImmuneType, MicrobialType, MsiType, MutationBurdenType, TmburType, HlaType,
 } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import { getMicbSiteIntegrationStatusLabel } from '@/utils/getMicbSiteIntegrationStatusLabel';
-import { useQueryClient } from 'react-query';
+
+import './index.scss';
 
 const MICB_SITE_STEPS = {
   yes: 'no',
@@ -156,12 +156,18 @@ const TumourSummaryEdit = ({
   }, [tmburMutBur]);
 
   useEffect(() => {
-    if (msi) {
+    if (msi && msi.score !== null) {
       setNewMsiData({
         score: msi.score,
       });
+    } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
+      setNewMsiData({
+        score: tmburMutBur.msiScore,
+      });
+    } else {
+      setNewMsiData(null);
     }
-  }, [msi]);
+  }, [msi, tmburMutBur]);
 
   useEffect(() => {
     if (hla) {
@@ -232,13 +238,16 @@ const TumourSummaryEdit = ({
     setTmburMutDirty(true);
   }, []);
 
-  const handleMsiScoreChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target: { value, name } } = event;
-    setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
+  const handleMsiScoreChange = useCallback(({ target: { value, name } }) => {
     if (msi) {
+      setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
       setMsiDirty(true);
     } else if (tmburMutBur) {
+      setNewTmburMutData((prevVal) => ({ ...prevVal, [name]: value }));
       setTmburMutDirty(true);
+    } else {
+      setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
+      setMsiDirty(true);
     }
   }, [msi, tmburMutBur]);
 
@@ -914,7 +923,8 @@ const TumourSummaryEdit = ({
           fullWidth
           type="number"
         />
-        )}
+        )
+      }
       {!msi && tmburMutBur
         && (
         <TextField
@@ -927,7 +937,22 @@ const TumourSummaryEdit = ({
           fullWidth
           type="number"
         />
-        )}
+        )
+      }
+      {!msi && !tmburMutBur
+        && (
+        <TextField
+          className="tumour-dialog__number-field"
+          label="MSI Score"
+          value={newMsiData?.score ?? null}
+          name="score"
+          onChange={handleMsiScoreChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+        )
+      }
     </>
   ), [
     msi,
