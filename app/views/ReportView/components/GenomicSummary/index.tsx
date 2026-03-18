@@ -359,6 +359,12 @@ const GenomicSummary = ({
               : null,
           },
           {
+            term: 'HRDetect Score',
+            value: report.hrdetectScore !== null
+              ? `${report.hrdetectScore}`
+              : null,
+          },
+          {
             term: `SV Burden${isPrint ? '*' : ''}`,
             value: null,
           },
