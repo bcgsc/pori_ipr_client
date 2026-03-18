@@ -113,6 +113,7 @@ const TumourSummaryEdit = ({
         captiv8Score: report.captiv8Score,
         genomeTmb: report.genomeTmb,
         hrdScore: report.hrdScore,
+        hrdetectScore: report.hrdetectScore,
       });
     }
   }, [report]);
@@ -588,6 +589,19 @@ const TumourSummaryEdit = ({
         />
       );
 
+      const hrdectScoreField = (
+        <TextField
+          className="tumour-dialog__number-field"
+          label="HRDetect Score"
+          value={newReportData?.hrdetectScore ?? ''}
+          name="hrdetectScore"
+          onChange={handleReportChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+      );
+
       if (reportType === 'genomic') {
         return (
           <>
@@ -614,6 +628,7 @@ const TumourSummaryEdit = ({
             {genomeTmbField}
             {captiv8Section}
             {hrdScoreField}
+            {hrdectScoreField}
           </>
         );
       }
