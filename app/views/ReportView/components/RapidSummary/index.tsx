@@ -793,7 +793,7 @@ const RapidSummary = ({
       return;
     }
     // Partial query keys to be refetched
-    const keysToRefetch = ['microbial', 'report', 'immune', 'primaryBurden', 'msi', 'tmbur'];
+    const keysToRefetch = ['microbial', 'report', 'immune', 'primaryBurden', 'msi'];
     queryClient.refetchQueries({
       predicate: (q) => keysToRefetch.includes(q.queryKey[0] as string),
     });

@@ -212,14 +212,13 @@ const TumourSummaryEdit = ({
 
   const handleMsiScoreChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
+    setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
     if (msi) {
-      setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
       setMsiDirty(true);
     } else if (tmburMutBur) {
-      setNewTmburMutData((prevVal) => ({ ...prevVal, msiScore: parseFloat(value) }));
       setTmburMutDirty(true);
     }
-  }, [msi, tmburMutBur]);
+  }, []);
 
   const handleAdjustedTmbCommentChange = useCallback(({ target: { value, name } }) => {
     setNewTmburMutData((tmb) => ({
@@ -844,8 +843,6 @@ const TumourSummaryEdit = ({
       }
     </>
   ), [
-    msi,
-    tmburMutBur,
     newMsiData?.score,
     newTmburMutData?.msiScore,
     handleMsiScoreChange,
