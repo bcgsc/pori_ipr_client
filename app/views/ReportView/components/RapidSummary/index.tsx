@@ -25,6 +25,8 @@ import {
   RecordDefaults,
   AnyVariant,
 } from '@/common';
+import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
+import { HlaType } from '../Immune/types';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
@@ -42,9 +44,6 @@ import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
 import './index.scss';
-import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
-
-import { HlaType } from '../Immune/types';
 
 const ANALYST_DISABLED = 'analyst disabled';
 
@@ -359,14 +358,23 @@ const RapidSummary = ({
   useEffect(() => {
     // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
     // Rapid report will now incorporate both sources to retain information in old reports and use updated msi score in future reports
-    let msiScore: null | number;
+    let msiStatus: null | string;
     if (msi && msi.score !== null) {
-      msiScore = msi.score;
+      if (msi?.score < 20) {
+        msiStatus = 'MSS';
+      }
+      if (msi?.score >= 20) {
+        msiStatus = 'MSI';
+      }
     } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
-      // eslint-disable-next-line prefer-destructuring
-      msiScore = tmburMutBur.msiScore;
+      if (tmburMutBur?.msiScore < 20) {
+        msiStatus = 'MSS';
+      }
+      if (tmburMutBur?.msiScore >= 20) {
+        msiStatus = 'MSI';
+      }
     } else {
-      msiScore = null;
+      msiStatus = null;
     }
 
     let svBurden: null | string = null;
@@ -471,7 +479,7 @@ const RapidSummary = ({
         },
         {
           term: 'MSI Score',
-          value: `${msiScore} (MSI Status: ${msiScore < 20 ? 'MSS' : 'MSI'})`,
+          value: msiStatus ?? null,
         },
         {
           term: 'HLA (normal)',
@@ -868,8 +876,8 @@ const RapidSummary = ({
                 printVersion={printVersion}
                 report={report}
                 tCellCd8={tCellCd8}
-                tmburMutBur={tmburMutBur}
-                msi={msi}
+                tmburMutBur={tmburMutBur ?? null}
+                msi={msi ?? null}
                 hla={hla}
                 tumourSummary={tumourSummary}
               />
@@ -933,8 +941,8 @@ const RapidSummary = ({
               printVersion={printVersion}
               report={report}
               tCellCd8={tCellCd8}
-              tmburMutBur={tmburMutBur}
-              msi={msi}
+              tmburMutBur={tmburMutBur ?? null}
+              msi={msi ?? null}
               hla={hla}
               tumourSummary={tumourSummary}
             />
