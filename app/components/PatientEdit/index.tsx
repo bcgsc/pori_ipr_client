@@ -119,7 +119,7 @@ const PatientEdit = ({
       setIsApiCalling(true);
       const apiCalls = [];
 
-      if (newPatientData) {
+      if (newPatientData && !Object.values(newPatientData).every((value) => value === null || value === '')) {
         const {
           caseType, biopsySite, physician, gender,
         } = newPatientData;
@@ -128,7 +128,7 @@ const PatientEdit = ({
         }, {}));
       }
 
-      if (newReportData) {
+      if (newReportData && !Object.values(newReportData).every((value) => value === null || value === '')) {
         apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
       }
 
