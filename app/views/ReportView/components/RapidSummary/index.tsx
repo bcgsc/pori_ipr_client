@@ -39,7 +39,6 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { useSignatureTypes } from '@/hooks/useSignatureTypes';
 import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
 import { useReportSignatures } from '@/queries/get';
-import { queryKeys } from '@/queries/queryKeys';
 
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
