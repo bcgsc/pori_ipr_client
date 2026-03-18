@@ -155,7 +155,7 @@ const GenomicSummary = ({
     },
   );
 
-  const { data: tmburMutBurData, isError: tmburMutBurError } = useQuery(
+  const { data: tmburMutBurData } = useQuery(
     `/reports/${report.ident}/tmbur-mutation-burden`,
     async ({ queryKey: [route] }) => api.get(route).request(),
     {
@@ -452,7 +452,7 @@ const GenomicSummary = ({
     }
   }, [setReport]);
 
-  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || tmburMutBurError || hlaError) {
+  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || hlaError) {
     return null;
   }
 
