@@ -155,12 +155,18 @@ const TumourSummaryEdit = ({
   }, [tmburMutBur]);
 
   useEffect(() => {
-    if (msi) {
+    if (msi && msi.score !== null) {
       setNewMsiData({
         score: msi.score,
       });
+    } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
+      setNewMsiData({
+        score: tmburMutBur.msiScore,
+      });
+    } else {
+      setNewMsiData(null);
     }
-  }, [msi]);
+  }, [msi, tmburMutBur]);
 
   useEffect(() => {
     if (hla) {
@@ -238,6 +244,9 @@ const TumourSummaryEdit = ({
     } else if (tmburMutBur) {
       setNewTmburMutData((prevVal) => ({ ...prevVal, [name]: value }));
       setTmburMutDirty(true);
+    } else {
+      setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
+      setMsiDirty(true);
     }
   }, [msi, tmburMutBur]);
 
@@ -899,7 +908,8 @@ const TumourSummaryEdit = ({
           fullWidth
           type="number"
         />
-        )}
+        )
+      }
       {!msi && tmburMutBur
         && (
         <TextField
@@ -912,7 +922,22 @@ const TumourSummaryEdit = ({
           fullWidth
           type="number"
         />
-        )}
+        )
+      }
+      {!msi && !tmburMutBur
+        && (
+        <TextField
+          className="tumour-dialog__number-field"
+          label="MSI Score"
+          value={newMsiData?.score ?? null}
+          name="score"
+          onChange={handleMsiScoreChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+        )
+      }
     </>
   ), [
     msi,

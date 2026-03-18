@@ -275,14 +275,14 @@ const GenomicSummary = ({
       }
 
       let msiStatus: null | string;
-      if (msi) {
+      if (msi && msi.score !== null) {
         if (msi?.score < 20) {
           msiStatus = 'MSS';
         }
         if (msi?.score >= 20) {
           msiStatus = 'MSI';
         }
-      } else if (tmburMutBur) {
+      } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
         if (tmburMutBur?.msiScore < 20) {
           msiStatus = 'MSS';
         }
