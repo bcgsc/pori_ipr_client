@@ -358,23 +358,23 @@ const RapidSummary = ({
   useEffect(() => {
     // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
     // Rapid report will now incorporate both sources to retain information in old reports and use updated msi score in future reports
-    let msiScore: null | string;
+    let msiStatus: null | string;
     if (msi && msi.score !== null) {
       if (msi?.score < 20) {
-        msiScore = `${msi?.score} (MSI Status: MSS)`;
+        msiStatus = 'MSS';
       }
       if (msi?.score >= 20) {
-        msiScore = `${msi?.score} (MSI Status: MSI)`;
+        msiStatus = 'MSI';
       }
     } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
       if (tmburMutBur?.msiScore < 20) {
-        msiScore = `${tmburMutBur?.msiScore} (MSI Status: MSS)`;
+        msiStatus = 'MSS';
       }
       if (tmburMutBur?.msiScore >= 20) {
-        msiScore = `${tmburMutBur?.msiScore} (MSI Status: MSI)`;
+        msiStatus = 'MSI';
       }
     } else {
-      msiScore = null;
+      msiStatus = null;
     }
 
     let svBurden: null | string = null;
@@ -479,7 +479,7 @@ const RapidSummary = ({
         },
         {
           term: 'MSI Score',
-          value: msiScore ?? null,
+          value: msiStatus ?? null,
         },
         {
           term: 'HLA (normal)',

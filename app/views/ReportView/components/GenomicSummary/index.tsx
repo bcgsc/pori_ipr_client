@@ -274,6 +274,8 @@ const GenomicSummary = ({
         sigs = 'Nothing of clinical relevance';
       }
 
+      // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
+      // Genomic report will now incorporate both sources to retain information in old reports and use updated msi score in future reports
       let msiStatus: null | string;
       if (msi && msi.score !== null) {
         if (msi?.score < 20) {
