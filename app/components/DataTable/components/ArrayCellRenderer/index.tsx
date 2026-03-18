@@ -34,7 +34,7 @@ const RenderArrayCell = (fieldPath: string, isLink: boolean = false, useValue: b
       if (firstVal?.match(/^\d+$/)) {
         link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
         validLink = true;
-      } else if (firstVal?.match(/^nct\d+$/)) {
+      } else if (firstVal?.match(/^NCT\d+$/)) {
         link = `https://clinicaltrials.gov/study/${firstVal}`;
         validLink = true;
       } else if (urlRegex.test(firstVal)) {
