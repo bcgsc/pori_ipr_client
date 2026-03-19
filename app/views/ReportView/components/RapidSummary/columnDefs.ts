@@ -115,8 +115,16 @@ const therapeuticAssociationColDefs = [
   {
     headerName: 'Copy Change',
     field: 'copyChange',
-    valueGetter: ({ data: { copyChange } }) => {
-      return copyChange || 'N/A';
+    valueGetter: ({ data: { copyChange, gene, variantType } }) => {
+      if (copyChange) {
+        return copyChange;
+      }
+      else if (variantType === 'cnv') {
+        if (gene && gene.copyVariants) {
+          return gene.copyVariants.copyChange;
+        }
+       }
+      return 'N/A';
     },
   },
   {
@@ -194,12 +202,15 @@ const cancerRelevanceColDefs = [
   {
     headerName: 'Copy Change',
     field: 'copyChange',
-    valueGetter: ({ data: { gene } }) => {
-      if (gene) {
-        if (gene.copyVariants) {
+    valueGetter: ({ data: { copyChange, gene, variantType } }) => {
+      if (copyChange) {
+        return copyChange;
+      }
+      else if (variantType === 'cnv') {
+        if (gene && gene.copyVariants) {
           return gene.copyVariants.copyChange;
         }
-      }
+       }
       return 'N/A';
     },
   },
