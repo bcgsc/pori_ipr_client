@@ -181,6 +181,7 @@ const GenomicSummary = ({
     },
   );
   const hlaNormal = useMemo(() => {
+    if (!hla) return null;
     const normal = hla.find((h) => h.pathology === 'normal' && !isHlaEmpty(h));
     if (normal) {
       return `${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`;
@@ -189,6 +190,7 @@ const GenomicSummary = ({
   }, [hla]);
 
   const hlaTumour = useMemo(() => {
+    if (!hla) return null;
     const tumourDNA = hla.find((h) => h.pathology === 'diseased' && h.protocol === 'DNA' && !isHlaEmpty(h));
     const tumourRNA = hla.find((h) => h.pathology === 'diseased' && h.protocol === 'RNA' && !isHlaEmpty(h));
     const tumourHla = tumourDNA ?? tumourRNA;
