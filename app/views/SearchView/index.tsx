@@ -196,7 +196,7 @@ const SearchView = () => {
               <MenuItem value="patientId">Patient ID</MenuItem>
               <MenuItem value="projectName">Project Name</MenuItem>
               <MenuItem value="diagnosis">Diagnosis</MenuItem>
-              <MenuItem value="therapeuticTarget">Therapeutic Target</MenuItem>
+              <MenuItem value="therapy">Therapy</MenuItem>
               <MenuItem value="smallMutation">Small Mutation</MenuItem>
               <MenuItem value="structuralVariant">Structural Variant</MenuItem>
               <MenuItem value="mutationSignature">Mutation Signature</MenuItem>

@@ -3,7 +3,9 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
+import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
+import useReport from '@/hooks/useReport';
 import { Box } from '@mui/material';
 
 import DemoDescription from '@/components/DemoDescription';
@@ -14,8 +16,8 @@ import {
   TmburType,
   MsiType,
 } from '@/common';
+
 import { MutationSignatureType } from '@/views/ReportView/components/MutationSignatures';
-import useReport from '@/hooks/useReport';
 
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { SummaryProps } from '@/commonComponents';
@@ -28,8 +30,9 @@ import {
   useReportTmburMutationBurden,
   useReportMsi,
 } from '@/queries/get';
-import PatientInformation from '../PatientInformation';
+import { HlaType } from '../Immune/types';
 
+import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
 type GenomicSummaryProps = {
@@ -38,6 +41,11 @@ type GenomicSummaryProps = {
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
+const isHlaEmpty = (hla?: HlaType | null): boolean => {
+  if (!hla) return true;
+  return (!hla.a1 || hla.a1 === '') && (!hla.a2 || hla.a2 === '') && (!hla.b1 || hla.b1 === '') && (!hla.b2 || hla.b2 === '') && (!hla.c1 || hla.c1 === '') && (!hla.c2 || hla.c2 === '');
+};
+
 const GenomicSummary = ({
   isPrint = false,
   printVersion = null,
@@ -45,7 +53,7 @@ const GenomicSummary = ({
   isLoading,
   loadedDispatch,
 }: GenomicSummaryProps): JSX.Element => {
-  const { report, canEdit: reportContextCanEdit } = useReport();
+  const { report, canEdit: reportContextCanEdit, refetchReport } = useReport();
   let canEdit = reportContextCanEdit;
   if (report.state === 'completed') {
     canEdit = false;
@@ -57,6 +65,7 @@ const GenomicSummary = ({
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
   const {
     data: microbial,
+    refetch: refetchMicrobial,
     isError: microbialError,
     isLoading: isMicrobialLoading,
   } = useReportSummaryMicrobial<MicrobialType[]>(
@@ -97,6 +106,7 @@ const GenomicSummary = ({
 
   const {
     data: reportImmuneCellTypes,
+    refetch: refetchImmuneCellTypes,
     isError: tCellCd8Error,
     isLoading: isTCellCd8Loading,
   } = useReportImmuneCellTypes<ImmuneType[]>(
@@ -114,6 +124,7 @@ const GenomicSummary = ({
 
   const {
     data: reportMutationBurden,
+    refetch: refetchMutationBurden,
     isError: primaryBurdenError,
     isLoading: isPrimaryBurdenLoading,
   } = useReportMutationBurden<MutationBurdenType[]>(
@@ -131,6 +142,7 @@ const GenomicSummary = ({
 
   const {
     data: msi,
+    refetch: refetchMsi,
     isError: msiError,
     isLoading: isMsiLoading,
   } = useReportMsi<MsiType[], MsiType>(
@@ -145,6 +157,7 @@ const GenomicSummary = ({
 
   const {
     data: tmburMutBur,
+    refetch: refetchTmbur,
     isLoading: isTmburMutBurLoading,
   } = useReportTmburMutationBurden<TmburType>(
     report?.ident,
@@ -209,12 +222,21 @@ const GenomicSummary = ({
         sigs = 'Nothing of clinical relevance';
       }
 
+      // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
+      // Genomic report will now incorporate both sources to retain information in old reports and use updated msi score in future reports
       let msiStatus: null | string;
-      if (msi) {
+      if (msi && msi.score !== null) {
         if (msi?.score < 20) {
           msiStatus = 'MSS';
         }
         if (msi?.score >= 20) {
+          msiStatus = 'MSI';
+        }
+      } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
+        if (tmburMutBur?.msiScore < 20) {
+          msiStatus = 'MSS';
+        }
+        if (tmburMutBur?.msiScore >= 20) {
           msiStatus = 'MSI';
         }
       } else {
@@ -289,6 +311,12 @@ const GenomicSummary = ({
               : null,
           },
           {
+            term: 'HRDetect Score',
+            value: report.hrdetectScore !== null
+              ? `${report.hrdetectScore}`
+              : null,
+          },
+          {
             term: `SV Burden${isPrint ? '*' : ''}`,
             value: null,
           },
@@ -308,24 +336,59 @@ const GenomicSummary = ({
           },
           {
             term: 'Adjusted TMB Comment',
-            value:
-              tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+            value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+          },
+          {
+            term: 'HLA (normal)',
+            value: hlaNormal ?? null,
+          },
+          {
+            term: 'HLA (tumour)',
+            value: hlaTumour ?? null,
           },
         ]);
       });
     }
-  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score]);
+  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score, hlaNormal, hlaTumour]);
 
   const handleTumourSummaryEditClose: TumourSummaryEditProps['onEditClose'] = useCallback((
     isSaved,
+    newMicrobialData,
+    newReportData,
+    newTCellCd8Data,
+    newMutationBurdenData,
+    newTmBurMutBurData,
+    newMsiData,
+    newHlaData,
   ) => {
     if (!isSaved) {
       return undefined;
     }
-    return undefined;
+
+    if (newMicrobialData) { refetchMicrobial(); }
+    if (newReportData) { refetchReport(); }
+    if (newTCellCd8Data) { refetchImmuneCellTypes(); }
+    if (newMutationBurdenData) { refetchMutationBurden(); }
+    if (newTmBurMutBurData) { refetchTmbur(); }
+    if (newMsiData) { refetchMsi(); }
+    if (newHlaData) {
+      setHla(newHlaData);
+      const normal = newHlaData.find((h) => h.pathology === 'normal' && !isHlaEmpty(h));
+      const tumourDNA = newHlaData.find((h) => h.pathology === 'diseased' && h.protocol === 'DNA' && !isHlaEmpty(h));
+      const tumourRNA = newHlaData.find((h) => h.pathology === 'diseased' && h.protocol === 'RNA' && !isHlaEmpty(h));
+
+      setHlaNormal(normal
+        ? `${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`
+        : null);
+
+      const tumourHla = tumourDNA ?? tumourRNA;
+      setHlaTumour(tumourHla
+        ? `${tumourHla.a1} ${tumourHla.a2} ${tumourHla.b1} ${tumourHla.b2} ${tumourHla.c1} ${tumourHla.c2}`
+        : null);
+    }
   }, []);
 
-  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError) {
+  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || hlaError) {
     return null;
   }
 
@@ -364,7 +427,9 @@ const GenomicSummary = ({
                 report={report}
                 tCellCd8={tCellCd8}
                 tmburMutBur={tmburMutBur ?? null}
+                msi={msi ?? null}
                 tumourSummary={tumourSummary}
+                hla={hla}
               />
             )}
           </Box>
@@ -400,7 +465,9 @@ const GenomicSummary = ({
               report={report}
               tCellCd8={tCellCd8}
               tmburMutBur={tmburMutBur ?? null}
+              msi={msi ?? null}
               tumourSummary={tumourSummary}
+              hla={hla}
             />
           )}
         </>

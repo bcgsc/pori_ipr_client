@@ -39,7 +39,7 @@ const searchFeaturesDescription = () => {
       </Typography>
       <br />
       <Typography variant="subtitle1" color="inherit">
-        <b>Category - Therapeutic Target:</b> Search for reports with at least 1 matching therapeutic target. Query column 'therapy' in 'Potential Therapeutic Targets' table.
+        <b>Category - Therapy:</b> Search for reports with at least 1 matching therapy. Query column 'therapy' in 'Potential Therapeutic Targets' table.
       </Typography>
       <br />
       <Typography variant="subtitle1" color="inherit">
