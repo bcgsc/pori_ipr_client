@@ -40,9 +40,11 @@ type ReportType = {
   biopsyName?: string;
   captiv8Score: number;
   createdBy?: UserType;
+  dataType: string;
   expression_matrix: string;
   genomeTmb?: number;
   hrdScore?: number;
+  hrdetectScore?: number;
   kbDiseaseMatch: string;
   kbVersion: string;
   m1m2Score: number;
@@ -54,6 +56,7 @@ type ReportType = {
   projects?: ProjectType[];
   reportVersion: string;
   sampleInfo: SampleInfoType[];
+  seqQC: SeqQCType[];
   state: string;
   subtyping: string;
   template: TemplateType;

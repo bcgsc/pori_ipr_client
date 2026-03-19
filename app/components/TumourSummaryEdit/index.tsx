@@ -1,6 +1,7 @@
 import React, {
   useState, useEffect, useCallback, useContext, useMemo,
 } from 'react';
+import { useQueryClient } from 'react-query';
 import {
   Dialog,
   DialogTitle,
@@ -12,6 +13,7 @@ import {
   Autocomplete,
   FormControlLabel,
   Checkbox,
+  Typography,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { pink } from '@mui/material/colors';
@@ -20,15 +22,14 @@ import api, { ApiCallSet } from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';
 import AsyncButton from '@/components/AsyncButton';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-
-import './index.scss';
 import { ReportType } from '@/context/ReportContext';
 import {
-  ImmuneType, MicrobialType, MsiType, MutationBurdenType, TmburType,
+  ImmuneType, MicrobialType, MsiType, MutationBurdenType, TmburType, HlaType,
 } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import { getMicbSiteIntegrationStatusLabel } from '@/utils/getMicbSiteIntegrationStatusLabel';
-import { useQueryClient } from 'react-query';
+
+import './index.scss';
 
 const MICB_SITE_STEPS = {
   yes: 'no',
@@ -44,6 +45,7 @@ type TumourSummaryEditProps = {
   tmburMutBur: TmburType;
   msi?: MsiType;
   isOpen: boolean;
+  hla: HlaType[];
   onEditClose: (
     isSaved: boolean,
     newMicrobialData?: MicrobialType[],
@@ -52,6 +54,7 @@ type TumourSummaryEditProps = {
     newMutationBurdenData?: MutationBurdenType,
     newTmBurMutBurData?: TmburType,
     newMsiData?: MsiType,
+    newHlaData?: HlaType[],
   ) => void;
 };
 
@@ -65,6 +68,7 @@ const TumourSummaryEdit = ({
   mutationBurden,
   tmburMutBur,
   msi,
+  hla,
   isOpen,
   onEditClose,
 }: TumourSummaryEditProps): JSX.Element => {
@@ -77,12 +81,16 @@ const TumourSummaryEdit = ({
   const [newMutationBurdenData, setNewMutationBurdenData] = useState<Partial<MutationBurdenType>>(null);
   const [newTmburMutData, setNewTmburMutData] = useState<Partial<TmburType>>(null);
   const [newMsiData, setNewMsiData] = useState<Partial<MsiType>>(null);
+  const [newHlaNormalData, setNewHlaNormalData] = useState<Partial<HlaType>>(null);
+  const [newHlaTumourData, setNewHlaTumourData] = useState<Partial<HlaType>>(null);
   const [microbialDirty, setMicrobialDirty] = useState(false);
   const [reportDirty, setReportDirty] = useState(false);
   const [tCellCd8Dirty, setTCellCd8Dirty] = useState(false);
   const [mutationBurdenDirty, setMutationBurdenDirty] = useState(false);
   const [tmburMutDirty, setTmburMutDirty] = useState(false);
   const [msiDirty, setMsiDirty] = useState(false);
+  const [hlaNormalDirty, setHlaNormalDirty] = useState(false);
+  const [hlaTumourDirty, setHlaTumourDirty] = useState(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
   const queryClient = useQueryClient();
 
@@ -91,8 +99,8 @@ const TumourSummaryEdit = ({
       // Note: filter out any placeholder 'none's, it gives a false positive to the front-end code
       setNewMicrobialData(
         cloneDeep(microbial).filter(
-          ({ species }) => species.toLowerCase() !== 'none'
-        )
+          ({ species }) => species.toLowerCase() !== 'none',
+        ),
       );
     }
   }, [microbial]);
@@ -105,6 +113,7 @@ const TumourSummaryEdit = ({
         captiv8Score: report.captiv8Score,
         genomeTmb: report.genomeTmb,
         hrdScore: report.hrdScore,
+        hrdetectScore: report.hrdetectScore,
       });
     }
   }, [report]);
@@ -147,13 +156,32 @@ const TumourSummaryEdit = ({
   }, [tmburMutBur]);
 
   useEffect(() => {
-    if (msi) {
+    if (msi && msi.score !== null) {
       setNewMsiData({
         score: msi.score,
       });
+    } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
+      setNewMsiData({
+        score: tmburMutBur.msiScore,
+      });
+    } else {
+      setNewMsiData(null);
     }
-  }, [msi]);
-  
+  }, [msi, tmburMutBur]);
+
+  useEffect(() => {
+    if (hla) {
+      setNewHlaNormalData(hla.find((h) => h.pathology === 'normal'));
+      const tumourDNA = hla.find((h) => h.pathology === 'diseased' && h.protocol === 'DNA');
+      const tumourRNA = hla.find((h) => h.pathology === 'diseased' && h.protocol === 'RNA');
+      if (tumourDNA) {
+        setNewHlaTumourData(tumourDNA);
+      } else {
+        setNewHlaTumourData(tumourRNA);
+      }
+    }
+  }, [hla]);
+
   const handleReportChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
@@ -210,15 +238,18 @@ const TumourSummaryEdit = ({
     setTmburMutDirty(true);
   }, []);
 
-  const handleMsiScoreChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target: { value, name } } = event;
-    setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
+  const handleMsiScoreChange = useCallback(({ target: { value, name } }) => {
     if (msi) {
+      setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
       setMsiDirty(true);
     } else if (tmburMutBur) {
+      setNewTmburMutData((prevVal) => ({ ...prevVal, [name]: value }));
       setTmburMutDirty(true);
+    } else {
+      setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
+      setMsiDirty(true);
     }
-  }, []);
+  }, [msi, tmburMutBur]);
 
   const handleAdjustedTmbCommentChange = useCallback(({ target: { value, name } }) => {
     setNewTmburMutData((tmb) => ({
@@ -234,6 +265,24 @@ const TumourSummaryEdit = ({
       [name]: checked,
     }));
     setTmburMutDirty(true);
+  }, []);
+
+  const handleHlaNormalChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target: { value, name } } = event;
+    setNewHlaNormalData((hlaNormal) => ({
+      ...hlaNormal,
+      [name]: value,
+    }));
+    setHlaNormalDirty(true);
+  }, []);
+
+  const handleHlaTumourChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target: { value, name } } = event;
+    setNewHlaTumourData((hlaTumour) => ({
+      ...hlaTumour,
+      [name]: value,
+    }));
+    setHlaTumourDirty(true);
   }, []);
 
   const handleClose = useCallback(async (isSaved) => {
@@ -330,6 +379,28 @@ const TumourSummaryEdit = ({
         }
       }
 
+      if (hlaNormalDirty && newHlaNormalData) {
+        const {
+          ident, createdAt, updatedAt, ...newData
+        } = newHlaNormalData;
+        if (ident) {
+          apiCalls.push(api.put(`/reports/${report.ident}/hla-types/${ident}`, newData, {}));
+        } else if (!Object.values(newData).every((value) => value === '' || value == null)) {
+          apiCalls.push(api.post(`/reports/${report.ident}/hla-types`, { pathology: 'normal', protocol: 'DNA', ...newData }, {}));
+        }
+      }
+
+      if (hlaTumourDirty && newHlaTumourData) {
+        const {
+          ident, createdAt, updatedAt, ...newData
+        } = newHlaTumourData;
+        if (ident) {
+          apiCalls.push(api.put(`/reports/${report.ident}/hla-types/${ident}`, newData, {}));
+        } else if (!Object.values(newData).every((value) => value === '' || value == null)) {
+          apiCalls.push(api.post(`/reports/${report.ident}/hla-types`, { pathology: 'diseased', protocol: 'DNA', ...newData }, {}));
+        }
+      }
+
       callSet = new ApiCallSet(apiCalls);
 
       if (isSigned) {
@@ -345,6 +416,7 @@ const TumourSummaryEdit = ({
           let msiResp = null;
           let mutationBurdenResp = null;
           let reportResp = null;
+          let hlaResp = null;
 
           if (microbialDirty) {
             microbialResp = await api.get(`/reports/${report.ident}/summary/microbial`).request();
@@ -364,28 +436,34 @@ const TumourSummaryEdit = ({
           if (reportDirty) {
             reportResp = await api.get(`/reports/${report.ident}`).request();
           }
+          if (hlaNormalDirty || hlaTumourDirty) {
+            hlaResp = await api.get(`/reports/${report.ident}/hla-types`).request();
+          }
 
           snackbar.success('Successfully updated Tumour Summary');
           queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/summary/microbial`]
+            queryKey: [`/reports/${report.ident}/summary/microbial`],
           });
           queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/comparators`]
+            queryKey: [`/reports/${report.ident}/comparators`],
           });
           queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/mutation-signatures`]
+            queryKey: [`/reports/${report.ident}/mutation-signatures`],
           });
           queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/mutation-burden`]
+            queryKey: [`/reports/${report.ident}/mutation-burden`],
           });
           queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/immune-cell-types`]
+            queryKey: [`/reports/${report.ident}/immune-cell-types`],
           });
           queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/msi`]
+            queryKey: [`/reports/${report.ident}/msi`],
           });
           queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/tmbur-mutation-burden`]
+            queryKey: [`/reports/${report.ident}/tmbur-mutation-burden`],
+          });
+          queryClient.refetchQueries({
+            queryKey: [`/reports/${report.ident}/hla-types`],
           });
           onEditClose(
             true,
@@ -395,6 +473,7 @@ const TumourSummaryEdit = ({
             mutationBurdenDirty ? mutationBurdenResp.find((mb) => mb.role === 'primary') : null,
             tmburMutDirty ? tmburMutResp : null,
             msiDirty ? msiResp : null,
+            hlaNormalDirty || hlaTumourDirty ? hlaResp : null,
           );
         } catch (callSetError) {
           snackbar.error(`Error updating Tumour Summary: ${callSetError?.message}`);
@@ -418,6 +497,10 @@ const TumourSummaryEdit = ({
     newTmburMutData,
     msiDirty,
     newMsiData,
+    hlaNormalDirty,
+    hlaTumourDirty,
+    newHlaNormalData,
+    newHlaTumourData,
     isSigned,
     newMicrobialData,
     queryClient,
@@ -515,6 +598,19 @@ const TumourSummaryEdit = ({
         />
       );
 
+      const hrdectScoreField = (
+        <TextField
+          className="tumour-dialog__number-field"
+          label="HRDetect Score"
+          value={newReportData?.hrdetectScore ?? ''}
+          name="hrdetectScore"
+          onChange={handleReportChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+      );
+
       if (reportType === 'genomic') {
         return (
           <>
@@ -541,6 +637,7 @@ const TumourSummaryEdit = ({
             {genomeTmbField}
             {captiv8Section}
             {hrdScoreField}
+            {hrdectScoreField}
           </>
         );
       }
@@ -711,7 +808,6 @@ const TumourSummaryEdit = ({
     newTCellCd8Data?.percentile,
     newTCellCd8Data?.percentileHidden,
     newTCellCd8Data?.score,
-    report.patientInformation.caseType,
   ]);
 
   const mutBurDataSection = useMemo(() => (
@@ -805,8 +901,6 @@ const TumourSummaryEdit = ({
       />
     </>
   ), [
-    newTmburMutData?.genomeSnvTmb,
-    newTmburMutData?.genomeIndelTmb,
     newTmburMutData?.adjustedTmb,
     newTmburMutData?.adjustedTmbComment,
     newTmburMutData?.tmbHidden,
@@ -817,7 +911,8 @@ const TumourSummaryEdit = ({
 
   const msiSection = useMemo(() => (
     <>
-      {msi && 
+      {msi
+        && (
         <TextField
           className="tumour-dialog__number-field"
           label="MSI Score"
@@ -827,9 +922,11 @@ const TumourSummaryEdit = ({
           variant="outlined"
           fullWidth
           type="number"
-        /> 
+        />
+        )
       }
-      {!msi && tmburMutBur &&
+      {!msi && tmburMutBur
+        && (
         <TextField
           className="tumour-dialog__number-field"
           label="MSI Score"
@@ -840,12 +937,170 @@ const TumourSummaryEdit = ({
           fullWidth
           type="number"
         />
+        )
+      }
+      {!msi && !tmburMutBur
+        && (
+        <TextField
+          className="tumour-dialog__number-field"
+          label="MSI Score"
+          value={newMsiData?.score ?? null}
+          name="score"
+          onChange={handleMsiScoreChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+        )
       }
     </>
   ), [
+    msi,
+    tmburMutBur,
     newMsiData?.score,
     newTmburMutData?.msiScore,
     handleMsiScoreChange,
+  ]);
+
+  const hlaSection = useMemo(() => (
+    <>
+      <Typography variant="body1">HLA (Normal)</Typography>
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="a1"
+        value={newHlaNormalData?.a1 ?? ''}
+        name="a1"
+        onChange={handleHlaNormalChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="a2"
+        value={newHlaNormalData?.a2 ?? ''}
+        name="a2"
+        onChange={handleHlaNormalChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="b1"
+        value={newHlaNormalData?.b1 ?? ''}
+        name="b1"
+        onChange={handleHlaNormalChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="b2"
+        value={newHlaNormalData?.b2 ?? ''}
+        name="b2"
+        onChange={handleHlaNormalChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="c1"
+        value={newHlaNormalData?.c1 ?? ''}
+        name="c1"
+        onChange={handleHlaNormalChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="c2"
+        value={newHlaNormalData?.c2 ?? ''}
+        name="c2"
+        onChange={handleHlaNormalChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="library"
+        value={newHlaNormalData?.library ?? ''}
+        name="library"
+        onChange={handleHlaNormalChange}
+        variant="outlined"
+        type="text"
+        helperText="library field must be provided"
+      />
+
+      <Typography variant="body1">HLA (Tumour)</Typography>
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="a1"
+        value={newHlaTumourData?.a1 ?? ''}
+        name="a1"
+        onChange={handleHlaTumourChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="a2"
+        value={newHlaTumourData?.a2 ?? ''}
+        name="a2"
+        onChange={handleHlaTumourChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="b1"
+        value={newHlaTumourData?.b1 ?? ''}
+        name="b1"
+        onChange={handleHlaTumourChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="b2"
+        value={newHlaTumourData?.b2 ?? ''}
+        name="b2"
+        onChange={handleHlaTumourChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="c1"
+        value={newHlaTumourData?.c1 ?? ''}
+        name="c1"
+        onChange={handleHlaTumourChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__hla-text-field"
+        label="c2"
+        value={newHlaTumourData?.c2 ?? ''}
+        name="c2"
+        onChange={handleHlaTumourChange}
+        variant="outlined"
+        type="text"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="library"
+        value={newHlaTumourData?.library ?? ''}
+        name="library"
+        onChange={handleHlaTumourChange}
+        variant="outlined"
+        type="text"
+        helperText="library field must be provided"
+      />
+    </>
+  ), [
+    newHlaNormalData,
+    newHlaTumourData,
+    handleHlaNormalChange,
+    handleHlaTumourChange,
   ]);
 
   return (
@@ -860,6 +1115,7 @@ const TumourSummaryEdit = ({
         {mutBurDataSection}
         {tmburMutBurSection}
         {msiSection}
+        {hlaSection}
       </DialogContent>
       <DialogActions>
         <Button onClick={() => handleClose(false)}>
