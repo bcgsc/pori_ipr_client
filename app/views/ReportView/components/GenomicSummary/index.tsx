@@ -3,7 +3,6 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import useReport from '@/hooks/useReport';
 import { Box } from '@mui/material';
@@ -15,6 +14,7 @@ import {
   TumourSummaryType, ComparatorType, ImmuneType, MicrobialType, MutationBurdenType,
   TmburType,
   MsiType,
+  HlaType,
 } from '@/common';
 
 import { MutationSignatureType } from '@/views/ReportView/components/MutationSignatures';
@@ -29,9 +29,8 @@ import {
   useReportComparators, useReportImmuneCellTypes, useReportSummaryMicrobial, useReportMutationBurden, useReportMutationSignatures,
   useReportTmburMutationBurden,
   useReportMsi,
+  useReportHlaTypes,
 } from '@/queries/get';
-import { HlaType } from '../Immune/types';
-
 import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
@@ -164,10 +163,40 @@ const GenomicSummary = ({
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
-      select: (response) => response,
       onError: () => console.error('tmbur mutation burden call error'),
     },
   );
+
+  const {
+    data: hla,
+    refetch: refetchHla,
+    isError: hlaError,
+    isLoading: isHlaLoading,
+  } = useReportHlaTypes<HlaType[]>(
+    report?.ident,
+    {
+      staleTime: Infinity,
+      enabled: !!report?.ident,
+      onError: () => console.error('hla call error'),
+    },
+  );
+  const hlaNormal = useMemo(() => {
+    const normal = hla.find((h) => h.pathology === 'normal' && !isHlaEmpty(h));
+    if (normal) {
+      return `${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`;
+    }
+    return null;
+  }, [hla]);
+
+  const hlaTumour = useMemo(() => {
+    const tumourDNA = hla.find((h) => h.pathology === 'diseased' && h.protocol === 'DNA' && !isHlaEmpty(h));
+    const tumourRNA = hla.find((h) => h.pathology === 'diseased' && h.protocol === 'RNA' && !isHlaEmpty(h));
+    const tumourHla = tumourDNA ?? tumourRNA;
+    if (tumourHla) {
+      return `${tumourHla.a1} ${tumourHla.a2} ${tumourHla.b1} ${tumourHla.b2} ${tumourHla.c1} ${tumourHla.c2}`;
+    }
+    return null;
+  }, [hla]);
 
   const someLoading = isMicrobialLoading
     && isPrimaryComparatorLoading
@@ -175,7 +204,8 @@ const GenomicSummary = ({
     && isTCellCd8Loading
     && isPrimaryBurdenLoading
     && isMsiLoading
-    && isTmburMutBurLoading;
+    && isTmburMutBurLoading
+    && isHlaLoading;
 
   useEffect(() => {
     if (report) {
@@ -371,22 +401,8 @@ const GenomicSummary = ({
     if (newMutationBurdenData) { refetchMutationBurden(); }
     if (newTmBurMutBurData) { refetchTmbur(); }
     if (newMsiData) { refetchMsi(); }
-    if (newHlaData) {
-      setHla(newHlaData);
-      const normal = newHlaData.find((h) => h.pathology === 'normal' && !isHlaEmpty(h));
-      const tumourDNA = newHlaData.find((h) => h.pathology === 'diseased' && h.protocol === 'DNA' && !isHlaEmpty(h));
-      const tumourRNA = newHlaData.find((h) => h.pathology === 'diseased' && h.protocol === 'RNA' && !isHlaEmpty(h));
-
-      setHlaNormal(normal
-        ? `${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`
-        : null);
-
-      const tumourHla = tumourDNA ?? tumourRNA;
-      setHlaTumour(tumourHla
-        ? `${tumourHla.a1} ${tumourHla.a2} ${tumourHla.b1} ${tumourHla.b2} ${tumourHla.c1} ${tumourHla.c2}`
-        : null);
-    }
-  }, []);
+    if (newHlaData) { refetchHla(); }
+  }, [refetchHla, refetchImmuneCellTypes, refetchMicrobial, refetchMsi, refetchMutationBurden, refetchReport, refetchTmbur]);
 
   if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || hlaError) {
     return null;

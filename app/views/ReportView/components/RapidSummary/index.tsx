@@ -24,6 +24,7 @@ import {
   KbMatchedStatementType,
   RecordDefaults,
   AnyVariant,
+  HlaType,
 } from '@/common';
 import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
@@ -40,7 +41,6 @@ import { useSignatureTypes } from '@/hooks/useSignatureTypes';
 import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
 
 import { useReportSignatures } from '@/queries/get';
-import { HlaType } from '../Immune/types';
 
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
