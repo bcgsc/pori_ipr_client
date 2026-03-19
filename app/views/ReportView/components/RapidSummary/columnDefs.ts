@@ -104,6 +104,22 @@ const therapeuticAssociationColDefs = [
     hide: false,
   },
   {
+    headerName: 'Variant Type',
+    field: 'variantType',
+    rowGroup: true,
+    hide: true,
+    valueGetter: ({ data: { variantType } }) => {
+      return variantType || 'N/A';
+    },
+  },
+  {
+    headerName: 'Copy Change',
+    field: 'copyChange',
+    valueGetter: ({ data: { copyChange } }) => {
+      return copyChange || 'N/A';
+    },
+  },
+  {
     headerName: 'Comments',
     field: 'comments',
     hide: true,
@@ -165,6 +181,27 @@ const cancerRelevanceColDefs = [
     },
     comparator: collator.compare,
     hide: false,
+  },
+  {
+    headerName: 'Variant Type',
+    field: 'variantType',
+    rowGroup: true,
+    hide: true,
+    valueGetter: ({ data: { variantType } }) => {
+      return variantType || 'N/A';
+    },
+  },
+  {
+    headerName: 'Copy Change',
+    field: 'copyChange',
+    valueGetter: ({ data: { gene } }) => {
+      if (gene) {
+        if (gene.copyVariants) {
+          return gene.copyVariants.copyChange;
+        }
+      }
+      return 'N/A';
+    },
   },
   {
     headerName: 'Comments',
