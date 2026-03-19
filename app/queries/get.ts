@@ -779,6 +779,25 @@ const useReportStateHistory = <TQueryFnData = unknown, TData = TQueryFnData>(
     { ...queryOptions, queryParams },
   );
 
+const useReportHlaTypes = <TQueryFnData = unknown, TData = TQueryFnData>(
+  reportIdent: string,
+  queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
+  queryParams?: QueryParams,
+) => useAuthedQuery<TQueryFnData, TData>(
+    queryKeys.reports.reportHlaTypes(reportIdent),
+    { ...queryOptions, queryParams },
+  );
+
+const useReportHlaTypesHlaType = <TQueryFnData = unknown, TData = TQueryFnData>(
+  reportIdent: string,
+  hlaTypeIdent: string,
+  queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
+  queryParams?: QueryParams,
+) => useAuthedQuery<TQueryFnData, TData>(
+    queryKeys.reports.reportHlaTypesHlaType(reportIdent, hlaTypeIdent),
+    { ...queryOptions, queryParams },
+  );
+
 const useReportsAsyncAll = <TQueryFnData = unknown, TData = TQueryFnData>(
   queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
   queryParams?: QueryParams,
@@ -1069,6 +1088,8 @@ export {
   useReportObservedVariantAnnotations,
   useReportObservedVariantAnnotationsObservedVariantAnnotation,
   useReportStateHistory,
+  useReportHlaTypes,
+  useReportHlaTypesHlaType,
   useReportsAsyncAll,
   useReportsAsyncReport,
   useProjectAll,

@@ -86,6 +86,8 @@ export const queryKeys = {
     reportObservedVariantAnnotations: (reportIdent) => ['reports', reportIdent, 'observed-variant-annotations'] as const,
     reportObservedVariantAnnotationsObservedVariantAnnotation: (reportIdent, observedVariantAnnotationIdent) => ['reports', reportIdent, 'observed-variant-annotations', observedVariantAnnotationIdent] as const,
     reportStateHistory: (reportIdent) => ['reports', reportIdent, 'state-history'] as const,
+    reportHlaTypes: (reportIdent) => ['reports', reportIdent, 'hla-types'] as const,
+    reportHlaTypesHlaType: (reportIdent, hlaTypeIdent) => ['reports', reportIdent, 'hla-types', hlaTypeIdent] as const,
   },
 
   reportsAsync: {
