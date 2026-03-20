@@ -9,11 +9,13 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/context/ReportContext';
+
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { sampleColumnDefs } from '@/views/ReportView/common';
-import { AppendicesType, TcgaType, ComparatorType } from './types';
+import { ComparatorType } from '@/common';
+import useReport from '@/hooks/useReport';
+import { AppendicesType, TcgaType } from './types';
 import { sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import { ReportOverview } from './components/ReportOverview';
 import ConfigTable from './components/ConfigTable';
@@ -31,7 +33,7 @@ const Appendices = ({
   isLoading,
   setIsLoading,
 }: AppendicesProps): JSX.Element => {
-  const { canEdit: reportEditAccess, report } = useContext(ReportContext);
+  const { canEdit: reportEditAccess, report } = useReport();
 
   const [comparators, setComparators] = useState<ComparatorType[]>([]);
   const [appendices, setAppendices] = useState<AppendicesType>();
