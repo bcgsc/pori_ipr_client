@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import api, { ApiCallSet } from '@/services/api';
-import { UserType, GroupType, UserProjectsType } from '@/common';
+import { UserType, GroupType, ProjectType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import AsyncButton from '@/components/AsyncButton';
 import UserAutocomplete from '@/components/UserAutocomplete';
@@ -32,17 +32,8 @@ import {
 } from '@/services/errors/errors';
 
 import './index.scss';
-import { useMutation, useQuery } from 'react-query';
-
-const fetchProjects = async () => {
-  const projectsResp = await api.get('/project').request();
-  return projectsResp;
-};
-
-const fetchGroups = async () => {
-  const groupsResp = await api.get('/user/group').request();
-  return groupsResp;
-};
+import { useMutation } from 'react-query';
+import { useProjectAll, useUserGroup } from '@/queries/get';
 
 const addModifyUser = async ({ formData, userIdent }: { formData: UserForm, userIdent: string }) => {
   const userReq: Partial<UserType> = {
@@ -90,6 +81,7 @@ const modifyUserProjects = async ({
 const modifyUserGroups = async ({
   existingGroupsIds, newGroupsIds, userId,
 }: ModifyUserGroupsFnType) => {
+  console.log('🚀 ~ modifyUserGroups ~ existingGroupsIds:', existingGroupsIds);
   const toAddGroups = newGroupsIds.filter((projectId) => !existingGroupsIds.includes(projectId));
   const toRemoveGroups = existingGroupsIds.filter((projectId) => !newGroupsIds.includes(projectId));
   const callSet = new ApiCallSet([
@@ -117,7 +109,7 @@ type UserForm = {
   groups: GroupType['ident'][];
   lastLogin: null | string;
   lastName: string;
-  projects: UserProjectsType['ident'][];
+  projects: ProjectType['ident'][];
   // Db type
   type: string;
   username: string;
@@ -156,7 +148,7 @@ const AddEditUserDialog = ({
     }, [editData]),
   });
 
-  const [projectOptions, setProjectOptions] = useState<UserProjectsType[]>([]);
+  const [projectOptions, setProjectOptions] = useState<ProjectType[]>([]);
   const [groupOptions, setGroupOptions] = useState<GroupType[]>([]);
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [isApiCalling, setIsApiCalling] = useState(false);
@@ -183,8 +175,11 @@ const AddEditUserDialog = ({
         snackbar.success(`Successfully edited ${username}'s projects.`);
       }
     },
-    onError: (err: ErrorMixin) => {
-      const { error } = err.toJSON();
+    onError: (err: Error) => {
+      let error = err;
+      if (err instanceof ErrorMixin) {
+        ({ error } = err.toJSON());
+      }
       snackbar.error(`Cannot add user to projects: ${error.message}`);
     },
   });
@@ -198,8 +193,11 @@ const AddEditUserDialog = ({
         snackbar.success(`Successfully edited ${username}'s groups.`);
       }
     },
-    onError: (err: ErrorMixin) => {
-      const { error } = err.toJSON();
+    onError: (err: Error) => {
+      let error = err;
+      if (err instanceof ErrorMixin) {
+        ({ error } = err.toJSON());
+      }
       snackbar.error(`Cannot add user to groups: ${error.message}`);
     },
   });
@@ -225,37 +223,45 @@ const AddEditUserDialog = ({
 
       const existingProjects = contextEditData?.projects.map(({ ident }) => ident) || [];
       const existingGroups = contextEditData?.groups.map(({ ident }) => ident) || [];
+      const promises = [
+        contextGkbAdd
+          ? addUserToGKBMutation.mutateAsync(formData)
+          : undefined,
 
-      try {
-        await Promise.all([
-          contextGkbAdd
-          && addUserToGKBMutation.mutateAsync(formData).catch(),
-          dirtyFields.projects
-          && userProjectsMutation.mutateAsync({
+        dirtyFields.projects
+          ? userProjectsMutation.mutateAsync({
             existingProjectsIds: existingProjects,
             newProjectsIds: projects,
             userId: data.ident,
             username,
-          }),
-          dirtyFields.groups
-          && userGroupsMutation.mutateAsync({
+          })
+          : undefined,
+
+        dirtyFields.groups
+          ? userGroupsMutation.mutateAsync({
             existingGroupsIds: existingGroups,
             newGroupsIds: groups,
             userId: data.ident,
             username,
-          }),
-        ]);
-
+          })
+          : undefined,
+      ].filter(Boolean);
+      try {
+        await Promise.allSettled(promises);
         onClose(true);
       } catch (e) {
         // Empty catch here, do not want to trigger another error response in this handler
+        console.error('Subsequent user groups/projects calls failed. \n', e);
       } finally {
         // Send onClose to refech, because new user is added
         onClose(true);
       }
     },
-    onError: (err: ErrorMixin) => {
-      const { error } = err.toJSON();
+    onError: (err: Error) => {
+      let error = err;
+      if (err instanceof ErrorMixin) {
+        ({ error } = err.toJSON());
+      }
       snackbar.error(`Cannot add user: ${error.message}`);
     },
     onSettled: () => {
@@ -264,16 +270,24 @@ const AddEditUserDialog = ({
   });
 
   // Grab project and groups
-  const { data: projects, isLoading: isProjectsLoading } = useQuery('user/projects', fetchProjects, {
-    onError: (e: ErrorMixin) => {
+  const { data: projects, isLoading: isProjectsLoading } = useProjectAll<ProjectType[]>({
+    onError: (e: Error) => {
       snackbar.error('Cannot load user projects');
-      console.error(e.toJSON());
+      let error = e;
+      if (e instanceof ErrorMixin) {
+        ({ error } = e.toJSON());
+      }
+      console.error('Failed user projects load: \n', error);
     },
   });
-  const { data: groups, isLoading: isGroupsLoading } = useQuery('user/groups', fetchGroups, {
-    onError: (e: ErrorMixin) => {
+  const { data: groups, isLoading: isGroupsLoading } = useUserGroup({
+    onError: (e: Error) => {
       snackbar.error('Cannot load user groups');
-      console.error(e.toJSON());
+      let error = e;
+      if (e instanceof ErrorMixin) {
+        ({ error } = e.toJSON());
+      }
+      console.error('Failed user groups load: \n', error.message);
     },
   });
 

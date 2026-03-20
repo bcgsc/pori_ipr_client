@@ -19,10 +19,10 @@ import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import { MutationBurdenType, MsiType, TmburType } from '@/common';
-import {
-  ComparatorType,
-} from './types';
+import { 
+  MutationBurdenType, MsiType, TmburType, ComparatorType 
+} from '@/common';
+
 import TabCards from './components/TabCards';
 import columnDefs from './columnDefs';
 

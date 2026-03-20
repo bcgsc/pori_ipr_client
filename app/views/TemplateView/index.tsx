@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 import snackbar from '@/services/SnackbarUtils';
 
 import DataTable from '@/components/DataTable';
 import api from '@/services/api';
+import { TemplateType } from '@/common';
+import { useTemplatesAll } from '@/queries/get';
 import AddEditTemplate from './components/AddEditTemplate';
 import columnDefs from './columnDefs';
-
-const fetchTemplates = async () => api.get('/templates', {}).request();
 
 const deleteTemplate = async (ident: string) => {
   await api.del(`/templates/${ident}/signature-types`, {}, {}).request();
@@ -17,18 +17,17 @@ const deleteTemplate = async (ident: string) => {
 const TemplateView = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
-  const queryClient = useQueryClient();
 
-  const { data: templates = [] } = useQuery({
-    queryKey: ['templates'],
-    queryFn: fetchTemplates,
-  });
+  const {
+    data: templates = [],
+    refetch: refetchTemplates,
+  } = useTemplatesAll<TemplateType[]>();
 
   const deleteMutation = useMutation({
     mutationFn: deleteTemplate,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['templates'] });
       snackbar.success('Template deleted');
+      refetchTemplates();
     },
     onError: (err) => {
       snackbar.error(`Error deleting template: ${err}`);
@@ -45,10 +44,10 @@ const TemplateView = (): JSX.Element => {
   const handleDialogClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      queryClient.invalidateQueries({ queryKey: ['templates'] });
+      refetchTemplates();
     }
     setSelectedRow(null);
-  }, [queryClient]);
+  }, [refetchTemplates]);
 
   const handleDelete = useCallback(async (rowData) => {
     try {
@@ -85,6 +84,5 @@ const TemplateView = (): JSX.Element => {
 export default TemplateView;
 export {
   TemplateView,
-  fetchTemplates,
   deleteTemplate,
 };

@@ -21,12 +21,19 @@ class ErrorMixin extends Error {
     }
   }
 
-  toJSON() {
-    return Object.assign(this.content, {
+  toJSON(): {
+    message: string;
+    name: string;
+    stacktrace: string | null;
+    error?: Error;
+    [key: string]: unknown;
+  } {
+    return {
+      ...this.content,
       message: this.message,
       name: this.name,
-      stacktrace: this.stack ? this.stack.trim() : null,
-    });
+      stacktrace: this.stack?.trim() ?? null,
+    };
   }
 }
 

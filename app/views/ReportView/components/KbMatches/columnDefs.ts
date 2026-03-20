@@ -81,14 +81,15 @@ const columnDefs: ColDef[] = [
     tooltipValueGetter: basicTooltipValueGetter,
   },
   {
-    headerName: 'External Source',
+    headerName: 'Reference',
     colId: 'reference',
     field: 'reference',
     valueGetter: (params) => {
-      const { data: { externalSource, externalStatementId, reference } } = params;
-      return externalSource === 'clinicaltrials.gov'
-        ? externalStatementId
-        : reference;
+      const { data: { reference } } = params;
+      if (Array.isArray(reference) && reference.length > 0) {
+        reference[0] = /^nct\d+$/.test(reference[0]) ? reference[0].toUpperCase() : reference[0];
+      }
+      return reference;
     },
     cellRendererFramework: ArrayCell('reference', true, true),
     hide: false,

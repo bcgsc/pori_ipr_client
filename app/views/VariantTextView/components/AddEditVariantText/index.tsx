@@ -29,8 +29,9 @@ import {
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import sanitizeHtml from 'sanitize-html';
-import { VariantTextType } from '@/common';
-import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { ProjectType, TemplateType, VariantTextType } from '@/common';
+import { useQueryClient, useMutation } from 'react-query';
+import { useProjectAll, useTemplatesAll } from '@/queries/get';
 
 type AddEditVariantTextProps = {
   editData?: VariantTextType;
@@ -56,8 +57,6 @@ const extensions = [
   Underline,
 ];
 
-const fetchProjects = async () => api.get('/project').request();
-const fetchTemplates = async () => api.get('/templates').request();
 const handleProjectError = (err) => snackbar.error(`Error getting project options: ${err}`);
 const handleTemplateError = (err) => snackbar.error(`Error getting template options: ${err}`);
 
@@ -86,15 +85,11 @@ const AddEditVariantText = ({
     onUpdate: () => setIsEditorDirty(true),
   });
 
-  const { data: projectOptions, isLoading: isProjectsLoading } = useQuery({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
+  const { data: projectOptions, isLoading: isProjectsLoading } = useProjectAll<ProjectType[]>({
     onError: handleProjectError,
   });
 
-  const { data: templateOptions, isLoading: isTemplatesLoading } = useQuery({
-    queryKey: ['templates'],
-    queryFn: fetchTemplates,
+  const { data: templateOptions, isLoading: isTemplatesLoading } = useTemplatesAll<TemplateType[]>({
     onError: handleTemplateError,
   });
 

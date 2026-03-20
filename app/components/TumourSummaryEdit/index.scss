@@ -7,6 +7,12 @@
     margin: 12px 0;
   }
 
+  &__hla-text-field {
+    margin: 12px 12px;
+    width: 30%;
+    margin-left: 0
+  }
+
   &__number-field {
     margin: 12px 0;
     input::-webkit-outer-spin-button,

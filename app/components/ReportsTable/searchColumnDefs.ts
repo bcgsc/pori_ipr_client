@@ -41,13 +41,13 @@ const searchColumnDefs: ColDef[] = [{
   filter: CustomSetFilter,
 },
 {
-  headerName: 'Matched Therapeutic Targets',
-  field: 'matchedTherapeuticTarget',
+  headerName: 'Matched Therapy',
+  field: 'matchedTherapy',
   filter: CustomSetFilter,
 },
 {
   headerName: 'Context',
-  field: 'matchedTherapeuticTargetContext',
+  field: 'matchedTherapyContext',
   filter: CustomSetFilter,
 },
 {
