@@ -54,7 +54,7 @@ const GenomicSummary = ({
 }: GenomicSummaryProps): JSX.Element => {
   const { report, canEdit: reportContextCanEdit, refetchReport } = useReport();
   let canEdit = reportContextCanEdit;
-  if (report.state === 'completed') {
+  if (report?.state === 'completed') {
     canEdit = false;
   }
   const history = useHistory();
@@ -68,7 +68,7 @@ const GenomicSummary = ({
     isError: microbialError,
     isLoading: isMicrobialLoading,
   } = useReportSummaryMicrobial<MicrobialType[]>(
-    report.ident,
+    report?.ident,
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
@@ -81,7 +81,7 @@ const GenomicSummary = ({
     isError: primaryComparatorError,
     isLoading: isPrimaryComparatorLoading,
   } = useReportComparators<ComparatorType[], ComparatorType | undefined>(
-    report.ident,
+    report?.ident,
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
@@ -95,7 +95,7 @@ const GenomicSummary = ({
     isError: signaturesError,
     isLoading: isSignaturesLoading,
   } = useReportMutationSignatures<MutationSignatureType[]>(
-    report.ident,
+    report?.ident,
     {
       staleTime: Infinity,
       enabled: !!report?.ident,

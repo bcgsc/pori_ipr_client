@@ -216,7 +216,7 @@ const RapidSummary = ({
   const { report, refetchReport, canEdit } = useReport();
 
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
-  const { data: signatures, refetch: refetchSignatures } = useReportSignatures<SignatureType>(report.ident);
+  const { data: signatures, refetch: refetchSignatures } = useReportSignatures<SignatureType>(report?.ident);
   const { data: signatureTypes } = useSignatureTypes(report);
 
   const { showConfirmDialog } = useConfirmDialog();
