@@ -1,49 +1,52 @@
 import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import searchReportsColumns from '@/utils/searchReportsColumns';
 import searchColumnDefs from '@/components/ReportsTable/searchColumnDefs';
-import { useQuery } from 'react-query';
-import { ReportType } from '@/context/ReportContext';
+import { ReportsType, ReportType } from '@/common';
 import useSearchParams from '@/hooks/useSearchParams';
 import { SearchParamsType } from '@/context/SearchParamsContext';
 import { CircularProgress } from '@mui/material';
+import { ErrorMixin } from '@/services/errors/errors';
+import { useReportsAll } from '@/queries/get';
 
 import '../ReportsView/index.scss';
 import './index.scss';
-import { ErrorMixin } from '@/services/errors/errors';
+
+const parseSearchParamsFromUrl = (paramsUrl: string) => {
+  const params: SearchParamsType[] = [];
+  const regex = /\[([^|]+)\|([^|]+)\|([^]+?)\]/g;
+  let match = [];
+
+  // eslint-disable-next-line no-cond-assign
+  while ((match = regex.exec(paramsUrl)) !== null) {
+    params.push({
+      category: match[1],
+      keyword: match[2],
+      threshold: match[3],
+    });
+  }
+
+  return params;
+};
 
 /**
  * Report table containing all searched reports
  */
 const ReportsSearchView = (): JSX.Element => {
-  const { search } = useLocation();
+  const { search } = useLocation(); // search: "?searchParams%3D%5BkeyVariant%7Ckars%7C0.8%5D"
   const { searchParams, setSearchParams } = useSearchParams();
 
   const searchParamsUrl = useMemo(() => decodeURIComponent(search), [search]);
 
-  const parseSearchParamsFromUrl = (paramsUrl: string) => {
-    const params: SearchParamsType[] = [];
-    const regex = /\[([^|]+)\|([^|]+)\|([^]+?)\]/g;
-    let match = [];
+  // Decode "?searchParams%3D%5B...%5D" → { searchParams: "[...]..." }
+  const decodedQueryParams = useMemo(() => {
+    const params = new URLSearchParams(searchParamsUrl.replace(/^\?/, ''));
+    return Object.fromEntries(params.entries()) as Record<string, string>;
+  }, [searchParamsUrl]);
 
-    // eslint-disable-next-line no-cond-assign
-    while ((match = regex.exec(paramsUrl)) !== null) {
-      params.push({
-        category: match[1],
-        keyword: match[2],
-        threshold: match[3],
-      });
-    }
-
-    return params;
-  };
-
-  const { data: reportsData, isFetching: isApiLoading } = useQuery(
-    `/reports${searchParamsUrl}`,
-    async ({ queryKey: [route] }) => api.get(route).request(),
+  const { data: reportsData, isFetching: isApiLoading } = useReportsAll<ReportsType, ReportType[]>(
     {
       staleTime: 0,
       enabled: Boolean(searchParamsUrl),
@@ -82,6 +85,9 @@ const ReportsSearchView = (): JSX.Element => {
       onError: (err: ErrorMixin) => {
         snackbar.error(`API error: ${err.message}`);
       },
+    },
+    {
+      ...decodedQueryParams,
     },
   );
 

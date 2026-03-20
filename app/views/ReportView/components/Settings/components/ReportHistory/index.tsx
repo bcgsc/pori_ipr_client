@@ -11,6 +11,7 @@ import { formatDate } from '@/utils/date';
 
 import './index.scss';
 import { useQuery } from 'react-query';
+import { useReportStateHistory } from '@/queries/get';
 
 const ReportHistory = (): JSX.Element => {
   const { report } = useContext(ReportContext);
@@ -25,9 +26,8 @@ const ReportHistory = (): JSX.Element => {
     },
   );
 
-  const { data: stateHistoryData } = useQuery(
-    `/reports/${report.ident}/state-history`,
-    async ({ queryKey: [route] }) => api.get(route).request(),
+  const { data: stateHistoryData } = useReportStateHistory(
+    report.ident,
     {
       staleTime: Infinity,
       select: (response) => response,
@@ -105,10 +105,10 @@ const ReportHistory = (): JSX.Element => {
           ) : null}
           {orderedHistory ? orderedHistory.map((result, idx) => (
             /* eslint-disable-next-line react/no-array-index-key */
-            <div key={`${result.toString()}-${idx}`}>
+            <span key={`${result.toString()}-${idx}`}>
               {result}
               <br />
-            </div>
+            </span>
           )) : null}
         </Typography>
       </div>

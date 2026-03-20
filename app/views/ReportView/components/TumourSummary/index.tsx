@@ -7,9 +7,15 @@ import {
   IconButton,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { ReportType } from '@/context/ReportContext';
 import {
-  TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType, MsiType, HlaType,
+  ReportType,
+  TumourSummaryType,
+  MicrobialType,
+  ImmuneType,
+  MutationBurdenType,
+  TmburType,
+  MsiType,
+  HlaType,
 } from '@/common';
 import { TumourSummaryEdit, TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
