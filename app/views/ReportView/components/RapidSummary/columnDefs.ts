@@ -56,6 +56,30 @@ const ACTIONS_COLDEF = {
   minWidth: 132,
 };
 
+const VARIANT_TYPE_COLDEF = {
+  headerName: 'Variant Type',
+  field: 'variantType',
+  rowGroup: true,
+  hide: true,
+  valueGetter: ({ data: { variantType } }) => variantType || 'N/A',
+};
+
+const COPY_CHANGE_COLDEF = {
+  headerName: 'Copy Change',
+  field: 'copyChange',
+  valueGetter: ({ data: { copyChange, gene, variantType } }) => {
+    if (copyChange) {
+      return copyChange;
+    }
+    if (variantType === 'cnv') {
+      if (gene && gene.copyVariants) {
+        return gene.copyVariants.copyChange;
+      }
+    }
+    return 'N/A';
+  },
+};
+
 const therapeuticAssociationColDefs = [
   {
     headerName: 'Genomic Events',
@@ -104,28 +128,10 @@ const therapeuticAssociationColDefs = [
     hide: false,
   },
   {
-    headerName: 'Variant Type',
-    field: 'variantType',
-    rowGroup: true,
-    hide: true,
-    valueGetter: ({ data: { variantType } }) => {
-      return variantType || 'N/A';
-    },
+    ...VARIANT_TYPE_COLDEF,
   },
   {
-    headerName: 'Copy Change',
-    field: 'copyChange',
-    valueGetter: ({ data: { copyChange, gene, variantType } }) => {
-      if (copyChange) {
-        return copyChange;
-      }
-      else if (variantType === 'cnv') {
-        if (gene && gene.copyVariants) {
-          return gene.copyVariants.copyChange;
-        }
-       }
-      return 'N/A';
-    },
+    ...COPY_CHANGE_COLDEF,
   },
   {
     headerName: 'Comments',
@@ -191,28 +197,10 @@ const cancerRelevanceColDefs = [
     hide: false,
   },
   {
-    headerName: 'Variant Type',
-    field: 'variantType',
-    rowGroup: true,
-    hide: true,
-    valueGetter: ({ data: { variantType } }) => {
-      return variantType || 'N/A';
-    },
+    ...VARIANT_TYPE_COLDEF,
   },
   {
-    headerName: 'Copy Change',
-    field: 'copyChange',
-    valueGetter: ({ data: { copyChange, gene, variantType } }) => {
-      if (copyChange) {
-        return copyChange;
-      }
-      else if (variantType === 'cnv') {
-        if (gene && gene.copyVariants) {
-          return gene.copyVariants.copyChange;
-        }
-       }
-      return 'N/A';
-    },
+    ...COPY_CHANGE_COLDEF,
   },
   {
     headerName: 'Comments',
