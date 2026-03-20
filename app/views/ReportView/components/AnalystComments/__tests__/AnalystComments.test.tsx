@@ -61,7 +61,7 @@ describe('AnalystComments', () => {
   });
 
   test('Img tags are sanitized', async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     const Component = withLoading(withReportContext(AnalystComments, mockReport));
     render(
       <QueryClientProvider client={queryClient}>
@@ -74,7 +74,7 @@ describe('AnalystComments', () => {
   });
 
   test('Style tags are still present', async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     const Component = withLoading(withReportContext(AnalystComments, mockReport));
     render(
       <QueryClientProvider client={queryClient}>
