@@ -489,16 +489,7 @@ const RapidSummary = ({
         },
       ]);
     });
-  }, [
-    microbial, primaryBurden,
-    msi, msi?.score,
-    report?.m1m2Score, report?.sampleInfo, report?.tumourContent, report?.genomeTmb, report?.captiv8Score, report?.hrdScore,
-    tCellCd8, tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment,
-    tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
-    tmburMutBur, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
-    hla,
-    report,
-  ]);
+  }, [microbial, primaryBurden, tmburMutBur, tCellCd8, msi, report, hla]);
 
   useEffect(() => {
     if (loadedDispatch && rapidSummarySectionsLoaded && !isLoadingFromQueries) {
