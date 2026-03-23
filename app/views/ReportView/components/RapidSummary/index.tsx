@@ -432,16 +432,31 @@ const RapidSummary = ({
           value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour')?.pathoTc ?? ''}`,
         },
         {
-          term: 'M1M2 Score',
-          value: report.m1m2Score !== null
-            ? `${report.m1m2Score}`
-            : null,
+          term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
+          value: tmbDisplayValue,
+        },
+        {
+          term: 'Adjusted TMB Comment',
+          value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+        },
+        {
+          term: 'MSI Score',
+          value: msiStatus ?? null,
         },
         {
           term: 'HRD Score',
           value: report.hrdScore !== null
             ? `${report.hrdScore}`
-            : null,
+            : 'No data available',
+        },
+        {
+          term: 'HLA (Normal)',
+          value: hlaNormal ?? null,
+        },
+        {
+          term:
+            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+          value: tCell,
         },
         {
           term: 'Preliminary CAPTIV-8 Score',
@@ -454,9 +469,10 @@ const RapidSummary = ({
           value: getMicbSiteSummary(microbial),
         },
         {
-          term:
-            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
-          value: tCell,
+          term: 'M1M2 Score',
+          value: report.m1m2Score !== null
+            ? `${report.m1m2Score}`
+            : null,
         },
         {
           term: 'Pediatric CD8+ T Cell Comment',
@@ -471,25 +487,9 @@ const RapidSummary = ({
           term: 'SV Burden (POG Average)',
           value: svBurden,
         },
-        {
-          term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
-          value: tmbDisplayValue,
-        },
-        {
-          term: 'Adjusted TMB Comment',
-          value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
-        },
-        {
-          term: 'MSI Score',
-          value: msiStatus ?? null,
-        },
-        {
-          term: 'HLA (normal)',
-          value: hlaNormal ?? null,
-        },
       ]);
     });
-  }, [microbial, primaryBurden, tmburMutBur, tCellCd8, msi, report]);
+  }, [microbial, primaryBurden, tmburMutBur, tCellCd8, msi, report, hla]);
 
   useEffect(() => {
     if (loadedDispatch && rapidSummarySectionsLoaded && !isLoadingFromQueries) {
