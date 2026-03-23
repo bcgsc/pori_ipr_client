@@ -1,19 +1,18 @@
 import React from 'react';
 import {
-  ReportContextType, ReportType, PatientInformationType, SampleInfoType,
+  ReportContextType, SampleInfoType,
 } from './types';
 
 const ReportContext = React.createContext<ReportContextType>({
   canEdit: false,
   report: null,
-  setReport: () => {},
+  reportTemplateName: '',
+  refetchReport: () => null,
 });
 
 export default ReportContext;
 
 export type {
   ReportContextType,
-  ReportType,
-  PatientInformationType,
   SampleInfoType,
 };

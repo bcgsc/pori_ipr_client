@@ -1,7 +1,6 @@
 import {
-  ImmuneType, MsiType, MutationBurdenType, TmburType,
+  ImmuneType, MsiType, MutationBurdenType, TmburType, ComparatorType,
 } from '@/common';
-import { ComparatorType } from '../Appendices/types';
 
 const defaultMutationBurden: MutationBurdenType = {
   ident: '',

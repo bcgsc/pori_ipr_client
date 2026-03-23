@@ -43,7 +43,7 @@ const SignatureCard = ({
   disabled = false,
 }: SignatureCardProps): JSX.Element => {
   const { reportAssignmentAccess: canAddSignatures } = useResource();
-  const { canEdit, report, setReport } = useReport();
+  const { canEdit, report, refetchReport } = useReport();
   const { userDetails } = useSecurity();
 
   const [userSignature, setUserSignature] = useState<UserType>();
@@ -101,14 +101,14 @@ const SignatureCard = ({
       ).request();
 
       if (newReport) {
-        setReport(newReport);
+        refetchReport();
       }
       onClick(true, newSignature);
       snackbar.success('User assigned to report');
     } catch (err) {
       snackbar.error(`Error adding user: ${err}`);
     }
-  }, [onClick, report.ident, role, setReport, userDetails.ident]);
+  }, [onClick, refetchReport, report.ident, role, userDetails.ident]);
 
   const handleRevoke = useCallback(async () => {
     try {

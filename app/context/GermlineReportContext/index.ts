@@ -5,7 +5,7 @@ import {
 
 const GermlineReportContext = React.createContext<GermlineReportContextType>({
   report: null,
-  setReport: () => {},
+  refetchReport: async () => undefined,
 });
 
 export default GermlineReportContext;

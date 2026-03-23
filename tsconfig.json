@@ -26,7 +26,8 @@
     "app/**/*.test.tsx",
     "app/**/*.test.js",
     "app/**/*.test.jsx",
-    "app/custom.d.ts"
+    "app/custom.d.ts",
+    "scripts/**/*.ts"
   ],
   "compileOnSave": false,
   "allowJs": true,
