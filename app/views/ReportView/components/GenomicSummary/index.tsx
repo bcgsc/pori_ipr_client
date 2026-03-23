@@ -312,7 +312,7 @@ const GenomicSummary = ({
           },
           {
             term: 'MSI Score',
-            value: tmburMutBur.msiScore,
+            value: tmburMutBur?.msiScore,
           },
           {
             term: 'HRD Score',
@@ -388,7 +388,7 @@ const GenomicSummary = ({
         ]);
       });
     }
-  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score, hlaNormal, hlaTumour]);
+  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, hlaNormal, hlaTumour]);
 
   const handleTumourSummaryEditClose: TumourSummaryEditProps['onEditClose'] = useCallback((
     isSaved,
