@@ -302,12 +302,39 @@ const GenomicSummary = ({
             value: `${report.tumourContent}%`,
           },
           {
-            term: 'Subtype',
-            value: report.subtyping,
+            term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
+            value: tmbDisplayValue,
           },
           {
-            term: 'Microbial Species',
-            value: getMicbSiteSummary(microbial),
+            term: 'Adjusted TMB Comment',
+            value:
+              tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+          },
+          {
+            term: 'MSI Score',
+            value: tmburMutBur?.msiScore,
+          },
+          {
+            term: 'HRD Score',
+            value: report.hrdScore !== null
+              ? `${report.hrdScore}`
+              : 'No data available',
+          },
+          {
+            term: 'HRDetect Score',
+            value: report.hrdetectScore ?? null,
+          },
+          {
+            term: 'HLA (Normal)',
+            value: hlaNormal !== null
+              ? `${hlaNormal}`
+              : 'No data available',
+          },
+          {
+            term: 'HLA (Tumour)',
+            value: hlaTumour !== null
+              ? `${hlaTumour}`
+              : 'No data available',
           },
           {
             term:
@@ -318,6 +345,20 @@ const GenomicSummary = ({
             term: 'Pediatric CD8+ T Cell Comment',
             value:
               tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
+          },
+          {
+            term: 'CAPTIV-8 Score',
+            value: report.captiv8Score !== null
+              ? `${report.captiv8Score}`
+              : null,
+          },
+          {
+            term: 'Microbial Species',
+            value: getMicbSiteSummary(microbial),
+          },
+          {
+            term: 'Subtype',
+            value: report.subtyping,
           },
           {
             term: 'Mutation Signatures',
@@ -337,18 +378,6 @@ const GenomicSummary = ({
             value: null,
           },
           {
-            term: 'HRD Score',
-            value: report.hrdScore !== null
-              ? `${report.hrdScore}`
-              : null,
-          },
-          {
-            term: 'HRDetect Score',
-            value: report.hrdetectScore !== null
-              ? `${report.hrdetectScore}`
-              : null,
-          },
-          {
             term: `SV Burden${isPrint ? '*' : ''}`,
             value: null,
           },
@@ -356,32 +385,10 @@ const GenomicSummary = ({
             term: 'MSI Status',
             value: msiStatus ?? null,
           },
-          {
-            term: 'CAPTIV-8 Score',
-            value: report.captiv8Score !== null
-              ? `${report.captiv8Score}`
-              : null,
-          },
-          {
-            term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
-            value: tmbDisplayValue,
-          },
-          {
-            term: 'Adjusted TMB Comment',
-            value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
-          },
-          {
-            term: 'HLA (normal)',
-            value: hlaNormal ?? null,
-          },
-          {
-            term: 'HLA (tumour)',
-            value: hlaTumour ?? null,
-          },
         ]);
       });
     }
-  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score, hlaNormal, hlaTumour]);
+  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, hlaNormal, hlaTumour]);
 
   const handleTumourSummaryEditClose: TumourSummaryEditProps['onEditClose'] = useCallback((
     isSaved,
@@ -404,6 +411,8 @@ const GenomicSummary = ({
     if (newTmBurMutBurData) { refetchTmbur(); }
     if (newMsiData) { refetchMsi(); }
     if (newHlaData) { refetchHla(); }
+
+    return undefined;
   }, [refetchHla, refetchImmuneCellTypes, refetchMicrobial, refetchMsi, refetchMutationBurden, refetchReport, refetchTmbur]);
 
   if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || hlaError) {

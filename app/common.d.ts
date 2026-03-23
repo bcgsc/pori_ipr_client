@@ -57,6 +57,7 @@ type ReportType = {
   expression_matrix: string;
   genomeTmb?: number;
   hrdScore?: number;
+  hrdetectScore?: number;
   kbDiseaseMatch: string;
   kbVersion: string;
   m1m2Score: number;
