@@ -75,6 +75,11 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
     setSearchCategory(event.target.value);
+    if (event.target.value === 'mutationSignature') {
+      setSearchThreshold('1.0');
+    } else {
+      setSearchThreshold(DEFAULT_THRESHOLD);
+    }
   };
 
   const handleThresholdChange = useCallback((event) => {

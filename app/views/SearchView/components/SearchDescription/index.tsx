@@ -53,7 +53,7 @@ const searchFeaturesDescription = () => {
       <br /> */}
       <Typography variant="subtitle1" color="inherit">
         <b>Matching Threshold:</b> The matching threshold defines how closely a search keyword must match a value, using a scale from 0 to 1. 
-        A threshold of 1 requires an exact match, while lower values allow for partial similarity. If no threshold is set, the default is 0.8.
+        A threshold of 1 requires an exact match, while lower values allow for partial similarity. If no threshold is set, the default is 0.8. (1.0 for mutation signature category)
       </Typography>
     </>
   );

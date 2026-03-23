@@ -31,6 +31,7 @@ import {
   BACKSPACE_KEY,
 } from '@/constants';
 import { useQueryClient } from 'react-query';
+import { set } from 'lodash';
 
 // Custom css to alter select dropdown border radius
 const useStyles = makeStyles({
@@ -101,6 +102,11 @@ const SearchView = () => {
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
     setSearchCategory(event.target.value);
+    if (event.target.value === 'mutationSignature') {
+      setSearchThreshold('1.0');
+    } else {
+      setSearchThreshold(DEFAULT_THRESHOLD);
+    }
   };
 
   const handleThresholdChange = useCallback((event) => {
