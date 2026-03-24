@@ -259,17 +259,17 @@ const GenomicSummary = ({
       let msiStatus: null | string;
       if (msi && msi.score !== null) {
         if (msi?.score < 20) {
-          msiStatus = 'MSS';
+          msiStatus = `${msi?.score} (MSS)`;
         }
         if (msi?.score >= 20) {
-          msiStatus = 'MSI';
+          msiStatus = `${msi?.score} (MSI)`;
         }
       } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
         if (tmburMutBur?.msiScore < 20) {
-          msiStatus = 'MSS';
+          msiStatus = `${tmburMutBur?.msiScore} (MSS)`;
         }
         if (tmburMutBur?.msiScore >= 20) {
-          msiStatus = 'MSI';
+          msiStatus = `${tmburMutBur?.msiScore} (MSI)`;
         }
       } else {
         msiStatus = null;
@@ -309,10 +309,6 @@ const GenomicSummary = ({
             term: 'Adjusted TMB Comment',
             value:
               tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
-          },
-          {
-            term: 'MSI Score',
-            value: tmburMutBur?.msiScore,
           },
           {
             term: 'HRD Score',
@@ -382,7 +378,7 @@ const GenomicSummary = ({
             value: null,
           },
           {
-            term: 'MSI Status',
+            term: 'MSI Score',
             value: msiStatus ?? null,
           },
         ]);
