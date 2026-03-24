@@ -1,5 +1,5 @@
-@import '../../styles/variables';
-@import '../../styles/theme.module';
+@use '../../styles/variables' as *;
+@use '../../styles/theme.module' as *;
 
 .report-sidebar {
   height: calc(100vh - #{$navbar-size});
