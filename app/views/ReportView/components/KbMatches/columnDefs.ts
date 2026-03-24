@@ -85,7 +85,10 @@ const columnDefs: ColDef[] = [
     colId: 'reference',
     field: 'reference',
     valueGetter: (params) => {
-      const { data: { reference } } = params;
+      const { data: { externalSource, externalStatementId, reference } } = params;
+      if (externalSource === 'clinicaltrials.gov' && /^nct\d+$/.test(externalStatementId)) {
+        return externalStatementId.toUpperCase();
+      }
       if (Array.isArray(reference) && reference.length > 0) {
         reference[0] = /^nct\d+$/.test(reference[0]) ? reference[0].toUpperCase() : reference[0];
       }
