@@ -25,6 +25,8 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import SignatureType from '../../types';
 
 import './index.scss';
+import { useQueryClient } from 'react-query';
+import { queryKeys } from '@/queries/queryKeys';
 
 type EditDialogProps = {
   editData: SignatureType;
@@ -43,6 +45,7 @@ const EditDialog = ({
   const [checkboxSelected, setCheckboxSelected] = useState(false);
   const [selectValue, setSelectValue] = useState('');
   const [isApiCalling, setIsApiCalling] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (editData) {
@@ -71,8 +74,10 @@ const EditDialog = ({
         if (isSigned) {
           showConfirmDialog(req);
           setIsApiCalling(false);
+          queryClient.refetchQueries(queryKeys.reports.reportMutationSignatures(report.ident));
         } else {
           await req.request();
+          queryClient.refetchQueries(queryKeys.reports.reportMutationSignatures(report.ident));
           onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
         }
       } catch (err) {

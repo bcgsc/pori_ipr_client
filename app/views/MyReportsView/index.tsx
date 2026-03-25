@@ -5,7 +5,7 @@ import ReportsTableComponent from '@/components/ReportsTable';
 
 import reportsColumns from '@/utils/reportsColumns';
 import useResource from '@/hooks/useResource';
-import { ReportType } from '@/common';
+import { ReportsType, ReportType } from '@/common';
 import { useReportsAll } from '@/queries/get';
 import useSecurity from '@/hooks/useSecurity';
 import { CircularProgress } from '@mui/material';
@@ -30,7 +30,7 @@ const MyReportsView = (): JSX.Element => {
     return statesArray.join(',');
   }, [allStates, nonproductionAccess, unreviewedAccess, nonproductionStates, unreviewedStates]);
 
-  const { isLoading: isApiLoading, data: reportsData } = useReportsAll<ReportType[]>({
+  const { isLoading: isApiLoading, data: reportsData } = useReportsAll<ReportsType>({
     staleTime: Infinity,
     cacheTime: Infinity,
   }, {
