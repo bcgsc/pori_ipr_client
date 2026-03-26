@@ -1101,11 +1101,11 @@ const TumourSummaryEdit = ({
       </DialogTitle>
       <DialogContent className="tumour-dialog__content">
         {reportDataSection}
+        {msiSection}
         {micbDataSection}
         {tCellCd8DataSection}
         {mutBurDataSection}
         {tmburMutBurSection}
-        {msiSection}
         {hlaSection}
       </DialogContent>
       <DialogActions>
