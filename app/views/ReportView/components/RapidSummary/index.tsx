@@ -35,7 +35,6 @@ import capitalize from 'lodash/capitalize';
 import getMostCurrentObj from '@/utils/getMostCurrentObj';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
-import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { useSignatureTypes } from '@/hooks/useSignatureTypes';
 import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
@@ -445,14 +444,14 @@ const RapidSummary = ({
           value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
         },
         {
-          term: 'MSI Score',
-          value: msiStatus ?? null,
-        },
-        {
           term: 'HRD Score',
           value: report.hrdScore !== null
             ? `${report.hrdScore}`
             : 'No data available',
+        },
+        {
+          term: 'MSI Score',
+          value: msiStatus ?? null,
         },
         {
           term: 'HLA (Normal)',

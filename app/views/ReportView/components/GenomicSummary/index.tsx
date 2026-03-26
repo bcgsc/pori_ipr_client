@@ -309,6 +309,10 @@ const GenomicSummary = ({
               : 'No data available',
           },
           {
+            term: 'MSI Score',
+            value: msiStatus ?? null,
+          },
+          {
             term: 'HRDetect Score',
             value: report.hrdetectScore ?? null,
           },
@@ -368,10 +372,6 @@ const GenomicSummary = ({
           {
             term: `SV Burden${isPrint ? '*' : ''}`,
             value: null,
-          },
-          {
-            term: 'MSI Score',
-            value: msiStatus ?? null,
           },
         ]);
       });
