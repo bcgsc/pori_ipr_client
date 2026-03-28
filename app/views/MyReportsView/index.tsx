@@ -5,21 +5,12 @@ import ReportsTableComponent from '@/components/ReportsTable';
 
 import reportsColumns from '@/utils/reportsColumns';
 import useResource from '@/hooks/useResource';
-import api from '@/services/api';
-import { ReportType } from '@/context/ReportContext';
+import { ReportsType, ReportType } from '@/common';
+import { useReportsAll } from '@/queries/get';
 import useSecurity from '@/hooks/useSecurity';
-import { useQuery } from 'react-query';
-import './index.scss';
+import { CircularProgress } from '@mui/material';
 
-const useReports = (states) => useQuery({
-  queryKey: ['reports'],
-  staleTime: Infinity,
-  cacheTime: Infinity,
-  queryFn: async () => {
-    const resp = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
-    return resp;
-  },
-});
+import './index.scss';
 
 const MyReportsView = (): JSX.Element => {
   const {
@@ -39,7 +30,12 @@ const MyReportsView = (): JSX.Element => {
     return statesArray.join(',');
   }, [allStates, nonproductionAccess, unreviewedAccess, nonproductionStates, unreviewedStates]);
 
-  const { isLoading: isApiLoading, data: reportsData } = useReports(states);
+  const { isLoading: isApiLoading, data: reportsData } = useReportsAll<ReportsType>({
+    staleTime: Infinity,
+    cacheTime: Infinity,
+  }, {
+    states,
+  });
 
   useEffect(() => {
     if (!rowData) {
@@ -78,7 +74,14 @@ const MyReportsView = (): JSX.Element => {
   }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData, userDetails, isApiLoading, reportsData]);
 
   return (
-    <ReportsTableComponent rowData={rowData} />
+    <>
+      {isApiLoading && 
+        <div className="circular-progress">
+          <CircularProgress />
+        </div>
+      }
+      {rowData && <ReportsTableComponent rowData={rowData} />}
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ import kbMatchStatementsKnownVarValueGetter from '@/utils/kbMatchStatementsKnown
 import kbMatchStatementsObsVarValueGetter from '@/utils/kbMatchStatementsObsVarValueGetter';
 import { ColDef } from '@ag-grid-community/core';
 import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
+import kbMatchStatementsFlagValueGetter from '@/utils/kbMatchStatementsFlagValueGetter';
 
 const columnDefs: ColDef[] = [
   {
@@ -29,6 +30,15 @@ const columnDefs: ColDef[] = [
     headerName: 'Observed Variants',
     colId: 'variant',
     valueGetter: kbMatchStatementsObsVarValueGetter,
+    hide: false,
+    maxWidth: 300,
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
+  },
+  {
+    headerName: 'Flags',
+    colId: 'flags',
+    valueGetter: kbMatchStatementsFlagValueGetter,
     hide: false,
     maxWidth: 300,
     tooltipComponent: 'ToolTip',
@@ -71,14 +81,18 @@ const columnDefs: ColDef[] = [
     tooltipValueGetter: basicTooltipValueGetter,
   },
   {
-    headerName: 'External Source',
+    headerName: 'Reference',
     colId: 'reference',
     field: 'reference',
     valueGetter: (params) => {
       const { data: { externalSource, externalStatementId, reference } } = params;
-      return externalSource === 'clinicaltrials.gov'
-        ? externalStatementId
-        : reference;
+      if (externalSource === 'clinicaltrials.gov' && /^nct\d+$/.test(externalStatementId)) {
+        return externalStatementId.toUpperCase();
+      }
+      if (Array.isArray(reference) && reference.length > 0) {
+        reference[0] = /^nct\d+$/.test(reference[0]) ? reference[0].toUpperCase() : reference[0];
+      }
+      return reference;
     },
     cellRendererFramework: ArrayCell('reference', true, true),
     hide: false,

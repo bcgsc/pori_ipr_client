@@ -26,13 +26,13 @@ import api, { ApiCallSet } from '@/services/api';
 import AsyncButton from '@/components/AsyncButton';
 
 import snackbar from '@/services/SnackbarUtils';
-import { UserNotificationType, UserType } from '@/common';
+import { TemplateType, UserNotificationType, UserType } from '@/common';
 import useSecurity from '@/hooks/useSecurity';
 
 import './index.scss';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import capitalize from 'lodash/capitalize';
-import { fetchTemplates } from '@/views/TemplateView';
+import { useTemplatesAll, useNotifications } from '@/queries/get';
 
 const USER_NOTIFICATION_MAPPING = {
   userBound: 'User Bound',
@@ -291,8 +291,6 @@ const projectTemplateNotifReducer = (
 
 const REPORT_TYPES_TO_TOGGLE = ['genomic', 'pharmacogenomic', 'probe', 'rapid'];
 
-const fetchNotifications = async (id) => api.get(`/notification/notifications?user=${id}`, {}).request();
-
 type UserSettingsDialogProps = {
   editData: Partial<UserType>;
   isOpen: boolean;
@@ -304,24 +302,21 @@ const UserSettingsDialog = ({
   isOpen = false,
   onClose,
 }: UserSettingsDialogProps): JSX.Element => {
-  const { userDetails, userDetails: { projects = [] } } = useSecurity();
+  const { userDetails, userDetails: { projects } } = useSecurity();
   const [allowNotifs, setAllowNotifs] = useState(false);
   const [notificationState, dispatchNotification] = useReducer(
     projectTemplateNotifReducer,
     {},
   );
 
-  const { data: templates = [] } = useQuery({
-    queryKey: ['templates'],
-    queryFn: fetchTemplates,
+  const { data: templates = [] } = useTemplatesAll<TemplateType[]>({
     enabled: isOpen,
   });
 
-  const { data: notifications = [] } = useQuery({
-    queryKey: ['notifications', userDetails.ident],
-    queryFn: () => fetchNotifications(userDetails.ident),
-    enabled: isOpen && Boolean(userDetails),
-  });
+  const { data: notifications = [] } = useNotifications<UserNotificationType[]>(
+    { enabled: isOpen && Boolean(userDetails) },
+    { user: userDetails.ident },
+  );
 
   useEffect(() => {
     if (editData) {
@@ -330,21 +325,24 @@ const UserSettingsDialog = ({
   }, [editData]);
 
   useEffect(() => {
-    if (projects.length > 0 && templates.length > 0) {
-      const initialState = initializeNotificationState(projects, templates);
+    if (!projects.length || !templates.length) return;
 
-      dispatchNotification({
-        type: 'reset',
-        initialState,
-      });
-    }
-    if (notifications.length) {
-      dispatchNotification({
-        type: 'hydrate',
-        notifications,
-      });
-    }
-  }, [projects, templates, notifications]);
+    const initialState = initializeNotificationState(projects, templates);
+
+    dispatchNotification({
+      type: 'reset',
+      initialState,
+    });
+  }, [projects, templates]);
+
+  useEffect(() => {
+    if (!notifications.length) return;
+
+    dispatchNotification({
+      type: 'hydrate',
+      notifications,
+    });
+  }, [notifications]);
 
   const { mutate: updateUserSettings, isLoading: isUserSettingLoading } = useMutation({
     mutationFn: async () => {

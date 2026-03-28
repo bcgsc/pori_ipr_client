@@ -15,6 +15,7 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import EditDialog from './components/EditDialog';
 import MutationSignatureType from './types';
 import columnDefs from './columnDefs';
+import { useQueryClient } from 'react-query';
 
 import './index.scss';
 
@@ -39,6 +40,7 @@ const MutationSignatures = ({
 
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<MutationSignatureType | null>();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (report && report.ident) {
@@ -91,6 +93,9 @@ const MutationSignatures = ({
         newSignatures[signatureIndex] = newData;
         setter(newSignatures);
       }
+      queryClient.refetchQueries({
+        queryKey: [`/reports/${report.ident}/mutation-signatures`]
+      });
     }
     setEditData(null);
   }, [dbsSignatures, idSignatures, sbsSignatures]);

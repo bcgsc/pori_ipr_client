@@ -11,11 +11,9 @@ import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import useReport from '@/hooks/useReport';
-import useSignatures from '@/hooks/useSignatures';
-import { useSignatureTypes, DEFAULT_SIGNATURE_TYPES } from '@/hooks/useSignatureTypes';
+import { DEFAULT_SIGNATURE_TYPES, useSignatureTypes } from '@/hooks/useSignatureTypes';
 import DemoDescription from '@/components/DemoDescription';
-import ReportContext, { ReportType } from '@/context/ReportContext';
-import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
+import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import ConfirmContext from '@/context/ConfirmContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import capitalize from 'lodash/capitalize';
@@ -23,24 +21,11 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 
 import './index.scss';
-import { useQuery, useQueryClient } from 'react-query';
 import { Editor } from '@tiptap/react';
+import { useReportSignatures, useReportSummaryAnalystComments } from '@/queries/get';
+import { AnalystCommentType } from '@/common';
 
 const AUTO_SAVE_INTERVAL = 30 * 1000; // Autosaves per 30s
-
-const useComments = (report?: ReportType) => useQuery({
-  queryKey: ['report-comments', report?.ident],
-  enabled: Boolean(report),
-  queryFn: async () => {
-    const resp = await api.get(`/reports/${report!.ident}/summary/analyst-comments`).request();
-    return resp?.comments
-      ? sanitizeHtml(resp.comments, {
-        allowedSchemes: [],
-        allowedAttributes: { '*': ['style'] },
-      })
-      : null;
-  },
-});
 
 type AnalystCommentsProps = {
   isPrint?: boolean;
@@ -55,42 +40,60 @@ const AnalystComments = ({
   setIsLoading: setIsComponentLoading,
   loadedDispatch,
 }: AnalystCommentsProps): JSX.Element => {
-  const { report } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
-  const { canEdit } = useReport();
+  const { report, canEdit } = useReport();
   const { showConfirmDialog } = useConfirmDialog();
 
   const editorRef = useRef<{ editor: Editor, isDirty: boolean | null }>();
-  const [comments, setComments] = useState('');
-  const [signatures, setSignatures] = useState<SignatureType>();
-  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>(DEFAULT_SIGNATURE_TYPES);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
-  const commentsQuery = useComments(report);
-  const signaturesQuery = useSignatures(report);
-  const signatureTypesQuery = useSignatureTypes(report);
-  const queryClient = useQueryClient();
+  const {
+    data: comments,
+    refetch: refetchComments,
+    isLoading: isCommentsLoading,
+    isError: isCommentsError,
+  } = useReportSummaryAnalystComments<AnalystCommentType>(report.ident, {
+    select: (data) => {
+      if (data.comments) {
+        data.comments = sanitizeHtml(data.comments, {
+          allowedSchemes: [],
+          allowedAttributes: { '*': ['style'] },
+        });
+      }
+      return data;
+    },
+  });
 
-  const isApiLoading = commentsQuery.isLoading || signaturesQuery.isLoading || signatureTypesQuery.isLoading;
-  const isError = commentsQuery.isError || signaturesQuery.isError || signatureTypesQuery.isError;
+  const {
+    data: signatures,
+    refetch: refetchSignatures,
+    isLoading: isSignaturesLoading,
+    isError: isSignaturesError,
+  } = useReportSignatures<SignatureType>(report.ident);
+
+  const {
+    data: signatureTypes = DEFAULT_SIGNATURE_TYPES,
+    isLoading: isSignatureTypesLoading,
+    isError: isSignatureTypesError,
+  } = useSignatureTypes(report);
+
+  const isApiLoading = isCommentsLoading || isSignaturesLoading || isSignatureTypesLoading;
+  const isError = isCommentsError || isSignaturesError || isSignatureTypesError;
 
   useEffect(() => {
     if (isError) {
       snackbar.error(`Network error: ${
-        commentsQuery.error || signaturesQuery.error || signatureTypesQuery.error
+        isCommentsError || isSignaturesError || isSignatureTypesError
       }`);
     }
-  }, [commentsQuery.error, isError, signatureTypesQuery.error, signaturesQuery.error]);
+  }, [isCommentsError, isError, isSignatureTypesError, isSignaturesError]);
 
   useEffect(() => {
     if (!isApiLoading) {
-      setComments(commentsQuery.data);
-      setSignatures(signaturesQuery.data);
-      setSignatureTypes(signatureTypesQuery.data);
       setIsComponentLoading(false);
       if (loadedDispatch) loadedDispatch({ type: 'analyst-comments' });
     }
-  }, [setIsComponentLoading, isApiLoading, isError, commentsQuery.data, signaturesQuery.data, signatureTypesQuery.data, loadedDispatch]);
+  }, [setIsComponentLoading, isApiLoading, isError, loadedDispatch]);
 
   // Try to load previously unsaved analyst comments
   useEffect(() => {
@@ -122,8 +125,8 @@ const AnalystComments = ({
 
   const handleSign = useCallback(async (signed: boolean) => {
     setIsSigned(signed);
-    await queryClient.refetchQueries({ queryKey: ['report-signatures', report?.ident] });
-  }, [report?.ident, setIsSigned, queryClient]);
+    refetchSignatures();
+  }, [refetchSignatures, setIsSigned]);
 
   const handleEditorStart = () => {
     setIsEditorOpen(true);
@@ -161,20 +164,12 @@ const AnalystComments = ({
         if (isSigned) {
           const isResolved = await showConfirmDialog(commentCall, true);
           if (isResolved) {
-            await queryClient.refetchQueries({ queryKey: ['report-comments', report?.ident] });
+            await refetchComments();
             snackbar.success('Comment updated');
           }
         } else {
-          const commentsResp = await commentCall.request();
-          setComments(
-            sanitizeHtml(commentsResp?.comments, {
-              allowedSchemes: [],
-              allowedAttributes: {
-                '*': ['style'],
-              },
-            }),
-          );
-          await queryClient.refetchQueries({ queryKey: ['report-comments', report?.ident] });
+          await commentCall.request();
+          await refetchComments();
           snackbar.success('Comment updated');
           if (shouldCloseEditor) {
             setIsEditorOpen(false);
@@ -184,7 +179,7 @@ const AnalystComments = ({
         snackbar.error(`Error saving edit: ${e.message ?? e}`);
       }
     },
-    [report, isSigned, showConfirmDialog, queryClient],
+    [report.ident, isSigned, showConfirmDialog, refetchComments],
   );
 
   const handleEditorSave = useCallback(
@@ -221,7 +216,7 @@ const AnalystComments = ({
         disabled={isApiLoading}
       />
     );
-  }), [signatureTypes, isPrint, handleSign, signatures, isApiLoading]);
+  }), [signatureTypes, isPrint, handleSign, isApiLoading, signatures]);
 
   return (
     <div className={isPrint ? 'analyst-comments--print' : 'analyst-comments'}>
@@ -251,7 +246,7 @@ const AnalystComments = ({
                 ref={editorRef}
                 alertLeave
                 isOpen={isEditorOpen}
-                text={comments}
+                text={comments.comments}
                 title="Edit Comments"
                 onClose={handleEditorClose}
                 onSave={handleEditorSave}
@@ -262,7 +257,7 @@ const AnalystComments = ({
             <div
               className="analyst-comments__user-text inner-html"
               // eslint-disable-next-line react/no-danger
-              dangerouslySetInnerHTML={{ __html: comments }}
+              dangerouslySetInnerHTML={{ __html: comments.comments }}
             />
           ) : (
             <Typography align="center" variant="h5">No comments yet</Typography>

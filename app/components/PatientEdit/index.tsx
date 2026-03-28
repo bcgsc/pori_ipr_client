@@ -17,7 +17,7 @@ import AsyncButton from '@/components/AsyncButton';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import './index.scss';
-import { ReportType } from '@/context/ReportContext';
+import { ReportType } from '@/common';
 
 const PatientEditField = ({
   value, onChange, label, name,
@@ -42,12 +42,13 @@ const FIELD_TO_DISPLAY_NAME = {
   physician: 'Physician',
   gender: 'Gender',
   pediatricIds: 'Pediatric Patient IDs',
+  dataType: 'Data Type',
   kbDiseaseMatch: 'Tumour type for matching',
 };
 
 const DEFAULT_PATIENT_FIELDS_TO_UPDATE = ['caseType', 'physician', 'biopsySite', 'gender'];
 
-const DEFAULT_REPORT_FIELDS_TO_UPDATE = ['alternateIdentifier', 'pediatricIds', 'biopsyName'];
+const DEFAULT_REPORT_FIELDS_TO_UPDATE = ['alternateIdentifier', 'pediatricIds', 'biopsyName', 'dataType'];
 const REPORT_FIELDS_TO_UPDATE = {
   default: DEFAULT_REPORT_FIELDS_TO_UPDATE,
   rapid: [...DEFAULT_REPORT_FIELDS_TO_UPDATE, 'kbDiseaseMatch'],
@@ -118,7 +119,7 @@ const PatientEdit = ({
       setIsApiCalling(true);
       const apiCalls = [];
 
-      if (newPatientData) {
+      if (newPatientData && !Object.values(newPatientData).every((value) => value === null || value === '')) {
         const {
           caseType, biopsySite, physician, gender,
         } = newPatientData;
@@ -127,7 +128,7 @@ const PatientEdit = ({
         }, {}));
       }
 
-      if (newReportData) {
+      if (newReportData && !Object.values(newReportData).every((value) => value === null || value === '')) {
         apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
       }
 

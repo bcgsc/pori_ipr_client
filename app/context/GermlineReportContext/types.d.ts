@@ -1,3 +1,4 @@
+import { UseQueryResult } from 'react-query';
 import { RecordDefaults, UserType, ProjectType } from '@/common';
 
 type ReviewType = {
@@ -65,9 +66,8 @@ type GermlineReportType = {
 
 type GermlineReportContextType = {
   /** Current report that's being viewed */
-  report: GermlineReportType | null,
-  /** Set new current report */
-  setReport: React.Dispatch<React.SetStateAction<GermlineReportType>>;
+  report: GermlineReportType | null;
+  refetchReport: UseQueryResult<GermlineReportType>['refetch'];
 };
 
 export {

@@ -1,5 +1,5 @@
 import React, {
-  useState, useCallback, useContext, useEffect,
+  useState, useCallback, useEffect,
 } from 'react';
 import {
   Button,
@@ -15,11 +15,11 @@ import {
 
 import api from '@/services/api';
 import UserAutocomplete from '@/components/UserAutocomplete';
-import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import { UserType } from '@/common';
 
 import './index.scss';
+import useReport from '@/hooks/useReport';
 
 type AddUserDialogProps = {
   isOpen: boolean;
@@ -30,7 +30,7 @@ const AddUserDialog = ({
   isOpen = false,
   onAdd,
 }: AddUserDialogProps): JSX.Element => {
-  const { report, setReport } = useContext(ReportContext);
+  const { report, refetchReport } = useReport();
 
   const [user, setUser] = useState<UserType>();
   const [role, setRole] = useState('');
@@ -44,24 +44,24 @@ const AddUserDialog = ({
 
   const handleAddUser = useCallback(async () => {
     try {
-      const newReport = await api.post(
+      await api.post(
         `/reports/${report.ident}/user`,
         { user: user.ident, role },
         {},
       ).request();
-      setReport(newReport);
+      await refetchReport();
       snackbar.success('User added!');
       onAdd();
     } catch (err) {
       snackbar.error(`Error adding user: ${err}`);
     }
-  }, [report, onAdd, user, role, setReport]);
-  
+  }, [report, user, role, refetchReport, onAdd]);
+
   const handleUserChange = (newUser: UserType) => {
     setUser(newUser);
   };
 
-  const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleRoleChange = (event) => {
     setRole(event.target.value);
   };
 
