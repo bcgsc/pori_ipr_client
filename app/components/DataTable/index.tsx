@@ -659,6 +659,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
               noRowsOverlayComponent="NoRowsOverlay"
+              noRowsOverlayComponentParams={{ hasChildren: columnDefs.some((col) => 'children' in col) }}
               loadingOverlayComponent="LoadingOverlay"
               gridOptions={{
                 // For when table is too short and the popup menus get cut-off
