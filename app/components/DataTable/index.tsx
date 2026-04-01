@@ -195,7 +195,7 @@ type DataTableCustomProps = {
   /* Callback function when rowData is changed within the DataTable */
   onRowDataChanged?: (rows: Record<string, unknown>[]) => void;
   /* Allows multiple rows to be selected (Note either 'single' or 'multiple') */
-  rowSelection?: string;
+  rowSelection?: 'single' | 'multiple';
   /* Data populating table */
   rowData: Record<string, unknown>[];
   /* Callback to sync multiple tables */
@@ -652,6 +652,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               paginationAutoPageSize={isFullLength}
               paginationPageSize={MAX_VISIBLE_ROWS}
               autoSizePadding={1}
+              // agGrid falls back to rowIdent as Id when ident does not exist
               getRowId={(params) => params.data.ident as string}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
