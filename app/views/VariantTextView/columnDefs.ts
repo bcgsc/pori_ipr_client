@@ -8,7 +8,7 @@ const columnDefs: ColDef[] = [
   },
   {
     headerName: 'Project',
-    cellRenderer: ({ data }) => data.project?.name,
+    valueGetter: ({ data }) => data.project?.name,
   },
   {
     headerName: 'Created',
@@ -26,9 +26,11 @@ const columnDefs: ColDef[] = [
     minWidth: 90,
   },
   {
-    headerName: 'Cancer Type',
-    valueGetter: ({ data }) => data.cancerType,
-    minWidth: 90,
+    headerName: 'Cancer Types',
+    valueGetter: ({ data }) => data.cancerType?.join(', '),
+    autoHeight: true,
+    wrapText: true,
+    maxWidth: 200,
   },
   {
     headerName: 'Text',

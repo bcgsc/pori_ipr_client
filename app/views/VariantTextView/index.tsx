@@ -83,35 +83,34 @@ function VariantText(): JSX.Element {
     setIsEditing(false);
   }, [variantTextUpdateMutation]);
 
+  if (isLoading) {
+    return <CircularProgress />;
+  }
+
   return (
-    <>
-      {!isLoading && (
-        <>
-          <DataTable
-            columnDefs={columnDefs}
-            rowData={variantText}
-            titleText="Variant Text"
-            canAdd
-            onAdd={handleOnAdd}
-            addText="Create Custom Variant Text"
-            canEdit
-            onEdit={handleOnEdit}
-            canDelete
-            onDelete={handleOnDelete}
-          />
-          <AddEditVariantText
-            editData={editingData}
-            isOpen={isEditing}
-            onClose={handleEditClose}
-          />
-          <AddEditVariantText
-            isOpen={isAdding}
-            onClose={handleAddClose}
-          />
-        </>
-      )}
-      {isLoading && <CircularProgress />}
-    </>
+    <section style={{ height: '100%', overflowY: 'auto' }}>
+      <DataTable
+        columnDefs={columnDefs}
+        rowData={variantText}
+        titleText="Variant Text"
+        canAdd
+        onAdd={handleOnAdd}
+        addText="Create Custom Variant Text"
+        canEdit
+        onEdit={handleOnEdit}
+        canDelete
+        onDelete={handleOnDelete}
+      />
+      <AddEditVariantText
+        editData={editingData}
+        isOpen={isEditing}
+        onClose={handleEditClose}
+      />
+      <AddEditVariantText
+        isOpen={isAdding}
+        onClose={handleAddClose}
+      />
+    </section>
   );
 }
 export default VariantText;

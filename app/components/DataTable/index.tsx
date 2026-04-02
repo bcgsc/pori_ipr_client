@@ -414,6 +414,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
         .filter((col) => (!col.getFlex() && col.isVisible()))
         .map((col) => col.getColId());
       colApi.autoSizeColumns(visibleColumnIds);
+      gridApi.resetRowHeights();
     } if (isFullLength) {
       gridApi.sizeColumnsToFit();
     }
