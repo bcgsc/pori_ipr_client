@@ -24,26 +24,26 @@ const mockLinkArrayData = {
 
 describe('ArrayCellRenderer', () => {
   test('A non-link string renders', async () => {
-    render(ArrayCellRenderer('test', false)({ data: mockData }));
+    render(ArrayCellRenderer('test')({ data: mockData }));
 
     expect(await screen.findByText(mockData.test)).toBeInTheDocument();
   });
 
   test('A non-link array renders the first sorted value', async () => {
-    render(ArrayCellRenderer('test', false)({ data: mockArrayData }));
+    render(ArrayCellRenderer('test')({ data: mockArrayData }));
 
     expect(await screen.findByText(`${mockArrayData.test[1]}…`)).toBeInTheDocument();
     expect(screen.queryByText(mockArrayData.test[0])).toBeNull();
   });
 
   test('A string link renders', async () => {
-    render(ArrayCellRenderer('test', true)({ data: mockLinkData }));
+    render(ArrayCellRenderer('test', { isLink: true })({ data: mockLinkData }));
 
     expect(await screen.findByText(mockLinkData.test)).toBeInTheDocument();
   });
 
   test('An array of PMIDs renders the first sorted link', async () => {
-    render(ArrayCellRenderer('test', true)({ data: mockPMIDArrayData }));
+    render(ArrayCellRenderer('test', { isLink: true })({ data: mockPMIDArrayData }));
 
     const expectedPMID = mockPMIDArrayData.test[1].replace('pmid:', '');
     const unexpectedPMID = mockPMIDArrayData.test[0].replace('pmid:', '');
@@ -54,7 +54,7 @@ describe('ArrayCellRenderer', () => {
   });
 
   test('An array of links renders the first sorted link', async () => {
-    render(ArrayCellRenderer('test', true)({ data: mockLinkArrayData }));
+    render(ArrayCellRenderer('test', { isLink: true })({ data: mockLinkArrayData }));
 
     const elem = await screen.findByText(mockLinkArrayData.test[0]);
 
