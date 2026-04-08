@@ -80,10 +80,6 @@ const PatientInformation = ({
               value: report.patientInformation.gender,
             },
             {
-              label: 'Biopsy Collection Date',
-              value: report?.sampleInfo?.find((info) => info.sample === 'Tumour')?.collectionDate,
-            },
-            {
               label: 'Data Type',
               value: report?.dataType,
             },
