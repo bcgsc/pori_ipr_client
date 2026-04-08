@@ -410,10 +410,16 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     }
 
     if (colApi && !isFullLength) {
+      // Exclude columns with suppressAutoSize so they keep their initialWidth
       const visibleColumnIds = colApi.getAllColumns()
-        .filter((col) => (!col.getFlex() && col.isVisible()))
+        .filter((col) => (!col.getFlex()
+          && col.isVisible()
+          && !col.getColDef().suppressAutoSize
+        ))
         .map((col) => col.getColId());
       colApi.autoSizeColumns(visibleColumnIds);
+      // Recalculate row heights after auto-sizing, since autoHeight rows measure based on column width
+      gridApi.resetRowHeights();
     } if (isFullLength) {
       gridApi.sizeColumnsToFit();
     }
@@ -498,6 +504,12 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
   }, [colApi, gridApi, isSearch, report?.ident, report?.patientId, titleText]);
+
+  const handleColumnResized = useCallback(() => {
+    if (gridApi) {
+      gridApi.resetRowHeights();
+    }
+  }, [gridApi]);
 
   const handleFilterAndSortChanged = useCallback(() => {
     if (onRowDataChanged) {
@@ -669,6 +681,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
               enableCellTextSelection={!showReorder}
+              onColumnResized={handleColumnResized}
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
               noRowsOverlayComponent="NoRowsOverlay"
