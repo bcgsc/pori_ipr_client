@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "ipr-client",
-  "version": "7.3.1",
+  "version": "7.4.0",
   "keywords": [],
   "license": "GPL-3.0",
   "sideEffects": false,
@@ -30,7 +30,9 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "lint": "eslint app --config .eslintrc.js --ext .ts,.tsx,.jsx,.js --quiet",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "generate:querykeys": "tsx scripts/generateQueryKeys.ts && eslint app/queries/queryKeys.ts --config .eslintrc.js --fix",
+    "generate:queryhooks": "tsx scripts/generateQueryHooks.ts && eslint app/queries/get.ts --config .eslintrc.js --fix"
   },
   "devDependencies": {
     "@babel/core": "~7.29.0",

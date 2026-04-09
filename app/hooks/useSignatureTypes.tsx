@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { ReportType } from '@/context/ReportContext';
+import { ReportType } from '@/common';
 import api from '@/services/api';
 import { SignatureUserType } from '@/components/SignatureCard';
 

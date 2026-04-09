@@ -11,8 +11,7 @@ import {
 import ImageType from '@/components/Image/types';
 import FrontPageTooltip from '@/components/FrontPageTooltip';
 import Image from '@/components/Image';
-import { MutationBurdenType } from '@/common';
-import { ComparatorType } from '../../types';
+import { MutationBurdenType, ComparatorType } from '@/common';
 
 const rankMapping = {
   primary: 0,

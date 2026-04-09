@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 import {
   Typography,
@@ -8,12 +8,13 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
-import ReportContext, { ReportType, PatientInformationType } from '@/context/ReportContext';
 import { formatDate } from '@/utils/date';
 import PatientEdit from '@/components/PatientEdit';
 import snackbar from '@/services/SnackbarUtils';
 import SummaryPrintTable from '@/components/SummaryPrintTable';
 import './index.scss';
+import { PatientInformationType, ReportType } from '@/common';
+import useReport from '@/hooks/useReport';
 
 type PatientInformationProps = {
   loadedDispatch: ({ type }: { type: string }) => void;
@@ -28,7 +29,7 @@ const PatientInformation = ({
   isPrint,
   printVersion,
 }: PatientInformationProps): JSX.Element => {
-  const { report, setReport } = useContext(ReportContext);
+  const { report, refetchReport } = useReport();
   const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [patientInformation, setPatientInformation] = useState<{
     label: string;
@@ -78,6 +79,10 @@ const PatientInformation = ({
               label: 'Gender',
               value: report.patientInformation.gender,
             },
+            {
+              label: 'Data Type',
+              value: report?.dataType,
+            },
           ]);
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
@@ -103,7 +108,7 @@ const PatientInformation = ({
     }
 
     if (newReportData) {
-      setReport((oldReport) => ({ ...oldReport, ...newReportData }));
+      refetchReport();
     }
 
     if (newPatientData) {
@@ -142,7 +147,7 @@ const PatientInformation = ({
         },
       ]);
     }
-  }, [report, setReport]);
+  }, [refetchReport, report.alternateIdentifier, report.biopsyName, report.createdAt, report.patientInformation.biopsySite, report.patientInformation.caseType, report.patientInformation.gender, report.patientInformation.physician, report.pediatricIds]);
 
   if (isPrint && printVersion === 'condensedLayout') {
     return (

@@ -12,25 +12,36 @@ import DemoDescription from '@/components/DemoDescription';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
-import ReportContext, { ReportType } from '@/context/ReportContext';
+import {
+  ReportType,
+  TumourSummaryType,
+  ImmuneType,
+  MutationBurdenType,
+  MicrobialType,
+  TmburType,
+  MsiType,
+  KbMatchType,
+  KbMatchedStatementType,
+  RecordDefaults,
+  AnyVariant,
+  HlaType,
+} from '@/common';
 import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
-import SignatureCard from '@/components/SignatureCard';
+import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import capitalize from 'lodash/capitalize';
 import getMostCurrentObj from '@/utils/getMostCurrentObj';
-import {
-  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, MsiType, KbMatchType, KbMatchedStatementType,
-  RecordDefaults,
-  AnyVariant,
-} from '@/common';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
-import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-import useSignatures from '@/hooks/useSignatures';
 import { useSignatureTypes } from '@/hooks/useSignatureTypes';
+import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
+
+import { useReportSignatures } from '@/queries/get';
+import { queryKeys } from '@/queries/queryKeys';
+
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
@@ -42,7 +53,6 @@ import TumourSummary from '../TumourSummary';
 
 import './index.scss';
 import { UNSPECIFIED_EVIDENCE_LEVEL, extractUUID } from './common';
-import { deepRemoveDuplicate } from '@/utils/deepRemoveDuplicate';
 
 const ANALYST_DISABLED = 'analyst disabled';
 
@@ -203,14 +213,12 @@ const RapidSummary = ({
   setIsLoading,
   printVersion = null,
 }: RapidSummaryProps): JSX.Element => {
-  const { report, setReport } = useContext(ReportContext);
+  const { report, canEdit } = useReport();
+
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
-  const { data: signatures } = useSignatures(report);
+  const { data: signatures, refetch: refetchSignatures } = useReportSignatures<SignatureType>(report?.ident);
   const { data: signatureTypes } = useSignatureTypes(report);
-  let { canEdit } = useReport();
-  if (report.state === 'completed') {
-    canEdit = false;
-  }
+
   const { showConfirmDialog } = useConfirmDialog();
   const queryClient = useQueryClient();
 
@@ -223,6 +231,11 @@ const RapidSummary = ({
 
   const reportIdent = report?.ident;
 
+  const variantQueryFn = useCallback(
+    (table: RapidSummaryTable) => (): Promise<RapidVariantType[]> => api.get(`/reports/${reportIdent}/variants?rapidTable=${table}`).request(),
+    [reportIdent],
+  );
+
   const queries = useQueries<
   [
     UseQueryResult<RapidVariantType[]>,
@@ -232,58 +245,50 @@ const RapidSummary = ({
     UseQueryResult<MsiType>,
     UseQueryResult<ImmuneType | undefined>,
     UseQueryResult<MicrobialType[]>,
+    UseQueryResult<HlaType[]>,
   ]
   >(
     [
       {
-        queryKey: [RapidSummaryTable.THERAPEUTIC_ASSOCIATION, reportIdent],
-        queryFn: (): Promise<RapidVariantType[]> => api
-          .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.THERAPEUTIC_ASSOCIATION}`)
-          .request(),
+        queryKey: ['reports', reportIdent, 'variants', RapidSummaryTable.THERAPEUTIC_ASSOCIATION],
+        queryFn: variantQueryFn(RapidSummaryTable.THERAPEUTIC_ASSOCIATION),
         select: (rows: RapidVariantType[]) => splitVariantsByRelevance(rows),
         enabled: !!reportIdent,
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
         refetchOnMount: 'always',
       },
-
       {
-        queryKey: [RapidSummaryTable.CANCER_RELEVANCE, reportIdent],
-        queryFn: (): Promise<RapidVariantType[]> => api
-          .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.CANCER_RELEVANCE}`)
-          .request(),
+        queryKey: ['reports', reportIdent, 'variants', RapidSummaryTable.CANCER_RELEVANCE],
+        queryFn: variantQueryFn(RapidSummaryTable.CANCER_RELEVANCE),
         enabled: !!reportIdent,
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
         refetchOnMount: 'always',
       },
-
       {
-        queryKey: [RapidSummaryTable.UNKNOWN_SIGNIFICANCE, reportIdent],
-        queryFn: (): Promise<RapidVariantType[]> => api
-          .get(`/reports/${reportIdent}/variants?rapidTable=${RapidSummaryTable.UNKNOWN_SIGNIFICANCE}`)
-          .request(),
+        queryKey: ['reports', reportIdent, 'variants', RapidSummaryTable.UNKNOWN_SIGNIFICANCE],
+        queryFn: variantQueryFn(RapidSummaryTable.UNKNOWN_SIGNIFICANCE),
         enabled: !!reportIdent,
         select: (data: RapidVariantType[]) => deepRemoveDuplicate(data),
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
         refetchOnMount: 'always',
       },
-
       {
-        queryKey: ['tmbur', reportIdent],
-        queryFn: (): Promise<TmburType> => api.get(`/reports/${reportIdent}/tmbur-mutation-burden`).request(),
+        queryKey: queryKeys.reports.reportTmburMutationBurden(reportIdent),
+        queryFn: ({ queryKey: [, ident] }): Promise<TmburType> => api.get(`/reports/${ident}/tmbur-mutation-burden`).request(),
         enabled: !!reportIdent,
         retry: 1,
-        onError: !isPrint ? (err) => {
-          // Silent fail not found
-          if (err.content.status !== 404) {
-            snackbar.error(err.content?.error?.message);
+        onError: !isPrint
+          ? (err) => {
+            if (err.content.status !== 404) {
+              snackbar.error(err.content?.error?.message);
+            }
           }
-        } : undefined,
+          : undefined,
         refetchOnMount: 'always',
       },
-
       {
-        queryKey: ['msi', reportIdent],
-        queryFn: (): Promise<MsiType[]> => api.get(`/reports/${reportIdent}/msi`).request(),
+        queryKey: queryKeys.reports.reportMsi(reportIdent),
+        queryFn: ({ queryKey: [, ident] }): Promise<MsiType[]> => api.get(`/reports/${ident}/msi`).request(),
         select: (rows: MsiType[]) => getMostCurrentObj(rows),
         enabled: !!reportIdent,
         onError: (err) => (!isPrint && err.content?.status !== 404
@@ -293,8 +298,8 @@ const RapidSummary = ({
       },
 
       {
-        queryKey: ['immune', reportIdent],
-        queryFn: (): Promise<ImmuneType[]> => api.get(`/reports/${reportIdent}/immune-cell-types`).request(),
+        queryKey: queryKeys.reports.reportImmuneCellTypes(reportIdent),
+        queryFn: ({ queryKey: [, ident] }): Promise<ImmuneType[]> => api.get(`/reports/${ident}/immune-cell-types`).request(),
         select: (rows: ImmuneType[]) => rows.find(({ cellType }) => cellType === 'T cells CD8'),
         enabled: !!reportIdent,
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
@@ -302,8 +307,15 @@ const RapidSummary = ({
       },
 
       {
-        queryKey: ['microbial', reportIdent],
-        queryFn: (): Promise<MicrobialType[]> => api.get(`/reports/${reportIdent}/summary/microbial`).request(),
+        queryKey: queryKeys.reports.reportSummaryMicrobial(reportIdent),
+        queryFn: ({ queryKey: [, ident] }): Promise<MicrobialType[]> => api.get(`/reports/${ident}/summary/microbial`).request(),
+        enabled: !!reportIdent,
+        onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
+        refetchOnMount: 'always',
+      },
+      {
+        queryKey: queryKeys.reports.reportHlaTypes(reportIdent),
+        queryFn: ({ queryKey: [, ident] }): Promise<HlaType[]> => api.get(`/reports/${ident}/hla-types`).request(),
         enabled: !!reportIdent,
         onError: !isPrint ? (err) => snackbar.error(err.content?.error?.message) : undefined,
         refetchOnMount: 'always',
@@ -314,10 +326,13 @@ const RapidSummary = ({
   const {
     data: primaryBurden,
   } = useQuery<MutationBurdenType | null>({
-    queryKey: ['primaryBurden', reportIdent],
+    queryKey: queryKeys.reports.reportMutationBurden(reportIdent),
     enabled: !!reportIdent,
-    queryFn: async () => {
-      const resp = await api.get(`/reports/${reportIdent}/mutation-burden`).request();
+    queryFn: async ({ queryKey: [, ident] }) => {
+      const resp = await api
+        .get(`/reports/${ident}/mutation-burden`)
+        .request();
+
       if (!resp.length || resp[0].qualitySvCount == null) return null;
       return resp[0];
     },
@@ -333,10 +348,11 @@ const RapidSummary = ({
     { data: msi, isSuccess: isMsiSuccess },
     { data: tCellCd8, isSuccess: isTCellCd8Success },
     { data: microbial, isSuccess: isMicrobialSuccess },
+    { data: hla, isSuccess: isHlaSuccess },
   ] = queries;
 
   const isLoadingFromQueries = queries.some((q) => q.isLoading);
-  const rapidSummarySectionsLoaded = isTherapAssocSuccess && isCancerRelSuccess && isUnknownSigSuccess && isMsiSuccess && isTCellCd8Success && isMicrobialSuccess;
+  const rapidSummarySectionsLoaded = isTherapAssocSuccess && isCancerRelSuccess && isUnknownSigSuccess && isMsiSuccess && isTCellCd8Success && isMicrobialSuccess && isHlaSuccess;
 
   useEffect(() => {
     if (!isLoadingFromQueries) {
@@ -347,14 +363,23 @@ const RapidSummary = ({
   useEffect(() => {
     // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
     // Rapid report will now incorporate both sources to retain information in old reports and use updated msi score in future reports
-    let msiScore: null | number;
+    let msiStatus: null | string;
     if (msi && msi.score !== null) {
-      msiScore = msi.score;
+      if (msi?.score < 20) {
+        msiStatus = `${msi?.score} (MSS)`;
+      }
+      if (msi?.score >= 20) {
+        msiStatus = `${msi?.score} (MSI)`;
+      }
     } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
-      // eslint-disable-next-line prefer-destructuring
-      msiScore = tmburMutBur.msiScore;
+      if (tmburMutBur?.msiScore < 20) {
+        msiStatus = `${tmburMutBur?.msiScore} (MSS)`;
+      }
+      if (tmburMutBur?.msiScore >= 20) {
+        msiStatus = `${tmburMutBur?.msiScore} (MSI)`;
+      }
     } else {
-      msiScore = null;
+      msiStatus = null;
     }
 
     let svBurden: null | string = null;
@@ -378,16 +403,24 @@ const RapidSummary = ({
       tCell = null;
     }
 
+    let hlaNormal = '';
+    if (hla) {
+      const normal = hla.find((h) => h.pathology === 'normal');
+      if (normal) {
+        hlaNormal = `${normal.a1} ${normal.a2} ${normal.b1} ${normal.b2} ${normal.c1} ${normal.c2}`;
+      }
+    }
+
     setTumourSummary(() => {
       // Check if genomeTmb (new version) exists
       const { genomeTmb } = report;
-      
+
       let tmbDisplayValue = 'No data available';
 
       if (genomeTmb) {
         tmbDisplayValue = genomeTmb.toFixed(2);
       }
-      
+
       if (tmburMutBur) {
         const { tmbHidden, adjustedTmb } = tmburMutBur;
         if (tmbHidden) {
@@ -396,24 +429,39 @@ const RapidSummary = ({
           tmbDisplayValue = adjustedTmb.toFixed(2);
         }
       }
-      
+
       return ([
         {
           term: 'Pathology Tumour Content',
           value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour')?.pathoTc ?? ''}`,
         },
         {
-          term: 'M1M2 Score',
-          value: report.m1m2Score !== null
-            ? `${report.m1m2Score}`
-            : null,
+          term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
+          value: tmbDisplayValue,
         },
         {
-            term: 'HRD Score',
-            value: report.hrdScore !== null
-              ? `${report.hrdScore}`
-              : null,
-          },
+          term: 'Adjusted TMB Comment',
+          value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+        },
+        {
+          term: 'HRD Score',
+          value: report.hrdScore !== null
+            ? `${report.hrdScore}`
+            : 'No data available',
+        },
+        {
+          term: 'MSI Score',
+          value: msiStatus ?? null,
+        },
+        {
+          term: 'HLA (Normal)',
+          value: hlaNormal ?? null,
+        },
+        {
+          term:
+            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+          value: tCell,
+        },
         {
           term: 'Preliminary CAPTIV-8 Score',
           value: report.captiv8Score !== null
@@ -425,9 +473,10 @@ const RapidSummary = ({
           value: getMicbSiteSummary(microbial),
         },
         {
-          term:
-            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
-          value: tCell,
+          term: 'M1M2 Score',
+          value: report.m1m2Score !== null
+            ? `${report.m1m2Score}`
+            : null,
         },
         {
           term: 'Pediatric CD8+ T Cell Comment',
@@ -442,26 +491,9 @@ const RapidSummary = ({
           term: 'SV Burden (POG Average)',
           value: svBurden,
         },
-        {
-          term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
-          value: tmbDisplayValue,
-        },
-        {
-          term: 'Adjusted TMB Comment',
-          value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
-        },
-        {
-          term: 'MSI Score',
-          value: `${msiScore} (MSI Status: ${msiScore < 20 ? 'MSS' : 'MSI'})`,
-        },
       ]);
     });
-  }, [
-    microbial, primaryBurden, tmburMutBur, tCellCd8, msi, msi?.score,
-    report.m1m2Score, report.sampleInfo, report.tumourContent, report?.genomeTmb, report.captiv8Score,
-    tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
-    tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
-  ]);
+  }, [microbial, primaryBurden, tmburMutBur, tCellCd8, msi, report, hla]);
 
   useEffect(() => {
     if (loadedDispatch && rapidSummarySectionsLoaded && !isLoadingFromQueries) {
@@ -509,8 +541,8 @@ const RapidSummary = ({
       if (!isSigned) {
         snackbar.success('Variant removed');
       }
-      queryClient.refetchQueries({ queryKey: ['report-signatures', reportIdent] });
-      await queryClient.refetchQueries({ queryKey: [rapidSummaryTable, reportIdent] });
+      await refetchSignatures();
+      await queryClient.refetchQueries({ queryKey: ['reports', reportIdent, 'variants', rapidSummaryTable] });
     },
     onError: (err) => {
       snackbar.error(`Failed to remove variant ${err}`);
@@ -537,8 +569,8 @@ const RapidSummary = ({
 
   const handleSign = useCallback(async (signed: boolean) => {
     setIsSigned(signed);
-    queryClient.refetchQueries({ queryKey: ['report-signatures', reportIdent] });
-  }, [reportIdent, queryClient, setIsSigned]);
+    await refetchSignatures();
+  }, [setIsSigned, refetchSignatures]);
 
   const handleMatchedTumourEditStart = useCallback((rowData) => {
     setShowMatchedTumourEditDialog(true);
@@ -551,7 +583,7 @@ const RapidSummary = ({
     if (newData) {
       // Call API again to get updated data
       try {
-        await queryClient.refetchQueries({ queryKey: [RapidSummaryTable.THERAPEUTIC_ASSOCIATION, reportIdent] });
+        await queryClient.refetchQueries({ queryKey: ['reports', reportIdent, 'variants', RapidSummaryTable.THERAPEUTIC_ASSOCIATION] });
         setShowMatchedTumourEditDialog(false);
       } catch (e) {
         snackbar.error(`Refetching of therapeutic association data failed: ${e.message ? e.message : e}`);
@@ -780,29 +812,6 @@ const RapidSummary = ({
   }, [report, isPrint]);
   const classNamePrefix = printVersion ? 'rapid-summary--print' : 'rapid-summary';
 
-  const handleTumourSummaryEditClose: TumourSummaryEditProps['onEditClose'] = useCallback((
-    isSaved,
-    newMicrobialData,
-    newReportData,
-    newTCellCd8Data,
-    newMutationBurdenData,
-    newTmBurMutBurData,
-    newMsiData,
-  ) => {
-    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData && !newMsiData)) {
-      return;
-    }
-    // Partial query keys to be refetched
-    const keysToRefetch = ['microbial', 'report', 'immune', 'primaryBurden', 'msi'];
-    queryClient.refetchQueries({
-      predicate: (q) => keysToRefetch.includes(q.queryKey[0] as string),
-    });
-
-    if (newReportData) {
-      setReport(newReportData);
-    }
-  }, [queryClient, setReport]);
-
   if (printVersion === 'condensedLayout') {
     return (
       <div className={classNamePrefix}>
@@ -833,12 +842,12 @@ const RapidSummary = ({
                 loadedDispatch={loadedDispatch}
                 microbial={microbial}
                 mutationBurden={primaryBurden}
-                onEditClose={handleTumourSummaryEditClose}
                 printVersion={printVersion}
                 report={report}
                 tCellCd8={tCellCd8}
-                tmburMutBur={tmburMutBur}
-                msi={msi}
+                tmburMutBur={tmburMutBur ?? null}
+                msi={msi ?? null}
+                hla={hla}
                 tumourSummary={tumourSummary}
               />
             )}
@@ -897,12 +906,12 @@ const RapidSummary = ({
               loadedDispatch={loadedDispatch}
               microbial={microbial}
               mutationBurden={primaryBurden}
-              onEditClose={handleTumourSummaryEditClose}
               printVersion={printVersion}
               report={report}
               tCellCd8={tCellCd8}
-              tmburMutBur={tmburMutBur}
-              msi={msi}
+              tmburMutBur={tmburMutBur ?? null}
+              msi={msi ?? null}
+              hla={hla}
               tumourSummary={tumourSummary}
             />
           )}

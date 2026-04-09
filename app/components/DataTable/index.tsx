@@ -571,6 +571,16 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     };
   }, [gridApi]);
 
+  // Hiding the auto group column that ag-grid creates when using row grouping
+  const autoGroupColumnDef = useMemo(() => ({
+    headerName: '',
+    minWidth: 0,
+    width: 0,
+    maxWidth: 0,
+    suppressSizeToFit: true,
+    cellRenderer: () => null,
+  }), []);
+
   return (
     <div className="data-table" style={{ height: isFullLength ? '100%' : '' }}>
       {Boolean(rowData.length) || canEdit || isSearch ? (
@@ -646,6 +656,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               rowData={rowData}
               data-testid="grid"
               defaultColDef={defaultColDef}
+              autoGroupColumnDef={autoGroupColumnDef}
               onGridReady={onGridReady}
               domLayout={domLayout}
               pagination={isPaginated}
