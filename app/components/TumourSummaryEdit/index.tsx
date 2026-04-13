@@ -209,6 +209,9 @@ const TumourSummaryEdit = ({
       ...cd8t,
       [name]: parseFloat(value),
     }));
+    if (value === null || value === '') {
+      setNewTCellCd8Data((cd8t) => ({ ...cd8t, pedsScoreComment: null })); // Clear comment if score is cleared
+    }
     setTCellCd8Dirty(true);
   }, []);
 
@@ -783,8 +786,8 @@ const TumourSummaryEdit = ({
         label="Pediatric CD8+ T Cell Comment"
         value={newTCellCd8Data?.pedsScoreComment ?? ''}
         name="pedsScoreComment"
-        disabled={!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment}
-        required={!!newTCellCd8Data?.pedsScore}
+        disabled={newTCellCd8Data?.pedsScore === null && !newTCellCd8Data?.pedsScoreComment}
+        required={newTCellCd8Data?.pedsScore !== null}
         onChange={handlePedsCd8tCommentChange}
         variant="outlined"
         fullWidth
