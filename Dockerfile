@@ -6,7 +6,7 @@ ARG KEYCLOAK_URL
 ARG KEYCLOAK_REALM
 
 WORKDIR /app
-COPY package*.json /app/
+COPY package*.json .npmrc /app/
 RUN npm ci
 COPY ./ /app/
 RUN npm run build:docker
