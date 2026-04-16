@@ -1,4 +1,4 @@
-@import '@/styles/_theme.module.scss';
+@use '@/styles/theme.module' as *;
 
 .variant-text__edit-dialog {
   .add-item {

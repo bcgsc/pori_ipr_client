@@ -1,6 +1,5 @@
 import React, {
   useEffect, useState,
-  useCallback,
   useMemo,
 } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -21,7 +20,6 @@ import { MutationSignatureType } from '@/views/ReportView/components/MutationSig
 
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { SummaryProps } from '@/commonComponents';
-import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 
 import './index.scss';
 
@@ -52,7 +50,7 @@ const GenomicSummary = ({
   isLoading,
   loadedDispatch,
 }: GenomicSummaryProps): JSX.Element => {
-  const { report, canEdit: reportContextCanEdit, refetchReport } = useReport();
+  const { report, canEdit: reportContextCanEdit } = useReport();
   let canEdit = reportContextCanEdit;
   if (report?.state === 'completed') {
     canEdit = false;
@@ -64,7 +62,6 @@ const GenomicSummary = ({
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
   const {
     data: microbial,
-    refetch: refetchMicrobial,
     isError: microbialError,
     isLoading: isMicrobialLoading,
   } = useReportSummaryMicrobial<MicrobialType[]>(
@@ -105,7 +102,6 @@ const GenomicSummary = ({
 
   const {
     data: reportImmuneCellTypes,
-    refetch: refetchImmuneCellTypes,
     isError: tCellCd8Error,
     isLoading: isTCellCd8Loading,
   } = useReportImmuneCellTypes<ImmuneType[]>(
@@ -123,7 +119,6 @@ const GenomicSummary = ({
 
   const {
     data: reportMutationBurden,
-    refetch: refetchMutationBurden,
     isError: primaryBurdenError,
     isLoading: isPrimaryBurdenLoading,
   } = useReportMutationBurden<MutationBurdenType[]>(
@@ -141,7 +136,6 @@ const GenomicSummary = ({
 
   const {
     data: msi,
-    refetch: refetchMsi,
     isError: msiError,
     isLoading: isMsiLoading,
   } = useReportMsi<MsiType[], MsiType>(
@@ -156,7 +150,6 @@ const GenomicSummary = ({
 
   const {
     data: tmburMutBur,
-    refetch: refetchTmbur,
     isLoading: isTmburMutBurLoading,
   } = useReportTmburMutationBurden<TmburType>(
     report?.ident,
@@ -169,7 +162,6 @@ const GenomicSummary = ({
 
   const {
     data: hla,
-    refetch: refetchHla,
     isError: hlaError,
     isLoading: isHlaLoading,
   } = useReportHlaTypes<HlaType[]>(
@@ -259,17 +251,17 @@ const GenomicSummary = ({
       let msiStatus: null | string;
       if (msi && msi.score !== null) {
         if (msi?.score < 20) {
-          msiStatus = 'MSS';
+          msiStatus = `${msi?.score} (MSS)`;
         }
         if (msi?.score >= 20) {
-          msiStatus = 'MSI';
+          msiStatus = `${msi?.score} (MSI)`;
         }
       } else if (tmburMutBur && tmburMutBur.msiScore !== null) {
         if (tmburMutBur?.msiScore < 20) {
-          msiStatus = 'MSS';
+          msiStatus = `${tmburMutBur?.msiScore} (MSS)`;
         }
         if (tmburMutBur?.msiScore >= 20) {
-          msiStatus = 'MSI';
+          msiStatus = `${tmburMutBur?.msiScore} (MSI)`;
         }
       } else {
         msiStatus = null;
@@ -302,12 +294,39 @@ const GenomicSummary = ({
             value: `${report.tumourContent}%`,
           },
           {
-            term: 'Subtype',
-            value: report.subtyping,
+            term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
+            value: tmbDisplayValue,
           },
           {
-            term: 'Microbial Species',
-            value: getMicbSiteSummary(microbial),
+            term: 'Adjusted TMB Comment',
+            value:
+              tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
+          },
+          {
+            term: 'HRD Score',
+            value: report.hrdScore !== null
+              ? `${report.hrdScore}`
+              : 'No data available',
+          },
+          {
+            term: 'MSI Score',
+            value: msiStatus ?? null,
+          },
+          {
+            term: 'HRDetect Score',
+            value: report.hrdetectScore ?? null,
+          },
+          {
+            term: 'HLA (Normal)',
+            value: hlaNormal !== null
+              ? `${hlaNormal}`
+              : 'No data available',
+          },
+          {
+            term: 'HLA (Tumour)',
+            value: hlaTumour !== null
+              ? `${hlaTumour}`
+              : 'No data available',
           },
           {
             term:
@@ -318,6 +337,20 @@ const GenomicSummary = ({
             term: 'Pediatric CD8+ T Cell Comment',
             value:
               tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
+          },
+          {
+            term: 'CAPTIV-8 Score',
+            value: report.captiv8Score !== null
+              ? `${report.captiv8Score}`
+              : null,
+          },
+          {
+            term: 'Microbial Species',
+            value: getMicbSiteSummary(microbial),
+          },
+          {
+            term: 'Subtype',
+            value: report.subtyping,
           },
           {
             term: 'Mutation Signatures',
@@ -337,74 +370,13 @@ const GenomicSummary = ({
             value: null,
           },
           {
-            term: 'HRD Score',
-            value: report.hrdScore !== null
-              ? `${report.hrdScore}`
-              : null,
-          },
-          {
-            term: 'HRDetect Score',
-            value: report.hrdetectScore !== null
-              ? `${report.hrdetectScore}`
-              : null,
-          },
-          {
             term: `SV Burden${isPrint ? '*' : ''}`,
             value: null,
-          },
-          {
-            term: 'MSI Status',
-            value: msiStatus ?? null,
-          },
-          {
-            term: 'CAPTIV-8 Score',
-            value: report.captiv8Score !== null
-              ? `${report.captiv8Score}`
-              : null,
-          },
-          {
-            term: tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
-            value: tmbDisplayValue,
-          },
-          {
-            term: 'Adjusted TMB Comment',
-            value: tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
-          },
-          {
-            term: 'HLA (normal)',
-            value: hlaNormal ?? null,
-          },
-          {
-            term: 'HLA (tumour)',
-            value: hlaTumour ?? null,
           },
         ]);
       });
     }
-  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score, hlaNormal, hlaTumour]);
-
-  const handleTumourSummaryEditClose: TumourSummaryEditProps['onEditClose'] = useCallback((
-    isSaved,
-    newMicrobialData,
-    newReportData,
-    newTCellCd8Data,
-    newMutationBurdenData,
-    newTmBurMutBurData,
-    newMsiData,
-    newHlaData,
-  ) => {
-    if (!isSaved) {
-      return undefined;
-    }
-
-    if (newMicrobialData) { refetchMicrobial(); }
-    if (newReportData) { refetchReport(); }
-    if (newTCellCd8Data) { refetchImmuneCellTypes(); }
-    if (newMutationBurdenData) { refetchMutationBurden(); }
-    if (newTmBurMutBurData) { refetchTmbur(); }
-    if (newMsiData) { refetchMsi(); }
-    if (newHlaData) { refetchHla(); }
-  }, [refetchHla, refetchImmuneCellTypes, refetchMicrobial, refetchMsi, refetchMutationBurden, refetchReport, refetchTmbur]);
+  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, hlaNormal, hlaTumour]);
 
   if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || hlaError) {
     return null;
@@ -440,7 +412,6 @@ const GenomicSummary = ({
                 loadedDispatch={loadedDispatch}
                 microbial={microbial}
                 mutationBurden={primaryBurden}
-                onEditClose={handleTumourSummaryEditClose}
                 printVersion={printVersion}
                 report={report}
                 tCellCd8={tCellCd8}
@@ -478,7 +449,6 @@ const GenomicSummary = ({
               loadedDispatch={loadedDispatch}
               microbial={microbial}
               mutationBurden={primaryBurden}
-              onEditClose={handleTumourSummaryEditClose}
               printVersion={printVersion}
               report={report}
               tCellCd8={tCellCd8}

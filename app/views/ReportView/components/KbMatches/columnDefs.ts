@@ -49,7 +49,7 @@ const columnDefs: ColDef[] = [
     colId: 'disease',
     field: 'disease',
     hide: false,
-    cellRendererFramework: ArrayCell('disease', false),
+    cellRenderer: ArrayCell('disease', false),
     maxWidth: 300,
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
@@ -58,7 +58,7 @@ const columnDefs: ColDef[] = [
     headerName: 'IPR Evidence Level',
     colId: 'iprEvidenceLevel',
     field: 'iprEvidenceLevel',
-    cellRendererFramework: ArrayCell('iprEvidenceLevel', false),
+    cellRenderer: ArrayCell('iprEvidenceLevel', false),
     hide: false,
     maxWidth: 300,
   },
@@ -66,7 +66,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Association',
     colId: 'relevance',
     field: 'relevance',
-    cellRendererFramework: ArrayCell('relevance', false),
+    cellRenderer: ArrayCell('relevance', false),
     hide: false,
     maxWidth: 300,
   },
@@ -74,7 +74,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Context',
     colId: 'context',
     field: 'context',
-    cellRendererFramework: ArrayCell('context', false),
+    cellRenderer: ArrayCell('context', false),
     hide: false,
     maxWidth: 300,
     tooltipComponent: 'ToolTip',
@@ -85,13 +85,16 @@ const columnDefs: ColDef[] = [
     colId: 'reference',
     field: 'reference',
     valueGetter: (params) => {
-      const { data: { reference } } = params;
+      const { data: { externalSource, externalStatementId, reference } } = params;
+      if (externalSource === 'clinicaltrials.gov' && /^nct\d+$/.test(externalStatementId)) {
+        return externalStatementId.toUpperCase();
+      }
       if (Array.isArray(reference) && reference.length > 0) {
         reference[0] = /^nct\d+$/.test(reference[0]) ? reference[0].toUpperCase() : reference[0];
       }
       return reference;
     },
-    cellRendererFramework: ArrayCell('reference', true, true),
+    cellRenderer: ArrayCell('reference', true, true),
     hide: false,
     maxWidth: 300,
     tooltipComponent: 'ToolTip',
@@ -116,7 +119,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Evidence Level',
     colId: 'evidenceLevel',
     field: 'evidenceLevel',
-    cellRendererFramework: ArrayCell('evidenceLevel', false),
+    cellRenderer: ArrayCell('evidenceLevel', false),
     hide: false,
     maxWidth: 300,
   },
@@ -124,13 +127,13 @@ const columnDefs: ColDef[] = [
     headerName: 'Category',
     colId: 'category',
     field: 'category',
-    cellRendererFramework: ArrayCell('category', false),
+    cellRenderer: ArrayCell('category', false),
     hide: true,
   },
   {
     headerName: 'Matched Cancer',
     field: 'matchedCancer',
-    cellRendererFramework: ArrayCell('matchedCancer', false),
+    cellRenderer: ArrayCell('matchedCancer', false),
     hide: true,
   },
   {

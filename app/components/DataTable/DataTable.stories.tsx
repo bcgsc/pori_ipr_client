@@ -1,7 +1,7 @@
 import React from 'react';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { Story } from '@storybook/react/types-6-0';
+import { StoryFn } from '@storybook/react';
 import DataTable, { DataTableProps } from '.';
 
 ModuleRegistry.registerModules([
@@ -128,33 +128,33 @@ export default {
 
 const Template = (args) => <DataTable {...args} />;
 
-export const Normal: Story<DataTableProps> = Template.bind({});
+export const Normal: StoryFn<DataTableProps> = Template.bind({});
 
 Normal.args = {
   ...DEFAULT_PROPS,
 };
 
-export const WithTitleText: Story<DataTableProps> = Template.bind({});
+export const WithTitleText: StoryFn<DataTableProps> = Template.bind({});
 
 WithTitleText.args = {
   ...DEFAULT_PROPS,
   titleText: 'Test title',
 };
 
-export const CannotToggleColumns: Story<DataTableProps> = Template.bind({});
+export const CannotToggleColumns: StoryFn<DataTableProps> = Template.bind({});
 
 CannotToggleColumns.args = {
   ...DEFAULT_PROPS,
   canToggleColumns: false,
 };
 
-export const CollapsedRows: Story<DataTableProps> = Template.bind({});
+export const CollapsedRows: StoryFn<DataTableProps> = Template.bind({});
 CollapsedRows.args = {
   ...DEFAULT_PROPS,
   collapseColumnFields: ['column_a', 'column_b'],
 };
 
-export const CollapsedRowsWithValueGetters: Story<DataTableProps> = Template.bind({});
+export const CollapsedRowsWithValueGetters: StoryFn<DataTableProps> = Template.bind({});
 CollapsedRowsWithValueGetters.args = {
   ...DEFAULT_PROPS,
   columnDefs: [

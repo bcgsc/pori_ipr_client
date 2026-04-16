@@ -1,5 +1,5 @@
 import React from 'react';
-import { Story } from '@storybook/react/types-6-0';
+import { StoryFn } from '@storybook/react';
 
 import PrintTable, { PrintTableProps } from '.';
 
@@ -65,25 +65,25 @@ const Template = (args) => (
   <PrintTable {...args} />
 );
 
-export const Normal: Story<PrintTableProps> = Template.bind({});
+export const Normal: StoryFn<PrintTableProps> = Template.bind({});
 
 Normal.args = {
   ...DEFAULT_PROPS,
 };
 
-export const WithColumnsArrangedByProp: Story<PrintTableProps> = Template.bind({});
+export const WithColumnsArrangedByProp: StoryFn<PrintTableProps> = Template.bind({});
 WithColumnsArrangedByProp.args = {
   ...DEFAULT_PROPS,
   order: ['Col_D', 'Col_A', 'Col_B', 'Col_C'],
 };
 
-export const WithCollapseableColumns: Story<PrintTableProps> = Template.bind({});
+export const WithCollapseableColumns: StoryFn<PrintTableProps> = Template.bind({});
 WithCollapseableColumns.args = {
   ...DEFAULT_PROPS,
   collapseableCols: ['column_a', 'column_b'],
 };
 
-export const WithCollapseableColumnsAndOrder: Story<PrintTableProps> = Template.bind({});
+export const WithCollapseableColumnsAndOrder: StoryFn<PrintTableProps> = Template.bind({});
 WithCollapseableColumnsAndOrder.args = {
   ...DEFAULT_PROPS,
   collapseableCols: ['column_a', 'column_b'],

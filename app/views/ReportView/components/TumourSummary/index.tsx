@@ -8,14 +8,7 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import {
-  ReportType,
   TumourSummaryType,
-  MicrobialType,
-  ImmuneType,
-  MutationBurdenType,
-  TmburType,
-  MsiType,
-  HlaType,
 } from '@/common';
 import { TumourSummaryEdit, TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
@@ -23,7 +16,7 @@ import SummaryPrintTable from '@/components/SummaryPrintTable';
 import './index.scss';
 import { SummaryProps } from '@/commonComponents';
 
-interface TumourSummaryProps extends Omit<TumourSummaryEditProps, 'isOpen'> {
+interface TumourSummaryProps extends Omit<TumourSummaryEditProps, 'isOpen' | 'onEditClose'> {
   canEdit: boolean;
   isPrint: boolean;
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
@@ -33,7 +26,6 @@ interface TumourSummaryProps extends Omit<TumourSummaryEditProps, 'isOpen'> {
 
 const TumourSummary = ({
   canEdit,
-  onEditClose,
   mutationBurden,
   tmburMutBur,
   msi,
@@ -49,28 +41,9 @@ const TumourSummary = ({
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
   const classNamePrefix = isPrint ? 'tumour-summary--print' : 'tumour-summary';
 
-  const handleClose = useCallback((
-    isSaved: boolean,
-    newMicrobialData?: MicrobialType[],
-    newReportData?: ReportType,
-    newTCellCd8Data?: ImmuneType,
-    newMutationBurdenData?: MutationBurdenType,
-    newTmBurMutBurData?: TmburType,
-    newMsiData?: MsiType,
-    newHlaData?: HlaType[],
-  ) => {
+  const handleClose = useCallback(() => {
     setShowTumourSummaryEdit(false);
-    onEditClose(
-      isSaved,
-      newMicrobialData,
-      newReportData,
-      newTCellCd8Data,
-      newMutationBurdenData,
-      newTmBurMutBurData,
-      newMsiData,
-      newHlaData,
-    );
-  }, [onEditClose]);
+  }, []);
 
   useEffect(() => {
     if (report && loadedDispatch) {
