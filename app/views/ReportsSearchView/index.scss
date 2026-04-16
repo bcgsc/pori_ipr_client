@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
 
 .reports-table {
   height: calc(100% - #{$navbar-size});

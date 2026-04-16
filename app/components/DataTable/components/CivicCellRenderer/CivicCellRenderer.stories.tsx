@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-grid.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
+import '@ag-grid-community/styles/ag-theme-material.css';
 import React from 'react';
-import { Story } from '@storybook/react/types-6-0';
-import { AgGridReact } from '@ag-grid-community/react/lib/agGridReact';
+import { StoryFn } from '@storybook/react';
+import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import CivicCellRenderer, { CivicCellRendererProps } from '.';
 
@@ -35,12 +35,11 @@ export const WithinGrid = ({
           cellRenderer: 'CivicCellRenderer',
         },
       ]}
-      frameworkComponents={{
+      components={{
         CivicCellRenderer,
       }}
       suppressAnimationFrame
       suppressColumnVirtualisation
-      disableStaticMarkup
       modules={[ClientSideRowModelModule]}
       rowData={data}
       domLayout="autoHeight"
@@ -48,7 +47,7 @@ export const WithinGrid = ({
   </div>
 );
 
-export const CivicSingle: Story<CivicCellRendererProps> = Template.bind({});
+export const CivicSingle: StoryFn<CivicCellRendererProps> = Template.bind({});
 CivicSingle.args = {
   data: {
     externalSource: 'CIViC',
@@ -56,7 +55,7 @@ CivicSingle.args = {
   },
 };
 
-export const CivicArray: Story<CivicCellRendererProps> = Template.bind({});
+export const CivicArray: StoryFn<CivicCellRendererProps> = Template.bind({});
 CivicArray.args = {
   data: {
     externalSource: 'CIViC',
@@ -64,7 +63,7 @@ CivicArray.args = {
   },
 };
 
-export const VariousSourcesNoCivicArray: Story<CivicCellRendererProps> = Template.bind({});
+export const VariousSourcesNoCivicArray: StoryFn<CivicCellRendererProps> = Template.bind({});
 VariousSourcesNoCivicArray.args = {
   data: {
     externalSource: ['IPRKB', 'totes-not-civic'],
@@ -72,7 +71,7 @@ VariousSourcesNoCivicArray.args = {
   },
 };
 
-export const VariousSourcesWithCivicArray: Story<CivicCellRendererProps> = Template.bind({});
+export const VariousSourcesWithCivicArray: StoryFn<CivicCellRendererProps> = Template.bind({});
 VariousSourcesWithCivicArray.args = {
   data: {
     externalSource: ['IPRKB', 'GraphKB', 'CIViC'],
@@ -80,7 +79,7 @@ VariousSourcesWithCivicArray.args = {
   },
 };
 
-export const NoCivicSingle: Story<CivicCellRendererProps> = Template.bind({});
+export const NoCivicSingle: StoryFn<CivicCellRendererProps> = Template.bind({});
 NoCivicSingle.args = {
   data: {
     externalSource: 'IPRKB',
@@ -88,7 +87,7 @@ NoCivicSingle.args = {
   },
 };
 
-export const NoCivicArray: Story<CivicCellRendererProps> = Template.bind({});
+export const NoCivicArray: StoryFn<CivicCellRendererProps> = Template.bind({});
 NoCivicArray.args = {
   data: {
     externalSource: 'IPRKB',
