@@ -51,7 +51,7 @@ describe('AlertDialog', () => {
     const confirmButton = getByText(/confirm/i);
 
     fireEvent.click(confirmButton);
-    expect(mockOnClose).toBeCalledWith(true);
+    expect(mockOnClose).toHaveBeenCalledWith(true);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
@@ -70,7 +70,7 @@ describe('AlertDialog', () => {
     const cancelButton = getByText(/cancel/i);
 
     fireEvent.click(cancelButton);
-    expect(mockOnClose).toBeCalledWith(false);
+    expect(mockOnClose).toHaveBeenCalledWith(false);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
@@ -109,6 +109,6 @@ describe('AlertDialog', () => {
     expect(confirmButton).not.toBeDisabled();
 
     fireEvent.click(confirmButton);
-    expect(mockOnClose).toBeCalledWith(true, 'test comment');
+    expect(mockOnClose).toHaveBeenCalledWith(true, 'test comment');
   });
 });

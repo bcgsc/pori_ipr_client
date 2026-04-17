@@ -24,7 +24,7 @@ const COMMON_COL_DEFS = [
     headerName: 'Known Variant',
     colId: 'kbVariant',
     field: 'kbVariant',
-    cellRendererFramework: ArrayCell('kbVariant', false),
+    cellRenderer: ArrayCell('kbVariant', false),
     hide: true,
     maxWidth: 300,
   },
@@ -76,7 +76,7 @@ const COMMON_COL_DEFS = [
     minWidth: 90,
     // ValueGetter is for mostly PrintTable, as ArrayCell has a different way of obtaining value
     valueGetter: ({ data }) => getNestedValue(data, 'kbMatchedStatements.relevance'),
-    cellRendererFramework: ArrayCell('kbMatchedStatements.relevance'),
+    cellRenderer: ArrayCell('kbMatchedStatements.relevance'),
   },
 ];
 
@@ -119,7 +119,7 @@ const pharmacoGenomicColumnDefs = [
     headerName: 'Therapy',
     colId: 'context',
     field: 'context',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.context'),
+    cellRenderer: ArrayCell('kbMatchedStatements.context'),
   },
   {
     headerName: 'Evidence',
@@ -131,33 +131,33 @@ const pharmacoGenomicColumnDefs = [
   {
     headerName: 'External Source',
     colId: 'externalSource',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.externalSource'),
+    cellRenderer: ArrayCell('kbMatchedStatements.externalSource'),
     minWidth: 110,
   },
   {
     headerName: 'External Statement ID',
     field: 'externalStatementId',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.externalStatementId'),
+    cellRenderer: ArrayCell('kbMatchedStatements.externalStatementId'),
     hide: true,
   },
   {
     headerName: 'Context',
     colId: 'context',
     field: 'context',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.context'),
+    cellRenderer: ArrayCell('kbMatchedStatements.context'),
     hide: true,
   },
   {
     headerName: 'Category',
     colId: 'category',
     field: 'category',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.category'),
+    cellRenderer: ArrayCell('kbMatchedStatements.category'),
     hide: true,
   },
   {
     headerName: 'Matched Cancer',
     field: 'matchedCancer',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.matchedCancer'),
+    cellRenderer: ArrayCell('kbMatchedStatements.matchedCancer'),
     hide: true,
   },
   {
@@ -169,7 +169,7 @@ const pharmacoGenomicColumnDefs = [
   {
     headerName: 'Review Status',
     field: 'reviewStatus',
-    cellRendererFramework: ArrayCell('kbMatchedStatements.reviewStatus'),
+    cellRenderer: ArrayCell('kbMatchedStatements.reviewStatus'),
     hide: true,
   },
   {

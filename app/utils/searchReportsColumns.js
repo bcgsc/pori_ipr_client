@@ -30,6 +30,8 @@ function searchReportsColumns(report, analyst, reviewer, bioinformatician) {
     project: report.projects.map((project) => project.name).sort().join(', '),
     physician: report?.patientInformation?.physician,
     analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
+    // Need this for DataTable identification for rowNodeId
+    ident: report.ident,
     reportIdent: report.ident,
     tumourType: report?.patientInformation?.diagnosis,
     date: report.createdAt,
