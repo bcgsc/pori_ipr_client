@@ -21,7 +21,7 @@ import columnDefs from './columnDefs';
 import './index.scss';
 
 const Reviews = (): JSX.Element => {
-  const { report, setReport } = useContext(GermlineReportContext);
+  const { report, refetchReport } = useContext(GermlineReportContext);
 
   const [isEditing, setIsEditing] = useState(false);
   const [newComment, setNewComment] = useState('');
@@ -36,38 +36,32 @@ const Reviews = (): JSX.Element => {
 
   const handleAddReview = useCallback(async () => {
     try {
-      const newReview = await api.post(
+      await api.post(
         `/germline-small-mutation-reports/${report.ident}/reviews`,
         { type: newType, comment: newComment },
         {},
       ).request();
-      setReport((prevVal) => ({
-        ...prevVal,
-        reviews: [...prevVal.reviews, newReview],
-      }));
+      refetchReport();
       setIsEditing(false);
       snackbar.success('Review added');
     } catch (err) {
       snackbar.error(`Error adding review: ${err}`);
     }
-  }, [newComment, newType, report, setReport]);
+  }, [newComment, newType, report, refetchReport]);
 
   const handleRowDelete = useCallback(async (row) => {
     try {
-      api.del(
+      await api.del(
         `/germline-small-mutation-reports/${report.ident}/reviews/${row.data.ident}`,
         {},
         {},
       ).request();
-      setReport((prevVal) => ({
-        ...prevVal,
-        reviews: prevVal.reviews.filter((val) => val.ident !== row.data.ident),
-      }));
+      refetchReport();
       snackbar.success('Review removed');
     } catch (err) {
       snackbar.error(`Error removing review: ${err}`);
     }
-  }, [report, setReport]);
+  }, [report, refetchReport]);
 
   const DeleteCellRenderer = useCallback((row) => (
     <DeleteCell
@@ -86,7 +80,7 @@ const Reviews = (): JSX.Element => {
           defaultColDef={{
             resizable: true,
           }}
-          frameworkComponents={{
+          components={{
             deleteCell: DeleteCellRenderer,
           }}
         />

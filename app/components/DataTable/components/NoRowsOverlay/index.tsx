@@ -1,12 +1,14 @@
 import React from 'react';
-import { INoRowsOverlayReactComp } from '@ag-grid-community/react';
+import type { INoRowsOverlayParams } from '@ag-grid-community/core';
 
 import './index.scss';
 
-const NoRowsOverlay = ({
-  agGridReact: { gridOptions: { columnDefs } },
-}: INoRowsOverlayReactComp): JSX.Element => (
-  <div className={`no-rows ${columnDefs.some((col) => col.children) ? 'no-rows--children' : ''}`}>
+interface NoRowsOverlayProps extends INoRowsOverlayParams {
+  hasChildren?: boolean;
+}
+
+const NoRowsOverlay = ({ hasChildren }: NoRowsOverlayProps): JSX.Element => (
+  <div className={`no-rows ${hasChildren ? 'no-rows--children' : ''}`}>
     No Rows To Show
   </div>
 );

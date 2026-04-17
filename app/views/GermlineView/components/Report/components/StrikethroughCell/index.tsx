@@ -10,29 +10,26 @@ import GermlineReportContext from '@/context/GermlineReportContext';
 import snackbar from '@/services/SnackbarUtils';
 
 const StrikethroughCell = (params: ICellRendererParams): JSX.Element => {
-  const { report, setReport } = useContext(GermlineReportContext);
+  const { report, refetchReport } = useContext(GermlineReportContext);
 
-  const [isHidden, setIsHidden] = useState<boolean>(params.data.hidden);
+  const { data: { ident: variantIdent, hidden: initialHidden } } = params;
+  const [isHidden, setIsHidden] = useState<boolean>(initialHidden);
 
   const handleChange = useCallback(async () => {
+    if (!report) { return; }
     try {
-      const updatedVariant = await api.put(
-        `/germline-small-mutation-reports/${report.ident}/variants/${params.data.ident}`,
+      await api.put(
+        `/germline-small-mutation-reports/${report.ident}/variants/${variantIdent}`,
         { hidden: !isHidden },
         {},
       ).request();
       setIsHidden((prevVal) => !prevVal);
-      setReport((prevVal) => {
-        const index = prevVal.variants.findIndex((variant) => variant.ident === updatedVariant.ident);
-        const newVariants = [...prevVal.variants];
-        newVariants[index] = updatedVariant;
-        return { ...prevVal, variants: newVariants };
-      });
+      refetchReport();
       snackbar.success('Visibility updated');
     } catch (err) {
       snackbar.error(`Failed to update variant with visibility change: ${err}`);
     }
-  }, [isHidden, params, report, setReport]);
+  }, [isHidden, variantIdent, report, refetchReport]);
 
   return (
     <IconButton onClick={handleChange} size="large">

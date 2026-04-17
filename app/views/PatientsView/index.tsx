@@ -7,7 +7,7 @@ import snackbar from '@/services/SnackbarUtils';
 import reportsColumns from '@/utils/reportsColumns';
 import '../ReportsView/index.scss';
 import ReportsTableComponent from '@/components/ReportsTable';
-import { ReportType } from '@/context/ReportContext';
+import { ReportType } from '@/common';
 
 type PatientsViewProps = WithLoadingInjectedProps;
 

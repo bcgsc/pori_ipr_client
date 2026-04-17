@@ -22,14 +22,16 @@ import api, { ApiCallSet } from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';
 import AsyncButton from '@/components/AsyncButton';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-import { ReportType } from '@/context/ReportContext';
+
+import './index.scss';
 import {
+  ReportType,
   ImmuneType, MicrobialType, MsiType, MutationBurdenType, TmburType, HlaType,
 } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import { getMicbSiteIntegrationStatusLabel } from '@/utils/getMicbSiteIntegrationStatusLabel';
 
-import './index.scss';
+import { queryKeys } from '@/queries/queryKeys';
 
 const MICB_SITE_STEPS = {
   yes: 'no',
@@ -238,7 +240,8 @@ const TumourSummaryEdit = ({
     setTmburMutDirty(true);
   }, []);
 
-  const handleMsiScoreChange = useCallback(({ target: { value, name } }) => {
+  const handleMsiScoreChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target: { value, name } } = event;
     if (msi) {
       setNewMsiData((prevVal) => ({ ...prevVal, [name]: value }));
       setMsiDirty(true);
@@ -286,6 +289,10 @@ const TumourSummaryEdit = ({
   }, []);
 
   const handleClose = useCallback(async (isSaved) => {
+    if (!isSaved) {
+      onEditClose(false);
+      return undefined;
+    }
     let callSet = null;
     if (!!newTmburMutData?.adjustedTmb && !newTmburMutData?.adjustedTmbComment) {
       snackbar.warning('Please add a comment on the adjusted TMB');
@@ -410,79 +417,66 @@ const TumourSummaryEdit = ({
         try {
           await callSet.request();
 
-          let microbialResp = null;
-          let immuneResp = null;
-          let tmburMutResp = null;
-          let msiResp = null;
-          let mutationBurdenResp = null;
-          let reportResp = null;
-          let hlaResp = null;
-
           if (microbialDirty) {
-            microbialResp = await api.get(`/reports/${report.ident}/summary/microbial`).request();
+            queryClient.refetchQueries({
+              queryKey: queryKeys.reports.reportSummaryMicrobial(report.ident),
+            });
           }
+
           if (tCellCd8Dirty) {
-            immuneResp = await api.get(`/reports/${report.ident}/immune-cell-types`).request();
+            queryClient.refetchQueries({
+              queryKey: queryKeys.reports.reportImmuneCellTypes(report.ident),
+            });
           }
+
           if (tmburMutDirty) {
-            tmburMutResp = await api.get(`/reports/${report.ident}/tmbur-mutation-burden`).request();
+            queryClient.refetchQueries({
+              queryKey: queryKeys.reports.reportTmburMutationBurden(report.ident),
+            });
           }
+
           if (msiDirty) {
-            msiResp = await api.get(`/reports/${report.ident}/msi`).request();
+            queryClient.refetchQueries({
+              queryKey: queryKeys.reports.reportMsi(report.ident),
+            });
           }
+
           if (mutationBurdenDirty) {
-            mutationBurdenResp = await api.get(`/reports/${report.ident}/mutation-burden`).request();
+            queryClient.refetchQueries({
+              queryKey: queryKeys.reports.reportMutationBurden(report.ident),
+            });
           }
+
           if (reportDirty) {
-            reportResp = await api.get(`/reports/${report.ident}`).request();
+            queryClient.refetchQueries({
+              queryKey: queryKeys.reports.report(report.ident),
+            });
           }
+
           if (hlaNormalDirty || hlaTumourDirty) {
-            hlaResp = await api.get(`/reports/${report.ident}/hla-types`).request();
+            queryClient.refetchQueries({
+              queryKey: queryKeys.reports.reportHlaTypes(report.ident),
+            });
           }
+
+          // Always refetch comparators and signatures
+          queryClient.refetchQueries({
+            queryKey: queryKeys.reports.reportComparators(report.ident),
+          });
+
+          queryClient.refetchQueries({
+            queryKey: queryKeys.reports.reportSignatures(report.ident),
+          });
 
           snackbar.success('Successfully updated Tumour Summary');
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/summary/microbial`],
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/comparators`],
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/mutation-signatures`],
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/mutation-burden`],
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/immune-cell-types`],
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/msi`],
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/tmbur-mutation-burden`],
-          });
-          queryClient.refetchQueries({
-            queryKey: [`/reports/${report.ident}/hla-types`],
-          });
-          onEditClose(
-            true,
-            microbialDirty ? microbialResp : null,
-            reportDirty ? reportResp : null,
-            tCellCd8Dirty ? immuneResp.find(({ cellType }) => cellType === 'T cells CD8') : null,
-            mutationBurdenDirty ? mutationBurdenResp.find((mb) => mb.role === 'primary') : null,
-            tmburMutDirty ? tmburMutResp : null,
-            msiDirty ? msiResp : null,
-            hlaNormalDirty || hlaTumourDirty ? hlaResp : null,
-          );
+
+          onEditClose(true);
         } catch (callSetError) {
           snackbar.error(`Error updating Tumour Summary: ${callSetError?.message}`);
         } finally {
           setIsApiCalling(false);
         }
       }
-    } else {
-      onEditClose(false);
     }
     return () => callSet.abort();
   }, [
@@ -923,8 +917,7 @@ const TumourSummaryEdit = ({
           fullWidth
           type="number"
         />
-        )
-      }
+        )}
       {!msi && tmburMutBur
         && (
         <TextField
@@ -937,8 +930,7 @@ const TumourSummaryEdit = ({
           fullWidth
           type="number"
         />
-        )
-      }
+        )}
       {!msi && !tmburMutBur
         && (
         <TextField
@@ -951,8 +943,7 @@ const TumourSummaryEdit = ({
           fullWidth
           type="number"
         />
-        )
-      }
+        )}
     </>
   ), [
     msi,
@@ -1110,11 +1101,11 @@ const TumourSummaryEdit = ({
       </DialogTitle>
       <DialogContent className="tumour-dialog__content">
         {reportDataSection}
+        {msiSection}
         {micbDataSection}
         {tCellCd8DataSection}
         {mutBurDataSection}
         {tmburMutBurSection}
-        {msiSection}
         {hlaSection}
       </DialogContent>
       <DialogActions>

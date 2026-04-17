@@ -47,6 +47,36 @@ type RecordDefaults = {
   deletedAt: string | null;
 };
 
+type ReportType = {
+  alternateIdentifier?: string;
+  analysisStartedAt: string | null;
+  appendix?: string;
+  biopsyName?: string;
+  captiv8Score: number;
+  createdBy?: UserType;
+  expression_matrix: string;
+  genomeTmb?: number;
+  hrdScore?: number;
+  hrdetectScore?: number;
+  kbDiseaseMatch: string;
+  kbVersion: string;
+  m1m2Score: number;
+  oncotreeTumourType: string;
+  patientId: string;
+  patientInformation: PatientInformationType;
+  pediatricIds?: string;
+  ploidy: string;
+  projects?: ProjectType[];
+  reportVersion: string;
+  sampleInfo: SampleInfoType[];
+  state: string;
+  subtyping: string;
+  template: TemplateType;
+  tumourContent?: number;
+  type: string;
+  users: UserRoleType[];
+} & RecordDefaults;
+
 type UserGroupMemberType = {
   createdAt: string;
   deletedAt: null | string;
@@ -64,19 +94,6 @@ type GroupType = {
   description: string;
 };
 
-type UserProjectsType = {
-  ident: string;
-  name: string;
-  user_project: {
-    createdAt: string;
-    deletedAt: null | string;
-    id: number;
-    project_id: number;
-    updatedAt: null | string;
-    user_id: number;
-  },
-};
-
 type UserType = {
   email: string;
   deletedAt: null | string;
@@ -84,7 +101,7 @@ type UserType = {
   groups?: GroupType[];
   lastLogin: null | string;
   lastName: string;
-  projects?: UserProjectsType[];
+  projects?: Partial<ProjectType[]>;
   type: string;
   username: string;
   allowNotifications: boolean;
@@ -429,6 +446,48 @@ type UserNotificationType = {
   project: Partial<ProjectType>;
 };
 
+type AnalystCommentType = {
+  comments: string | null;
+} & RecordDefaults;
+
+type ReportsType = {
+  reports: ReportType[];
+  total: number;
+};
+
+type PatientInformationType = {
+  age: string | null;
+  biopsySite: string | null;
+  caseType: 'Pediatric' | 'Adult' | null;
+  constitutionalProtocol: string | null;
+  constitutionalSample: string | null;
+  diagnosis: string | null;
+  gender: string | null;
+  physician: string | null;
+  reportDate: string | null;
+  tumourProtocol: string | null;
+  tumourSample: string | null;
+  oncotreeTumourType?: string | null;
+  kbDiseaseMatch?: string | null;
+} & RecordDefaults;
+
+type UserRoleType = {
+  role: string;
+  user: UserType;
+} & RecordDefaults;
+
+type ComparatorType = {
+  analysisRole: string;
+  createdAt: string;
+  deletedAt: string;
+  description: string | null;
+  ident: string;
+  name: string;
+  size: number | null;
+  updatedAt: string | null;
+  version: string | null;
+};
+
 export {
   RecordDefaults,
   ShortReportType,
@@ -440,7 +499,6 @@ export {
   AnyVariant,
   AnyVariantType,
   GroupType,
-  UserProjectsType,
   UserGroupMemberType,
   ImageType,
   GeneType,
@@ -459,4 +517,10 @@ export {
   ImmuneType,
   MicrobialType,
   UserNotificationType,
+  AnalystCommentType,
+  ReportsType,
+  ReportType,
+  PatientInformationType,
+  UserRoleType,
+  ComparatorType,
 };

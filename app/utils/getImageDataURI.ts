@@ -1,6 +1,8 @@
 import { ImageType } from '@/common';
 
 const getImageDataURI = (image: ImageType): string => {
+  if (!image) return null;
+
   const { data: imageData, format: imageFormat } = image;
 
   if (imageData) {

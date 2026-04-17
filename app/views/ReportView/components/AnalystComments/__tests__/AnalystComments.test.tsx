@@ -5,9 +5,9 @@ import { when, resetAllWhenMocks } from 'jest-when';
 
 import { withReportContext } from '@/test/testHelpers';
 import withLoading from '@/hoc/WithLoading';
-import { ReportType } from '@/context/ReportContext';
 import api, { ApiCall } from '@/services/api';
-import { TemplateType } from '@/common';
+import { TemplateType, ReportType } from '@/common';
+import { SecurityContext } from '@/context/SecurityContext';
 import AnalystComments from '..';
 
 const mockTemplate = {
@@ -33,6 +33,13 @@ const mockSignatures = {
 
 const mockComments = {
   comments: '<div><img></img><p style="color: red;">test</p></div>',
+};
+
+const mockSecurityContext = {
+  authorizationToken: 'mock-token',
+  setAuthorizationToken: () => {},
+  userDetails: {},
+  setUserDetails: () => {},
 };
 
 const mockEndpoints: Record<string, unknown> = {
@@ -61,11 +68,13 @@ describe('AnalystComments', () => {
   });
 
   test('Img tags are sanitized', async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     const Component = withLoading(withReportContext(AnalystComments, mockReport));
     render(
       <QueryClientProvider client={queryClient}>
-        <Component />
+        <SecurityContext.Provider value={mockSecurityContext}>
+          <Component />
+        </SecurityContext.Provider>
       </QueryClientProvider>,
     );
 
@@ -74,11 +83,13 @@ describe('AnalystComments', () => {
   });
 
   test('Style tags are still present', async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     const Component = withLoading(withReportContext(AnalystComments, mockReport));
     render(
       <QueryClientProvider client={queryClient}>
-        <Component />
+        <SecurityContext.Provider value={mockSecurityContext}>
+          <Component />
+        </SecurityContext.Provider>
       </QueryClientProvider>,
     );
 

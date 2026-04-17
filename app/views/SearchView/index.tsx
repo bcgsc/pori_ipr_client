@@ -14,7 +14,6 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
@@ -31,18 +30,7 @@ import {
   BACKSPACE_KEY,
 } from '@/constants';
 import { useQueryClient } from 'react-query';
-
-// Custom css to alter select dropdown border radius
-const useStyles = makeStyles({
-  categoryBorder: {
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderTopLeftRadius: '25px',
-      borderBottomLeftRadius: '25px',
-      borderTopRightRadius: '0px',
-      borderBottomRightRadius: '0px',
-    },
-  },
-});
+import { set } from 'lodash';
 
 const SearchView = () => {
   const { searchParams, setSearchParams } = useSearchParams();
@@ -53,7 +41,6 @@ const SearchView = () => {
   const [searchErrorMessage, setSearchErrorMessage] = useState('');
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const customCss = useStyles();
   const queryClient = useQueryClient();
 
   // Calls submit function
@@ -101,6 +88,11 @@ const SearchView = () => {
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
     setSearchCategory(event.target.value);
+    if (event.target.value === 'mutationSignature') {
+      setSearchThreshold('1.0');
+    } else {
+      setSearchThreshold(DEFAULT_THRESHOLD);
+    }
   };
 
   const handleThresholdChange = useCallback((event) => {
@@ -175,7 +167,17 @@ const SearchView = () => {
     <div className="search-view">
       <div className="search-view__bar">
         <div className="search-view__category-select">
-          <FormControl classes={{ root: customCss.categoryBorder }} style={{ height: '100%' }}>
+          <FormControl
+            sx={{
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderTopLeftRadius: '25px',
+                borderBottomLeftRadius: '25px',
+                borderTopRightRadius: '0px',
+                borderBottomRightRadius: '0px',
+              },
+            }}
+            style={{ height: '100%' }}
+          >
             <Select
               value={searchCategory}
               onChange={handleCategoryChange}

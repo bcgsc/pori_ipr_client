@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useCallback, useMemo,
+  useState, useCallback, useMemo,
 } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import {
@@ -19,7 +19,7 @@ import { ActionCellRenderer } from '@/components/DataTable/components/ActionCell
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
 import { GermlineReportType, VariantType } from '@/context/GermlineReportContext/types';
-import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { useGermlineSmallMutationReportsGermline } from '@/queries/get';
 import { getDate } from '@/utils/date';
 import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
@@ -28,16 +28,13 @@ import columnDefs from './columnDefs';
 import './index.scss';
 import LinkoutCellRenderer from '../LinkoutCellRenderer';
 
-type GermlineReportProps = WithLoadingInjectedProps;
-
-const GermlineReport = ({
-  isLoading,
-  setIsLoading,
-}: GermlineReportProps): JSX.Element => {
+const GermlineReport = (): JSX.Element => {
   const { ident } = useParams<{ ident: string }>();
   const { gridApi, colApi, onGridReady } = useGrid();
   const history = useHistory();
-  const [report, setReport] = useState<GermlineReportType>();
+  const {
+    data: report, isLoading, refetch: refetchReport,
+  } = useGermlineSmallMutationReportsGermline<GermlineReportType>(ident);
 
   const [showAllColumns, setShowAllColumns] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -46,25 +43,7 @@ const GermlineReport = ({
 
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
 
-  const germlineReportContextValue = useMemo(() => ({ report, setReport }), [report]);
-
-  useEffect(() => {
-    if (ident) {
-      const getData = async () => {
-        try {
-          const reportResp = await api.get(
-            `/germline-small-mutation-reports/${ident}`,
-          ).request();
-          setReport(reportResp);
-        } catch (err) {
-          snackbar.error(`Network error: ${err}`);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      getData();
-    }
-  }, [ident, setReport, setIsLoading]);
+  const germlineReportContextValue = useMemo(() => ({ report, refetchReport }), [report, refetchReport]);
 
   const handleGridReady = useCallback((params) => {
     const { columnApi } = params;
@@ -92,13 +71,10 @@ const GermlineReport = ({
 
   const handleEditClose = useCallback((newRow) => {
     if (newRow) {
-      const newVariants = [...report.variants];
-      const index = newVariants.findIndex((variant) => variant.ident === newRow.ident);
-      newVariants[index] = newRow;
-      setReport((prevVal) => ({ ...prevVal, variants: newVariants }));
+      refetchReport();
     }
     setShowEditDialog(false);
-  }, [report]);
+  }, [refetchReport]);
 
   const RowActionCellRenderer = useCallback((row) => (
     <ActionCellRenderer
@@ -223,7 +199,7 @@ const GermlineReport = ({
                     resizable: true,
                   },
                 }}
-                frameworkComponents={{
+                components={{
                   strikethroughCell: StrikethroughCell,
                   actionCell: RowActionCellRenderer,
                   linkOutCell: LinkoutCellRenderer,
@@ -248,4 +224,4 @@ const GermlineReport = ({
   );
 };
 
-export default withLoading(GermlineReport);
+export default GermlineReport;

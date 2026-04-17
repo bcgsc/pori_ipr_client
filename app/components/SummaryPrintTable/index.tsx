@@ -31,7 +31,7 @@ const SummaryPrintTable = ({
     <TableBody>
       {data.filter((key) => (key.value !== null && key.value !== '')).map(({ [labelKey]: label, [valueKey]: value }) => (
         <TableRow key={`${label}${value}`}>
-          <TableCell>
+          <TableCell sx={{ whiteSpace: 'nowrap' }}>
             <Typography variant="body2" fontWeight="bold">{variantTypes.includes(String(label)) ? `${variantToStrings[String(label)]}${Object.values(value).length > 1 ? 's' : ''}` : label}</Typography>
           </TableCell>
           <TableCell sx={{ paddingLeft: 1 }}>

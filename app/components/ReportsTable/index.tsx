@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import useGrid from '@/hooks/useGrid';
-import { ReportType } from '@/context/ReportContext';
+import { ReportType } from '@/common';
 import LaunchCell from '@/components/LaunchCell';
 import NoRowsOverlay from '@/components/DataTable/components/NoRowsOverlay';
 import { ToolTip } from '@/components/DataTable/components/ToolTip';
@@ -100,7 +100,7 @@ const ReportsTableComponent = ({
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         enableCellTextSelection
-        frameworkComponents={{
+        components={{
           Launch: LaunchCell,
           NoRowsOverlay,
           ToolTip,
