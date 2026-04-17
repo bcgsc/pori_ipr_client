@@ -1,5 +1,6 @@
-@import '../../../../../../styles/variables';
-@import '../../../../../../styles/theme.module';
+@use 'sass:color';
+@use '../../../../../../styles/variables' as *;
+@use '../../../../../../styles/theme.module' as *;
 
 .variant-counts {
   display: flex;
@@ -38,7 +39,7 @@
       background-color: $accent--green;
 
       & > .variant-counts__count {
-        background-color: darken($accent--green, 30);
+        background-color: color.adjust($accent--green, $lightness: -30%);
       }
     }
 
@@ -46,7 +47,7 @@
       background-color: $accent--blue;
 
       & > .variant-counts__count {
-        background-color: darken($accent--blue, 30);
+        background-color: color.adjust($accent--blue, $lightness: -30%);
       }
     }
 
@@ -54,7 +55,7 @@
       background-color: $accent--orange;
 
       & > .variant-counts__count {
-        background-color: darken($accent--orange, 30);
+        background-color: color.adjust($accent--orange, $lightness: -30%);
         border-right: none;
       }
     }
@@ -63,7 +64,7 @@
       background-color: $accent--purple;
 
       & > .variant-counts__count {
-        background-color: darken($accent--purple, 30);
+        background-color: color.adjust($accent--purple, $lightness: -30%);
       }
     }
   }

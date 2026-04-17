@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import {
   Chip, TextField, InputAdornment, IconButton,
 } from '@mui/material';
@@ -7,32 +6,39 @@ import DoneIcon from '@mui/icons-material/Done';
 import AddIcon from '@mui/icons-material/AddCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import AlertDialog from '@/components/AlertDialog';
+import { GeneVariantType } from '@/views/ReportView/components/GenomicSummary/types';
 
 import './index.scss';
 
 const ENTER_KEYCODE = 13;
 
-const VariantChips = (props) => {
-  const {
-    variants,
-    canEdit,
-    onChipDeleted,
-    onChipAdded,
-    isPrint,
-  } = props;
+type VariantChipsProps = {
+  variants?: GeneVariantType[];
+  canEdit?: boolean;
+  onChipDeleted?: (ident: string, type: string, comment: string) => void;
+  onChipAdded?: (variant: string) => void;
+  isPrint?: boolean;
+};
 
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+const VariantChips = ({
+  variants = [],
+  canEdit = false,
+  onChipDeleted = () => {},
+  onChipAdded = () => {},
+  isPrint = false,
+}: VariantChipsProps): JSX.Element => {
+  const [showDeleteAlert, setShowDeleteAlert] = useState<GeneVariantType | false>(false);
   const [showAddInput, setShowAddInput] = useState(false);
   const [addedVariant, setAddedVariant] = useState('');
 
-  const handleDeleteDialogClose = useCallback((deleted, comment) => {
-    if (deleted) {
-      onChipDeleted(showDeleteAlert.ident, showDeleteAlert.type, comment);
+  const handleDeleteDialogClose = useCallback((deleted: boolean, comment: string) => {
+    if (deleted && showDeleteAlert) {
+      onChipDeleted((showDeleteAlert as GeneVariantType).ident, (showDeleteAlert as GeneVariantType).type, comment);
     }
     setShowDeleteAlert(false);
   }, [showDeleteAlert, onChipDeleted]);
 
-  const handleAddInputClose = useCallback((added) => {
+  const handleAddInputClose = useCallback((added: boolean) => {
     if (added) {
       onChipAdded(addedVariant);
     }
@@ -40,7 +46,7 @@ const VariantChips = (props) => {
     setAddedVariant('');
   }, [onChipAdded, addedVariant]);
 
-  const handleEnterPressed = useCallback((event) => {
+  const handleEnterPressed = useCallback((event: React.KeyboardEvent) => {
     if (event.keyCode === ENTER_KEYCODE) {
       handleAddInputClose(true);
     }
@@ -95,7 +101,7 @@ const VariantChips = (props) => {
             {variants.map((variant) => (
               <React.Fragment key={variant.geneVariant}>
                 <Chip
-                  label={`${variant.geneVariant} ${variant.germline ? '(germline)' : ''}`}
+                  label={`${variant.geneVariant} ${(variant as any).germline ? '(germline)' : ''}`}
                   className={`variant variant--${variant.type}`}
                   onDelete={canEdit && !isPrint ? () => setShowDeleteAlert(variant) : null}
                 />
@@ -109,29 +115,13 @@ const VariantChips = (props) => {
         isOpen={Boolean(showDeleteAlert)}
         onClose={handleDeleteDialogClose}
         title="Remove Alteration"
-        text={`Are you sure you want to delete ${showDeleteAlert.geneVariant}?`}
+        text={`Are you sure you want to delete ${(showDeleteAlert as GeneVariantType)?.geneVariant}?`}
         confirmText="Delete"
         cancelText="Cancel"
         commentRequired
       />
     </div>
   );
-};
-
-VariantChips.propTypes = {
-  variants: PropTypes.arrayOf(PropTypes.object),
-  canEdit: PropTypes.bool,
-  onChipDeleted: PropTypes.func,
-  onChipAdded: PropTypes.func,
-  isPrint: PropTypes.bool,
-};
-
-VariantChips.defaultProps = {
-  variants: [],
-  canEdit: false,
-  onChipDeleted: () => {},
-  onChipAdded: () => {},
-  isPrint: false,
 };
 
 export default VariantChips;

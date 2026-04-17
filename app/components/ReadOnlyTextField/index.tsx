@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import {
-  TextField, Typography,
-} from '@mui/material';
+import { Typography } from '@mui/material';
 
 import './index.scss';
 
@@ -12,13 +9,17 @@ const WIDTH_SMALL = 160;
 const WIDTH_MEDIUM = 346;
 const WIDTH_LARGE = 528;
 
-const ReadOnlyTextField = (props) => {
-  const {
-    label,
-    children,
-    isUnderlined,
-  } = props;
+type ReadOnlyTextFieldProps = {
+  label?: string;
+  children?: string;
+  isUnderlined?: boolean;
+};
 
+const ReadOnlyTextField = ({
+  label = '',
+  children = '',
+  isUnderlined = true,
+}: ReadOnlyTextFieldProps): JSX.Element => {
   const [width, setWidth] = useState(160);
 
   useEffect(() => {
@@ -57,18 +58,6 @@ const ReadOnlyTextField = (props) => {
       </Typography>
     </span>
   );
-};
-
-ReadOnlyTextField.propTypes = {
-  label: PropTypes.string,
-  children: PropTypes.string,
-  isUnderlined: PropTypes.bool,
-};
-
-ReadOnlyTextField.defaultProps = {
-  label: '',
-  children: '',
-  isUnderlined: true,
 };
 
 export default ReadOnlyTextField;
