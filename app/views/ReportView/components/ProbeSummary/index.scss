@@ -1,4 +1,4 @@
-@import '../../../../styles/variables';
+@use '../../../../styles/variables' as *;
 
 .probe-summary, .probe-summary--print {
   padding: 0 20px;
