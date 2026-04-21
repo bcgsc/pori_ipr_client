@@ -75,6 +75,12 @@ const Appendices = ({
           ]);
           const [appendicesResp, tcgaResp, comparatorsResp] = await callSet.request() as [AppendicesType, TcgaType[], ComparatorType[]];
 
+          // DEVSU-2848 temporary fix to handle old appendices response that doesn't have seqQC field
+          // should remove after datafix
+          if (appendicesResp.seqQC && appendicesResp.seqQC.length === 0) {
+            appendicesResp.seqQC = appendicesResp.seqQc;
+          }
+
           setAppendices(appendicesResp);
           setTcga(tcgaResp);
           setComparators(comparatorsResp);
@@ -161,7 +167,7 @@ const Appendices = ({
                   titleText="Sample Information"
                 />
               )}
-              {appendices?.seqQC && (
+              {(appendices?.seqQC) && (
                 <DataTable
                   columnDefs={sequencingProtocolInformationColumnDefs}
                   rowData={appendices.seqQC}
