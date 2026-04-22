@@ -273,6 +273,10 @@ const GenomicSummary = ({
 
         let tmbDisplayValue = 'No data available';
 
+        if (genomeTmb) {
+          tmbDisplayValue = genomeTmb.toFixed(2);
+        }
+
         if (tmburMutBur) {
           const {
             tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb,
@@ -281,8 +285,6 @@ const GenomicSummary = ({
             tmbDisplayValue = null;
           } else if (adjustedTmb != null) {
             tmbDisplayValue = adjustedTmb.toFixed(2);
-          } else if (genomeTmb) {
-            tmbDisplayValue = genomeTmb.toFixed(2);
           } else if (genomeSnvTmb && genomeIndelTmb) {
             tmbDisplayValue = (genomeSnvTmb + genomeIndelTmb).toFixed(2);
           }
