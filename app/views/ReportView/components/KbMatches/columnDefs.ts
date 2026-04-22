@@ -22,7 +22,6 @@ const columnDefs: ColDef[] = [
     colId: 'kbVariant',
     valueGetter: kbMatchStatementsKnownVarValueGetter,
     hide: false,
-    maxWidth: 300,
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
   },
@@ -31,7 +30,6 @@ const columnDefs: ColDef[] = [
     colId: 'variant',
     valueGetter: kbMatchStatementsObsVarValueGetter,
     hide: false,
-    maxWidth: 300,
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
   },
@@ -40,7 +38,6 @@ const columnDefs: ColDef[] = [
     colId: 'flags',
     valueGetter: kbMatchStatementsFlagValueGetter,
     hide: false,
-    maxWidth: 300,
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
   },
@@ -60,7 +57,6 @@ const columnDefs: ColDef[] = [
     field: 'iprEvidenceLevel',
     cellRenderer: ArrayCell('iprEvidenceLevel', false),
     hide: false,
-    maxWidth: 300,
   },
   {
     headerName: 'Association',
@@ -68,7 +64,6 @@ const columnDefs: ColDef[] = [
     field: 'relevance',
     cellRenderer: ArrayCell('relevance', false),
     hide: false,
-    maxWidth: 300,
   },
   {
     headerName: 'Context',
@@ -76,7 +71,10 @@ const columnDefs: ColDef[] = [
     field: 'context',
     cellRenderer: ArrayCell('context', false),
     hide: false,
-    maxWidth: 300,
+    initialWidth: 300,
+    suppressAutoSize: true,
+    autoHeight: true,
+    wrapText: true,
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
   },
@@ -96,7 +94,7 @@ const columnDefs: ColDef[] = [
     },
     cellRenderer: ArrayCell('reference', true, true),
     hide: false,
-    maxWidth: 300,
+    initialWidth: 300,
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
   },
@@ -113,7 +111,6 @@ const columnDefs: ColDef[] = [
       }
       return '';
     },
-    maxWidth: 300,
   },
   {
     headerName: 'Evidence Level',
@@ -121,7 +118,6 @@ const columnDefs: ColDef[] = [
     field: 'evidenceLevel',
     cellRenderer: ArrayCell('evidenceLevel', false),
     hide: false,
-    maxWidth: 300,
   },
   {
     headerName: 'Category',
@@ -190,7 +186,6 @@ const columnDefs: ColDef[] = [
     colId: 'externalSource',
     cellRenderer: 'CivicCellRenderer',
     hide: false,
-    maxWidth: 300,
   }, {
     headerName: 'External Statement ID',
     field: 'externalStatementId',
