@@ -393,14 +393,13 @@ const RapidSummary = ({
     }
 
     let tCell: null | string;
-    if (tCellCd8 && (typeof tCellCd8.score === 'number' || typeof tCellCd8.pedsScore === 'number')) {
-      if (tCellCd8.pedsScore !== null) {
-        tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile && !tCellCd8.percentileHidden ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
+    const hasPedsScore = typeof tCellCd8?.pedsScore === 'number';
+    if (tCellCd8 && (typeof tCellCd8.score === 'number' || hasPedsScore)) {
+      if (hasPedsScore) {
+        tCell = `${tCellCd8.pedsScore} ...`;
       } else {
-        tCell = `${tCellCd8.score} ${tCellCd8.percentile && !tCellCd8.percentileHidden ? `(${tCellCd8.percentile}%)` : ''}`;
+        tCell = `${tCellCd8.score} ...`;
       }
-    } else {
-      tCell = null;
     }
 
     let hlaNormal = '';
@@ -458,8 +457,7 @@ const RapidSummary = ({
           value: hlaNormal ?? null,
         },
         {
-          term:
-            tCellCd8?.pedsScore !== null ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+          term: hasPedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
           value: tCell,
         },
         {
@@ -480,8 +478,7 @@ const RapidSummary = ({
         },
         {
           term: 'Pediatric CD8+ T Cell Comment',
-          value:
-            tCellCd8?.pedsScoreComment && tCellCd8?.pedsScore !== null ? tCellCd8?.pedsScoreComment : null,
+          value: tCellCd8?.pedsScoreComment && hasPedsScore ? tCellCd8.pedsScoreComment : null,
         },
         {
           term: 'Mutation Burden',
