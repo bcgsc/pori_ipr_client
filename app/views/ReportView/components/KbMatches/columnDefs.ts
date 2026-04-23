@@ -68,6 +68,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Context',
     colId: 'context',
     field: 'context',
+    cellRenderer: ArrayCell('context'),
     hide: false,
     initialWidth: 300,
     suppressAutoSize: true,
