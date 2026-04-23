@@ -205,10 +205,11 @@ const TumourSummaryEdit = ({
   }, []);
 
   const handlePedsCd8tChange = useCallback(({ target: { value, name } }) => {
-    setNewTCellCd8Data((cd8t) => ({
-      ...cd8t,
-      [name]: parseFloat(value),
-    }));
+    if (value === null || value === '') {
+      setNewTCellCd8Data((cd8t) => ({ ...cd8t, [name]: null, pedsScoreComment: null }));
+    } else {
+      setNewTCellCd8Data((cd8t) => ({ ...cd8t, [name]: parseFloat(value) }));
+    }
     setTCellCd8Dirty(true);
   }, []);
 
