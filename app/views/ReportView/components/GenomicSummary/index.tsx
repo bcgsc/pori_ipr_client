@@ -225,18 +225,17 @@ const GenomicSummary = ({
         svBurden = null;
       }
 
-      let tCell: null | string;
-      if (tCellCd8 && (typeof tCellCd8.score === 'number' || typeof tCellCd8.pedsScore === 'number')) {
-        if (tCellCd8.pedsScore !== null) {
-          tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile && !tCellCd8.percentileHidden ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
+      let tCell: null | string = null;
+      const hasPedsScore = typeof tCellCd8?.pedsScore === 'number';
+      if (tCellCd8 && (typeof tCellCd8.score === 'number' || hasPedsScore)) {
+        if (hasPedsScore) {
+          tCell = `${tCellCd8.pedsScore} ...`;
         } else {
-          tCell = `${tCellCd8.score} ${tCellCd8.percentile && !tCellCd8.percentileHidden ? `(${tCellCd8.percentile}%)` : ''}`;
+          tCell = `${tCellCd8.score} ...`;
         }
-      } else {
-        tCell = null;
       }
 
-      let sigs: null | string;
+      let sigs: null | string = null;
       if (signatures?.length && signatures.find((sig) => sig.selected)) {
         sigs = signatures.filter(({ selected }) => selected)
           .map(({ associations, signature }) => (
@@ -248,7 +247,7 @@ const GenomicSummary = ({
 
       // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
       // Genomic report will now incorporate both sources to retain information in old reports and use updated msi score in future reports
-      let msiStatus: null | string;
+      let msiStatus: null | string = null;
       if (msi && msi.score !== null) {
         if (msi?.score < 20) {
           msiStatus = `${msi?.score} (MSS)`;
@@ -331,14 +330,12 @@ const GenomicSummary = ({
               : 'No data available',
           },
           {
-            term:
-              tCellCd8?.pedsScore !== null ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+            term: hasPedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
             value: tCell,
           },
           {
             term: 'Pediatric CD8+ T Cell Comment',
-            value:
-              tCellCd8?.pedsScoreComment && tCellCd8?.pedsScore !== null ? tCellCd8?.pedsScoreComment : null,
+            value: tCellCd8?.pedsScoreComment && hasPedsScore ? tCellCd8.pedsScoreComment : null,
           },
           {
             term: 'CAPTIV-8 Score',
