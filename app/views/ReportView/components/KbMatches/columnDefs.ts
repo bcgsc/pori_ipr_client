@@ -46,7 +46,7 @@ const columnDefs: ColDef[] = [
     colId: 'disease',
     field: 'disease',
     hide: false,
-    cellRendererFramework: ArrayCell('disease'),
+    cellRenderer: ArrayCell('disease'),
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
   },
@@ -54,14 +54,14 @@ const columnDefs: ColDef[] = [
     headerName: 'IPR Evidence Level',
     colId: 'iprEvidenceLevel',
     field: 'iprEvidenceLevel',
-    cellRendererFramework: ArrayCell('iprEvidenceLevel'),
+    cellRenderer: ArrayCell('iprEvidenceLevel'),
     hide: false,
   },
   {
     headerName: 'Association',
     colId: 'relevance',
     field: 'relevance',
-    cellRendererFramework: ArrayCell('relevance'),
+    cellRenderer: ArrayCell('relevance'),
     hide: false,
   },
   {
@@ -90,7 +90,7 @@ const columnDefs: ColDef[] = [
       }
       return reference;
     },
-    cellRendererFramework: ArrayCell('reference', { isLink: true, useValue: true, allLinks: true }),
+    cellRenderer: ArrayCell('reference', { isLink: true, useValue: true, allLinks: true }),
     hide: false,
     autoHeight: true,
     wrapText: true,
@@ -117,20 +117,20 @@ const columnDefs: ColDef[] = [
     headerName: 'Evidence Level',
     colId: 'evidenceLevel',
     field: 'evidenceLevel',
-    cellRendererFramework: ArrayCell('evidenceLevel'),
+    cellRenderer: ArrayCell('evidenceLevel'),
     hide: false,
   },
   {
     headerName: 'Category',
     colId: 'category',
     field: 'category',
-    cellRendererFramework: ArrayCell('category'),
+    cellRenderer: ArrayCell('category'),
     hide: true,
   },
   {
     headerName: 'Matched Cancer',
     field: 'matchedCancer',
-    cellRendererFramework: ArrayCell('matchedCancer'),
+    cellRenderer: ArrayCell('matchedCancer'),
     hide: true,
   },
   {
