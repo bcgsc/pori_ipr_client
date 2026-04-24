@@ -4,7 +4,7 @@ import kbMStatementsGeneValueGetter from '@/utils/kbMatchStatementsGeneValueGett
 import kbMatchStatementsKnownVarValueGetter from '@/utils/kbMatchStatementsKnownVarValueGetter';
 import kbMatchStatementsObsVarValueGetter from '@/utils/kbMatchStatementsObsVarValueGetter';
 import { ColDef } from '@ag-grid-community/core';
-import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
+import { arrayTooltipValueGetter, basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
 import kbMatchStatementsFlagValueGetter from '@/utils/kbMatchStatementsFlagValueGetter';
 
 const columnDefs: ColDef[] = [
@@ -48,7 +48,7 @@ const columnDefs: ColDef[] = [
     hide: false,
     cellRenderer: ArrayCell('disease'),
     tooltipComponent: 'ToolTip',
-    tooltipValueGetter: basicTooltipValueGetter,
+    tooltipValueGetter: arrayTooltipValueGetter,
   },
   {
     headerName: 'IPR Evidence Level',
@@ -98,7 +98,7 @@ const columnDefs: ColDef[] = [
     initialWidth: 300,
     suppressAutoSize: true,
     tooltipComponent: 'ToolTip',
-    tooltipValueGetter: basicTooltipValueGetter,
+    tooltipValueGetter: arrayTooltipValueGetter,
   },
   {
     headerName: 'Recruitment Status',
