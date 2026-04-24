@@ -61,6 +61,8 @@ const HTMLCellRenderer = (props: HTMLCellRendererProps) => {
   }, [api, node, dispMode]);
 
   const handleOnClick = useCallback((evt) => {
+    if (window.getSelection()?.toString().length > 0) return;
+
     const gridCellElem = evt.target.closest('[role="gridcell"]');
 
     setDispMode((prevMode) => {
@@ -70,6 +72,7 @@ const HTMLCellRenderer = (props: HTMLCellRendererProps) => {
         }
         return DisplayMode.compact;
       }
+      gridCellElem.scrollTop = 0;
       gridCellElem.style.overflow = 'hidden';
       return DisplayMode.normal;
     });
@@ -83,6 +86,7 @@ const HTMLCellRenderer = (props: HTMLCellRendererProps) => {
       ref={cellRef}
       role="button"
       tabIndex={0}
+      aria-label="Click to toggle between normal and compact view"
     >
       <div className="inner-html" dangerouslySetInnerHTML={{ __html: text }} />
     </div>
