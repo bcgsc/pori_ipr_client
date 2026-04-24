@@ -7,4 +7,9 @@
     text-decoration: underline solid $underline;
     cursor: pointer;
   }
+
+  &__wrap {
+    white-space: normal;
+    word-break: break-word;
+  }
 }
