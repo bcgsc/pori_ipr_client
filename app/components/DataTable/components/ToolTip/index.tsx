@@ -40,7 +40,7 @@ function basicTooltipValueGetter(params: ITooltipParams) {
 function arrayTooltipValueGetter(params: ITooltipParams) {
   const { valueFormatted, value } = params;
   const val = valueFormatted ?? value;
-  if (Array.isArray(val)) return val.join(', ');
+  if (Array.isArray(val)) return val.filter((v) => v !== null && v !== '').join(', ');
   return val;
 }
 

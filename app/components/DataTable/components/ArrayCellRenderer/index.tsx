@@ -109,7 +109,9 @@ const RenderArrayCell = (
     return function ArrayCell(params: ICellRendererParams) {
       const { data, value } = params;
       const fieldData = useValue ? value : getNestedValue(data, fieldPath);
-      const cellData = Array.isArray(fieldData) ? [...fieldData].sort() : [fieldData];
+      const cellData = (Array.isArray(fieldData) ? [...fieldData] : [fieldData])
+        .filter((v) => v !== null && v !== '')
+        .sort();
 
       if (allLinks) {
         const { node, api } = params;
@@ -162,7 +164,9 @@ const RenderArrayCell = (
     const fieldData = getNestedValue(data, fieldPath);
 
     // Ensure fieldData is always treated as an array
-    const cellData = Array.isArray(fieldData) ? [...fieldData].sort() : [fieldData];
+    const cellData = (Array.isArray(fieldData) ? [...fieldData] : [fieldData])
+      .filter((v) => v !== null && v !== '')
+      .sort();
     const [firstVal] = cellData;
     // AgGrid doesn't like false to show in table
     const firstValString = `${firstVal}`;
