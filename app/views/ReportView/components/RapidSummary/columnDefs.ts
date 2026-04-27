@@ -1,3 +1,4 @@
+import { ColDef } from '@ag-grid-community/core';
 import { sampleColumnDefs } from '../../common';
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -44,7 +45,7 @@ const getGenomicEvent = ({ data }) => {
   return hgvsGenomic;
 };
 
-const ACTIONS_COLDEF = {
+const ACTIONS_COLDEF: ColDef = {
   headerName: 'Actions',
   colId: 'Actions',
   field: 'Actions',
@@ -56,7 +57,7 @@ const ACTIONS_COLDEF = {
   minWidth: 132,
 };
 
-const VARIANT_TYPE_COLDEF = {
+const VARIANT_TYPE_COLDEF: ColDef = {
   headerName: 'Variant Type',
   field: 'variantType',
   rowGroup: true,
@@ -64,7 +65,7 @@ const VARIANT_TYPE_COLDEF = {
   valueGetter: ({ data: { variantType } }) => variantType || 'N/A',
 };
 
-const COPY_CHANGE_COLDEF = {
+const COPY_CHANGE_COLDEF: ColDef = {
   headerName: 'Copy Change',
   field: 'copyChange',
   valueGetter: ({ data: { copyChange, gene, variantType } }) => {
@@ -80,7 +81,7 @@ const COPY_CHANGE_COLDEF = {
   },
 };
 
-const therapeuticAssociationColDefs = [
+const therapeuticAssociationColDefs: ColDef[] = [
   {
     headerName: 'Genomic Events',
     colId: 'genomicEvents',
@@ -149,7 +150,7 @@ const therapeuticAssociationColDefs = [
   },
 ];
 
-const cancerRelevanceColDefs = [
+const cancerRelevanceColDefs: ColDef[] = [
   {
     headerName: 'Genomic Events',
     colId: 'genomicEvents',
