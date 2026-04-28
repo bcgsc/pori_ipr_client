@@ -393,9 +393,9 @@ const RapidSummary = ({
     const hasPedsScore = typeof tCellCd8?.pedsScore === 'number';
     if (tCellCd8 && (typeof tCellCd8.score === 'number' || hasPedsScore)) {
       if (hasPedsScore) {
-        tCell = `${tCellCd8.pedsScore} ...`;
+        tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile && !tCellCd8.percentileHidden ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
       } else {
-        tCell = `${tCellCd8.score} ...`;
+        tCell = `${tCellCd8.score} ${tCellCd8.percentile && !tCellCd8.percentileHidden ? `(${tCellCd8.percentile}%)` : ''}`;
       }
     }
 

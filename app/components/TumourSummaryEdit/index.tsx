@@ -300,7 +300,7 @@ const TumourSummaryEdit = ({
       onEditClose(false);
       return undefined;
     }
-    if (!!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment) {
+    if (newTCellCd8Data?.pedsScore != null && !newTCellCd8Data?.pedsScoreComment) {
       snackbar.warning('Please add a comment on the added pediatric CD8+ t cell score');
       onEditClose(false);
       return undefined;
@@ -784,8 +784,8 @@ const TumourSummaryEdit = ({
         label="Pediatric CD8+ T Cell Comment"
         value={newTCellCd8Data?.pedsScoreComment ?? ''}
         name="pedsScoreComment"
-        disabled={!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment}
-        required={!!newTCellCd8Data?.pedsScore}
+        disabled={(newTCellCd8Data?.pedsScore == null || String(newTCellCd8Data?.pedsScore) === '') && !newTCellCd8Data?.pedsScoreComment}
+        required={newTCellCd8Data?.pedsScore != null}
         onChange={handlePedsCd8tCommentChange}
         variant="outlined"
         fullWidth
