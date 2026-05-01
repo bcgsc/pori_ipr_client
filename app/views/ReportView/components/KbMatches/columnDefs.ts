@@ -4,7 +4,7 @@ import kbMStatementsGeneValueGetter from '@/utils/kbMatchStatementsGeneValueGett
 import kbMatchStatementsKnownVarValueGetter from '@/utils/kbMatchStatementsKnownVarValueGetter';
 import kbMatchStatementsObsVarValueGetter from '@/utils/kbMatchStatementsObsVarValueGetter';
 import { ColDef } from '@ag-grid-community/core';
-import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
+import { arrayTooltipValueGetter, basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
 import kbMatchStatementsFlagValueGetter from '@/utils/kbMatchStatementsFlagValueGetter';
 
 const columnDefs: ColDef[] = [
@@ -46,30 +46,29 @@ const columnDefs: ColDef[] = [
     colId: 'disease',
     field: 'disease',
     hide: false,
-    cellRenderer: ArrayCell('disease', false),
-    maxWidth: 300,
+    cellRenderer: ArrayCell('disease'),
     tooltipComponent: 'ToolTip',
-    tooltipValueGetter: basicTooltipValueGetter,
+    tooltipValueGetter: arrayTooltipValueGetter,
   },
   {
     headerName: 'IPR Evidence Level',
     colId: 'iprEvidenceLevel',
     field: 'iprEvidenceLevel',
-    cellRenderer: ArrayCell('iprEvidenceLevel', false),
+    cellRenderer: ArrayCell('iprEvidenceLevel'),
     hide: false,
   },
   {
     headerName: 'Association',
     colId: 'relevance',
     field: 'relevance',
-    cellRenderer: ArrayCell('relevance', false),
+    cellRenderer: ArrayCell('relevance'),
     hide: false,
   },
   {
     headerName: 'Context',
     colId: 'context',
     field: 'context',
-    cellRenderer: ArrayCell('context', false),
+    cellRenderer: ArrayCell('context'),
     hide: false,
     initialWidth: 300,
     suppressAutoSize: true,
@@ -92,11 +91,14 @@ const columnDefs: ColDef[] = [
       }
       return reference;
     },
-    cellRenderer: ArrayCell('reference', true, true),
+    cellRenderer: ArrayCell('reference', { isLink: true, useValue: true, allLinks: true }),
     hide: false,
+    autoHeight: true,
+    wrapText: true,
     initialWidth: 300,
+    suppressAutoSize: true,
     tooltipComponent: 'ToolTip',
-    tooltipValueGetter: basicTooltipValueGetter,
+    tooltipValueGetter: arrayTooltipValueGetter,
   },
   {
     headerName: 'Recruitment Status',
@@ -116,20 +118,20 @@ const columnDefs: ColDef[] = [
     headerName: 'Evidence Level',
     colId: 'evidenceLevel',
     field: 'evidenceLevel',
-    cellRenderer: ArrayCell('evidenceLevel', false),
+    cellRenderer: ArrayCell('evidenceLevel'),
     hide: false,
   },
   {
     headerName: 'Category',
     colId: 'category',
     field: 'category',
-    cellRenderer: ArrayCell('category', false),
+    cellRenderer: ArrayCell('category'),
     hide: true,
   },
   {
     headerName: 'Matched Cancer',
     field: 'matchedCancer',
-    cellRenderer: ArrayCell('matchedCancer', false),
+    cellRenderer: ArrayCell('matchedCancer'),
     hide: true,
   },
   {

@@ -24,7 +24,7 @@ const COMMON_COL_DEFS = [
     headerName: 'Known Variant',
     colId: 'kbVariant',
     field: 'kbVariant',
-    cellRenderer: ArrayCell('kbVariant', false),
+    cellRenderer: ArrayCell('kbVariant'),
     hide: true,
     maxWidth: 300,
   },
