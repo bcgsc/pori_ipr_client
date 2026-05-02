@@ -1,8 +1,9 @@
 const custom = require('../config/webpack/webpack.config');
 
 module.exports = {
-  core: {
-    builder: "webpack5",
+  framework: {
+    name: '@storybook/react-webpack5',
+    options: {},
   },
   stories: [
     "../app/**/*.stories.@(js|jsx|ts|tsx)",
@@ -10,13 +11,23 @@ module.exports = {
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@react-theming/storybook-addon",
   ],
   webpackFinal: (config) => {
+    const customConfig = custom('prod');
     return {
       ...config,
-      module: { ...config.module, rules: custom('prod').module.rules },
-      resolve: custom('prod').resolve
+      module: {
+        ...config.module,
+        rules: customConfig.module.rules,
+      },
+      resolve: {
+        ...config.resolve,
+        ...customConfig.resolve,
+        alias: {
+          ...config.resolve?.alias,
+          ...customConfig.resolve.alias,
+        },
+      },
     };
   },
 }

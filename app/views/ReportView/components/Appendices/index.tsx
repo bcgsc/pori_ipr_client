@@ -22,6 +22,8 @@ import ConfigTable from './components/ConfigTable';
 
 import './index.scss';
 
+import { normalizeSeqQCArray } from './normalizeSeqQCArray';
+
 type AppendicesProps = {
   isPrint: boolean;
   loadedDispatch: (section: { type: string }) => void;
@@ -74,6 +76,12 @@ const Appendices = ({
             api.get(`/reports/${report.ident}/comparators`),
           ]);
           const [appendicesResp, tcgaResp, comparatorsResp] = await callSet.request() as [AppendicesType, TcgaType[], ComparatorType[]];
+
+          // DEVSU-2848 temporary fix to handle old appendices response that doesn't have seqQC field
+          // should remove after datafix
+          if (appendicesResp.seqQC && appendicesResp.seqQC.length === 0) {
+            appendicesResp.seqQC = appendicesResp.seqQc;
+          }
 
           setAppendices(appendicesResp);
           setTcga(tcgaResp);
@@ -134,25 +142,25 @@ const Appendices = ({
                 Appendix A
               </Typography>
               {!isPharmacogenomic && (
-              <div className="analysis-summary">
-                <Typography variant="h3">
-                  Analysis Summary
-                </Typography>
-                <Grid
-                  alignItems="flex-end"
-                  container
-                  spacing={3}
-                  className="analysis-summary__content"
-                >
-                  {analysisSummary.map(({ label, value }) => (
-                    <Grid key={label as string} item>
-                      <ReadOnlyTextField label={label}>
-                        {value}
-                      </ReadOnlyTextField>
-                    </Grid>
-                  ))}
-                </Grid>
-              </div>
+                <div className="analysis-summary">
+                  <Typography variant="h3">
+                    Analysis Summary
+                  </Typography>
+                  <Grid
+                    alignItems="flex-end"
+                    container
+                    spacing={3}
+                    className="analysis-summary__content"
+                  >
+                    {analysisSummary.map(({ label, value }) => (
+                      <Grid key={label as string} item>
+                        <ReadOnlyTextField label={label}>
+                          {value}
+                        </ReadOnlyTextField>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </div>
               )}
               {report?.sampleInfo && (
                 <DataTable
@@ -161,10 +169,10 @@ const Appendices = ({
                   titleText="Sample Information"
                 />
               )}
-              {appendices?.seqQC && (
+              {(appendices?.seqQC) && (
                 <DataTable
                   columnDefs={sequencingProtocolInformationColumnDefs}
-                  rowData={appendices.seqQC}
+                  rowData={normalizeSeqQCArray(appendices.seqQC)}
                   titleText="Sequencing Protocol Information"
                 />
               )}

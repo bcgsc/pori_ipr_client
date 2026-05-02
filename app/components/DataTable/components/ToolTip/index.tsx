@@ -37,6 +37,13 @@ function basicTooltipValueGetter(params: ITooltipParams) {
   return valueFormatted ?? value;
 }
 
+function arrayTooltipValueGetter(params: ITooltipParams) {
+  const { valueFormatted, value } = params;
+  const val = valueFormatted ?? value;
+  if (Array.isArray(val)) return val.filter((v) => v !== null && v !== '').join(', ');
+  return val;
+}
+
 const maybeZombies = new Set<string>();
 const deleteZombieTooltips = (ids: string[]) => {
   if (ids.length) {
@@ -91,6 +98,7 @@ function TooltipWrapper(props: { id?: string; disableRemoveZombies?: boolean; sx
         borderRadius: '5px',
         color: 'common.white',
         padding: '5px',
+        width: 'fit-content',
         ...sx,
       }}
     >
@@ -171,6 +179,7 @@ function ToolTip(props: ToolTipProps) {
 }
 
 export {
+  arrayTooltipValueGetter,
   basicTooltipValueGetter,
   ToolTip,
   tooltipValueGetter,

@@ -134,10 +134,12 @@ describe('GeneViewer', () => {
       fireEvent.click(button);
     });
 
-    await screen.getByRole('dialog');
+    await screen.findByRole('dialog');
 
-    for (const key of Object.keys(mockGeneResults)) {
-      screen.getByText(key, { exact: false });
-    }
+    await waitFor(() => {
+      for (const key of Object.keys(mockGeneResults)) {
+        screen.getByText(key, { exact: false });
+      }
+    });
   });
 });
