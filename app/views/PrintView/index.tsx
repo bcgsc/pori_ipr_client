@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useReducer, useMemo, useRef, lazy,
+  useEffect, useReducer, useMemo, useRef, lazy,
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@mui/material';
@@ -169,12 +169,10 @@ const Print = ({
     slides: false,
     appendices: false,
   });
-  const [isPrintDialogShown, setIsPrintDialogShown] = useState(false);
   const paged = useMemo(() => new Previewer(), []);
-  // Synchronous re-entry latch. `setIsPrintDialogShown(true)` only flips the
-  // state-driven guard after `await paged.preview(...)` resolves, leaving a
-  // window where React can re-run this effect (e.g. on a late
-  // `loadedDispatch` updating reportSectionsLoaded) and start a second
+  // Synchronous re-entry latch for `paged.preview`. React can re-fire the
+  // print effect during the awaits inside showPrint (e.g. on a late
+  // `loadedDispatch` updating reportSectionsLoaded), starting a second
   // showPrint concurrently. A second paged.preview on the same Previewer
   // re-registers all built-in handlers (Breaks, AtPage, …) onto the same
   // polisher.hooks, so each declaration fires twice and Breaks's
@@ -241,7 +239,6 @@ const Print = ({
       reportSectionsLoaded
       && template?.sections.length
       && allSectionsLoaded
-      && !isPrintDialogShown
       && !isPrinting.current
     ) {
       isPrinting.current = true;
@@ -280,11 +277,10 @@ const Print = ({
         }
 
         window.print();
-        setIsPrintDialogShown(true);
       };
       showPrint();
     }
-  }, [isPrintDialogShown, paged, report, reportSectionsLoaded, template]);
+  }, [paged, report, reportSectionsLoaded, template]);
 
   return (
     <ReportContext.Provider value={reportContextValue}>
