@@ -1,12 +1,12 @@
 # Stage 0, "build-stage", based on Node.js, to build and compile the frontend
-FROM node:16 as build-stage
+FROM node:22 as build-stage
 
 ARG API_BASE_URL
 ARG KEYCLOAK_URL
 ARG KEYCLOAK_REALM
 
 WORKDIR /app
-COPY package*.json /app/
+COPY package*.json .npmrc /app/
 RUN npm ci
 COPY ./ /app/
 RUN npm run build:docker

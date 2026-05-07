@@ -26,7 +26,7 @@ const LaunchCellWithAgGrid = ({
       },
     ]}
     rowData={mockData}
-    frameworkComponents={{
+    components={{
       Launch: LaunchCell,
     }}
     suppressColumnVirtualisation

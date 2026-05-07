@@ -85,7 +85,12 @@ const VariantEditDialog = ({
   const handleSubmit = useCallback(async () => {
     if (!availableVariants.includes(variant)) {
       setIsApiCalling(true);
-      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant });
+      const payload = {
+        geneVariant: variant,
+        variantType,
+        variantIdent: editData.ident,
+      };
+      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, payload);
       try {
         if (isSigned) {
           showConfirmDialog(req);

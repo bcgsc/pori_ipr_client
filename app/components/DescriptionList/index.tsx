@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import {
   List,
   ListItem,
@@ -31,40 +30,38 @@ const DescriptionList = ({
     }
   }, [entries]);
 
-  return (
-    <>
-      {Boolean(visibleEntries.length) && (
-        <List className="description-list">
-          {visibleEntries.map(({ term, value, action }, index) => (
-            <React.Fragment key={term}>
-              <ListItem className="description-list__group">
-                <span className="description-list__text-group">
-                  <ListItemText className="description-list__term">
-                    {`${term}: `}
-                  </ListItemText>
-                  <ListItemText className="description-list__value">
-                    {value}
-                    {action && (
-                      <IconButton size="small" onClick={action} className="description-list__action">
-                        <LaunchIcon />
-                      </IconButton>
-                    )}
-                  </ListItemText>
-                </span>
-              </ListItem>
-              {index % 2 === 1 && index !== visibleEntries.length - 1 && (
-                <Divider variant="middle" className="description-list__divider" />
-              )}
-            </React.Fragment>
-          ))}
-        </List>
-      )}
-    </>
-  );
-};
+  if (!visibleEntries.length) {
+    return null;
+  }
 
-DescriptionList.propTypes = {
-  entries: PropTypes.arrayOf(PropTypes.object).isRequired,
+  return (
+
+    <List className="description-list">
+      {visibleEntries.map(({ term, value, action }, index) => (
+        <React.Fragment key={term}>
+          <ListItem className="description-list__group">
+            <span className="description-list__text-group">
+              <ListItemText className="description-list__term">
+                {`${term}: `}
+              </ListItemText>
+              <ListItemText className="description-list__value">
+                {value}
+                {action && (
+                <IconButton size="small" onClick={action} className="description-list__action">
+                  <LaunchIcon />
+                </IconButton>
+                )}
+              </ListItemText>
+            </span>
+          </ListItem>
+          {index % 2 === 1 && index !== visibleEntries.length - 1 && (
+          <Divider variant="middle" className="description-list__divider" />
+          )}
+        </React.Fragment>
+      ))}
+    </List>
+
+  );
 };
 
 export default DescriptionList;

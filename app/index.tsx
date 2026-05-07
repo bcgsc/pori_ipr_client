@@ -2,10 +2,12 @@ import './publicPath';
 import './index.scss';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import App from './App';
 import { unregister } from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('base'));
+const container = document.getElementById('base');
+const root = createRoot(container);
+root.render(<App />);
 unregister();

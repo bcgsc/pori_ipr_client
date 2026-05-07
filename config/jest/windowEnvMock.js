@@ -1,3 +1,7 @@
+const { TextEncoder, TextDecoder } = require('util');
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
 window._env_ = {
   KEYCLOAK_CLIENT_ID: process.env.KEYCLOAK_CLIENT_ID || "IPR",
   KEYCLOAK_REALM: process.env.KEYCLOAK_REALM || "GSC",

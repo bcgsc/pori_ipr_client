@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { Typography } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
@@ -12,14 +11,18 @@ const nameMapping = {
   expression: 'Expression Outliers',
 };
 
-const VariantCounts = (props) => {
-  const {
-    counts,
-    filter,
-    onToggleFilter,
-  } = props;
+type VariantCountsProps = {
+  counts: Record<string, number>;
+  filter?: string;
+  onToggleFilter?: (key: string | null) => void;
+};
 
-  const filterCallback = useCallback((key) => {
+const VariantCounts = ({
+  counts,
+  filter = '',
+  onToggleFilter = () => {},
+}: VariantCountsProps): JSX.Element => {
+  const filterCallback = useCallback((key: string) => {
     if (!filter || (filter && filter !== key)) {
       onToggleFilter(key);
     } else {
@@ -57,17 +60,6 @@ const VariantCounts = (props) => {
       )}
     </div>
   );
-};
-
-VariantCounts.propTypes = {
-  counts: PropTypes.objectOf(PropTypes.number).isRequired,
-  filter: PropTypes.string,
-  onToggleFilter: PropTypes.func,
-};
-
-VariantCounts.defaultProps = {
-  filter: '',
-  onToggleFilter: () => {},
 };
 
 export default VariantCounts;

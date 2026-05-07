@@ -1,4 +1,4 @@
-@import '../../../../styles/variables';
+@use '../../../../styles/variables' as *;
 
 .kb-matches {
   &__button-container {

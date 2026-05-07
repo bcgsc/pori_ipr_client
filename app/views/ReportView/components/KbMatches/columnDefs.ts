@@ -4,7 +4,7 @@ import kbMStatementsGeneValueGetter from '@/utils/kbMatchStatementsGeneValueGett
 import kbMatchStatementsKnownVarValueGetter from '@/utils/kbMatchStatementsKnownVarValueGetter';
 import kbMatchStatementsObsVarValueGetter from '@/utils/kbMatchStatementsObsVarValueGetter';
 import { ColDef } from '@ag-grid-community/core';
-import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
+import { arrayTooltipValueGetter, basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
 import kbMatchStatementsFlagValueGetter from '@/utils/kbMatchStatementsFlagValueGetter';
 
 const columnDefs: ColDef[] = [
@@ -22,7 +22,6 @@ const columnDefs: ColDef[] = [
     colId: 'kbVariant',
     valueGetter: kbMatchStatementsKnownVarValueGetter,
     hide: false,
-    maxWidth: 300,
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
   },
@@ -31,7 +30,6 @@ const columnDefs: ColDef[] = [
     colId: 'variant',
     valueGetter: kbMatchStatementsObsVarValueGetter,
     hide: false,
-    maxWidth: 300,
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
   },
@@ -40,7 +38,6 @@ const columnDefs: ColDef[] = [
     colId: 'flags',
     valueGetter: kbMatchStatementsFlagValueGetter,
     hide: false,
-    maxWidth: 300,
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
   },
@@ -49,34 +46,34 @@ const columnDefs: ColDef[] = [
     colId: 'disease',
     field: 'disease',
     hide: false,
-    cellRendererFramework: ArrayCell('disease', false),
-    maxWidth: 300,
+    cellRenderer: ArrayCell('disease'),
     tooltipComponent: 'ToolTip',
-    tooltipValueGetter: basicTooltipValueGetter,
+    tooltipValueGetter: arrayTooltipValueGetter,
   },
   {
     headerName: 'IPR Evidence Level',
     colId: 'iprEvidenceLevel',
     field: 'iprEvidenceLevel',
-    cellRendererFramework: ArrayCell('iprEvidenceLevel', false),
+    cellRenderer: ArrayCell('iprEvidenceLevel'),
     hide: false,
-    maxWidth: 300,
   },
   {
     headerName: 'Association',
     colId: 'relevance',
     field: 'relevance',
-    cellRendererFramework: ArrayCell('relevance', false),
+    cellRenderer: ArrayCell('relevance'),
     hide: false,
-    maxWidth: 300,
   },
   {
     headerName: 'Context',
     colId: 'context',
     field: 'context',
-    cellRendererFramework: ArrayCell('context', false),
+    cellRenderer: ArrayCell('context'),
     hide: false,
-    maxWidth: 300,
+    initialWidth: 300,
+    suppressAutoSize: true,
+    autoHeight: true,
+    wrapText: true,
     tooltipComponent: 'ToolTip',
     tooltipValueGetter: basicTooltipValueGetter,
   },
@@ -94,11 +91,14 @@ const columnDefs: ColDef[] = [
       }
       return reference;
     },
-    cellRendererFramework: ArrayCell('reference', true, true),
+    cellRenderer: ArrayCell('reference', { isLink: true, useValue: true, allLinks: true }),
     hide: false,
-    maxWidth: 300,
+    autoHeight: true,
+    wrapText: true,
+    initialWidth: 300,
+    suppressAutoSize: true,
     tooltipComponent: 'ToolTip',
-    tooltipValueGetter: basicTooltipValueGetter,
+    tooltipValueGetter: arrayTooltipValueGetter,
   },
   {
     headerName: 'Recruitment Status',
@@ -113,27 +113,25 @@ const columnDefs: ColDef[] = [
       }
       return '';
     },
-    maxWidth: 300,
   },
   {
     headerName: 'Evidence Level',
     colId: 'evidenceLevel',
     field: 'evidenceLevel',
-    cellRendererFramework: ArrayCell('evidenceLevel', false),
+    cellRenderer: ArrayCell('evidenceLevel'),
     hide: false,
-    maxWidth: 300,
   },
   {
     headerName: 'Category',
     colId: 'category',
     field: 'category',
-    cellRendererFramework: ArrayCell('category', false),
+    cellRenderer: ArrayCell('category'),
     hide: true,
   },
   {
     headerName: 'Matched Cancer',
     field: 'matchedCancer',
-    cellRendererFramework: ArrayCell('matchedCancer', false),
+    cellRenderer: ArrayCell('matchedCancer'),
     hide: true,
   },
   {
@@ -190,7 +188,6 @@ const columnDefs: ColDef[] = [
     colId: 'externalSource',
     cellRenderer: 'CivicCellRenderer',
     hide: false,
-    maxWidth: 300,
   }, {
     headerName: 'External Statement ID',
     field: 'externalStatementId',

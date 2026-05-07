@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
 import {
   Typography,
   IconButton,
@@ -14,16 +13,23 @@ import {
 
 import './index.scss';
 
-function ReportToolbar(props) {
-  const {
-    diagnosis,
-    patientId,
-    type,
-    state,
-    isSidebarVisible,
-    onSidebarToggle,
-  } = props;
+type ReportToolbarProps = {
+  diagnosis?: string;
+  patientId: string;
+  type: string;
+  state: string;
+  isSidebarVisible: boolean;
+  onSidebarToggle: (visible: boolean) => void;
+};
 
+function ReportToolbar({
+  diagnosis = '',
+  patientId,
+  type,
+  state,
+  isSidebarVisible,
+  onSidebarToggle,
+}: ReportToolbarProps): JSX.Element {
   const reportTitle = useMemo(() => {
     const titleFirstPart = REPORT_TYPE_TO_SUFFIX[type];
     const titleSecondPart = REPORT_TYPE_TO_TITLE[type];
@@ -60,18 +66,5 @@ function ReportToolbar(props) {
     </span>
   );
 }
-
-ReportToolbar.propTypes = {
-  diagnosis: PropTypes.string,
-  patientId: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  state: PropTypes.string.isRequired,
-  isSidebarVisible: PropTypes.bool.isRequired,
-  onSidebarToggle: PropTypes.func.isRequired,
-};
-
-ReportToolbar.defaultProps = {
-  diagnosis: '',
-};
 
 export default ReportToolbar;

@@ -3,7 +3,6 @@ import React, {
   useRef, useState, useEffect, useCallback, useContext, useMemo, forwardRef, useImperativeHandle,
 } from 'react';
 import { AgGridReact, AgGridReactProps } from '@ag-grid-community/react';
-import { AgGridReact as AgGridReactType } from '@ag-grid-community/react/lib/agGridReact';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
@@ -196,7 +195,7 @@ type DataTableCustomProps = {
   /* Callback function when rowData is changed within the DataTable */
   onRowDataChanged?: (rows: Record<string, unknown>[]) => void;
   /* Allows multiple rows to be selected (Note either 'single' or 'multiple') */
-  rowSelection?: string;
+  rowSelection?: 'single' | 'multiple';
   /* Data populating table */
   rowData: Record<string, unknown>[];
   /* Callback to sync multiple tables */
@@ -250,7 +249,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   const { report } = useContext(ReportContext);
 
   const gridDiv = useRef<HTMLDivElement>();
-  const gridRef = useRef<AgGridReactType>();
+  const gridRef = useRef<AgGridReact>();
 
   const [showPopover, setShowPopover] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
@@ -410,10 +409,16 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     }
 
     if (colApi && !isFullLength) {
+      // Exclude columns with suppressAutoSize so they keep their initialWidth
       const visibleColumnIds = colApi.getAllColumns()
-        .filter((col) => (!col.getFlex() && col.isVisible()))
+        .filter((col) => (!col.getFlex()
+          && col.isVisible()
+          && !col.getColDef().suppressAutoSize
+        ))
         .map((col) => col.getColId());
       colApi.autoSizeColumns(visibleColumnIds);
+      // Recalculate row heights after auto-sizing, since autoHeight rows measure based on column width
+      gridApi.resetRowHeights();
     } if (isFullLength) {
       gridApi.sizeColumnsToFit();
     }
@@ -425,7 +430,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
         col.sortable = false;
         col.filter = false;
       });
-      gridApi.setSortModel([{ colId: 'rank', sort: 'asc' }]);
+      colApi.applyColumnState({ state: [{ colId: 'rank', sort: 'asc' }], defaultState: { sort: null } });
       gridApi.setColumnDefs(columnDefs);
 
       colApi.setColumnVisible('drag', true);
@@ -498,6 +503,12 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
   }, [colApi, gridApi, isSearch, report?.ident, report?.patientId, titleText]);
+
+  const handleColumnResized = useCallback(() => {
+    if (gridApi) {
+      gridApi.resetRowHeights();
+    }
+  }, [gridApi]);
 
   const handleFilterAndSortChanged = useCallback(() => {
     if (onRowDataChanged) {
@@ -664,14 +675,16 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               paginationAutoPageSize={isFullLength}
               paginationPageSize={MAX_VISIBLE_ROWS}
               autoSizePadding={1}
-              immutableData={canReorder}
-              getRowNodeId={(data) => data.ident}
+              // agGrid falls back to rowIdent as Id when ident does not exist
+              getRowId={(params) => params.data.ident as string}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
               enableCellTextSelection={!showReorder}
+              onColumnResized={handleColumnResized}
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
               noRowsOverlayComponent="NoRowsOverlay"
+              noRowsOverlayComponentParams={{ hasChildren: columnDefs.some((col) => 'children' in col) }}
               loadingOverlayComponent="LoadingOverlay"
               gridOptions={{
                 // For when table is too short and the popup menus get cut-off
@@ -684,7 +697,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
                 tableType,
               }}
               tooltipShowDelay={0}
-              frameworkComponents={{
+              components={{
                 EnsemblCellRenderer,
                 CivicCellRenderer,
                 GeneCellRenderer,
@@ -701,7 +714,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               suppressAnimationFrame
               suppressRowTransform={Boolean(collapseColumnFields)}
               suppressColumnVirtualisation
-              disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
               onFirstDataRendered={onFirstDataRendered}
               onPaginationChanged={handlePaginationChanged}
               rowSelection={rowSelection}

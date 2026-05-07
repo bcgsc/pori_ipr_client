@@ -134,10 +134,9 @@ const ApiPaginatedTable = ({
       <AgGridReact
         rowData={rowData}
         columnDefs={columnDefs}
-        disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
         onGridReady={onGridReady}
         onFirstDataRendered={onFirstDataRendered}
-        frameworkComponents={{
+        components={{
           checkboxCellRenderer: CheckboxCell,
           reviewFilter: ReviewFilter,
           Launch: LaunchCell,

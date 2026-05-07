@@ -1,5 +1,5 @@
 import React from 'react';
-import { Story } from '@storybook/react/types-6-0';
+import { StoryFn } from '@storybook/react';
 import ReportOverview, { ReportOverviewProps } from '.';
 
 export default {
@@ -9,7 +9,7 @@ export default {
 
 const Template = (args) => <ReportOverview {...args} />;
 
-export const CannotEdit: Story<ReportOverviewProps> = Template.bind({});
+export const CannotEdit: StoryFn<ReportOverviewProps> = Template.bind({});
 CannotEdit.args = {
   canEdit: false,
   isNew: false,

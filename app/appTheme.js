@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import cssTheme from './styles/_theme.module.scss';
+import * as cssTheme from './styles/_theme.module.scss';
 
 const theme = createTheme({
   direction: 'ltr',

@@ -1,5 +1,5 @@
-@import '../../../../styles/theme.module';
-@import '../../../../styles/variables';
+@use '../../../../styles/theme.module' as *;
+@use '../../../../styles/variables' as *;
 
 .settings {
   padding: 16px;

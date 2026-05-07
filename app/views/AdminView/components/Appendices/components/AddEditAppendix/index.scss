@@ -1,4 +1,4 @@
-@import '@/styles/_theme.module.scss';
+@use '@/styles/theme.module' as *;
 
 .edit-dialog {
     &__section-title {

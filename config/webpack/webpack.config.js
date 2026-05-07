@@ -24,10 +24,17 @@ module.exports = (env) => ({
             sideEffects: true,
             use: [
               'style-loader',
-              'css-loader',
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: { auto: true },
+                },
+              },
               {
                 loader: 'sass-loader',
                 options: {
+                  api: 'modern-compiler',
+                  implementation: require('sass-embedded'),
                   sassOptions: { quietDeps: true },
                 },
               },

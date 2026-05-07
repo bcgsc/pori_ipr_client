@@ -1,4 +1,4 @@
-@import '../../../../styles/variables';
+@use '../../../../styles/variables' as *;
 
 .array-cell {
   &__link {
@@ -6,5 +6,10 @@
     font-weight: 700;
     text-decoration: underline solid $underline;
     cursor: pointer;
+  }
+
+  &__wrap {
+    white-space: normal;
+    word-break: break-word;
   }
 }

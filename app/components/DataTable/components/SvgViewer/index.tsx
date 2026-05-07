@@ -105,7 +105,7 @@ const SvgViewer = ({
             columnDefs={columnDefs}
             rowData={rowData}
             domLayout="autoHeight"
-            frameworkComponents={{
+            components={{
               EnsemblCellRenderer,
             }}
           />

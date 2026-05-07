@@ -84,12 +84,11 @@ describe('DataTable', () => {
     }
 
     // Row that should not be shown
-    elems = await Promise.all(
-      Object.values(mockRowData[0]).map((val) => screen.queryByText(val))
-    );
-    for (const elem of elems) {
-      expect(elem).toBeNull();
-    }
+    await waitFor(() => {
+      for (const val of Object.values(mockRowData[0])) {
+        expect(screen.queryByText(val)).toBeNull();
+      }
+    });
   });
 
   test('visibleColumns affects the shown columns', async () => {

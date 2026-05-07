@@ -3,17 +3,11 @@ import { basicTooltipValueGetter } from '../DataTable/components/ToolTip';
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
-const dateCellRenderer = (params) => {
-  const gui = document.createElement('span');
-  const date = new Date(params.value);
-  const formattedDate = new Intl.DateTimeFormat('en-ca', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(date);
-  gui.innerHTML = formattedDate;
-  return gui;
-};
+const dateCellRenderer = (params) => new Intl.DateTimeFormat('en-ca', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+}).format(new Date(params.value));
 
 const columnDefs: ColDef[] = [{
   headerName: 'Patient ID',

@@ -18,9 +18,9 @@ import CacheBuster from './components/CacheBuster';
 import theme from './appTheme';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
+import '@ag-grid-community/styles/ag-grid.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
+import '@ag-grid-community/styles/ag-theme-material.css';
 import '@fontsource/roboto';
 import './styles/ag-grid.scss';
 

@@ -20,6 +20,7 @@ import useSecurity from '@/hooks/useSecurity';
 import { useReport, useReportSignatures, useTemplatesAll } from '@/queries/get';
 import { ReportType, TemplateType } from '@/common';
 import { SignatureType } from '@/components/SignatureCard';
+import { AuthorizationError } from '@/services/errors/errors';
 
 import Summary from './components/Summary';
 import allSections from './sections';
@@ -61,7 +62,7 @@ const ReportView = (): JSX.Element => {
   const [visibleSections, setVisibleSections] = useState([]);
   const [reportTemplateName, setReportTemplateName] = useState('');
   const [isSigned, setIsSigned] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; isAuthError: boolean } | null>(null);
 
   const { data: report, refetch } = useReport<ReportType>(
     params.ident,
@@ -69,9 +70,11 @@ const ReportView = (): JSX.Element => {
       cacheTime: 0,
       enabled: Boolean(params.ident),
       onError: (err) => {
-        const message = `Cannot access report ${params.ident}, reason: ${err?.message}`;
+        const isAuthError = err instanceof AuthorizationError;
+        const reason = err.content?.error?.message || err?.message;
+        const message = `Cannot access report ${params.ident}, reason: ${reason}`;
         snackbar.error(message);
-        setError(message);
+        setError({ message, isAuthError });
       },
       onSuccess: (rpt) => {
         setReportTemplateName(rpt.template.name);
@@ -120,12 +123,12 @@ const ReportView = (): JSX.Element => {
       if (unreviewedStates.includes(report.state) && !unreviewedAccess) {
         const message = 'User does not have access to this report; it is unreviewed';
         snackbar.error(message);
-        setError(message);
+        setError({ message, isAuthError: false });
       }
       if (nonproductionStates.includes(report.state) && !nonproductionAccess) {
         const message = 'User does not have access to this report; it is nonproduction';
         snackbar.error(message);
-        setError(message);
+        setError({ message, isAuthError: false });
       }
     }
   }, [report, unreviewedAccess, unreviewedStates, nonproductionAccess, nonproductionStates, history]);
@@ -158,14 +161,21 @@ const ReportView = (): JSX.Element => {
 
   if (!report && error) {
     return (
-      <div>
-        {error ? (
-          <div className="error-centered">
-            <Typography color="error" gutterBottom variant="h2">Error: Cannot access report</Typography>
-            <Typography paragraph>An error occurred while accessing the report. please logout and try again or contact your administrator if the problem persists</Typography>
-            <Typography paragraph>{error}</Typography>
-          </div>
-        ) : null}
+      <div className="error-centered">
+        <Typography color="error" gutterBottom variant="h2">Error: Cannot access report</Typography>
+        {error.isAuthError ? (
+          <>
+            <Typography paragraph>
+              You do not have permission to access this report. This is usually because you are not a member of the project this report belongs to, or you are missing a required permission group.
+            </Typography>
+            <Typography paragraph>
+              Contact your administrator to request access to the project or the appropriate permission group.
+            </Typography>
+          </>
+        ) : (
+          <Typography paragraph>An error occurred while accessing the report. Please logout and try again, or contact your administrator if the problem persists.</Typography>
+        )}
+        <Typography paragraph>{error.message}</Typography>
       </div>
     );
   }

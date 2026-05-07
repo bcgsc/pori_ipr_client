@@ -1,4 +1,4 @@
-@import '@/styles/theme.module';
+@use '@/styles/theme.module' as *;
 
 .reviews {
   margin: 12px 0;

@@ -33,7 +33,7 @@ import NoRowsOverlay from '../NoRowsOverlay';
 import './index.scss';
 
 const defaultTableOptions: Partial<AgGridReactProps> = {
-  frameworkComponents: {
+  components: {
     ActionCellRenderer,
     KbMatchesActionCellRenderer,
     NoRowsOverlay,

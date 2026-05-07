@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState,
+  useCallback, useEffect, useState,
   useMemo,
 } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -7,6 +7,8 @@ import useReport from '@/hooks/useReport';
 import { Box } from '@mui/material';
 
 import DemoDescription from '@/components/DemoDescription';
+import snackbar from '@/services/SnackbarUtils';
+import { ErrorMixin } from '@/services/errors/errors';
 
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
@@ -60,56 +62,53 @@ const GenomicSummary = ({
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
 
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
-  const {
-    data: microbial,
-    isError: microbialError,
-    isLoading: isMicrobialLoading,
-  } = useReportSummaryMicrobial<MicrobialType[]>(
+
+  const queryOnError = useCallback((label: string) => (
+    !isPrint
+      ? (err: Error | ErrorMixin) => snackbar.error(`${label}: ${err.message}`)
+      : undefined
+  ), [isPrint]);
+
+  const queryOnErrorSkip404 = useCallback((label: string) => (
+    !isPrint
+      ? (err: Error | ErrorMixin) => { if ((err as ErrorMixin).content?.status !== 404) snackbar.error(`${label}: ${err.message}`); }
+      : undefined
+  ), [isPrint]);
+
+  const { data: microbial, isLoading: isMicrobialLoading } = useReportSummaryMicrobial<MicrobialType[]>(
     report?.ident,
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
-      onError: () => console.error('microbial call error'),
+      onError: queryOnError('Failed to load microbial summary'),
     },
   );
 
-  const {
-    data: primaryComparator,
-    isError: primaryComparatorError,
-    isLoading: isPrimaryComparatorLoading,
-  } = useReportComparators<ComparatorType[], ComparatorType | undefined>(
+  const { data: primaryComparator, isLoading: isPrimaryComparatorLoading } = useReportComparators<ComparatorType[], ComparatorType | undefined>(
     report?.ident,
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
       select: (data) => data?.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'),
-      onError: () => console.error('comparators call error'),
+      onError: queryOnError('Failed to load comparators'),
     },
   );
 
-  const {
-    data: signatures,
-    isError: signaturesError,
-    isLoading: isSignaturesLoading,
-  } = useReportMutationSignatures<MutationSignatureType[]>(
+  const { data: signatures, isLoading: isSignaturesLoading } = useReportMutationSignatures<MutationSignatureType[]>(
     report?.ident,
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
-      onError: () => console.error('mutation signatures call error'),
+      onError: queryOnError('Failed to load mutation signatures'),
     },
   );
 
-  const {
-    data: reportImmuneCellTypes,
-    isError: tCellCd8Error,
-    isLoading: isTCellCd8Loading,
-  } = useReportImmuneCellTypes<ImmuneType[]>(
+  const { data: reportImmuneCellTypes, isLoading: isTCellCd8Loading } = useReportImmuneCellTypes<ImmuneType[]>(
     report?.ident,
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
-      onError: () => console.error('immune cell types call error'),
+      onError: queryOnError('Failed to load immune cell types'),
     },
   );
   const tCellCd8 = useMemo(
@@ -117,16 +116,12 @@ const GenomicSummary = ({
     [reportImmuneCellTypes],
   );
 
-  const {
-    data: reportMutationBurden,
-    isError: primaryBurdenError,
-    isLoading: isPrimaryBurdenLoading,
-  } = useReportMutationBurden<MutationBurdenType[]>(
+  const { data: reportMutationBurden, isLoading: isPrimaryBurdenLoading } = useReportMutationBurden<MutationBurdenType[]>(
     report?.ident,
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
-      onError: () => console.error('mutation burden call error'),
+      onError: queryOnError('Failed to load mutation burden'),
     },
   );
   const primaryBurden = useMemo(
@@ -134,17 +129,13 @@ const GenomicSummary = ({
     [reportMutationBurden],
   );
 
-  const {
-    data: msi,
-    isError: msiError,
-    isLoading: isMsiLoading,
-  } = useReportMsi<MsiType[], MsiType>(
+  const { data: msi, isLoading: isMsiLoading } = useReportMsi<MsiType[], MsiType>(
     report?.ident,
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
       select: (response) => (response.length ? response[0] : null),
-      onError: () => console.error('msi call error'),
+      onError: queryOnError('Failed to load MSI data'),
     },
   );
 
@@ -156,20 +147,16 @@ const GenomicSummary = ({
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
-      onError: () => console.error('tmbur mutation burden call error'),
+      onError: queryOnErrorSkip404('Failed to load TMB mutation burden'),
     },
   );
 
-  const {
-    data: hla,
-    isError: hlaError,
-    isLoading: isHlaLoading,
-  } = useReportHlaTypes<HlaType[]>(
+  const { data: hla, isLoading: isHlaLoading } = useReportHlaTypes<HlaType[]>(
     report?.ident,
     {
       staleTime: Infinity,
       enabled: !!report?.ident,
-      onError: () => console.error('hla call error'),
+      onError: queryOnError('Failed to load HLA types'),
     },
   );
   const hlaNormal = useMemo(() => {
@@ -193,13 +180,13 @@ const GenomicSummary = ({
   }, [hla]);
 
   const someLoading = isMicrobialLoading
-    && isPrimaryComparatorLoading
-    && isSignaturesLoading
-    && isTCellCd8Loading
-    && isPrimaryBurdenLoading
-    && isMsiLoading
-    && isTmburMutBurLoading
-    && isHlaLoading;
+    || isPrimaryComparatorLoading
+    || isSignaturesLoading
+    || isTCellCd8Loading
+    || isPrimaryBurdenLoading
+    || isMsiLoading
+    || isTmburMutBurLoading
+    || isHlaLoading;
 
   useEffect(() => {
     if (report) {
@@ -225,18 +212,17 @@ const GenomicSummary = ({
         svBurden = null;
       }
 
-      let tCell: null | string;
-      if (tCellCd8 && typeof tCellCd8.score === 'number') {
-        if (tCellCd8.pedsScore) {
+      let tCell: null | string = null;
+      const hasPedsScore = typeof tCellCd8?.pedsScore === 'number';
+      if (tCellCd8 && (typeof tCellCd8.score === 'number' || hasPedsScore)) {
+        if (hasPedsScore) {
           tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile && !tCellCd8.percentileHidden ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
         } else {
           tCell = `${tCellCd8.score} ${tCellCd8.percentile && !tCellCd8.percentileHidden ? `(${tCellCd8.percentile}%)` : ''}`;
         }
-      } else {
-        tCell = null;
       }
 
-      let sigs: null | string;
+      let sigs: null | string = null;
       if (signatures?.length && signatures.find((sig) => sig.selected)) {
         sigs = signatures.filter(({ selected }) => selected)
           .map(({ associations, signature }) => (
@@ -248,7 +234,7 @@ const GenomicSummary = ({
 
       // MSI score now has 2 possible sources: tmbur and reports_msi due to new tool being able to capture MSI in FFPE samples now.
       // Genomic report will now incorporate both sources to retain information in old reports and use updated msi score in future reports
-      let msiStatus: null | string;
+      let msiStatus: null | string = null;
       if (msi && msi.score !== null) {
         if (msi?.score < 20) {
           msiStatus = `${msi?.score} (MSS)`;
@@ -273,6 +259,10 @@ const GenomicSummary = ({
 
         let tmbDisplayValue = 'No data available';
 
+        if (genomeTmb) {
+          tmbDisplayValue = genomeTmb.toFixed(2);
+        }
+
         if (tmburMutBur) {
           const {
             tmbHidden, adjustedTmb, genomeSnvTmb, genomeIndelTmb,
@@ -281,8 +271,6 @@ const GenomicSummary = ({
             tmbDisplayValue = null;
           } else if (adjustedTmb != null) {
             tmbDisplayValue = adjustedTmb.toFixed(2);
-          } else if (genomeTmb) {
-            tmbDisplayValue = genomeTmb.toFixed(2);
           } else if (genomeSnvTmb && genomeIndelTmb) {
             tmbDisplayValue = (genomeSnvTmb + genomeIndelTmb).toFixed(2);
           }
@@ -329,14 +317,12 @@ const GenomicSummary = ({
               : 'No data available',
           },
           {
-            term:
-              tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+            term: hasPedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
             value: tCell,
           },
           {
             term: 'Pediatric CD8+ T Cell Comment',
-            value:
-              tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
+            value: tCellCd8?.pedsScoreComment && hasPedsScore ? tCellCd8.pedsScoreComment : null,
           },
           {
             term: 'CAPTIV-8 Score',
@@ -378,7 +364,7 @@ const GenomicSummary = ({
     }
   }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, hlaNormal, hlaTumour]);
 
-  if (isLoading || !report || !tumourSummary || microbialError || primaryComparatorError || signaturesError || primaryBurdenError || tCellCd8Error || msiError || hlaError) {
+  if (isLoading || !report || !tumourSummary) {
     return null;
   }
 

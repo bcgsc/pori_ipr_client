@@ -1,5 +1,5 @@
 import React from 'react';
-import { Story } from '@storybook/react/types-6-0';
+import { StoryFn } from '@storybook/react';
 import IPRWYSIWYGEditor, { IPRWYSIWYGEditorProps } from '.';
 
 export default {
@@ -9,13 +9,13 @@ export default {
 
 const Template = (args) => <IPRWYSIWYGEditor {...args} />;
 
-export const Empty: Story<IPRWYSIWYGEditorProps> = Template.bind({});
+export const Empty: StoryFn<IPRWYSIWYGEditorProps> = Template.bind({});
 Empty.args = {
   isOpen: true,
   text: null,
 };
 
-export const WithDefaultText: Story<IPRWYSIWYGEditorProps> = Template.bind({});
+export const WithDefaultText: StoryFn<IPRWYSIWYGEditorProps> = Template.bind({});
 WithDefaultText.args = {
   isOpen: true,
   text: 'Default loaded text',
