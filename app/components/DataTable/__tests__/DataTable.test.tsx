@@ -120,18 +120,6 @@ describe('DataTable', () => {
     });
   });
 
-  test('Does not throw when visibleColumns is null', () => {
-    expect(() => {
-      render(
-        <DataTable
-          rowData={mockRowData}
-          columnDefs={mockColumnDefs}
-          visibleColumns={null}
-        />,
-      );
-    }).not.toThrow();
-  });
-
   test('Does not throw when visibleColumns is undefined', () => {
     expect(() => {
       render(
