@@ -250,6 +250,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
   const gridDiv = useRef<HTMLDivElement>();
   const gridRef = useRef<AgGridReact>();
+  const hasRenderedData = useRef(false);
 
   const [showPopover, setShowPopover] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
@@ -296,6 +297,19 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     }
   }, [filterText, gridApi]);
 
+  // Triggers when syncVisibleColumns is called, only after first data render
+  useEffect(() => {
+    if (colApi && visibleColumns?.length && hasRenderedData.current) {
+      const columns = colApi.getColumns();
+      if (!columns) return;
+      const allCols = columns.map((col) => col.getColId());
+      const hiddenColumns = allCols.filter((col) => !visibleColumns.includes(col));
+      colApi.setColumnsVisible(visibleColumns, true);
+      colApi.setColumnsVisible(hiddenColumns, false);
+      colApi.autoSizeColumns(visibleColumns);
+    }
+  }, [colApi, visibleColumns]);
+
   /**
    * Currently only used by Expression Correlation
    */
@@ -326,7 +340,9 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
    */
   useEffect(() => {
     if (colApi) {
-      const names = colApi.getColumns()
+      const columns = colApi.getColumns();
+      if (!columns) return;
+      const names = columns
         .filter((col) => col.getColId().toLowerCase() !== 'actions')
         .map((col) => {
           const parent = col.getOriginalParent();
@@ -365,6 +381,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   }, [colApi, columnDefs, gridApi, isSearch]);
 
   const onFirstDataRendered = useCallback(() => {
+    hasRenderedData.current = true;
     if (syncVisibleColumns) {
       const columns = colApi.getColumns();
       if (!columns) return;
