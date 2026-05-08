@@ -39,7 +39,9 @@ const ReportsTableComponent = ({
     if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
       gridApi.sizeColumnsToFit();
     } else {
-      const allCols = colApi.getAllColumns().map((col) => col.getColId());
+      const columns = colApi.getColumns();
+      if (!columns) return;
+      const allCols = columns.map((col) => col.getColId());
       colApi.autoSizeColumns(allCols);
     }
   }, [colApi, gridApi]);
