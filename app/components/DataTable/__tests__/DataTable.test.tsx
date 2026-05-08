@@ -120,13 +120,13 @@ describe('DataTable', () => {
     });
   });
 
-  test('Does not throw when visibleColumns is null', () => {
+  test('Does not throw when visibleColumns is empty array', () => {
     expect(() => {
       render(
         <DataTable
           rowData={mockRowData}
           columnDefs={mockColumnDefs}
-          visibleColumns={null}
+          visibleColumns={[]}
         />,
       );
     }).not.toThrow();
