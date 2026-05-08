@@ -40,9 +40,10 @@ const ApiPaginatedTable = ({
   const [tempSearchText, setTempSearchText] = useState('');
 
   const onFirstDataRendered = useCallback(() => {
-    const visibleColumnIds = colApi.getAllColumns()
+    const visibleColumnIds = colApi.getColumns()
       .filter((col) => !col.getFlex() && col.isVisible)
       .map((col) => col.getColId());
+      if (!visibleColumnIds) return;
     colApi.autoSizeColumns(visibleColumnIds);
   }, [colApi]);
 

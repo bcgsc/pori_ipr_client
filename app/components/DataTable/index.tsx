@@ -296,17 +296,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     }
   }, [filterText, gridApi]);
 
-  // Triggers when syncVisibleColumns is called
-  useEffect(() => {
-    if (colApi && visibleColumns.length) {
-      const allCols = colApi.getAllColumns().map((col) => col.getColId());
-      const hiddenColumns = allCols.filter((col) => !visibleColumns.includes(col));
-      colApi.setColumnsVisible(visibleColumns, true);
-      colApi.setColumnsVisible(hiddenColumns, false);
-      colApi.autoSizeColumns(visibleColumns);
-    }
-  }, [colApi, visibleColumns]);
-
   /**
    * Currently only used by Expression Correlation
    */
@@ -337,7 +326,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
    */
   useEffect(() => {
     if (colApi) {
-      const names = colApi.getAllColumns()
+      const names = colApi.getColumns()
         .filter((col) => col.getColId().toLowerCase() !== 'actions')
         .map((col) => {
           const parent = col.getOriginalParent();
@@ -361,8 +350,9 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
    */
   useEffect(() => {
     if (colApi && isSearch) {
-      const columns = colApi.getAllColumns();
+      const columns = colApi.getColumns();
       const rowsNodes = gridApi.getRenderedNodes();
+      if (!columns || !rowsNodes) return;
       columns.forEach((column) => {
         const isColumnEmpty = !rowsNodes.some((rowNode) => {
           const value = gridApi.getValue(column, rowNode);
@@ -376,7 +366,9 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
   const onFirstDataRendered = useCallback(() => {
     if (syncVisibleColumns) {
-      const hiddenColumns = colApi.getAllColumns()
+      const columns = colApi.getColumns();
+      if (!columns) return;
+      const hiddenColumns = columns
         .map((col) => col.getColId())
         .filter((col) => !visibleColumns.includes(col));
 
@@ -410,15 +402,20 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
     if (colApi && !isFullLength) {
       // Exclude columns with suppressAutoSize so they keep their initialWidth
-      const visibleColumnIds = colApi.getAllColumns()
-        .filter((col) => (!col.getFlex()
-          && col.isVisible()
-          && !col.getColDef().suppressAutoSize
-        ))
-        .map((col) => col.getColId());
-      colApi.autoSizeColumns(visibleColumnIds);
-      // Recalculate row heights after auto-sizing, since autoHeight rows measure based on column width
-      gridApi.resetRowHeights();
+      const columns = colApi.getColumns();
+      if (columns) {
+        const visibleColumnIds = columns
+          .filter((col) => (!col.getFlex()
+            && col.isVisible()
+            && !col.getColDef().suppressAutoSize
+          ))
+          .map((col) => col.getColId());
+        if (visibleColumnIds.length) {
+          colApi.autoSizeColumns(visibleColumnIds);
+        }
+        // Recalculate row heights after auto-sizing, since autoHeight rows measure based on column width
+        gridApi.resetRowHeights();
+      }
     } if (isFullLength) {
       gridApi.sizeColumnsToFit();
     }
@@ -453,14 +450,18 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
   const handlePopoverClose = useCallback((returnedVisibleCols) => {
     returnedVisibleCols.push('Actions');
-    const returnedHiddenCols = colApi.getAllColumns()
+    const columns = colApi.getColumns();
+    if (!columns) return;
+    const returnedHiddenCols = columns
       .map((col) => col.getColId())
       .filter((col) => !returnedVisibleCols.includes(col));
 
     colApi.setColumnsVisible(returnedVisibleCols, true);
     colApi.setColumnsVisible(returnedHiddenCols, false);
 
-    colApi.autoSizeColumns(returnedVisibleCols);
+    if (returnedVisibleCols?.length) {
+      colApi.autoSizeColumns(returnedVisibleCols);
+    }
 
     if (syncVisibleColumns) {
       syncVisibleColumns(returnedVisibleCols);
