@@ -94,6 +94,7 @@
     "sass": "~1.86.0",
     "sass-embedded": "^1.98.0",
     "sass-loader": "~16.0.7",
+    "storybook": "^8.6.18",
     "style-loader": "~4.0.0",
     "typescript": "~5.7.3",
     "webpack-bundle-analyzer": "~5.2.0",

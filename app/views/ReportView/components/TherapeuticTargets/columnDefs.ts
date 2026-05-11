@@ -1,4 +1,7 @@
-const potentialTherapeuticTargetsColDefs = [{
+import { ColDef } from '@ag-grid-community/core';
+import NotesCellRenderer from './components/NotesCellRenderer';
+
+const potentialTherapeuticTargetsColDefs: ColDef[] = [{
   colId: 'drag',
   rowDrag: true,
   rowDragText: (params) => params.rowNode.data.gene,
@@ -26,6 +29,10 @@ const potentialTherapeuticTargetsColDefs = [{
   headerName: 'Therapy',
   field: 'therapy',
   hide: false,
+  wrapText: true,
+  autoHeight: true,
+  suppressAutoSize: true,
+  initialWidth: 300,
 }, {
   headerName: 'Context',
   field: 'context',
@@ -34,11 +41,19 @@ const potentialTherapeuticTargetsColDefs = [{
   headerName: 'Evidence Level',
   headerComponent: 'headerCellRenderer',
   field: 'evidenceLevel',
+  wrapText: true,
+  autoHeight: true,
+  suppressAutoSize: true,
+  initialWidth: 300,
   hide: false,
 }, {
   headerName: 'Notes',
   field: 'notes',
   hide: false,
+  autoHeight: true,
+  suppressAutoSize: true,
+  initialWidth: 300,
+  cellRendererFramework: NotesCellRenderer,
 }, {
   colId: 'rank',
   field: 'rank',
@@ -53,7 +68,9 @@ const potentialTherapeuticTargetsColDefs = [{
   suppressMenu: true,
 }];
 
-const potentialResistanceToxicityColDefs = potentialTherapeuticTargetsColDefs.map((col) => (col.field === 'context' ? { ...col, hide: false } : col));
+const potentialResistanceToxicityColDefs = potentialTherapeuticTargetsColDefs.map(
+  (col) => (col.field === 'context' ? { ...col, hide: false } : col),
+);
 
 export {
   potentialTherapeuticTargetsColDefs,
