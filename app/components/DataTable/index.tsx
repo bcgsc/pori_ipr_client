@@ -6,7 +6,7 @@ import { AgGridReact, AgGridReactProps } from '@ag-grid-community/react';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
-  ColDef, Column, GridApi, RowNode, RowSpanParams,
+  ColDef, Column, GetRowIdParams, GridApi, RowNode, RowSpanParams,
 } from '@ag-grid-community/core';
 import cloneDeep from 'lodash/cloneDeep';
 import useGrid from '@/hooks/useGrid';
@@ -601,6 +601,11 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     };
   }, [gridApi]);
 
+  const getRowId = useMemo(() => {
+    const hasIdent = rowData.some((row) => row?.ident !== undefined);
+    return hasIdent ? (params: GetRowIdParams) => params.data.ident as string : undefined;
+  }, [rowData]);
+
   // Hiding the auto group column that ag-grid creates when using row grouping
   const autoGroupColumnDef = useMemo(() => ({
     headerName: '',
@@ -693,8 +698,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               paginationAutoPageSize={isFullLength}
               paginationPageSize={MAX_VISIBLE_ROWS}
               autoSizePadding={1}
-              // agGrid falls back to rowIdent as Id when ident does not exist
-              getRowId={(params) => params.data.ident as string}
+              getRowId={getRowId}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
               enableCellTextSelection={!showReorder}
@@ -761,6 +765,8 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     </div>
   );
 });
+
+DataTable.displayName = 'DataTable';
 
 export { DataTableProps };
 export default DataTable;
