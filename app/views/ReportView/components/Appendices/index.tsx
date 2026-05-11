@@ -22,6 +22,8 @@ import ConfigTable from './components/ConfigTable';
 
 import './index.scss';
 
+import { normalizeSeqQCArray } from './normalizeSeqQCArray';
+
 type AppendicesProps = {
   isPrint: boolean;
   loadedDispatch: (section: { type: string }) => void;
@@ -140,25 +142,25 @@ const Appendices = ({
                 Appendix A
               </Typography>
               {!isPharmacogenomic && (
-              <div className="analysis-summary">
-                <Typography variant="h3">
-                  Analysis Summary
-                </Typography>
-                <Grid
-                  alignItems="flex-end"
-                  container
-                  spacing={3}
-                  className="analysis-summary__content"
-                >
-                  {analysisSummary.map(({ label, value }) => (
-                    <Grid key={label as string} item>
-                      <ReadOnlyTextField label={label}>
-                        {value}
-                      </ReadOnlyTextField>
-                    </Grid>
-                  ))}
-                </Grid>
-              </div>
+                <div className="analysis-summary">
+                  <Typography variant="h3">
+                    Analysis Summary
+                  </Typography>
+                  <Grid
+                    alignItems="flex-end"
+                    container
+                    spacing={3}
+                    className="analysis-summary__content"
+                  >
+                    {analysisSummary.map(({ label, value }) => (
+                      <Grid key={label as string} item>
+                        <ReadOnlyTextField label={label}>
+                          {value}
+                        </ReadOnlyTextField>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </div>
               )}
               {report?.sampleInfo && (
                 <DataTable
@@ -170,7 +172,7 @@ const Appendices = ({
               {(appendices?.seqQC) && (
                 <DataTable
                   columnDefs={sequencingProtocolInformationColumnDefs}
-                  rowData={appendices.seqQC}
+                  rowData={normalizeSeqQCArray(appendices.seqQC)}
                   titleText="Sequencing Protocol Information"
                 />
               )}

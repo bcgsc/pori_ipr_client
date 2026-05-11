@@ -250,6 +250,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
   const gridDiv = useRef<HTMLDivElement>();
   const gridRef = useRef<AgGridReact>();
+  const hasRenderedData = useRef(false);
 
   const [showPopover, setShowPopover] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
@@ -296,10 +297,12 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     }
   }, [filterText, gridApi]);
 
-  // Triggers when syncVisibleColumns is called
+  // Triggers when syncVisibleColumns is called, only after first data render
   useEffect(() => {
-    if (colApi && visibleColumns.length) {
-      const allCols = colApi.getAllColumns().map((col) => col.getColId());
+    if (colApi && visibleColumns?.length && hasRenderedData.current) {
+      const columns = colApi.getColumns();
+      if (!columns) return;
+      const allCols = columns.map((col) => col.getColId());
       const hiddenColumns = allCols.filter((col) => !visibleColumns.includes(col));
       colApi.setColumnsVisible(visibleColumns, true);
       colApi.setColumnsVisible(hiddenColumns, false);
@@ -337,7 +340,9 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
    */
   useEffect(() => {
     if (colApi) {
-      const names = colApi.getAllColumns()
+      const columns = colApi.getColumns();
+      if (!columns) return;
+      const names = columns
         .filter((col) => col.getColId().toLowerCase() !== 'actions')
         .map((col) => {
           const parent = col.getOriginalParent();
@@ -361,8 +366,9 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
    */
   useEffect(() => {
     if (colApi && isSearch) {
-      const columns = colApi.getAllColumns();
+      const columns = colApi.getColumns();
       const rowsNodes = gridApi.getRenderedNodes();
+      if (!columns || !rowsNodes) return;
       columns.forEach((column) => {
         const isColumnEmpty = !rowsNodes.some((rowNode) => {
           const value = gridApi.getValue(column, rowNode);
@@ -375,8 +381,11 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   }, [colApi, columnDefs, gridApi, isSearch]);
 
   const onFirstDataRendered = useCallback(() => {
+    hasRenderedData.current = true;
     if (syncVisibleColumns) {
-      const hiddenColumns = colApi.getAllColumns()
+      const columns = colApi.getColumns();
+      if (!columns) return;
+      const hiddenColumns = columns
         .map((col) => col.getColId())
         .filter((col) => !visibleColumns.includes(col));
 
@@ -410,15 +419,20 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
     if (colApi && !isFullLength) {
       // Exclude columns with suppressAutoSize so they keep their initialWidth
-      const visibleColumnIds = colApi.getAllColumns()
-        .filter((col) => (!col.getFlex()
-          && col.isVisible()
-          && !col.getColDef().suppressAutoSize
-        ))
-        .map((col) => col.getColId());
-      colApi.autoSizeColumns(visibleColumnIds);
-      // Recalculate row heights after auto-sizing, since autoHeight rows measure based on column width
-      gridApi.resetRowHeights();
+      const columns = colApi.getColumns();
+      if (columns) {
+        const visibleColumnIds = columns
+          .filter((col) => (!col.getFlex()
+            && col.isVisible()
+            && !col.getColDef().suppressAutoSize
+          ))
+          .map((col) => col.getColId());
+        if (visibleColumnIds.length) {
+          colApi.autoSizeColumns(visibleColumnIds);
+        }
+        // Recalculate row heights after auto-sizing, since autoHeight rows measure based on column width
+        gridApi.resetRowHeights();
+      }
     } if (isFullLength) {
       gridApi.sizeColumnsToFit();
     }
@@ -453,14 +467,18 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
   const handlePopoverClose = useCallback((returnedVisibleCols) => {
     returnedVisibleCols.push('Actions');
-    const returnedHiddenCols = colApi.getAllColumns()
+    const columns = colApi.getColumns();
+    if (!columns) return;
+    const returnedHiddenCols = columns
       .map((col) => col.getColId())
       .filter((col) => !returnedVisibleCols.includes(col));
 
     colApi.setColumnsVisible(returnedVisibleCols, true);
     colApi.setColumnsVisible(returnedHiddenCols, false);
 
-    colApi.autoSizeColumns(returnedVisibleCols);
+    if (returnedVisibleCols?.length) {
+      colApi.autoSizeColumns(returnedVisibleCols);
+    }
 
     if (syncVisibleColumns) {
       syncVisibleColumns(returnedVisibleCols);

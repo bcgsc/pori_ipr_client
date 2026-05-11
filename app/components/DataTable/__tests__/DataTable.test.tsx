@@ -5,7 +5,6 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 
-import api from '@/services/api';
 import DataTable from '..';
 import {
   mockRowData,
@@ -119,6 +118,18 @@ describe('DataTable', () => {
       expect(screen.queryByText(mockColumnDefs[1].headerName)).toBeNull();
       expect(screen.queryByText(mockColumnDefs[2].headerName)).toBeNull();
     });
+  });
+
+  test('Does not throw when visibleColumns is undefined', () => {
+    expect(() => {
+      render(
+        <DataTable
+          rowData={mockRowData}
+          columnDefs={mockColumnDefs}
+          visibleColumns={undefined}
+        />,
+      );
+    }).not.toThrow();
   });
 
   test('The demoDescription is shown', async () => {
