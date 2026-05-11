@@ -54,6 +54,8 @@ import { queryKeys } from '@/queries/queryKeys';
 
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
+  therapeuticAssociationPrintColDefs, cancerRelevancePrintColDefs,
+  COLLAPSEABLE_COLS, sortByCollapseableCols,
 } from './columnDefs';
 import { RapidVariantEditDialog, FIELDS } from './components/RapidVariantEditDialog';
 import { RapidVariantType } from './types';
@@ -631,16 +633,22 @@ const RapidSummary = ({
 
     // Piggy-back added-in attributes to filter out relevance rows where empty
     // Only shown variants where there's at least one treatment
-    const printData = filteredOutEmpty.filter(({ relevanceKey, potentialClinicalAssociation }) => relevanceKey.length !== potentialClinicalAssociation.length);
+    const printData = sortByCollapseableCols(
+      filteredOutEmpty.filter(({ relevanceKey, potentialClinicalAssociation }) => relevanceKey.length !== potentialClinicalAssociation.length),
+      therapeuticAssociationColDefs,
+    );
 
     // Show valid variants first, then the variants that are disabled
-    const webData = [...printData, ...crossedOutVariants];
+    const webData = [
+      ...printData,
+      ...sortByCollapseableCols(crossedOutVariants, therapeuticAssociationColDefs),
+    ];
     if (isPrint) {
       therapeuticAssociationSection = (
         <PrintTable
           data={printData}
-          columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
-          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
+          columnDefs={therapeuticAssociationPrintColDefs}
+          collapseableCols={COLLAPSEABLE_COLS}
           fullWidth
         />
       );
@@ -654,7 +662,7 @@ const RapidSummary = ({
             canEdit={canEdit}
             canDelete={canEdit}
             onDelete={handleVariantDelete(RapidSummaryTable.THERAPEUTIC_ASSOCIATION)}
-            collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'Actions']}
+            collapseColumnFields={[...COLLAPSEABLE_COLS, 'Actions']}
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
@@ -679,12 +687,13 @@ const RapidSummary = ({
 
   let cancerRelevanceSection;
   if (cancerRelevanceResults?.length > 0) {
+    const sortedCancerRelevance = sortByCollapseableCols(cancerRelevanceResults, cancerRelevanceColDefs);
     if (isPrint) {
       cancerRelevanceSection = (
         <PrintTable
-          data={cancerRelevanceResults}
-          columnDefs={cancerRelevanceColDefs.filter((col) => col.headerName !== 'Actions')}
-          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
+          data={sortedCancerRelevance}
+          columnDefs={cancerRelevancePrintColDefs}
+          collapseableCols={COLLAPSEABLE_COLS}
           fullWidth
         />
       );
@@ -695,8 +704,8 @@ const RapidSummary = ({
           canDelete={canEdit}
           onDelete={handleVariantDelete(RapidSummaryTable.CANCER_RELEVANCE)}
           columnDefs={cancerRelevanceColDefs}
-          rowData={cancerRelevanceResults}
-          collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
+          rowData={sortedCancerRelevance}
+          collapseColumnFields={COLLAPSEABLE_COLS}
           isPrint={isPrint}
           isPaginated={!isPrint}
         />
