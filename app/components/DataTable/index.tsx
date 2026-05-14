@@ -6,7 +6,7 @@ import { AgGridReact, AgGridReactProps } from '@ag-grid-community/react';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
-  ColDef, Column, GetRowIdParams, GridApi, RowNode, RowSpanParams,
+  ColDef, Column, ColumnApi, GetRowIdParams, GridApi, RowNode, RowSpanParams,
 } from '@ag-grid-community/core';
 import cloneDeep from 'lodash/cloneDeep';
 import useGrid from '@/hooks/useGrid';
@@ -142,6 +142,8 @@ export type DataTableImperativeHandle = {
   goToEntry: (ident: string) => void;
   hideLoading: () => void;
   showLoading: () => void;
+  getGridApi: () => GridApi | null;
+  getColumnApi: () => ColumnApi | null;
 };
 
 type DataTableCustomProps = {
@@ -160,8 +162,6 @@ type DataTableCustomProps = {
   canToggleColumns?: boolean;
   /* Can the row details be viewed? */
   canViewDetails?: boolean;
-  /* Can the rows be reordered? */
-  canReorder?: boolean;
   /* Column definitions for rowData */
   columnDefs: ColDef[];
   /* Column fields to collapse, this will build the key that will combine these column values to be collapsed */
@@ -190,8 +190,6 @@ type DataTableCustomProps = {
   onDelete?: (row: Record<string, unknown>) => void;
   /* Callback function when edit is started */
   onEdit?: (row: Record<string, unknown>) => void;
-  /* Callback when a row is reordered */
-  onReorder?: (newRow: Record<string, unknown>, newRank: number, tableType?: string) => void;
   /* Callback function when rowData is changed within the DataTable */
   onRowDataChanged?: (rows: Record<string, unknown>[]) => void;
   /* Allows multiple rows to be selected (Note either 'single' or 'multiple') */
@@ -217,7 +215,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   canDelete,
   canEdit,
   canExport = true,
-  canReorder,
   canToggleColumns = true,
   canViewDetails = true,
   collapseColumnFields = null,
@@ -234,7 +231,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   onAdd,
   onDelete,
   onEdit,
-  onReorder,
   onRowDataChanged,
   rowData = [],
   rowSelection = undefined,
@@ -254,16 +250,15 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
   const [showPopover, setShowPopover] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
-  const [showReorder, setShowReorder] = useState(false);
   const [columnWithNames, setColumnWithNames] = useState<Column[] | ColumnPickerProps['columns']>([]);
 
   const defaultColDef = useMemo(() => ({
-    sortable: !showReorder,
+    sortable: true,
     resizable: true,
-    filter: !showReorder,
+    filter: true,
     editable: false,
     valueFormatter: (params) => (params.value === null ? '' : params.value),
-  }), [showReorder]);
+  }), []);
 
   // Enhanced ColumnDefs here if rows are to be collapsed
   const columnDefs = useMemo(() => {
@@ -288,13 +283,8 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
         }
       });
     }
-    if (showReorder) {
-      nextColDefs = nextColDefs.map((cd) => (
-        cd.colId === 'drag' ? { ...cd, hide: false } : cd
-      ));
-    }
     return nextColDefs;
-  }, [colDefs, collapseColumnFields, showReorder]);
+  }, [colDefs, collapseColumnFields]);
 
   useEffect(() => {
     if (gridApi) {
@@ -348,7 +338,10 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       const columns = colApi.getColumns();
       if (!columns) return;
       const names = columns
-        .filter((col) => col.getColId().toLowerCase() !== 'actions')
+        .filter((col) => {
+          const id = col.getColId().toLowerCase();
+          return id !== 'actions' && id !== 'drag';
+        })
         .map((col) => {
           const parent = col.getOriginalParent();
           const nextCol: ColumnPickerProps['columns'][number] = col;
@@ -443,22 +436,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     }
   }, [colApi, columnDefs, gridApi, isFullLength, isPrint, rowData.length, syncVisibleColumns, visibleColumns]);
 
-  const toggleReorder = useCallback(() => {
-    setShowReorder((prev) => !prev);
-  }, []);
-
-  useEffect(() => {
-    if (!colApi || !showReorder) return;
-    colApi.applyColumnState({
-      state: [{ colId: 'rank', sort: 'asc' }],
-      defaultState: { sort: null },
-    });
-  }, [colApi, showReorder, columnDefs]);
-
-  const onRowDragEnd = useCallback(async (event) => {
-    onReorder(event.node.data, event.overIndex, tableType);
-  }, [onReorder, tableType]);
-
   const handlePopoverClose = useCallback((returnedVisibleCols) => {
     returnedVisibleCols.push('Actions');
     const columns = colApi.getColumns();
@@ -466,11 +443,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     const returnedHiddenCols = columns
       .map((col) => col.getColId())
       .filter((col) => !returnedVisibleCols.includes(col));
-
-    const dragVisible = returnedVisibleCols.includes('drag');
-    if (dragVisible !== showReorder) {
-      setShowReorder(dragVisible);
-    }
 
     colApi.setColumnsVisible(returnedVisibleCols, true);
     colApi.setColumnsVisible(returnedHiddenCols, false);
@@ -483,7 +455,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       syncVisibleColumns(returnedVisibleCols);
     }
     setShowPopover(false);
-  }, [colApi, showReorder, syncVisibleColumns]);
+  }, [colApi, syncVisibleColumns]);
 
   const RowActionCellRenderer = useCallback((row) => (
     <ActionCellRenderer
@@ -548,14 +520,11 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       case 'export':
         handleTSVExport();
         break;
-      case 'reorder':
-        toggleReorder();
-        break;
       default:
         break;
     }
     setMenuAnchor(null);
-  }, [handleTSVExport, onAdd, tableType, toggleReorder]);
+  }, [handleTSVExport, onAdd, tableType]);
 
   const handlePaginationChanged = useCallback((params) => {
     const {
@@ -597,8 +566,10 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       },
       showLoading: () => gridApi.showLoadingOverlay(),
       hideLoading: () => gridApi.hideOverlay(),
+      getGridApi: () => gridApi,
+      getColumnApi: () => colApi,
     };
-  }, [gridApi]);
+  }, [gridApi, colApi]);
 
   const getRowId = useMemo(() => {
     const hasIdent = rowData.some((row) => row?.ident !== undefined);
@@ -627,7 +598,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
                   <QueryEditDialog isApiLoading={isApiLoading} />
                 </span>
               )}
-              {(canAdd || canToggleColumns || canExport || canReorder) && (
+              {(canAdd || canToggleColumns || canExport || additionalTableMenuItems) && (
                 <span className="data-table__action">
                   <IconButton
                     onClick={(event) => setMenuAnchor(event.currentTarget)}
@@ -654,11 +625,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
                     {canExport && (
                     <MenuItem onClick={() => handleMenuItemClick('export')}>
                       Export to TSV
-                    </MenuItem>
-                    )}
-                    {canReorder && (
-                    <MenuItem onClick={() => handleMenuItemClick('reorder')}>
-                      Reorder Rows
                     </MenuItem>
                     )}
                     {additionalTableMenuItems && additionalTableMenuItems(gridApi)}
@@ -698,9 +664,8 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               paginationPageSize={MAX_VISIBLE_ROWS}
               autoSizePadding={1}
               getRowId={getRowId}
-              onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
-              enableCellTextSelection={!showReorder}
+              enableCellTextSelection
               onColumnResized={handleColumnResized}
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
