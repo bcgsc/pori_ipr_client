@@ -149,7 +149,7 @@ export type DataTableImperativeHandle = {
 type DataTableCustomProps = {
   /* Text shown next to the add row button */
   addText?: string;
-  additionalTableMenuItems?: (gridApi: GridApi) => JSX.Element | JSX.Element[];
+  additionalTableMenuItems?: (gridApi: GridApi, closeMenu: () => void) => JSX.Element | JSX.Element[];
   /* Can rows be added to the table? */
   canAdd?: boolean;
   /* Can rows be deleted? */
@@ -627,7 +627,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
                       Export to TSV
                     </MenuItem>
                     )}
-                    {additionalTableMenuItems && additionalTableMenuItems(gridApi)}
+                    {additionalTableMenuItems && additionalTableMenuItems(gridApi, () => setMenuAnchor(null))}
                   </Menu>
                 </span>
               )}

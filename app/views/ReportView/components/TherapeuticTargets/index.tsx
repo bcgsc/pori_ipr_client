@@ -5,7 +5,7 @@ import React, {
 import orderBy from 'lodash/orderBy';
 import { MenuItem, Typography } from '@mui/material';
 import { cloneDeep } from 'lodash';
-import { ColDef } from '@ag-grid-community/core';
+import { ColDef, GridApi } from '@ag-grid-community/core';
 
 import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
 import useReport from '@/hooks/useReport';
@@ -141,14 +141,14 @@ const Therapeutic = ({
     [reorderingTable],
   );
 
-  const therapeuticMenuItems = () => (
-    <MenuItem onClick={() => toggleReorder('therapeutic')}>
+  const therapeuticMenuItems = (_gridApi: GridApi, closeMenu: () => void) => (
+    <MenuItem onClick={() => { toggleReorder('therapeutic'); closeMenu(); }}>
       {reorderingTable === 'therapeutic' ? 'Stop Reordering' : 'Reorder Rows'}
     </MenuItem>
   );
 
-  const chemoresistanceMenuItems = () => (
-    <MenuItem onClick={() => toggleReorder('chemoresistance')}>
+  const chemoresistanceMenuItems = (_gridApi: GridApi, closeMenu: () => void) => (
+    <MenuItem onClick={() => { toggleReorder('chemoresistance'); closeMenu(); }}>
       {reorderingTable === 'chemoresistance' ? 'Stop Reordering' : 'Reorder Rows'}
     </MenuItem>
   );
