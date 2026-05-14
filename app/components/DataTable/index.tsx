@@ -288,8 +288,13 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
         }
       });
     }
+    if (showReorder) {
+      nextColDefs = nextColDefs.map((cd) => (
+        cd.colId === 'drag' ? { ...cd, hide: false } : cd
+      ));
+    }
     return nextColDefs;
-  }, [colDefs, collapseColumnFields]);
+  }, [colDefs, collapseColumnFields, showReorder]);
 
   useEffect(() => {
     if (gridApi) {
@@ -439,27 +444,16 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   }, [colApi, columnDefs, gridApi, isFullLength, isPrint, rowData.length, syncVisibleColumns, visibleColumns]);
 
   const toggleReorder = useCallback(() => {
-    if (!showReorder) {
-      columnDefs.forEach((col) => {
-        col.sortable = false;
-        col.filter = false;
-      });
-      colApi.applyColumnState({ state: [{ colId: 'rank', sort: 'asc' }], defaultState: { sort: null } });
-      gridApi.setColumnDefs(columnDefs);
+    setShowReorder((prev) => !prev);
+  }, []);
 
-      colApi.setColumnVisible('drag', true);
-      setShowReorder(true);
-    } else {
-      columnDefs.forEach((col) => {
-        col.sortable = true;
-        col.filter = true;
-      });
-      gridApi.setColumnDefs(columnDefs);
-
-      colApi.setColumnVisible('drag', false);
-      setShowReorder(false);
-    }
-  }, [colApi, columnDefs, gridApi, showReorder]);
+  useEffect(() => {
+    if (!colApi || !showReorder) return;
+    colApi.applyColumnState({
+      state: [{ colId: 'rank', sort: 'asc' }],
+      defaultState: { sort: null },
+    });
+  }, [colApi, showReorder, columnDefs]);
 
   const onRowDragEnd = useCallback(async (event) => {
     onReorder(event.node.data, event.overIndex, tableType);
@@ -473,6 +467,11 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       .map((col) => col.getColId())
       .filter((col) => !returnedVisibleCols.includes(col));
 
+    const dragVisible = returnedVisibleCols.includes('drag');
+    if (dragVisible !== showReorder) {
+      setShowReorder(dragVisible);
+    }
+
     colApi.setColumnsVisible(returnedVisibleCols, true);
     colApi.setColumnsVisible(returnedHiddenCols, false);
 
@@ -484,7 +483,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       syncVisibleColumns(returnedVisibleCols);
     }
     setShowPopover(false);
-  }, [colApi, syncVisibleColumns]);
+  }, [colApi, showReorder, syncVisibleColumns]);
 
   const RowActionCellRenderer = useCallback((row) => (
     <ActionCellRenderer
