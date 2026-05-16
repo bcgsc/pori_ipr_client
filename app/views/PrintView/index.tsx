@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useReducer, useMemo, lazy,
+  useEffect, useReducer, useMemo, useRef, lazy,
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@mui/material';
@@ -169,8 +169,16 @@ const Print = ({
     slides: false,
     appendices: false,
   });
-  const [isPrintDialogShown, setIsPrintDialogShown] = useState(false);
   const paged = useMemo(() => new Previewer(), []);
+  // Synchronous re-entry latch for `paged.preview`. React can re-fire the
+  // print effect during the awaits inside showPrint (e.g. on a late
+  // `loadedDispatch` updating reportSectionsLoaded), starting a second
+  // showPrint concurrently. A second paged.preview on the same Previewer
+  // re-registers all built-in handlers (Breaks, AtPage, …) onto the same
+  // polisher.hooks, so each declaration fires twice and Breaks's
+  // `dList.remove(dItem)` throws "item doesn't belong to list" on the
+  // second pass. This ref latches synchronously and prevents that.
+  const isPrinting = useRef(false);
 
   const renderSections = useMemo(() => {
     if (report && template) { // TODO remove checks on 'summary' and template name once data updated in prod
@@ -231,8 +239,9 @@ const Print = ({
       reportSectionsLoaded
       && template?.sections.length
       && allSectionsLoaded
-      && !isPrintDialogShown
+      && !isPrinting.current
     ) {
+      isPrinting.current = true;
       const showPrint = async () => {
         await paged.registerHandlers(TableOverflowHandler, SplitRowSpanHandler);
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
@@ -268,11 +277,10 @@ const Print = ({
         }
 
         window.print();
-        setIsPrintDialogShown(true);
       };
       showPrint();
     }
-  }, [isPrintDialogShown, paged, report, reportSectionsLoaded, template]);
+  }, [paged, report, reportSectionsLoaded, template]);
 
   return (
     <ReportContext.Provider value={reportContextValue}>
