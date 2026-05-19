@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef } from '@ag-grid-community/core';
+
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 const columnDefs: ColDef[] = [{
@@ -27,6 +28,10 @@ const columnDefs: ColDef[] = [{
 }, {
   headerName: 'Zygosity',
   field: 'zygosity',
+  hide: false,
+}, {
+  headerName: 'Exon',
+  field: 'exon',
   hide: false,
 }, {
   headerName: 'Ref/Alt',
