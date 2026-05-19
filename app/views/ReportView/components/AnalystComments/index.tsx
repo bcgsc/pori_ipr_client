@@ -162,10 +162,14 @@ const AnalystComments = ({
         );
 
         if (isSigned) {
-          const isResolved = await showConfirmDialog(commentCall, true);
+          // The hook emits the success snackbar and resets signature state;
+          // we only refresh the comments in place (no page reload anymore).
+          const isResolved = await showConfirmDialog(commentCall, true, 'Comment updated');
           if (isResolved) {
             await refetchComments();
-            snackbar.success('Comment updated');
+            if (shouldCloseEditor) {
+              setIsEditorOpen(false);
+            }
           }
         } else {
           await commentCall.request();

@@ -99,10 +99,10 @@ const ReportView = (): JSX.Element => {
         console.error('Unable to obtain report signatures', signaturesErr);
       },
       onSuccess: (sigs) => {
+        // Don't flip on a null/failed fetch: that would suppress the
+        // signature-removal warning on a still-signed report.
         if (!sigs) { return; }
-        if (sigs.reviewerSignature?.ident || sigs.authorSignature?.ident) {
-          setIsSigned(true);
-        }
+        setIsSigned(Boolean(sigs.reviewerSignature?.ident || sigs.authorSignature?.ident));
       },
     },
   );
