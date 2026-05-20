@@ -2,6 +2,7 @@ import React, {
   useEffect, useState, useContext, useCallback,
 } from 'react';
 import orderBy from 'lodash/orderBy';
+import { useQueryClient } from 'react-query';
 import { Typography } from '@mui/material';
 
 import DemoDescription from '@/components/DemoDescription';
@@ -12,10 +13,10 @@ import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import ImageType from '@/components/Image/types';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { MutationSignatureType } from '@/common';
+
 import EditDialog from './components/EditDialog';
-import MutationSignatureType from './types';
 import columnDefs from './columnDefs';
-import { useQueryClient } from 'react-query';
 
 import './index.scss';
 
@@ -94,11 +95,11 @@ const MutationSignatures = ({
         setter(newSignatures);
       }
       queryClient.refetchQueries({
-        queryKey: [`/reports/${report.ident}/mutation-signatures`]
+        queryKey: [`/reports/${report.ident}/mutation-signatures`],
       });
     }
     setEditData(null);
-  }, [dbsSignatures, idSignatures, sbsSignatures]);
+  }, [dbsSignatures, idSignatures, queryClient, report.ident, sbsSignatures]);
 
   const getImage = useCallback((key, isSmall) => {
     const image = images.find((img) => img.key === key);
@@ -180,5 +181,3 @@ const MutationSignatures = ({
 };
 
 export default withLoading(MutationSignatures);
-
-export type { MutationSignatureType };
