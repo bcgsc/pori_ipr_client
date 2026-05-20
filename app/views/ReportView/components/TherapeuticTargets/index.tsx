@@ -1,17 +1,20 @@
 /* eslint-disable no-param-reassign */
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useContext, useCallback, useRef,
 } from 'react';
 import orderBy from 'lodash/orderBy';
 import { Typography } from '@mui/material';
 import { cloneDeep } from 'lodash';
 
-import DataTable from '@/components/DataTable';
+import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
 import useReport from '@/hooks/useReport';
+import { useReportTherapeuticTargets } from '@/queries/get';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
+import ConfirmContext from '@/context/ConfirmContext';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
@@ -106,36 +109,60 @@ const Therapeutic = ({
 
   const { canEdit } = useReport();
   const { report } = useContext(ReportContext);
+  const { isSigned } = useContext(ConfirmContext);
+  const { showConfirmDialog } = useConfirmDialog();
 
-  const getData = useCallback(async () => {
-    if (report) {
-      try {
-        setIsLoading(true);
-        const therapeuticResp = await api.get(
-          `/reports/${report.ident}/therapeutic-targets`,
-        ).request();
-        const [
-          filteredTherapeutic,
-          filteredChemoresistance,
-        ] = filterType(therapeuticResp, 'therapeutic', 'chemoresistance');
-        if (isPrint) {
-          setTherapeuticData(removeExtraProps(filteredTherapeutic));
-          setChemoresistanceData(removeExtraProps(filteredChemoresistance));
-        } else {
-          setTherapeuticData(orderRankStartingByZero(filteredTherapeutic));
-          setChemoresistanceData(orderRankStartingByZero(filteredChemoresistance));
-        }
-      } catch (err) {
+  const therapeuticTableRef = useRef<DataTableImperativeHandle>(null);
+  const chemoresistanceTableRef = useRef<DataTableImperativeHandle>(null);
+
+  const {
+    data: therapeuticTargets,
+    isLoading: isQueryLoading,
+    isFetching: isTherapeuticTargetsFetching,
+    refetch: refetchTherapeuticTargets,
+  } = useReportTherapeuticTargets<TherapeuticType[]>(
+    report?.ident,
+    {
+      enabled: Boolean(report?.ident),
+      onError: (err) => {
         snackbar.error(`Network error: ${err}`);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  }, [report, setIsLoading, isPrint]);
+      },
+    },
+  );
 
   useEffect(() => {
-    getData();
-  }, [getData]);
+    setIsLoading(isQueryLoading);
+  }, [isQueryLoading, setIsLoading]);
+
+  // Drive each DataTable's built-in loading overlay during refetches: AG Grid
+  // covers the row area and suppresses drag while the overlay is shown, so the
+  // user can't act on stale rows. The toolbar Add button stays clickable, but
+  // it only opens an empty dialog for a new row — not dangerous to leave open.
+  useEffect(() => {
+    if (isTherapeuticTargetsFetching) {
+      therapeuticTableRef.current?.showLoading();
+      chemoresistanceTableRef.current?.showLoading();
+    } else {
+      therapeuticTableRef.current?.hideLoading();
+      chemoresistanceTableRef.current?.hideLoading();
+    }
+  }, [isTherapeuticTargetsFetching]);
+
+  useEffect(() => {
+    if (!therapeuticTargets) { return; }
+    // Clone so the in-place rank reassignment below never mutates the query cache.
+    const [
+      filteredTherapeutic,
+      filteredChemoresistance,
+    ] = filterType(cloneDeep(therapeuticTargets), 'therapeutic', 'chemoresistance');
+    if (isPrint) {
+      setTherapeuticData(removeExtraProps(filteredTherapeutic));
+      setChemoresistanceData(removeExtraProps(filteredChemoresistance));
+    } else {
+      setTherapeuticData(orderRankStartingByZero(filteredTherapeutic));
+      setChemoresistanceData(orderRankStartingByZero(filteredChemoresistance));
+    }
+  }, [therapeuticTargets, isPrint]);
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -164,27 +191,24 @@ const Therapeutic = ({
           setter((prevVal) => [...prevVal, newData]);
         }
         snackbar.success('Row updated');
-        // Update state to reflect new data after entry deleted
-        getData();
+        // Resync with the server (rank normalization, deleted entries, etc.).
+        refetchTherapeuticTargets();
       }
     } catch (err) {
       snackbar.error(`Error, row not updated: ${err}`);
     } finally {
       setEditData(null);
     }
-  }, [chemoresistanceData, getData, therapeuticData]);
+  }, [chemoresistanceData, refetchTherapeuticTargets, therapeuticData]);
 
   const handleReorder = useCallback(async (newRow, newRank, tableType) => {
     try {
-      let setter: React.Dispatch<React.SetStateAction<TherapeuticDataTableType>>;
       let data: TherapeuticDataTableType;
       const oldRank = newRow.rank;
 
       if (tableType === 'therapeutic') {
-        setter = setTherapeuticData;
         data = cloneDeep(therapeuticData);
       } else {
-        setter = setChemoresistanceData;
         data = cloneDeep(chemoresistanceData);
       }
 
@@ -210,24 +234,49 @@ const Therapeutic = ({
       });
 
       // @ts-expect-error - specialized data object vs a general API call
-      await api.put(`/reports/${report.ident}/therapeutic-targets`, newData).request();
-      setter(newData);
-      snackbar.success('Row updated');
+      const reorderCall = api.put(`/reports/${report.ident}/therapeutic-targets`, newData);
+
+      // Show the loading overlay immediately so the user can't act on the
+      // table while the PUT (and follow-up refetch) is in flight. We await the
+      // refetch so `finally` runs only after the table state is settled — that
+      // way the isFetching effect has already hidden the overlay and the
+      // explicit hideLoading() below is just a safety net (also handles the
+      // error path, where isFetching never flips).
+      if (isSigned) {
+        // Persisting this change clears the report signatures; confirm first.
+        // The hook shows the success snackbar and resets signature state; on
+        // cancel the state is left untouched so the dragged row snaps back.
+        const confirmed = await showConfirmDialog(reorderCall, true, 'Row updated');
+        if (confirmed) {
+          therapeuticTableRef.current?.showLoading();
+          chemoresistanceTableRef.current?.showLoading();
+          await refetchTherapeuticTargets();
+        }
+      } else {
+        therapeuticTableRef.current?.showLoading();
+        chemoresistanceTableRef.current?.showLoading();
+        await reorderCall.request();
+        snackbar.success('Row updated');
+        await refetchTherapeuticTargets();
+      }
     } catch (err) {
       snackbar.error(`Error, row not updated: ${err}`);
+    } finally {
+      therapeuticTableRef.current?.hideLoading();
+      chemoresistanceTableRef.current?.hideLoading();
     }
-  }, [chemoresistanceData, therapeuticData, report]);
+  }, [chemoresistanceData, therapeuticData, report, isSigned, showConfirmDialog, refetchTherapeuticTargets]);
 
   const handleDeleteTherapeuticTarget = useCallback(async (rowNodeData: TherapeuticDataTableType[number]) => {
     const { ident: therapeuticIdent } = rowNodeData;
     try {
       await api.del(`/reports/${report.ident}/therapeutic-targets/${therapeuticIdent}`, {}).request();
       snackbar.success(`Successfully deleted ${therapeuticIdent}`);
-      getData();
+      refetchTherapeuticTargets();
     } catch (e) {
       snackbar.error('Failed to delete therapeutic option: ', e);
     }
-  }, [report.ident, getData]);
+  }, [report.ident, refetchTherapeuticTargets]);
 
   if (isPrint && printVersion === 'standardLayout') {
     return (
@@ -303,6 +352,7 @@ const Therapeutic = ({
       {!isLoading && (
         <>
           <DataTable
+            ref={therapeuticTableRef}
             titleText="Potential Therapeutic Targets"
             columnDefs={potentialTherapeuticTargetsColDefs}
             canAdd={canEdit}
@@ -320,6 +370,7 @@ const Therapeutic = ({
             tableType="therapeutic"
           />
           <DataTable
+            ref={chemoresistanceTableRef}
             titleText="Potential Resistance and Toxicity"
             columnDefs={potentialResistanceToxicityColDefs}
             canAdd={canEdit}
