@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useContext, useCallback, useMemo, useRef,
 } from 'react';
 import orderBy from 'lodash/orderBy';
-import { Typography } from '@mui/material';
+import { MenuItem, Typography } from '@mui/material';
 import { cloneDeep } from 'lodash';
+import { ColDef, GridApi } from '@ag-grid-community/core';
 
-import DataTable from '@/components/DataTable';
+import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
 import useReport from '@/hooks/useReport';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -106,6 +107,51 @@ const Therapeutic = ({
 
   const { canEdit } = useReport();
   const { report } = useContext(ReportContext);
+
+  const therapeuticTableRef = useRef<DataTableImperativeHandle>(null);
+  const chemoresistanceTableRef = useRef<DataTableImperativeHandle>(null);
+  const [reorderingTable, setReorderingTable] = useState<null | 'therapeutic' | 'chemoresistance'>(null);
+
+  const toggleReorder = (which: 'therapeutic' | 'chemoresistance') => {
+    setReorderingTable((prev) => (prev === which ? null : which));
+  };
+
+  useEffect(() => {
+    if (!reorderingTable) return;
+    const ref = reorderingTable === 'therapeutic' ? therapeuticTableRef : chemoresistanceTableRef;
+    ref.current?.getColumnApi()?.applyColumnState({
+      state: [{ colId: 'rank', sort: 'asc' }],
+      defaultState: { sort: null },
+    });
+  }, [reorderingTable]);
+
+  const withReorderColDefs = (base: ColDef[], reorder: boolean): ColDef[] => base.map((col) => {
+    if (col.colId === 'drag') return { ...col, hide: !reorder };
+    if (reorder) return { ...col, sortable: false, filter: false };
+    return col;
+  });
+
+  const therapeuticColDefs = useMemo(
+    () => withReorderColDefs(potentialTherapeuticTargetsColDefs, reorderingTable === 'therapeutic'),
+    [reorderingTable],
+  );
+
+  const chemoresistanceColDefs = useMemo(
+    () => withReorderColDefs(potentialResistanceToxicityColDefs, reorderingTable === 'chemoresistance'),
+    [reorderingTable],
+  );
+
+  const therapeuticMenuItems = (_gridApi: GridApi, closeMenu: () => void) => (
+    <MenuItem onClick={() => { toggleReorder('therapeutic'); closeMenu(); }}>
+      {reorderingTable === 'therapeutic' ? 'Stop Reordering' : 'Reorder Rows'}
+    </MenuItem>
+  );
+
+  const chemoresistanceMenuItems = (_gridApi: GridApi, closeMenu: () => void) => (
+    <MenuItem onClick={() => { toggleReorder('chemoresistance'); closeMenu(); }}>
+      {reorderingTable === 'chemoresistance' ? 'Stop Reordering' : 'Reorder Rows'}
+    </MenuItem>
+  );
 
   const getData = useCallback(async () => {
     if (report) {
@@ -303,36 +349,38 @@ const Therapeutic = ({
       {!isLoading && (
         <>
           <DataTable
+            ref={therapeuticTableRef}
             titleText="Potential Therapeutic Targets"
-            columnDefs={potentialTherapeuticTargetsColDefs}
+            columnDefs={therapeuticColDefs}
             canAdd={canEdit}
             canDelete={canEdit}
             canEdit={canEdit}
             canExport
-            canReorder={canEdit}
+            additionalTableMenuItems={canEdit ? therapeuticMenuItems : null}
             Header={EvidenceHeader}
             isPaginated={false}
             onAdd={handleEditStart}
             onDelete={handleDeleteTherapeuticTarget}
             onEdit={handleEditStart}
-            onReorder={handleReorder}
+            onRowDragEnd={(e) => handleReorder(e.node.data, e.overIndex, 'therapeutic')}
             rowData={therapeuticData}
             tableType="therapeutic"
           />
           <DataTable
+            ref={chemoresistanceTableRef}
             titleText="Potential Resistance and Toxicity"
-            columnDefs={potentialResistanceToxicityColDefs}
+            columnDefs={chemoresistanceColDefs}
             canAdd={canEdit}
             canDelete={canEdit}
             canEdit={canEdit}
             canExport
-            canReorder={canEdit}
+            additionalTableMenuItems={canEdit ? chemoresistanceMenuItems : null}
             Header={EvidenceHeader}
             isPaginated={false}
             onAdd={handleEditStart}
             onDelete={handleDeleteTherapeuticTarget}
             onEdit={handleEditStart}
-            onReorder={handleReorder}
+            onRowDragEnd={(e) => handleReorder(e.node.data, e.overIndex, 'chemoresistance')}
             rowData={chemoresistanceData}
             tableType="chemoresistance"
           />
