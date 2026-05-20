@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useContext, useCallback, useRef,
 } from 'react';
 import orderBy from 'lodash/orderBy';
 import { Typography } from '@mui/material';
 import { cloneDeep } from 'lodash';
 
-import DataTable from '@/components/DataTable';
+import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
 import useReport from '@/hooks/useReport';
 import { useReportTherapeuticTargets } from '@/queries/get';
 import api from '@/services/api';
@@ -112,9 +112,13 @@ const Therapeutic = ({
   const { isSigned } = useContext(ConfirmContext);
   const { showConfirmDialog } = useConfirmDialog();
 
+  const therapeuticTableRef = useRef<DataTableImperativeHandle>(null);
+  const chemoresistanceTableRef = useRef<DataTableImperativeHandle>(null);
+
   const {
     data: therapeuticTargets,
     isLoading: isQueryLoading,
+    isFetching: isTherapeuticTargetsFetching,
     refetch: refetchTherapeuticTargets,
   } = useReportTherapeuticTargets<TherapeuticType[]>(
     report?.ident,
@@ -129,6 +133,20 @@ const Therapeutic = ({
   useEffect(() => {
     setIsLoading(isQueryLoading);
   }, [isQueryLoading, setIsLoading]);
+
+  // Drive each DataTable's built-in loading overlay during refetches: AG Grid
+  // covers the row area and suppresses drag while the overlay is shown, so the
+  // user can't act on stale rows. The toolbar Add button stays clickable, but
+  // it only opens an empty dialog for a new row — not dangerous to leave open.
+  useEffect(() => {
+    if (isTherapeuticTargetsFetching) {
+      therapeuticTableRef.current?.showLoading();
+      chemoresistanceTableRef.current?.showLoading();
+    } else {
+      therapeuticTableRef.current?.hideLoading();
+      chemoresistanceTableRef.current?.hideLoading();
+    }
+  }, [isTherapeuticTargetsFetching]);
 
   useEffect(() => {
     if (!therapeuticTargets) { return; }
@@ -218,23 +236,34 @@ const Therapeutic = ({
       // @ts-expect-error - specialized data object vs a general API call
       const reorderCall = api.put(`/reports/${report.ident}/therapeutic-targets`, newData);
 
+      // Show the loading overlay immediately so the user can't act on the
+      // table while the PUT (and follow-up refetch) is in flight. We await the
+      // refetch so `finally` runs only after the table state is settled — that
+      // way the isFetching effect has already hidden the overlay and the
+      // explicit hideLoading() below is just a safety net (also handles the
+      // error path, where isFetching never flips).
       if (isSigned) {
         // Persisting this change clears the report signatures; confirm first.
         // The hook shows the success snackbar and resets signature state; on
-        // confirm we refetch so the table reflects the persisted order, on
         // cancel the state is left untouched so the dragged row snaps back.
         const confirmed = await showConfirmDialog(reorderCall, true, 'Row updated');
         if (confirmed) {
-          // Hook already showed the 'Row updated' snackbar; just resync.
-          refetchTherapeuticTargets();
+          therapeuticTableRef.current?.showLoading();
+          chemoresistanceTableRef.current?.showLoading();
+          await refetchTherapeuticTargets();
         }
       } else {
+        therapeuticTableRef.current?.showLoading();
+        chemoresistanceTableRef.current?.showLoading();
         await reorderCall.request();
         snackbar.success('Row updated');
-        refetchTherapeuticTargets();
+        await refetchTherapeuticTargets();
       }
     } catch (err) {
       snackbar.error(`Error, row not updated: ${err}`);
+    } finally {
+      therapeuticTableRef.current?.hideLoading();
+      chemoresistanceTableRef.current?.hideLoading();
     }
   }, [chemoresistanceData, therapeuticData, report, isSigned, showConfirmDialog, refetchTherapeuticTargets]);
 
@@ -323,6 +352,7 @@ const Therapeutic = ({
       {!isLoading && (
         <>
           <DataTable
+            ref={therapeuticTableRef}
             titleText="Potential Therapeutic Targets"
             columnDefs={potentialTherapeuticTargetsColDefs}
             canAdd={canEdit}
@@ -340,6 +370,7 @@ const Therapeutic = ({
             tableType="therapeutic"
           />
           <DataTable
+            ref={chemoresistanceTableRef}
             titleText="Potential Resistance and Toxicity"
             columnDefs={potentialResistanceToxicityColDefs}
             canAdd={canEdit}
