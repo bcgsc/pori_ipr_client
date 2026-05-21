@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import ReportContext from '@/context/ReportContext';
 import { ReportContextType } from '@/context/ReportContext/types';
-import ConfirmContext from '@/context/ConfirmContext';
 import snackbar from '@/services/SnackbarUtils';
 import { ApiCall, ApiCallSet } from '@/services/api';
 import { ReportType } from '@/common';
@@ -36,8 +35,6 @@ const buildReport = (templateName = 'genomic'): ReportType => ({
   template: { name: templateName },
 } as unknown as ReportType);
 
-const setIsSignedMock = jest.fn();
-
 const makeApiCall = (requestImpl: jest.Mock): ApiCall => Object.assign(
   Object.create(ApiCall.prototype) as ApiCall,
   { request: requestImpl },
@@ -60,16 +57,10 @@ const wrapperFactory = (templateName = 'genomic') => {
       reportTemplateName: templateName,
       refetchReport: (() => null) as unknown as ReportContextType['refetchReport'],
     }), []);
-    const confirmValue = useMemo(() => ({
-      isSigned: true,
-      setIsSigned: setIsSignedMock,
-    }), []);
     return (
       <QueryClientProvider client={queryClient}>
         <ReportContext.Provider value={reportValue}>
-          <ConfirmContext.Provider value={confirmValue}>
-            {children}
-          </ConfirmContext.Provider>
+          {children}
         </ReportContext.Provider>
       </QueryClientProvider>
     );
@@ -83,7 +74,6 @@ describe('useConfirmDialog', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     capturedOnClose = null;
-    setIsSignedMock.mockClear();
 
     // The hook renders into this app-wide container via createRoot.
     const container = document.createElement('div');
@@ -186,7 +176,7 @@ describe('useConfirmDialog', () => {
   });
 
   describe('awaitable (waitForConfirmation = true)', () => {
-    test('resolves true, invalidates signatures, and clears isSigned on confirm', async () => {
+    test('resolves true and invalidates signatures on confirm', async () => {
       const requestMock = jest.fn().mockResolvedValue({});
       const apiCallSet = makeApiCallSet(requestMock);
 
@@ -207,7 +197,6 @@ describe('useConfirmDialog', () => {
       await expect(promise).resolves.toBe(true);
       expect(requestMock).toHaveBeenCalledTimes(1);
       expect(invalidateSpy).toHaveBeenCalledWith(queryKeys.reports.reportSignatures(REPORT_IDENT));
-      expect(setIsSignedMock).toHaveBeenCalledWith(false);
       // Awaitable path must not reload — caller refreshes its own data.
       expect(reloadWindowMock).not.toHaveBeenCalled();
     });
@@ -233,7 +222,6 @@ describe('useConfirmDialog', () => {
       await expect(promise).resolves.toBe(false);
       expect(requestMock).not.toHaveBeenCalled();
       expect(invalidateSpy).not.toHaveBeenCalled();
-      expect(setIsSignedMock).not.toHaveBeenCalled();
     });
 
     test('rejects when the api call fails', async () => {
@@ -265,7 +253,6 @@ describe('useConfirmDialog', () => {
       await expect(settled).resolves.toEqual({ status: 'rejected', reason: err });
       expect(snackbar.error).toHaveBeenCalledWith(expect.stringContaining('api exploded'));
       expect(invalidateSpy).not.toHaveBeenCalled();
-      expect(setIsSignedMock).not.toHaveBeenCalled();
     });
 
     test('accepts an array of calls and awaits all of them', async () => {
