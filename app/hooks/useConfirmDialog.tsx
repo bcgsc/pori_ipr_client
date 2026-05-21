@@ -7,6 +7,7 @@ import { useQueryClient } from 'react-query';
 import snackbar from '@/services/SnackbarUtils';
 import { ApiCall, ApiCallSet } from '@/services/api';
 import { queryKeys } from '@/queries/queryKeys';
+import reloadWindow from '@/utils/reloadWindow';
 import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import { Box } from '@mui/system';
 
@@ -39,24 +40,55 @@ const closeDialog = () => {
 };
 
 /**
- * Confirms a signature-removing action, then runs the given API call(s).
+ * React hook for confirming an action that removes the report's signatures
+ * before running it.
  *
- * `showConfirmDialog(calls, waitForConfirmation?, confirmText?)`
- *  - `calls`: an ApiCall/ApiCallSet (or array) to run if the user confirms.
- *  - `waitForConfirmation = false` (fire-and-forget): on confirm the hook runs
- *    the calls and does a full `window.location.reload()`. Returns nothing.
- *  - `waitForConfirmation = true` (awaitable): returns `Promise<boolean>` —
- *    resolves `true` after the calls succeed, `false` if cancelled, rejects on
- *    error. No page reload; instead the hook invalidates the report-signatures
- *    query and resets the `isSigned` flag (the signature state the reload used
- *    to clear). The caller is responsible for refreshing its own mutated data.
- *  - `confirmText`: success snackbar message.
+ * Renders a confirmation `AlertDialog` into the app-wide `#alert-dialog`
+ * container. The dialog body text is chosen from the current report's template
+ * (`probe`, `pharmacogenomic`, `genomic`, `rapid`). On confirm the supplied API
+ * call(s) are executed; on cancel nothing happens.
+ *
+ * Reads `report` from {@link ReportContext}, `setIsSigned` from
+ * {@link ConfirmContext}, and uses the react-query client for cache
+ * invalidation.
+ *
+ * @returns An object with a single member, `showConfirmDialog` — see
+ *   {@link showDialog} for its parameters and return value.
+ *
+ * @example
+ * const { showConfirmDialog } = useConfirmDialog();
+ *
+ * // Fire-and-forget: runs the call, then reloads the page.
+ * showConfirmDialog(api.put(`/reports/${ident}/...`, body));
+ *
+ * // Awaitable: no reload; refresh your own data on success.
+ * const confirmed = await showConfirmDialog(api.put(...), true);
+ * if (confirmed) { refetch(); }
  */
 const useConfirmDialog = () => {
   const { report } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
   const queryClient = useQueryClient();
 
+  /**
+   * Opens the confirmation dialog and, on confirm, runs the given API call(s).
+   *
+   * @param calls - An `ApiCall` / `ApiCallSet` (or an array of them) to execute
+   *   when the user confirms. Plain promises are also accepted and awaited.
+   * @param [waitForConfirmation=false] - Selects the completion strategy:
+   *   - `false` (fire-and-forget): on confirm the calls run and the page is
+   *     fully reloaded via `reloadWindow()`. Returns `undefined`.
+   *   - `true` (awaitable): returns a `Promise<boolean>` that resolves `true`
+   *     once the calls succeed, resolves `false` if the user cancels, and
+   *     rejects if a call throws. Instead of reloading, the hook invalidates
+   *     the report-signatures query and clears the `isSigned` flag; the caller
+   *     is responsible for refreshing its own mutated data.
+   * @param [confirmText='Task completed, refreshing...'] - Message shown in the
+   *   success snackbar after the calls complete.
+   * @returns `undefined` when `waitForConfirmation` is `false`; otherwise a
+   *   `Promise<boolean>` resolving `true` on success or `false` on cancel, and
+   *   rejecting if an API call fails.
+   */
   const showDialog = useCallback((calls, waitForConfirmation = false, confirmText = 'Task completed, refreshing...') => {
     const callPromises = Array.isArray(calls) ? calls : [calls];
 
@@ -92,7 +124,7 @@ const useConfirmDialog = () => {
           try {
             await Promise.all(callPromises.map((promise) => ((promise instanceof ApiCall || promise instanceof ApiCallSet) ? promise.request() : promise)));
             snackbar.success(confirmText);
-            window.location.reload();
+            reloadWindow();
           } catch (e) {
             snackbar.error(`Error: ${e}`);
           } finally {
