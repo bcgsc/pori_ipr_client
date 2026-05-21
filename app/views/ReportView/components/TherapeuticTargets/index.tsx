@@ -26,13 +26,13 @@ import TherapeuticTargetPrintTable from './components/TherapeuticTargetPrintTabl
 import { TherapeuticDataTableType, TherapeuticType } from './types';
 
 // Sort by existing rank ascending, then reassign rank based on 0 index, 1 per step
-const orderRankStartingByZero = (data: { rank: number }[]) => data.sort((a, b) => a.rank - b.rank)
+export const orderRankStartingByZero = (data: { rank: number }[]) => data.sort((a, b) => a.rank - b.rank)
   .map((nextData, idx) => {
     nextData.rank = idx;
     return nextData;
   });
 
-const removeExtraProps = (data: TherapeuticType[]): Partial<TherapeuticType>[] => data.map(({
+export const removeExtraProps = (data: TherapeuticType[]): Partial<TherapeuticType>[] => data.map(({
   gene, variant, therapy, context, evidenceLevel, iprEvidenceLevel, notes, signature, rank,
 }) => ({
   gene,
@@ -46,7 +46,7 @@ const removeExtraProps = (data: TherapeuticType[]): Partial<TherapeuticType>[] =
   rank,
 }));
 
-const filterType = (
+export const filterType = (
   data: TherapeuticType[],
   type1: string,
   type2: string,
@@ -59,6 +59,33 @@ const filterType = (
   }
   return accumulator;
 }, [[], []]);
+
+// Re-rank a therapeutic table after a row moves from oldRank to newRank.
+// Ranks are first normalised to a contiguous 0-based sequence (guards against
+// historical rows indexed from 1 or with gaps) before the affected span shifts.
+export const reorderByRank = (
+  rows: TherapeuticDataTableType,
+  oldRank: number,
+  newRank: number,
+): TherapeuticDataTableType => {
+  let data = cloneDeep(rows);
+  data = data.sort((a, b) => a.rank - b.rank).map((row, idx) => {
+    row.rank = idx;
+    return row;
+  });
+  return data.map((row) => {
+    if (row.rank === oldRank) {
+      row.rank = newRank;
+      return row;
+    }
+    if (row.rank > oldRank && row.rank <= newRank) {
+      row.rank -= 1;
+    } else if (row.rank < oldRank && row.rank >= newRank) {
+      row.rank += 1;
+    }
+    return row;
+  });
+};
 
 type TherapeuticProps = {
   isPrint?: boolean;
@@ -223,37 +250,18 @@ const Therapeutic = ({
   const handleReorder = useCallback(async (newRow, newRank, tableType) => {
     try {
       let setter: React.Dispatch<React.SetStateAction<TherapeuticDataTableType>>;
-      let data: TherapeuticDataTableType;
+      let sourceData: TherapeuticDataTableType;
       const oldRank = newRow.rank;
 
       if (tableType === 'therapeutic') {
         setter = setTherapeuticData;
-        data = cloneDeep(therapeuticData);
+        sourceData = therapeuticData;
       } else {
         setter = setChemoresistanceData;
-        data = cloneDeep(chemoresistanceData);
+        sourceData = chemoresistanceData;
       }
 
-      // For datafixes on the front-end, bugs introduced due to data inconsistencies between indexed by 0 or 1
-      // This forces indexed by 0
-      data = data.sort((a, b) => a.rank - b.rank).map((row, idx) => {
-        row.rank = idx;
-        return row;
-      });
-
-      const newData = data.map((row) => {
-        if (row.rank === oldRank) {
-          row.rank = newRank;
-          return row;
-        }
-
-        if (row.rank > oldRank && row.rank <= newRank) {
-          row.rank -= 1;
-        } else if (row.rank < oldRank && row.rank >= newRank) {
-          row.rank += 1;
-        }
-        return row;
-      });
+      const newData = reorderByRank(sourceData, oldRank, newRank);
 
       // @ts-expect-error - specialized data object vs a general API call
       await api.put(`/reports/${report.ident}/therapeutic-targets`, newData).request();
