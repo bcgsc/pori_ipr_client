@@ -1,6 +1,5 @@
 import AlertDialog from '@/components/AlertDialog';
 import ReportContext from '@/context/ReportContext';
-import ConfirmContext from '@/context/ConfirmContext';
 import React, { useCallback, useContext } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { useQueryClient } from 'react-query';
@@ -67,7 +66,6 @@ const closeDialog = () => {
  */
 const useConfirmDialog = () => {
   const { report } = useContext(ReportContext);
-  const { setIsSigned } = useContext(ConfirmContext);
   const queryClient = useQueryClient();
 
   /**
@@ -153,7 +151,6 @@ const useConfirmDialog = () => {
             if (report?.ident) {
               await queryClient.invalidateQueries(queryKeys.reports.reportSignatures(report.ident));
             }
-            setIsSigned(false);
             resolve(true);
           } catch (e) {
             snackbar.error(`Error: ${e}`);
@@ -169,7 +166,7 @@ const useConfirmDialog = () => {
 
       renderDialog(handleClose);
     });
-  }, [report?.template.name, report?.ident, queryClient, setIsSigned]);
+  }, [report?.template.name, report?.ident, queryClient]);
 
   return {
     showConfirmDialog: showDialog,
