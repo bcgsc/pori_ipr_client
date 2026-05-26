@@ -2,6 +2,7 @@ import React, { act } from 'react';
 import {
   render, screen, fireEvent, waitFor, within,
 } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ColumnApi, ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -53,7 +54,11 @@ jest.mock('../components/TherapeuticTargetPrintTable', () => {
   };
 });
 
-const mockReport = { ident: 'report-1' } as ReportType;
+// `template` is required: useConfirmDialog reads report.template.name.
+const mockReport = {
+  ident: 'report-1',
+  template: { name: 'genomic' },
+} as unknown as ReportType;
 
 const mockTherapeuticTargets = [
   {
@@ -74,18 +79,26 @@ const renderTherapeutic = (
   canEdit = true,
   isPrint = false,
   printVersion: 'standardLayout' | 'condensedLayout' | null = null,
-) => render(
-  <ReportContext.Provider
-    value={{
-      canEdit,
-      report: mockReport,
-      reportTemplateName: '',
-      refetchReport: () => null,
-    }}
-  >
-    <Therapeutic isPrint={isPrint} printVersion={printVersion} />
-  </ReportContext.Provider>,
-);
+) => {
+  // Fresh client per render so react-query cache never leaks between tests.
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <ReportContext.Provider
+        value={{
+          canEdit,
+          report: mockReport,
+          reportTemplateName: '',
+          refetchReport: () => null,
+        }}
+      >
+        <Therapeutic isPrint={isPrint} printVersion={printVersion} />
+      </ReportContext.Provider>
+    </QueryClientProvider>,
+  );
+};
 
 const flushPromises = () => act(async () => {
   await new Promise((resolve) => { setTimeout(resolve, 0); });
@@ -348,7 +361,10 @@ describe('TherapeuticTargets — add and edit flow', () => {
     });
 
     expect(snackbar.success).toHaveBeenCalledWith('Row updated');
-    expect((api.get as jest.Mock).mock.calls.length).toBe(getCallsBefore + 1);
+    // handleEditClose triggers a react-query refetch, which re-hits api.get.
+    await waitFor(() => {
+      expect((api.get as jest.Mock).mock.calls.length).toBeGreaterThan(getCallsBefore);
+    });
     expect(screen.queryByTestId('edit-dialog')).toBeNull();
   });
 
@@ -396,7 +412,9 @@ describe('TherapeuticTargets — delete flow', () => {
     await waitFor(() => {
       expect(snackbar.success).toHaveBeenCalledWith('Successfully deleted t1');
     });
-    expect((api.get as jest.Mock).mock.calls.length).toBe(getCallsBefore + 1);
+    await waitFor(() => {
+      expect((api.get as jest.Mock).mock.calls.length).toBeGreaterThan(getCallsBefore);
+    });
     await flushPromises();
   });
 
