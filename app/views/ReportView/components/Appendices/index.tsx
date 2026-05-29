@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useMemo,
+  useState, useEffect, useMemo,
 } from 'react';
 import {
   Typography,
@@ -22,7 +22,7 @@ import ConfigTable from './components/ConfigTable';
 
 import './index.scss';
 
-import { normalizeSeqQCArray } from './normalizeSeqQCArray';
+import normalizeSeqQCArray from './normalizeSeqQCArray';
 
 type AppendicesProps = {
   isPrint: boolean;
@@ -41,7 +41,7 @@ const Appendices = ({
   const [appendices, setAppendices] = useState<AppendicesType>();
   const [appendixCText, setAppendixCText] = useState('');
   const [tcga, setTcga] = useState<TcgaType[]>([]);
-  const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
+  const [analysisSummary, setAnalysisSummary] = useState<{ label: string; value: string | number }[]>([]);
 
   useEffect(() => {
     if (report) {
