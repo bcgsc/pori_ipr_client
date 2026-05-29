@@ -6,7 +6,7 @@ import { AgGridReact, AgGridReactProps } from '@ag-grid-community/react';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
-  ColDef, Column, GridApi, RowNode, RowSpanParams,
+  ColDef, Column, GetRowIdParams, GridApi, RowNode, RowSpanParams,
 } from '@ag-grid-community/core';
 import cloneDeep from 'lodash/cloneDeep';
 import useGrid from '@/hooks/useGrid';
@@ -288,8 +288,13 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
         }
       });
     }
+    if (showReorder) {
+      nextColDefs = nextColDefs.map((cd) => (
+        cd.colId === 'drag' ? { ...cd, hide: false } : cd
+      ));
+    }
     return nextColDefs;
-  }, [colDefs, collapseColumnFields]);
+  }, [colDefs, collapseColumnFields, showReorder]);
 
   useEffect(() => {
     if (gridApi) {
@@ -439,27 +444,16 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   }, [colApi, columnDefs, gridApi, isFullLength, isPrint, rowData.length, syncVisibleColumns, visibleColumns]);
 
   const toggleReorder = useCallback(() => {
-    if (!showReorder) {
-      columnDefs.forEach((col) => {
-        col.sortable = false;
-        col.filter = false;
-      });
-      colApi.applyColumnState({ state: [{ colId: 'rank', sort: 'asc' }], defaultState: { sort: null } });
-      gridApi.setColumnDefs(columnDefs);
+    setShowReorder((prev) => !prev);
+  }, []);
 
-      colApi.setColumnVisible('drag', true);
-      setShowReorder(true);
-    } else {
-      columnDefs.forEach((col) => {
-        col.sortable = true;
-        col.filter = true;
-      });
-      gridApi.setColumnDefs(columnDefs);
-
-      colApi.setColumnVisible('drag', false);
-      setShowReorder(false);
-    }
-  }, [colApi, columnDefs, gridApi, showReorder]);
+  useEffect(() => {
+    if (!colApi || !showReorder) return;
+    colApi.applyColumnState({
+      state: [{ colId: 'rank', sort: 'asc' }],
+      defaultState: { sort: null },
+    });
+  }, [colApi, showReorder, columnDefs]);
 
   const onRowDragEnd = useCallback(async (event) => {
     onReorder(event.node.data, event.overIndex, tableType);
@@ -473,6 +467,11 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       .map((col) => col.getColId())
       .filter((col) => !returnedVisibleCols.includes(col));
 
+    const dragVisible = returnedVisibleCols.includes('drag');
+    if (dragVisible !== showReorder) {
+      setShowReorder(dragVisible);
+    }
+
     colApi.setColumnsVisible(returnedVisibleCols, true);
     colApi.setColumnsVisible(returnedHiddenCols, false);
 
@@ -484,7 +483,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       syncVisibleColumns(returnedVisibleCols);
     }
     setShowPopover(false);
-  }, [colApi, syncVisibleColumns]);
+  }, [colApi, showReorder, syncVisibleColumns]);
 
   const RowActionCellRenderer = useCallback((row) => (
     <ActionCellRenderer
@@ -601,6 +600,11 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     };
   }, [gridApi]);
 
+  const getRowId = useMemo(() => {
+    const hasIdent = rowData.some((row) => row?.ident !== undefined);
+    return hasIdent ? (params: GetRowIdParams) => params.data.ident as string : undefined;
+  }, [rowData]);
+
   // Hiding the auto group column that ag-grid creates when using row grouping
   const autoGroupColumnDef = useMemo(() => ({
     headerName: '',
@@ -693,8 +697,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
               paginationAutoPageSize={isFullLength}
               paginationPageSize={MAX_VISIBLE_ROWS}
               autoSizePadding={1}
-              // agGrid falls back to rowIdent as Id when ident does not exist
-              getRowId={(params) => params.data.ident as string}
+              getRowId={getRowId}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
               enableCellTextSelection={!showReorder}
@@ -761,6 +764,8 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     </div>
   );
 });
+
+DataTable.displayName = 'DataTable';
 
 export { DataTableProps };
 export default DataTable;

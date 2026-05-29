@@ -11,7 +11,7 @@ const WIDTH_LARGE = 528;
 
 type ReadOnlyTextFieldProps = {
   label?: string;
-  children?: string;
+  children?: string | number;
   isUnderlined?: boolean;
 };
 
@@ -24,10 +24,11 @@ const ReadOnlyTextField = ({
 
   useEffect(() => {
     if (children) {
+      const text = String(children);
       let weightedLength = 0;
 
-      for (let i = 0; i < children.length; i++) {
-        if (children.charAt(i) === children.charAt(i).toUpperCase()) {
+      for (let i = 0; i < text.length; i += 1) {
+        if (text.charAt(i) === text.charAt(i).toUpperCase()) {
           weightedLength += 1.3;
         } else {
           weightedLength += 0.8;
