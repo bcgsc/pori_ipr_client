@@ -11,6 +11,7 @@ const NONPRODUCTION_ACCESS = ['admin', 'manager', 'non-production access'];
 const TEMPLATE_EDIT_ACCESS = ['admin', 'manager', 'template edit access'];
 const APPENDIX_EDIT_ACCESS = ['admin', 'manager', 'appendix edit access'];
 const REPORT_ASSIGNMENT_ACCESS = ['admin', 'manager', 'report assignment access'];
+const CREATE_PROJECT_ACCESS = ['admin', 'manager', 'create project access'];
 
 const GERMLINE_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
 const UNREVIEWED_ACCESS_BLOCK = NO_GROUP_MATCH;
@@ -42,6 +43,7 @@ const useResources = (): ResourceContextType => {
    */
   const [reportAssignmentAccess, setReportAssignmentAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
+  const [createProjectAccess, setCreateProjectAccess] = useState(false);
   const [allProjectsAccess, setAllProjectsAccess] = useState(false);
   const [managerAccess, setManagerAccess] = useState(false);
   /**
@@ -77,6 +79,10 @@ const useResources = (): ResourceContextType => {
         setManagerAccess(true);
       }
 
+      if (checkAccess(groups, CREATE_PROJECT_ACCESS, ADMIN_BLOCK)) {
+        setCreateProjectAccess(true);
+      }
+
       if (checkAccess(groups, [...TEMPLATE_EDIT_ACCESS], GERMLINE_BLOCK)) {
         setTemplateEditAccess(true);
       }
@@ -110,6 +116,7 @@ const useResources = (): ResourceContextType => {
 
   return {
     adminAccess,
+    createProjectAccess,
     allProjectsAccess,
     allStates: ALL_STATES,
     appendixEditAccess,
@@ -130,6 +137,7 @@ const useResources = (): ResourceContextType => {
 
 const ResourceContext = createContext<ResourceContextType>({
   adminAccess: false,
+  createProjectAccess: false,
   allProjectsAccess: false,
   allStates: ALL_STATES,
   appendixEditAccess: false,
@@ -154,6 +162,7 @@ type ResourceContextProviderProps = {
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
     adminAccess,
+    createProjectAccess,
     allProjectsAccess,
     allStates,
     appendixEditAccess,
@@ -173,6 +182,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
 
   const providerValue = useMemo(() => ({
     adminAccess,
+    createProjectAccess,
     allProjectsAccess,
     allStates,
     appendixEditAccess,
@@ -190,6 +200,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     variantTextEditAccess,
   }), [
     adminAccess,
+    createProjectAccess,
     allProjectsAccess,
     allStates,
     appendixEditAccess,
