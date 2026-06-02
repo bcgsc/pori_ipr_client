@@ -59,7 +59,7 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         titleText={mockTitleText}
-      />
+      />,
     );
 
     expect(await screen.findByText(mockTitleText)).toBeInTheDocument();
@@ -71,12 +71,12 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         filterText={mockFilterText}
-      />
+      />,
     );
 
     // Row that should be shown
-    let elems = await Promise.all(
-      Object.values(mockRowData[1]).map((val) => screen.findByText(val))
+    const elems = await Promise.all(
+      Object.values(mockRowData[1]).map((val) => screen.findByText(val)),
     );
     for (const elem of elems) {
       expect(elem).not.toBeNull();
@@ -96,10 +96,10 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         visibleColumns={mockVisibleColumns}
-      />
+      />,
     );
 
-    waitFor(() => expect(screen.queryByText(mockColumnDefs[0].headerName)).toBeNull());
+    await waitFor(() => expect(screen.queryByText(mockColumnDefs[0].headerName)).toBeNull());
     expect(await screen.findByText(mockColumnDefs[1].headerName)).toBeInTheDocument();
     expect(await screen.findByText(mockColumnDefs[2].headerName)).toBeInTheDocument();
   });
@@ -110,10 +110,10 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         visibleColumns={[]}
-      />
+      />,
     );
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.queryByText(mockColumnDefs[0].headerName)).toBeNull();
       expect(screen.queryByText(mockColumnDefs[1].headerName)).toBeNull();
       expect(screen.queryByText(mockColumnDefs[2].headerName)).toBeNull();
@@ -138,8 +138,8 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         demoDescription={mockDemoDescription}
-      />
+      />,
     );
-    waitFor(() => expect(screen.getByText(mockDemoDescription)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(mockDemoDescription)).toBeInTheDocument());
   });
 });
