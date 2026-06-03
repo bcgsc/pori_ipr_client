@@ -387,7 +387,10 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
   const onFirstDataRendered = useCallback(() => {
     hasRenderedData.current = true;
-    if (syncVisibleColumns) {
+    // An empty visibleColumns means "no filter / show all" (matching the useEffect above
+    // and visibleColumnIds), so only hide columns when an explicit subset is provided.
+    // colApi may not be set yet when this fires; the useEffect above re-applies once it is.
+    if (syncVisibleColumns && visibleColumns.length && colApi) {
       const columns = colApi.getColumns();
       if (!columns) return;
       const hiddenColumns = columns
@@ -460,27 +463,30 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   }, [onReorder, tableType]);
 
   const handlePopoverClose = useCallback((returnedVisibleCols) => {
-    returnedVisibleCols.push('Actions');
+    // The Actions column must stay visible but is not user-toggleable, so it is already
+    // carried over in returnedVisibleCols from the previous sync. De-dupe (rather than
+    // unconditionally pushing) so 'actions' is not re-added on every open/close cycle.
+    const nextVisibleCols = Array.from(new Set([...returnedVisibleCols, 'actions']));
     const columns = colApi.getColumns();
     if (!columns) return;
     const returnedHiddenCols = columns
       .map((col) => col.getColId())
-      .filter((col) => !returnedVisibleCols.includes(col));
+      .filter((col) => !nextVisibleCols.includes(col));
 
-    const dragVisible = returnedVisibleCols.includes('drag');
+    const dragVisible = nextVisibleCols.includes('drag');
     if (dragVisible !== showReorder) {
       setShowReorder(dragVisible);
     }
 
-    colApi.setColumnsVisible(returnedVisibleCols, true);
+    colApi.setColumnsVisible(nextVisibleCols, true);
     colApi.setColumnsVisible(returnedHiddenCols, false);
 
-    if (returnedVisibleCols?.length) {
-      colApi.autoSizeColumns(returnedVisibleCols);
+    if (nextVisibleCols?.length) {
+      colApi.autoSizeColumns(nextVisibleCols);
     }
 
     if (syncVisibleColumns) {
-      syncVisibleColumns(returnedVisibleCols);
+      syncVisibleColumns(nextVisibleCols);
     }
     setShowPopover(false);
   }, [colApi, showReorder, syncVisibleColumns]);
