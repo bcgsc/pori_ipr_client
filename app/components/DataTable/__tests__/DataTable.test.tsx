@@ -1,5 +1,7 @@
 import React from 'react';
-import { screen, render, waitFor } from '@testing-library/react';
+import {
+  screen, render, waitFor, fireEvent,
+} from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -14,6 +16,7 @@ import {
   mockVisibleColumns,
   mockDemoDescription,
 } from './mockData';
+import { ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
 
 jest.mock('@/services/api');
 
@@ -96,6 +99,7 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         visibleColumns={mockVisibleColumns}
+        syncVisibleColumns={() => {}}
       />,
     );
 
@@ -104,20 +108,53 @@ describe('DataTable', () => {
     expect(await screen.findByText(mockColumnDefs[2].headerName)).toBeInTheDocument();
   });
 
-  test('Empty visibleColumns shows no columns', async () => {
+  test('Empty visibleColumns is treated as no filter and shows all columns', async () => {
     render(
       <DataTable
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         visibleColumns={[]}
+        syncVisibleColumns={() => {}}
       />,
     );
 
-    await waitFor(() => {
-      expect(screen.queryByText(mockColumnDefs[0].headerName)).toBeNull();
-      expect(screen.queryByText(mockColumnDefs[1].headerName)).toBeNull();
-      expect(screen.queryByText(mockColumnDefs[2].headerName)).toBeNull();
-    });
+    expect(await screen.findByText(mockColumnDefs[0].headerName)).toBeInTheDocument();
+    expect(await screen.findByText(mockColumnDefs[1].headerName)).toBeInTheDocument();
+    expect(await screen.findByText(mockColumnDefs[2].headerName)).toBeInTheDocument();
+  });
+
+  test('Toggling columns does not accumulate duplicate Actions entries', async () => {
+    const syncVisibleColumns = jest.fn();
+    render(
+      <DataTable
+        rowData={mockRowData}
+        columnDefs={mockColumnDefs}
+        visibleColumns={['username', 'Actions']}
+        syncVisibleColumns={syncVisibleColumns}
+        canToggleColumns
+      />,
+    );
+
+    // Wait for the grid to be ready before driving the column picker
+    await screen.findByText('pattredes');
+
+    // One open-the-menu / open-the-picker / close-the-picker cycle
+    const openAndCloseColumnPicker = async () => {
+      fireEvent.click(screen.getByTestId('MoreHorizIcon').closest('button'));
+      fireEvent.click(await screen.findByText('Toggle Columns'));
+      const dialog = await screen.findByRole('dialog');
+      fireEvent.keyDown(dialog, { key: 'Escape', code: 'Escape' });
+      await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    };
+
+    // Repeating the cycle must not keep re-adding 'Actions' to the synced columns
+    await openAndCloseColumnPicker();
+    await openAndCloseColumnPicker();
+    await openAndCloseColumnPicker();
+
+    expect(syncVisibleColumns).toHaveBeenCalled();
+    const [lastSynced] = syncVisibleColumns.mock.calls.at(-1);
+    expect(lastSynced.filter((col: string) => col === ACTIONS_COLUMN)).toHaveLength(1);
   });
 
   test('Does not throw when visibleColumns is undefined', () => {
@@ -133,6 +170,10 @@ describe('DataTable', () => {
   });
 
   test('The demoDescription is shown', async () => {
+    // DemoDescription only renders when the demo env flag is set
+    const prevIsDemo = window._env_?.IS_DEMO;
+    window._env_ = { ...window._env_, IS_DEMO: true };
+
     render(
       <DataTable
         rowData={mockRowData}
@@ -140,6 +181,8 @@ describe('DataTable', () => {
         demoDescription={mockDemoDescription}
       />,
     );
-    await waitFor(() => expect(screen.getByText(mockDemoDescription)).toBeInTheDocument());
+    expect(await screen.findByText(mockDemoDescription)).toBeInTheDocument();
+
+    window._env_.IS_DEMO = prevIsDemo;
   });
 });
