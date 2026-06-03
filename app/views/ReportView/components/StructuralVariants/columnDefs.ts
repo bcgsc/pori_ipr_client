@@ -1,3 +1,5 @@
+import { actionsColDef } from '@/utils/actionsColumnDef';
+
 const createGeneRelatedValueGetter = (field, delimiter = ' / ', subfield = '') => ({ data }) => {
   try {
     let attr1 = data.gene1[field];
@@ -117,12 +119,7 @@ const columnDefs = [{
   valueGetter: 'data.highQuality || false',
   hide: true,
 }, {
-  headerName: 'Actions',
-  cellRenderer: 'ActionCellRenderer',
-  colId: 'actions',
-  pinned: 'right',
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
 }];
 
 export const setHeaderName = (header, colId) => {

@@ -21,6 +21,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import LaunchCell from '@/components/LaunchCell';
+import { ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
 import { ColumnPicker, ColumnPickerProps } from './components/ColumnPicker';
 import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
@@ -348,7 +349,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       const columns = colApi.getColumns();
       if (!columns) return;
       const names = columns
-        .filter((col) => col.getColId().toLowerCase() !== 'actions')
+        .filter((col) => col.getColId() !== ACTIONS_COLUMN)
         .map((col) => {
           const parent = col.getOriginalParent();
           const nextCol: ColumnPickerProps['columns'][number] = col;
@@ -388,7 +389,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   const onFirstDataRendered = useCallback(() => {
     hasRenderedData.current = true;
     // An empty visibleColumns means "no filter / show all" (matching the useEffect above
-    // and visibleColumnIds), so only hide columns when an explicit subset is provided.
+    // and visibleColumnIds)
     // colApi may not be set yet when this fires; the useEffect above re-applies once it is.
     if (syncVisibleColumns && visibleColumns.length && colApi) {
       const columns = colApi.getColumns();
@@ -421,7 +422,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
         cellStyle: { 'white-space': 'normal' },
       }));
       gridApi.setColumnDefs(newCols);
-      colApi.setColumnVisible('Actions', false);
+      colApi.setColumnVisible(ACTIONS_COLUMN, false);
       gridApi.sizeColumnsToFit();
     }
 
@@ -465,8 +466,8 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   const handlePopoverClose = useCallback((returnedVisibleCols) => {
     // The Actions column must stay visible but is not user-toggleable, so it is already
     // carried over in returnedVisibleCols from the previous sync. De-dupe (rather than
-    // unconditionally pushing) so 'actions' is not re-added on every open/close cycle.
-    const nextVisibleCols = Array.from(new Set([...returnedVisibleCols, 'actions']));
+    // unconditionally pushing) so the actions column is not re-added on every open/close cycle.
+    const nextVisibleCols = Array.from(new Set([...returnedVisibleCols, ACTIONS_COLUMN]));
     const columns = colApi.getColumns();
     if (!columns) return;
     const returnedHiddenCols = columns
@@ -519,7 +520,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       columnKeys: colApi.getAllDisplayedColumns()
         .filter((col) => {
           const colD = col.getColDef();
-          return !(colD?.headerName === 'Actions' || colD?.field === 'Actions' || col.getColId() === 'Actions');
+          return !(colD?.headerName === ACTIONS_COLUMN || colD?.field === ACTIONS_COLUMN || col.getColId() === ACTIONS_COLUMN);
         })
         .map((col) => col.getColId()),
       fileName: isSearch ? searchReportsFileName : defaultFileName,
@@ -579,7 +580,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     if (visibleColumns.length > 0) {
       return visibleColumns;
     }
-    return columnWithNames.filter((col) => col.isVisible()).map((col) => col.getColId()).concat('actions');
+    return columnWithNames.filter((col) => col.isVisible()).map((col) => col.getColId()).concat(ACTIONS_COLUMN);
   }, [columnWithNames, visibleColumns]);
 
   useImperativeHandle(forwardedRef, () => {

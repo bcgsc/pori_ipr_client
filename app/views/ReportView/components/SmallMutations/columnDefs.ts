@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef } from '@ag-grid-community/core';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
@@ -134,12 +135,7 @@ const columnDefs: ColDef[] = [{
   valueGetter: 'data.gene.expressionVariants.diseaseZScore',
   hide: false,
 }, {
-  headerName: 'Actions',
-  colId: 'actions',
-  cellRenderer: 'ActionCellRenderer',
-  pinned: 'right',
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',

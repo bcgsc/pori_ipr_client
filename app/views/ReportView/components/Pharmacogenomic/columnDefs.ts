@@ -1,5 +1,6 @@
 import { ColDef, ValueGetterParams } from '@ag-grid-community/core';
 import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 import getGeneProp from '@/utils/getGeneProp';
 import kbMStatementsGeneValueGetter from '@/utils/kbMatchStatementsGeneValueGetter';
 import kbMatchStatementsKnownVarValueGetter from '@/utils/kbMatchStatementsKnownVarValueGetter';
@@ -139,13 +140,7 @@ const columnDefs: ColDef[] = [{
   valueGetter: (params) => getGeneProp(params, 'therapeuticAssociated'),
   hide: true,
 }, {
-  headerName: 'Actions',
-  colId: 'Actions',
-  cellRenderer: 'ActionCellRenderer',
-  pinned: 'right',
-  hide: false,
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
 }];
 
 export default columnDefs;

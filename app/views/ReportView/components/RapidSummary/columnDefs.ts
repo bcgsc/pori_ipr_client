@@ -1,4 +1,5 @@
 import { ColDef } from '@ag-grid-community/core';
+import { actionsColDef, ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
 import { sampleColumnDefs } from '../../common';
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -46,14 +47,8 @@ const getGenomicEvent = ({ data }) => {
 };
 
 const ACTIONS_COLDEF: ColDef = {
-  headerName: 'Actions',
-  colId: 'Actions',
-  field: 'Actions',
-  cellRenderer: 'ActionCellRenderer',
-  pinned: 'right',
-  hide: false,
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
+  field: ACTIONS_COLUMN,
   minWidth: 132,
 };
 

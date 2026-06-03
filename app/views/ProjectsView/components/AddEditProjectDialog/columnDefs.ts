@@ -1,3 +1,5 @@
+import { actionsColDef } from '@/utils/actionsColumnDef';
+
 const userColumnDefs = [
   {
     headerName: 'Username',
@@ -15,11 +17,7 @@ const userColumnDefs = [
     hide: false,
   },
   {
-    headerName: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    sortable: false,
-    suppressMenu: true,
+    ...actionsColDef,
   },
 ];
 
@@ -35,11 +33,7 @@ const reportColumnDefs = [
     hide: false,
   },
   {
-    headerName: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    sortable: false,
-    suppressMenu: true,
+    ...actionsColDef,
   },
 ];
 

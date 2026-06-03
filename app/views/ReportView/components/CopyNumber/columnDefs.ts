@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef } from '@ag-grid-community/core';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 
 const columnDefs: ColDef[] = [{
   headerName: 'Gene',
@@ -96,12 +97,7 @@ const columnDefs: ColDef[] = [{
   valueGetter: 'data.gene.therapeuticAssociated || false',
   hide: true,
 }, {
-  headerName: 'Actions',
-  colId: 'actions',
-  cellRenderer: 'ActionCellRenderer',
-  pinned: 'right',
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
 }];
 
 export const setHeaderName = (header, colId) => {
