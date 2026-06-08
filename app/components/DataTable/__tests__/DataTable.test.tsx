@@ -1,12 +1,13 @@
 import React from 'react';
 import {
-  screen, render, waitFor, fireEvent,
+  screen, render, waitFor, fireEvent, within,
 } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry, GridApi } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 
+import { ACTIONS_COLUMN, actionsColDef } from '@/utils/actionsColumnDef';
 import DataTable from '..';
 import {
   mockRowData,
@@ -16,7 +17,6 @@ import {
   mockVisibleColumns,
   mockDemoDescription,
 } from './mockData';
-import { ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
 
 jest.mock('@/services/api');
 
@@ -184,5 +184,107 @@ describe('DataTable', () => {
     expect(await screen.findByText(mockDemoDescription)).toBeInTheDocument();
 
     window._env_.IS_DEMO = prevIsDemo;
+  });
+
+  test('Clicking a column header sorts that column', async () => {
+    const { container } = render(
+      <DataTable
+        rowData={mockRowData}
+        columnDefs={mockColumnDefs}
+      />,
+    );
+
+    await screen.findByText('pattredes');
+
+    const usernameHeader = container.querySelector('[col-id="username"]');
+    expect(usernameHeader).toHaveAttribute('aria-sort', 'none');
+
+    fireEvent.click(screen.getByText('Username'));
+
+    await waitFor(() => expect(usernameHeader).toHaveAttribute('aria-sort', 'ascending'));
+  });
+
+  test('Unchecking a column in the picker hides it', async () => {
+    render(
+      <DataTable
+        rowData={mockRowData}
+        columnDefs={mockColumnDefs}
+        canToggleColumns
+      />,
+    );
+
+    await screen.findByText('pattredes');
+    expect(screen.getByText('Username')).toBeInTheDocument();
+
+    // Open the column picker
+    fireEvent.click(screen.getByTestId('MoreHorizIcon').closest('button'));
+    fireEvent.click(await screen.findByText('Toggle Columns'));
+    const dialog = await screen.findByRole('dialog');
+
+    // Uncheck the Username column, then close the picker
+    fireEvent.click(within(dialog).getByLabelText('Username'));
+    fireEvent.keyDown(dialog, { key: 'Escape', code: 'Escape' });
+
+    await waitFor(() => expect(screen.queryByText('Username')).toBeNull());
+  });
+
+  test('An empty grid shows the no-rows overlay when editable', async () => {
+    render(
+      <DataTable
+        rowData={[]}
+        columnDefs={mockColumnDefs}
+        canEdit
+      />,
+    );
+
+    expect(await screen.findByText('No Rows To Show')).toBeInTheDocument();
+  });
+
+  test('Empty rowData with no edit access shows the no-data message instead of a grid', () => {
+    render(
+      <DataTable
+        rowData={[]}
+        columnDefs={mockColumnDefs}
+      />,
+    );
+
+    expect(screen.getByText('No data to display')).toBeInTheDocument();
+    expect(screen.queryByTestId('grid')).toBeNull();
+  });
+
+  test('Export to TSV triggers a tab-separated export', async () => {
+    const exportSpy = jest.spyOn(GridApi.prototype, 'exportDataAsCsv').mockImplementation(() => {});
+
+    render(
+      <DataTable
+        rowData={mockRowData}
+        columnDefs={mockColumnDefs}
+        canExport
+      />,
+    );
+
+    await screen.findByText('pattredes');
+
+    fireEvent.click(screen.getByTestId('MoreHorizIcon').closest('button'));
+    fireEvent.click(await screen.findByText('Export to TSV'));
+
+    expect(exportSpy).toHaveBeenCalledTimes(1);
+    expect(exportSpy).toHaveBeenCalledWith(expect.objectContaining({ columnSeparator: '\t' }));
+
+    exportSpy.mockRestore();
+  });
+
+  test('Clicking the view-details action opens the detail dialog', async () => {
+    render(
+      <DataTable
+        rowData={mockRowData}
+        columnDefs={[...mockColumnDefs, { ...actionsColDef }]}
+      />,
+    );
+
+    const detailIcons = await screen.findAllByTestId('view-details');
+    fireEvent.click(detailIcons[0]);
+
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
   });
 });
