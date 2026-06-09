@@ -25,6 +25,7 @@ const CustomSetFilter = forwardRef((props: IFilterParams, ref) => {
   const selectAllRef = useRef<HTMLInputElement>(null);
   const textInputRef = useRef<HTMLInputElement>(null);
   const filterChangedCallbackRef = useRef(props.filterChangedCallback);
+  // Just in case the filter callback changes (unlikely), we want to make sure we call the latest version
   filterChangedCallbackRef.current = props.filterChangedCallback;
   const isFirstRender = useRef(true);
   const isSettingModel = useRef(false);

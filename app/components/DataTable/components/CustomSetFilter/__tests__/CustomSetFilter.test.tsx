@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { act } from 'react';
 import {
-  render, screen, fireEvent, act, within,
+  render, screen, fireEvent, within,
 } from '@testing-library/react';
 import type { IFilterParams, IDoesFilterPassParams } from '@ag-grid-community/core';
 
@@ -47,9 +47,11 @@ describe('CustomSetFilter', () => {
     const checkboxes = screen.getAllByRole('checkbox');
     // select-all + one per unique value
     expect(checkboxes).toHaveLength(ROW_VALUES.length + 1);
-    expect(screen.getByLabelText('apple')).toBeInTheDocument();
-    expect(screen.getByLabelText('banana')).toBeInTheDocument();
-    expect(screen.getByLabelText('cherry')).toBeInTheDocument();
+    const labels = checkboxes
+      .slice(1) // skip "(Select All)"
+      .map((cb) => cb.getAttribute('value'));
+
+    expect(labels).toEqual(['apple', 'banana', 'cherry']);
   });
 
   test('It is inactive with an empty model until a value is selected', () => {
