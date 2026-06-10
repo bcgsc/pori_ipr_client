@@ -4,9 +4,11 @@ import React, {
   useLayoutEffect, useMemo,
 } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { ColDef, ValueGetterParams } from '@ag-grid-community/core';
+import { ColDef } from '@ag-grid-community/core';
 import { v7 as createUuid } from 'uuid';
 import { registerHandlers, Handler } from 'pagedjs';
+
+import { resolveCellValue } from './utils';
 
 export type PrintTableProps = {
   data: Record<string, unknown>[];
@@ -150,11 +152,7 @@ function PrintTable({
 
         sortedColDefs.forEach((colD, cellIdx) => {
           // Data section
-          const columnIdentifier = colD.colId || colD.field;
-          let cellValue = dataRow[columnIdentifier];
-          if (colD.valueGetter && typeof colD.valueGetter === 'function') {
-            cellValue = colD.valueGetter({ data: dataRow } as ValueGetterParams);
-          }
+          const cellValue = resolveCellValue(dataRow, colD);
 
           // Collapseable column check section
           const { field } = colD;

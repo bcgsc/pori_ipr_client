@@ -302,6 +302,7 @@ type SmallMutationType = {
   tumourRefCopies: number | null;
   tumourRefCount: number | null;
   zygosity: string | null;
+  exon: string | null;
   variantType: 'mut';
 } & RecordDefaults;
 
