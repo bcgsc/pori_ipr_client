@@ -244,7 +244,7 @@ const EditDialog = ({
     setVariantType(event.target.value);
   };
 
-  const handleChemoresistanceContextChange = (
+  const handleChemoresistanceContextChange = useCallback((
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setIsDirty(true);
@@ -253,7 +253,7 @@ const EditDialog = ({
         context: event.target.value,
       },
     });
-  };
+  }, []);
 
   const isAddChemoresistanceRow = tableType === 'chemoresistance' && !newData.ident;
 
