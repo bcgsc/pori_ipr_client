@@ -47,7 +47,7 @@ $palette__error--contrast-text: #ffffff;
 /* MUI transitions */
 $transitions__duration--standard: 0.3s;
 
-/* MUI  palette divider (default) */
+/* MUI palette divider (default) */
 $palette__divider: rgba(0, 0, 0, 0.12);
 
 $typography__font-size--body1: 1rem;
@@ -57,6 +57,11 @@ $typography__font-size--h3: 1.4rem;
 $typography__font-size--h4: 1.25rem;
 $typography__font-size--h5: 1.1rem;
 $typography__font-size--h6: 0.875rem;
+
+/* MUI Fab sizes (default) */
+$fab-size--small: 2.5rem;
+$fab-size--medium: 3rem;
+$fab-size--large: 3.5rem;
 
 // export the css colors to use in creating the MUI theme
 :export {

@@ -4,13 +4,20 @@
 .analyst-comments {
   padding: 16px;
 
-  &__user-text {
+  &__body {
     max-width: $readable-max;
     margin: 32px auto;
   }
 
   &__fab {
-    float: right;
+    position: sticky;
+    // pins the FAB 1rem below the scrolling viewport's top edge
+    top: 1rem;
+    display: flex;
+    margin-left: auto;
+    // Collapses own height so it does not affect text display
+    margin-bottom: -$fab-size--small;
+    z-index: 1;
   }
 
   &__signatures {
@@ -22,9 +29,12 @@
     padding: $print-container-padding;
     font-family: Arial, Helvetica, sans-serif;
 
-    .analyst-comments__user-text {
+    .analyst-comments__body {
       max-width: unset;
       margin: 0;
+    }
+
+    .analyst-comments__user-text {
       padding: 20px 0;
 
       & > * {
