@@ -16,9 +16,8 @@ import {
   TmburType,
   MsiType,
   HlaType,
+  MutationSignatureType,
 } from '@/common';
-
-import { MutationSignatureType } from '@/views/ReportView/components/MutationSignatures';
 
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { SummaryProps } from '@/commonComponents';
