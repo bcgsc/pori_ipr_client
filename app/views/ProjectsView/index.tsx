@@ -29,7 +29,8 @@ const Projects = (): JSX.Element => {
   const { userDetails } = useSecurity();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<ProjectType | null>();
-  const { adminAccess, managerAccess } = useResource();
+  const { adminAccess, managerAccess, createProjectAccess } = useResource();
+  const canCreateProject = adminAccess || createProjectAccess;
   const queryClient = useQueryClient();
 
   const { data: projects = [], isLoading } = useQuery<ProjectType[]>({
@@ -86,7 +87,7 @@ const Projects = (): JSX.Element => {
             canViewDetails={false}
             isPaginated
             isFullLength
-            canAdd={adminAccess}
+            canAdd={canCreateProject}
             canEdit={managerAccess}
             canDelete={adminAccess}
             onEdit={handleEditStart}
