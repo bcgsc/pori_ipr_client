@@ -1,28 +1,28 @@
-import { KbMatchedStatementType } from '@/common';
+import { KbMatchedStatementType, KbMatchType } from '@/common';
 import { coalesceEntries, getVariantName, getBucketKey } from '../coalesce';
 
 describe('getVariantName', () => {
   test('formats a small mutation as gene:proteinChange', () => {
-    expect(getVariantName({ gene: { name: 'TP53' }, proteinChange: 'p.R175H' } as never, 'mut')).toBe('TP53:p.R175H');
+    expect(getVariantName({ gene: { name: 'TP53' }, proteinChange: 'p.R175H' } as KbMatchType<'mut'>['variant'], 'mut')).toBe('TP53:p.R175H');
   });
 
   test('formats a copy variant as gene cnvState', () => {
-    expect(getVariantName({ gene: { name: 'EGFR' }, cnvState: 'amplification' } as never, 'cnv')).toBe('EGFR amplification');
+    expect(getVariantName({ gene: { name: 'EGFR' }, cnvState: 'amplification' } as KbMatchType<'cnv'>['variant'], 'cnv')).toBe('EGFR amplification');
   });
 
   test('formats a structural variant as a fusion string', () => {
     const variant = {
       gene1: { name: 'BRAF' }, gene2: { name: 'KIAA1549' }, exon1: 9, exon2: 16,
-    } as never;
+    } as unknown as KbMatchType<'sv'>['variant'];
     expect(getVariantName(variant, 'sv')).toBe('(BRAF,KIAA1549):fusion(e.9,e.16)');
   });
 
   test('uses kbCategory for msi/tmb variants', () => {
-    expect(getVariantName({ kbCategory: 'MSI high' } as never, 'msi')).toBe('MSI high');
+    expect(getVariantName({ kbCategory: 'MSI high' } as KbMatchType<'msi'>['variant'], 'msi')).toBe('MSI high');
   });
 
   test('falls back to gene expressionState for expression variants', () => {
-    expect(getVariantName({ gene: { name: 'PTEN' }, expressionState: 'underexpressed' } as never, 'exp')).toBe('PTEN underexpressed');
+    expect(getVariantName({ gene: { name: 'PTEN' }, expressionState: 'underexpressed' } as KbMatchType<'exp'>['variant'], 'exp')).toBe('PTEN underexpressed');
   });
 });
 
@@ -54,7 +54,7 @@ describe('coalesceEntries', () => {
       makeEntry({
         kbMatches: [
           { ident: 'kb-2', variantType: 'mut', variant: { gene: { name: 'TP53' }, proteinChange: 'p.R175H' } },
-        ] as never,
+        ] as unknown as KbMatchType<'mut'>[],
       }),
     ]);
 
@@ -73,8 +73,8 @@ describe('coalesceEntries', () => {
 
   test('collapses differing scalar fields into an array', () => {
     const result = coalesceEntries([
-      makeEntry({ iprEvidenceLevel: 'IPR-A' } as never),
-      makeEntry({ iprEvidenceLevel: 'IPR-B' } as never),
+      makeEntry({ iprEvidenceLevel: 'IPR-A' } as KbMatchedStatementType),
+      makeEntry({ iprEvidenceLevel: 'IPR-B' } as KbMatchedStatementType),
     ]);
 
     expect(result).toHaveLength(1);
