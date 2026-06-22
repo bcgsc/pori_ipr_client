@@ -72,7 +72,9 @@ const AddEditProjectDialog = ({
   const [reports, setReports] = useState<ShortReportType[]>([]);
   const [existingReports, setExistingReports] = useState<ShortReportType[]>([]);
   const [projectUsersToAdd, setProjectUsersToAdd] = useState<ProjectType | null>(null);
-  const { adminAccess, managerAccess } = useResource();
+  const { adminAccess, managerAccess, createProjectAccess } = useResource();
+  const canCreateProject = adminAccess || createProjectAccess;
+  const canEditProject = managerAccess || adminAccess;
   const queryClient = useQueryClient();
 
   const { isLoading: isReportsLoading } = useQuery<ShortReportType[]>({
@@ -244,7 +246,7 @@ const AddEditProjectDialog = ({
               error={errors.projectName}
               helperText={errors.projectName ? 'Project name is required' : null}
               className="add-user__field"
-              disabled={!adminAccess}
+              disabled={editData ? !adminAccess : !canCreateProject}
               required
             />
           </FormControl>
@@ -256,7 +258,7 @@ const AddEditProjectDialog = ({
               label="Project Description"
               variant="outlined"
               className="add-user__field"
-              disabled={!managerAccess}
+              disabled={editData ? !canEditProject : !canCreateProject}
             />
           </FormControl>
 
