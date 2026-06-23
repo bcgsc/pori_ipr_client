@@ -1,5 +1,5 @@
 import React, {
-  createContext, ReactChild, useState, useEffect, useMemo,
+  createContext, ReactChild, useMemo,
 } from 'react';
 import { checkAccess, ALL_ROLES, NO_GROUP_MATCH } from '@/utils/checkAccess';
 import useSecurity from '@/hooks/useSecurity';
@@ -32,107 +32,31 @@ const ADMIN_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
 const useResources = (): ResourceContextType => {
   const { userDetails: { groups } } = useSecurity();
 
-  const [germlineAccess, setGermlineAccess] = useState(false);
-  const [reportsAccess, setReportsAccess] = useState(false);
-  /**
-   * Is the user allowed to edit the report
-   */
-  const [reportEditAccess, setReportEditAccess] = useState(false);
-  /**
-   * Is the user allowed to assign users to the report
-   */
-  const [reportAssignmentAccess, setReportAssignmentAccess] = useState(false);
-  const [adminAccess, setAdminAccess] = useState(false);
-  const [createProjectAccess, setCreateProjectAccess] = useState(false);
-  const [allProjectsAccess, setAllProjectsAccess] = useState(false);
-  const [managerAccess, setManagerAccess] = useState(false);
-  /**
-   * Is the user allowed to see the settings page
-   */
-  const [reportSettingAccess, setReportSettingAccess] = useState(false);
-  const [unreviewedAccess, setUnreviewedAccess] = useState(false);
-  const [nonproductionAccess, setNonproductionAccess] = useState(false);
-  const [templateEditAccess, setTemplateEditAccess] = useState(false);
-  const [appendixEditAccess, setAppendixEditAccess] = useState(false);
-  const [variantTextEditAccess, setVariantTextEditAccess] = useState(false);
+  return useMemo<ResourceContextType>(() => {
+    const userGroups = groups ?? [];
+    const managerAccess = checkAccess(userGroups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK);
 
-  // Check user group first to see which resources they can access
-  useEffect(() => {
-    if (groups) {
-      if (checkAccess(groups, GERMLINE_ACCESS, GERMLINE_BLOCK)) {
-        setGermlineAccess(true);
-      }
-
-      if (checkAccess(groups, REPORTS_ACCESS, REPORTS_BLOCK)) {
-        setReportsAccess(true);
-      }
-
-      if (checkAccess(groups, ADMIN_ACCESS, ADMIN_BLOCK)) {
-        setAdminAccess(true);
-      }
-
-      if (checkAccess(groups, [...ADMIN_ACCESS, 'all projects access'], ADMIN_BLOCK)) {
-        setAllProjectsAccess(true);
-      }
-
-      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
-        setManagerAccess(true);
-      }
-
-      if (checkAccess(groups, CREATE_PROJECT_ACCESS, ADMIN_BLOCK)) {
-        setCreateProjectAccess(true);
-      }
-
-      if (checkAccess(groups, [...TEMPLATE_EDIT_ACCESS], GERMLINE_BLOCK)) {
-        setTemplateEditAccess(true);
-      }
-
-      if (checkAccess(groups, [...APPENDIX_EDIT_ACCESS], GERMLINE_BLOCK)) {
-        setAppendixEditAccess(true);
-      }
-
-      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
-        setReportSettingAccess(true);
-        setReportEditAccess(true);
-      }
-
-      if (checkAccess(groups, [...REPORT_ASSIGNMENT_ACCESS], ADMIN_BLOCK)) {
-        setReportAssignmentAccess(true);
-      }
-
-      if (checkAccess(groups, UNREVIEWED_ACCESS, UNREVIEWED_ACCESS_BLOCK)) {
-        setUnreviewedAccess(true);
-      }
-
-      if (checkAccess(groups, NONPRODUCTION_ACCESS, NONPRODUCTION_ACCESS_BLOCK)) {
-        setNonproductionAccess(true);
-      }
-
-      if (checkAccess(groups, [...ADMIN_ACCESS, 'variant-text edit access'], ADMIN_BLOCK)) {
-        setVariantTextEditAccess(true);
-      }
-    }
+    return {
+      adminAccess: checkAccess(userGroups, ADMIN_ACCESS, ADMIN_BLOCK),
+      createProjectAccess: checkAccess(userGroups, CREATE_PROJECT_ACCESS, ADMIN_BLOCK),
+      allProjectsAccess: checkAccess(userGroups, [...ADMIN_ACCESS, 'all projects access'], ADMIN_BLOCK),
+      allStates: ALL_STATES,
+      appendixEditAccess: checkAccess(userGroups, [...APPENDIX_EDIT_ACCESS], GERMLINE_BLOCK),
+      germlineAccess: checkAccess(userGroups, GERMLINE_ACCESS, GERMLINE_BLOCK),
+      managerAccess,
+      nonproductionAccess: checkAccess(userGroups, NONPRODUCTION_ACCESS, NONPRODUCTION_ACCESS_BLOCK),
+      nonproductionStates: NONPRODUCTION_STATES,
+      reportAssignmentAccess: checkAccess(userGroups, [...REPORT_ASSIGNMENT_ACCESS], ADMIN_BLOCK),
+      // Manager (or admin) can both edit reports and see the settings page
+      reportEditAccess: managerAccess,
+      reportSettingAccess: managerAccess,
+      reportsAccess: checkAccess(userGroups, REPORTS_ACCESS, REPORTS_BLOCK),
+      templateEditAccess: checkAccess(userGroups, [...TEMPLATE_EDIT_ACCESS], GERMLINE_BLOCK),
+      unreviewedAccess: checkAccess(userGroups, UNREVIEWED_ACCESS, UNREVIEWED_ACCESS_BLOCK),
+      unreviewedStates: UNREVIEWED_STATES,
+      variantTextEditAccess: checkAccess(userGroups, [...ADMIN_ACCESS, 'variant-text edit access'], ADMIN_BLOCK),
+    };
   }, [groups]);
-
-  return {
-    adminAccess,
-    createProjectAccess,
-    allProjectsAccess,
-    allStates: ALL_STATES,
-    appendixEditAccess,
-    germlineAccess,
-    managerAccess,
-    nonproductionAccess,
-    nonproductionStates: NONPRODUCTION_STATES,
-    reportAssignmentAccess,
-    reportEditAccess,
-    reportSettingAccess,
-    reportsAccess,
-    templateEditAccess,
-    unreviewedAccess,
-    unreviewedStates: UNREVIEWED_STATES,
-    variantTextEditAccess,
-  };
 };
 
 const ResourceContext = createContext<ResourceContextType>({
