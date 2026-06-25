@@ -11,6 +11,7 @@ const NONPRODUCTION_ACCESS = ['admin', 'manager', 'non-production access'];
 const TEMPLATE_EDIT_ACCESS = ['admin', 'manager', 'template edit access'];
 const APPENDIX_EDIT_ACCESS = ['admin', 'manager', 'appendix edit access'];
 const REPORT_ASSIGNMENT_ACCESS = ['admin', 'manager', 'report assignment access'];
+const CREATE_PROJECT_ACCESS = ['admin', 'manager', 'create project access'];
 
 const GERMLINE_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
 const UNREVIEWED_ACCESS_BLOCK = NO_GROUP_MATCH;
