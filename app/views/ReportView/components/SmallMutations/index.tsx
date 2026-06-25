@@ -176,7 +176,7 @@ const SmallMutations = ({
           {showDialog && (
             <VariantEditDialog
               editData={editData}
-              variantType="snv"
+              variantType="mut"
               isOpen={showDialog}
               onClose={handleEditClose}
             />
