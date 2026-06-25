@@ -61,6 +61,7 @@ const useResources = (): ResourceContextType => {
 
 const ResourceContext = createContext<ResourceContextType>({
   adminAccess: false,
+  createProjectAccess: false,
   allProjectsAccess: false,
   allStates: ALL_STATES,
   appendixEditAccess: false,
@@ -85,6 +86,7 @@ type ResourceContextProviderProps = {
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
     adminAccess,
+    createProjectAccess,
     allProjectsAccess,
     allStates,
     appendixEditAccess,
@@ -104,6 +106,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
 
   const providerValue = useMemo(() => ({
     adminAccess,
+    createProjectAccess,
     allProjectsAccess,
     allStates,
     appendixEditAccess,
@@ -121,6 +124,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     variantTextEditAccess,
   }), [
     adminAccess,
+    createProjectAccess,
     allProjectsAccess,
     allStates,
     appendixEditAccess,

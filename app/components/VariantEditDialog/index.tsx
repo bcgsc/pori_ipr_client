@@ -47,7 +47,7 @@ const VariantEditDialog = ({
     if (editData) {
       let newVariant;
       switch (variantType) {
-        case 'snv':
+        case 'mut':
           newVariant = `${editData?.gene.name}:${editData?.proteinChange}`;
           setVariant(newVariant);
           break;
