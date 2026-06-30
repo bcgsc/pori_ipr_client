@@ -26,6 +26,7 @@ const descriptions = {
   'germline access': 'can view germline reports',
   'report assignment access': 'can assign users to reports; bioinformatician',
   'create report access': 'can load new reports',
+  'create project access': 'can create new projects',
   'variant-text edit access': 'can create/edit/delete specific variant-text',
   manager: 'can create/edit/delete nonadmin users; all other permissions within assigned projects',
 };
@@ -42,6 +43,7 @@ const ALL_ACCESS = [
   'template edit access',
   'appendix edit access',
   'variant-text edit access',
+  'create project access',
 ];
 
 const Groups = (): JSX.Element => {
