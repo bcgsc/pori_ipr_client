@@ -23,6 +23,7 @@ import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-material.css';
 import '@fontsource/roboto';
 import './styles/ag-grid.scss';
+import { ErrorMixin } from './services/errors/errors';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,12 @@ const queryClient = new QueryClient({
       staleTime: 15 * 60 * 1000, // 15m
       refetchOnWindowFocus: false,
       refetchOnMount: false,
+      retry: (failureCount, error) => {
+        if ((error as ErrorMixin).content?.status === 404) {
+          return false;
+        }
+        return failureCount < 1;
+      },
     },
   },
 });

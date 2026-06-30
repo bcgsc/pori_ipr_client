@@ -1,5 +1,6 @@
 type ResourceContextType = {
   adminAccess: boolean;
+  createProjectAccess: boolean;
   allStates: string[];
   allProjectsAccess: boolean;
   appendixEditAccess: boolean;
