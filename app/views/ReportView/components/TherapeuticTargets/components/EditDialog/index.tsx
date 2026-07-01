@@ -9,6 +9,7 @@ import {
   DialogTitle,
   FormControl,
   TextField,
+  MenuItem,
   Radio,
   RadioGroup,
   FormLabel,
@@ -91,8 +92,14 @@ const EditDialog = ({
     } else {
       setDefaultVariantType('gene');
     }
-    setNewData({ type: 'replace', payload: editData || {} });
-  }, [editData]);
+
+    let initialData = editData || {};
+    if (!editData?.ident && tableType === 'therapeutic') {
+      initialData = { context: 'sensitivity', ...(editData || {}) };
+    }
+
+    setNewData({ type: 'replace', payload: initialData });
+  }, [editData, tableType]);
 
   useEffect(() => {
     let missing;
@@ -237,6 +244,19 @@ const EditDialog = ({
     setVariantType(event.target.value);
   };
 
+  const handleChemoresistanceContextChange = useCallback((
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setIsDirty(true);
+    setNewData({
+      payload: {
+        context: event.target.value,
+      },
+    });
+  }, []);
+
+  const isAddChemoresistanceRow = tableType === 'chemoresistance' && !newData.ident;
+
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
@@ -292,15 +312,30 @@ const EditDialog = ({
           />
         </FormControl>
         <FormControl fullWidth>
-          <AutocompleteHandler
-            defaultValue={newData.context}
-            type="context"
-            label="Context"
-            onChange={handleAutocompleteValueSelected}
-            required
-            minCharacters={3}
-            error={errors && isDirty && errors.context}
-          />
+          {isAddChemoresistanceRow ? (
+            <TextField
+              select
+              required
+              label="Context"
+              value={newData.context || ''}
+              onChange={handleChemoresistanceContextChange}
+              error={Boolean(errors && isDirty && errors.context)}
+              helperText={errors && isDirty && errors.context ? errors.context : ''}
+            >
+              <MenuItem value="toxicity">toxicity</MenuItem>
+              <MenuItem value="resistance">resistance</MenuItem>
+            </TextField>
+          ) : (
+            <AutocompleteHandler
+              defaultValue={newData.context}
+              type="context"
+              label="Context"
+              onChange={handleAutocompleteValueSelected}
+              required
+              minCharacters={3}
+              error={errors && isDirty && errors.context}
+            />
+          )}
         </FormControl>
         <FormControl fullWidth>
           <AutocompleteHandler
