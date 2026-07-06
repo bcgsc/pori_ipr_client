@@ -30,7 +30,7 @@ const renderDialog = (onClose = jest.fn(), existingVariants: string[] = []) => {
   render(
     <ReportContext.Provider value={reportValue}>
       <ConfirmContext.Provider value={confirmValue}>
-        <VariantEditDialog editData={mockEditData} variantType="snv" isOpen onClose={onClose} />
+        <VariantEditDialog editData={mockEditData} variantType="mut" isOpen onClose={onClose} />
       </ConfirmContext.Provider>
     </ReportContext.Provider>,
   );
@@ -61,7 +61,7 @@ describe('VariantEditDialog', () => {
       fireEvent.click(screen.getByText('Add to Summary'));
       expect(api.post).toHaveBeenCalledWith(
         '/reports/report-1/summary/genomic-alterations-identified',
-        { geneVariant: 'TP53:p.R175H', variantType: 'snv', variantIdent: 'variant-1' },
+        { geneVariant: 'TP53:p.R175H', variantType: 'mut', variantIdent: 'variant-1' },
       );
     });
 
