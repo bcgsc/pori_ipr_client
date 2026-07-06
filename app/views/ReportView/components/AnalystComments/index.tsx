@@ -232,36 +232,37 @@ const AnalystComments = ({
       {!(isComponentLoading || isApiLoading) && (
         <>
           {!isPrint && canEdit && (
-            <>
+            <IPRWYSIWYGEditor
+              ref={editorRef}
+              alertLeave
+              isOpen={isEditorOpen}
+              text={comments.comments}
+              title="Edit Comments"
+              onClose={handleEditorClose}
+              onSave={handleEditorSave}
+            />
+          )}
+          <div className="analyst-comments__body">
+            {!isPrint && canEdit && (
               <Fab
                 className="analyst-comments__fab"
                 color="secondary"
                 onClick={handleEditorStart}
                 size="small"
-                style={{ right: 295, position: 'fixed' }}
               >
                 <EditIcon />
               </Fab>
-              <IPRWYSIWYGEditor
-                ref={editorRef}
-                alertLeave
-                isOpen={isEditorOpen}
-                text={comments.comments}
-                title="Edit Comments"
-                onClose={handleEditorClose}
-                onSave={handleEditorSave}
+            )}
+            {comments ? (
+              <div
+                className="analyst-comments__user-text inner-html"
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{ __html: comments.comments }}
               />
-            </>
-          )}
-          {comments ? (
-            <div
-              className="analyst-comments__user-text inner-html"
-              // eslint-disable-next-line react/no-danger
-              dangerouslySetInnerHTML={{ __html: comments.comments }}
-            />
-          ) : (
-            <Typography align="center" variant="h5">No comments yet</Typography>
-          )}
+            ) : (
+              <Typography className="analyst-comments__user-text" align="center" variant="h5">No comments yet</Typography>
+            )}
+          </div>
           <div className="analyst-comments__signatures">
             {!isPrint && (
               <Typography variant="h5">Signed By</Typography>
