@@ -1,3 +1,5 @@
+import { ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
+
 const potentialTherapeuticTargetsColDefs = [{
   colId: 'drag',
   rowDrag: true,
@@ -45,8 +47,8 @@ const potentialTherapeuticTargetsColDefs = [{
   hide: true,
   sort: 'asc',
 }, {
-  headerName: 'Actions',
-  colId: 'actions',
+  headerName: ACTIONS_COLUMN,
+  colId: ACTIONS_COLUMN,
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   sortable: false,
