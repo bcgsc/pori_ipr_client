@@ -30,6 +30,7 @@ import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import NotesIcon from '@mui/icons-material/Notes';
+import LegendToggleIcon from '@mui/icons-material/LegendToggle';
 
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -201,6 +202,9 @@ const Sidebar = (): JSX.Element => {
       },
       {
         to: '/admin/appendices', icon: FilePresentIcon, label: 'Appendices', key: 'admin/appendices',
+      },
+      {
+        to: '/admin/pathway-legends', icon: LegendToggleIcon, label: 'Pathway Legends', key: 'admin/pathway-legends',
       },
       {
         to: '/admin/variant-text', icon: NotesIcon, label: 'Variant Text', key: 'admin/variant-text',
