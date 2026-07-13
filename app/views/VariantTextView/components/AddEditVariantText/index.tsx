@@ -8,7 +8,7 @@ import {
   DialogTitle,
   Button,
   MenuItem,
-  Select,
+  Select, 
   FormControl,
   InputLabel,
   Divider,
@@ -32,21 +32,24 @@ import sanitizeHtml from 'sanitize-html';
 import { ProjectType, TemplateType, VariantTextType } from '@/common';
 import { useQueryClient, useMutation } from 'react-query';
 import { useProjectAll, useTemplatesAll } from '@/queries/get';
+import {
+  ErrorMixin,
+} from '@/services/errors/errors';
 
 type AddEditVariantTextProps = {
-  editData?: VariantTextType;
+  editData?: VariantTextType | null;
   isOpen: boolean;
   onClose: (newData?: VariantTextType) => void;
 };
 
-type AddEditVariantFormProps = Omit<VariantTextType, 'project' | 'template'> & {
-  template: string;
-  project: string
+type AddEditVariantFormProps = Omit<VariantTextType, 'projects' | 'template'> & {
+  template: string | null;
+  projects: ProjectType[];
 };
 
 type VariantTextPayload = {
   template: string;
-  project: string;
+  projects: string[];
   variantName: string;
   cancerType: string[];
   text: string;
@@ -57,8 +60,8 @@ const extensions = [
   Underline,
 ];
 
-const handleProjectError = (err) => snackbar.error(`Error getting project options: ${err}`);
-const handleTemplateError = (err) => snackbar.error(`Error getting template options: ${err}`);
+const handleProjectsError = (err: ErrorMixin) => snackbar.error(`Error getting projects options: ${err.message}`);
+const handleTemplateError = (err: ErrorMixin) => snackbar.error(`Error getting template options: ${err.message}`);
 
 const AddEditVariantText = ({
   editData = null,
@@ -74,7 +77,7 @@ const AddEditVariantText = ({
     mode: 'onChange',
     defaultValues: {
       cancerType: [],
-      project: '',
+      projects: [],
       template: '',
       variantName: '',
     },
@@ -86,7 +89,7 @@ const AddEditVariantText = ({
   });
 
   const { data: projectOptions, isLoading: isProjectsLoading } = useProjectAll<ProjectType[]>({
-    onError: handleProjectError,
+    onError: handleProjectsError,
   });
 
   const { data: templateOptions, isLoading: isTemplatesLoading } = useTemplatesAll<TemplateType[]>({
@@ -94,18 +97,19 @@ const AddEditVariantText = ({
   });
 
   const savingVariant = async ({
-    template, project, variantName, cancerType, text,
+    template, projects, variantName, cancerType, text,
   }: VariantTextPayload) => {
     let response;
     if (editData) {
       response = await api.put(`/variant-text/${editData.ident}`, {
+        projects,
         cancerType,
         text,
       }).request();
     } else {
       response = await api.post('/variant-text', {
         template,
-        project,
+        projects,
         variantName,
         cancerType,
         text,
@@ -118,15 +122,18 @@ const AddEditVariantText = ({
     if (editData) {
       reset({
         cancerType: editData.cancerType,
-        template: editData.template.ident,
-        project: editData.project.ident,
+        template: editData.template?.ident,
+        projects: editData.projects.map(({ ident, name }) => ({ ident, name })),
         variantName: editData.variantName,
       });
       editor.commands.setContent(editData.text);
     }
   }, [editor, reset, editData]);
 
-  const handlecancerTypesFieldKeyDown = useCallback(({ code, target: { value } }) => {
+  const handlecancerTypesFieldKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    const { code } = event;
+    const { value } = event.target as HTMLInputElement;
+
     if (code === 'Backspace' && !value) {
       // Delete the last entry
       const currData = getValues('cancerType');
@@ -159,13 +166,13 @@ const AddEditVariantText = ({
 
   const { mutate: mutateVariant } = useMutation({
     mutationFn: savingVariant,
-    onSuccess: (res, { template, project }) => {
+    onSuccess: (res, { template, projects }) => {
       snackbar.success(editData ? 'Variant text modified successfully' : 'Variant text created successfully');
 
       const returnedData = {
         ...res,
         template: templateOptions?.find(({ ident }) => ident === template) || null,
-        project: projectOptions?.find(({ ident }) => ident === project) || null,
+        projects: projectOptions?.filter(({ ident }) => projects.includes(ident)) || [],
       };
 
       queryClient.invalidateQueries(['variant-text']);
@@ -179,7 +186,7 @@ const AddEditVariantText = ({
   });
 
   const saveVariant = useCallback(async ({
-    template, project, variantName, cancerType,
+    template, projects, variantName, cancerType,
   }) => {
     try {
       const sanitizedText = sanitizeHtml(editor?.getHTML() || '', {
@@ -194,7 +201,7 @@ const AddEditVariantText = ({
 
       mutateVariant({
         template,
-        project,
+        projects: projects.map(({ ident }) => ident),
         variantName,
         cancerType,
         text: sanitizedText,
@@ -308,34 +315,35 @@ const AddEditVariantText = ({
         />
         <Controller
           control={control}
-          name="project"
+          name="projects"
           rules={{ required: true }}
           render={({ field: { onChange, value } }) => (
-            <FormControl fullWidth classes={{ root: 'add-item__form-container' }}>
-              <InputLabel id="projects-select-label" className="add-item__select-label">Project</InputLabel>
-              <Select
-                className="add-item__select-field"
-                disabled={Boolean(editData)}
-                fullWidth
-                id="projects-select"
-                label="Project"
-                labelId="projects-select-label"
-                onChange={onChange}
-                value={value}
-                variant="outlined"
-              >
-                {projectOptions && (
-                  projectOptions.map((proj) => (
-                    <MenuItem
-                      value={proj.ident}
-                      key={proj.name}
-                    >
-                      {proj.name}
-                    </MenuItem>
-                  ))
-                )}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              className="add-item__select-field"
+              multiple
+              options={projectOptions || []}
+              disabled={Boolean(editData)}
+              value={value}
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, selected) => option.ident === selected.ident}
+              disableCloseOnSelect
+              onChange={(_event, selectedProjects) => onChange(selectedProjects)}
+              renderTags={(values, getTagProps) => values.map((project, idx) => (
+                <Chip
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${project.ident}-${idx}`}
+                  label={project.name}
+                  {...getTagProps({ index: idx })}
+                />
+              ))}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Projects"
+                  placeholder="Select projects"
+                />
+              )}
+            />
           )}
         />
         <Divider><Typography variant="caption">Add variant text</Typography></Divider>
