@@ -122,6 +122,12 @@ export const queryKeys = {
     evidenceLevels: () => ['graphkb', 'evidence-levels'] as const,
   },
 
+  legend: {
+    all: () => ['legend'] as const,
+
+    legend: (legendIdent) => ['legend', legendIdent] as const,
+  },
+
   variantText: {
     all: () => ['variant-text'] as const,
 
