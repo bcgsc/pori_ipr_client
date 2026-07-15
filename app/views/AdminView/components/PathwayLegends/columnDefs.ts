@@ -7,6 +7,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Name',
     field: 'name',
     flex: 1,
+    sort: 'asc',
   },
   {
     headerName: 'Preview',

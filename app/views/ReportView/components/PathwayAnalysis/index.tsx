@@ -13,7 +13,7 @@ import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PageBreak from '@/components/PageBreak';
 import PathwayImageType from './types';
-import Legend from './components/Legend';
+import Legend, { LEGEND_IMAGE_KEY } from './components/Legend';
 import Pathway from './components/Pathway';
 
 import './index.scss';
@@ -32,30 +32,18 @@ const PathwayAnalysis = ({
   const { report } = useContext(ReportContext);
 
   const [pathwayImage, setPathwayImage] = useState<PathwayImageType>();
-  const [legend, setLegend] = useState<string | ImageType>();
+  const [legend, setLegend] = useState<ImageType | null>(null);
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
         try {
-          const pathwayImageResp = await api.get(
-            `/reports/${report.ident}/summary/pathway-analysis`,
-          ).request();
+          const [pathwayImageResp, legendResp] = await Promise.all([
+            api.get(`/reports/${report.ident}/summary/pathway-analysis`).request(),
+            api.get(`/reports/${report.ident}/image/retrieve/${LEGEND_IMAGE_KEY}`).request(),
+          ]);
           setPathwayImage(pathwayImageResp);
-
-          const type = pathwayImageResp?.legend;
-          if (type === 'v1') {
-            setLegend('img/pathway_legend_v1.png');
-          } else if (type === 'v2') {
-            setLegend('img/pathway_legend_v2.png');
-          } else if (type === 'v3') {
-            setLegend('img/pathway_legend_v3.png');
-          } else if (type === 'custom') {
-            const legendResp = await api.get(
-              `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
-            ).request();
-            setLegend(legendResp[0]);
-          }
+          setLegend(legendResp?.[0] ?? null);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
@@ -69,23 +57,9 @@ const PathwayAnalysis = ({
     }
   }, [loadedDispatch, report, setIsLoading]);
 
-  const handlePathwayChange = useCallback(async (newPathway) => {
-    if (!legend) {
-      const type = newPathway?.legend;
-      if (type === 'v1') {
-        setLegend('img/pathway_legend_v1.png');
-      } else if (type === 'v2') {
-        setLegend('img/pathway_legend_v2.png');
-      } else if (type === 'v3') {
-        setLegend('img/pathway_legend_v3.png');
-      } else if (type === 'custom') {
-        const legendResp = await api.get(
-          `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
-        ).request();
-        setLegend(legendResp[0]);
-      }
-    }
-  }, [legend, report]);
+  const handlePathwayChange = useCallback((newPathway: PathwayImageType) => {
+    setPathwayImage(newPathway);
+  }, []);
 
   return (
     <div className={`pathway ${isPrint ? 'pathway--print' : ''}`}>
@@ -93,21 +67,32 @@ const PathwayAnalysis = ({
       <DemoDescription>
         This section is for display of a graphical or visual summary of the sequencing results in the context of biological pathways. This enables the visualization of multiple genomic alterations affecting often diverse biological pathways.
       </DemoDescription>
-      {!isLoading && (
+      {!isLoading && (isPrint ? (
         <>
           <Pathway
             initialPathway={pathwayImage}
-            isPrint={isPrint}
+            isPrint
             onChange={handlePathwayChange}
           />
-          {isPrint && <PageBreak />}
+          <PageBreak />
           <Legend
             initialLegend={legend}
-            type={pathwayImage?.legend}
-            isPrint={isPrint}
+            isPrint
           />
         </>
-      )}
+      ) : (
+        <div className="pathway__content">
+          <div className="pathway__section">
+            <Pathway
+              initialPathway={pathwayImage}
+              onChange={handlePathwayChange}
+            />
+          </div>
+          <div className="pathway__section">
+            <Legend initialLegend={legend} />
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

@@ -1,12 +1,10 @@
 import React, {
-  useEffect, useState, useContext, useCallback, useMemo,
+  useEffect, useState, useContext, useCallback,
 } from 'react';
 import { useSnackbar } from 'notistack';
 import {
-  IconButton,
   Typography,
   Button,
-  CircularProgress,
 } from '@mui/material';
 import PublishIcon from '@mui/icons-material/Publish';
 
@@ -17,6 +15,7 @@ import useReport from '@/hooks/useReport';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import PathwayImageType from '../../types';
+import PreviewBox from '../PreviewBox';
 
 type PathwayProps = {
   initialPathway: PathwayImageType | null;
@@ -61,7 +60,6 @@ const Pathway = ({
       const newPathway = new FormData();
 
       newPathway.append('pathway', uploadedFile);
-      newPathway.set('legend', 'v2');
 
       let pathwayCall;
 
@@ -92,69 +90,56 @@ const Pathway = ({
       }
     } catch (err) {
       snackbar.enqueueSnackbar(`Error uploading pathway image: ${err}`, { variant: 'error' });
+      setIsPathwayLoading(false);
     }
   }, [initialPathway, isSigned, onChange, report, snackbar, showConfirmDialog]);
 
-  const pathwayUpload = useMemo(() => {
-    let component = null;
-    if (canEdit && !isPrint) {
-      component = (
-        <Button
-          className="pathway__legend-button"
-          component="label"
-          color="secondary"
-          variant="outlined"
-        >
-          {!isPathwayLoading && (
-          <>
-            Upload Pathway Image
-            <PublishIcon />
-            <input
-              accept=".svg"
-              onChange={handlePathwayUpload}
-              type="file"
-              hidden
-            />
-          </>
-          )}
-          {isPathwayLoading && (
-          <CircularProgress size="small" color="secondary" />
-          )}
-        </Button>
-      );
-      if (pathwayImage?.pathway) {
-        component = (
-          <IconButton
-            className="pathway__button"
-            color="secondary"
-            component="label"
-            size="large"
-          >
-            <PublishIcon />
-            <input
-              accept=".svg"
-              onChange={handlePathwayUpload}
-              type="file"
-              hidden
-            />
-          </IconButton>
-        );
-      }
-    }
-    return component;
-  }, [handlePathwayUpload, canEdit, isPrint, pathwayImage?.pathway, isPathwayLoading]);
+  let previewNode: JSX.Element;
+  if (pathwayImage?.pathway && isPrint) {
+    previewNode = <SvgImage image={pathwayImage.pathway} isPrint />;
+  } else if (pathwayImage?.pathway) {
+    previewNode = (
+      <PreviewBox variant="filled" scrollable>
+        <div style={{ width: '100%' }}>
+          <SvgImage image={pathwayImage.pathway} />
+        </div>
+      </PreviewBox>
+    );
+  } else if (isPrint) {
+    previewNode = <Typography align="center">Pathway Not Yet Analyzed</Typography>;
+  } else {
+    previewNode = (
+      <PreviewBox variant="empty">
+        <Typography align="center" color="text.secondary">
+          {canEdit ? 'No pathway image' : 'Pathway Not Yet Analyzed'}
+        </Typography>
+      </PreviewBox>
+    );
+  }
 
   return (
     <div>
       {imageError && (
         <Typography align="center" color="error">{imageError}</Typography>
       )}
-      {pathwayUpload}
-      {pathwayImage?.pathway && (
-        <SvgImage image={pathwayImage.pathway} isPrint={isPrint} />
-      )}
-      {!pathwayImage && (!canEdit || isPrint) && (
-        <Typography align="center">Pathway Not Yet Analyzed</Typography>
+      {previewNode}
+      {canEdit && !isPrint && (
+        <Button
+          component="label"
+          color="secondary"
+          variant="outlined"
+          startIcon={<PublishIcon />}
+          disabled={isPathwayLoading}
+          sx={{ mt: 2 }}
+        >
+          {isPathwayLoading ? 'Uploading…' : 'Upload Pathway Image'}
+          <input
+            accept=".svg"
+            onChange={handlePathwayUpload}
+            type="file"
+            hidden
+          />
+        </Button>
       )}
     </div>
   );
