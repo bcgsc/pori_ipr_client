@@ -1,11 +1,27 @@
 import { formatDate } from '@/utils/date';
 import { ColDef } from '@ag-grid-community/core';
+import LegendPreviewCellRenderer from './components/LegendPreviewCellRenderer';
 
 const columnDefs: ColDef[] = [
   {
     headerName: 'Name',
     field: 'name',
     flex: 1,
+  },
+  {
+    headerName: 'Preview',
+    // Deliberately no `field`: the renderer reads the row via params.data, and binding
+    // this column to `data` would dump the base64 blob into CSV exports.
+    colId: 'preview',
+    cellRenderer: LegendPreviewCellRenderer,
+    // Let the row grow to the image's natural height rather than clipping it.
+    autoHeight: true,
+    // Keep DataTable's autoSizeColumns from measuring the image and blowing the width out.
+    suppressAutoSize: true,
+    sortable: false,
+    suppressMenu: true,
+    minWidth: 240,
+    flex: 2,
   },
   {
     headerName: 'Format',

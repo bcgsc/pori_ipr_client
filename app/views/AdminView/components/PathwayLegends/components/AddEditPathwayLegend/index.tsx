@@ -15,6 +15,7 @@ import {
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
+import legendDataUri from '../../legendImage';
 
 type PathwayLegendRecord = {
   ident: string;
@@ -97,13 +98,7 @@ const AddEditPathwayLegend = ({
 
   const previewSrc = useMemo(() => {
     if (file) return URL.createObjectURL(file);
-    if (editData?.data) {
-      const fmt = editData.format ?? editData.filename?.split('.').pop() ?? 'png';
-      const mime = fmt.toLowerCase() === 'svg' ? 'svg+xml' : fmt.toLowerCase();
-      return editData.data.startsWith('data:')
-        ? editData.data
-        : `data:image/${mime};base64,${editData.data}`;
-    }
+    if (editData) return legendDataUri(editData);
     return '';
   }, [file, editData]);
 
