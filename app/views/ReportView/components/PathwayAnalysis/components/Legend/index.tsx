@@ -76,7 +76,9 @@ const Legend = ({
             color="secondary"
             onClick={handleDeleteLegend}
             size="small"
-            sx={{ position: 'absolute', top: 4, right: 4 }}
+            sx={{
+              position: 'absolute', top: 4, right: 4, zIndex: '+1',
+            }}
           >
             <HighlightOffIcon />
           </IconButton>
