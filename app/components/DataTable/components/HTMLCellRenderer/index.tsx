@@ -3,8 +3,6 @@ import React, {
   useCallback, useEffect, useRef, useState,
 } from 'react';
 
-import './index.scss';
-
 enum DisplayMode {
   normal, compact,
 }
