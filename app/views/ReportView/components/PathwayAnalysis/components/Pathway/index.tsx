@@ -84,12 +84,12 @@ const Pathway = ({
       } else {
         const pathwayResp = await pathwayCall.request();
         setPathwayImage(pathwayResp);
-        setIsPathwayLoading(false);
         onChange(pathwayResp);
         snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
       }
     } catch (err) {
       snackbar.enqueueSnackbar(`Error uploading pathway image: ${err}`, { variant: 'error' });
+    } finally {
       setIsPathwayLoading(false);
     }
   }, [initialPathway, isSigned, onChange, report, snackbar, showConfirmDialog]);

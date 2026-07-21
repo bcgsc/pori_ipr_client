@@ -1,14 +1,16 @@
 import React, {
-  useState, useContext, useEffect, useCallback,
+  useContext, useEffect, useCallback,
 } from 'react';
 import {
   Typography,
 } from '@mui/material';
+import { useQueryClient } from 'react-query';
 
-import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
+import { queryKeys } from '@/queries/queryKeys';
+import { useReportSummaryPathwayAnalysis, useReportImageRetrieveKey } from '@/queries/get';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PageBreak from '@/components/PageBreak';
@@ -30,36 +32,52 @@ const PathwayAnalysis = ({
   setIsLoading,
 }: PathwayAnalysisProps): JSX.Element => {
   const { report } = useContext(ReportContext);
+  const queryClient = useQueryClient();
 
-  const [pathwayImage, setPathwayImage] = useState<PathwayImageType>();
-  const [legend, setLegend] = useState<ImageType | null>(null);
+  const {
+    data: pathwayImage,
+    isLoading: isPathwayLoading,
+    isError: isPathwayError,
+    error: pathwayError,
+  } = useReportSummaryPathwayAnalysis<PathwayImageType>(report?.ident, {
+    enabled: !!report?.ident,
+  });
+
+  const {
+    data: legend = null,
+    isLoading: isLegendLoading,
+    isError: isLegendError,
+    error: legendError,
+  } = useReportImageRetrieveKey<ImageType[], ImageType | null>(report?.ident, LEGEND_IMAGE_KEY, {
+    enabled: !!report?.ident,
+    select: (data) => data?.[0] ?? null,
+  });
+
+  const isApiLoading = isPathwayLoading || isLegendLoading;
 
   useEffect(() => {
-    if (report) {
-      const getData = async () => {
-        try {
-          const [pathwayImageResp, legendResp] = await Promise.all([
-            api.get(`/reports/${report.ident}/summary/pathway-analysis`).request(),
-            api.get(`/reports/${report.ident}/image/retrieve/${LEGEND_IMAGE_KEY}`).request(),
-          ]);
-          setPathwayImage(pathwayImageResp);
-          setLegend(legendResp?.[0] ?? null);
-        } catch (err) {
-          snackbar.error(`Network error: ${err}`);
-        } finally {
-          setIsLoading(false);
-          if (loadedDispatch) {
-            loadedDispatch({ type: 'pathway' });
-          }
-        }
-      };
-      getData();
+    if (isPathwayError || isLegendError) {
+      snackbar.error(`Network error: ${pathwayError ?? legendError}`);
     }
-  }, [loadedDispatch, report, setIsLoading]);
+  }, [isPathwayError, isLegendError, pathwayError, legendError]);
+
+  useEffect(() => {
+    if (report && !isApiLoading) {
+      setIsLoading(false);
+      if (loadedDispatch) {
+        loadedDispatch({ type: 'pathway' });
+      }
+    }
+  }, [report, isApiLoading, loadedDispatch, setIsLoading]);
 
   const handlePathwayChange = useCallback((newPathway: PathwayImageType) => {
-    setPathwayImage(newPathway);
-  }, []);
+    if (report) {
+      queryClient.setQueryData(
+        queryKeys.reports.reportSummaryPathwayAnalysis(report.ident),
+        newPathway,
+      );
+    }
+  }, [queryClient, report]);
 
   return (
     <div className={`pathway ${isPrint ? 'pathway--print' : ''}`}>
@@ -67,7 +85,7 @@ const PathwayAnalysis = ({
       <DemoDescription>
         This section is for display of a graphical or visual summary of the sequencing results in the context of biological pathways. This enables the visualization of multiple genomic alterations affecting often diverse biological pathways.
       </DemoDescription>
-      {!isLoading && (isPrint ? (
+      {!isLoading && !isApiLoading && (isPrint ? (
         <>
           <Pathway
             initialPathway={pathwayImage}
