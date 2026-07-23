@@ -5,13 +5,12 @@ type PreviewBoxProps = {
   children: React.ReactNode;
   // 'empty' shows a dashed placeholder frame; 'filled' a solid frame around an image.
   variant?: 'empty' | 'filled';
-  // When true, content taller than the square scrolls instead of being clipped.
+  // When true, content taller than the box scrolls instead of being clipped.
   scrollable?: boolean;
 };
 
-// Fixed square preview area — its height tracks its width (aspect-ratio 1) so the
-// pathway and legend previews are the same size whether or not an image is present.
-// The section's max-width caps the square at 500px.
+// Preview container that scales to fit the available width; height is determined
+// by the content (the SVG viewer or image).
 const PreviewBox = ({
   children,
   variant = 'filled',
@@ -21,7 +20,6 @@ const PreviewBox = ({
     sx={{
       position: 'relative',
       width: '100%',
-      aspectRatio: '1 / 1',
       display: 'flex',
       // Top-align when scrollable so overflowing content stays reachable
       // (centering would push the top out of view and make it unscrollable).
