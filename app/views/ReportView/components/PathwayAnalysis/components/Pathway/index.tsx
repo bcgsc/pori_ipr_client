@@ -21,12 +21,15 @@ type PathwayProps = {
   initialPathway: PathwayImageType | null;
   isPrint?: boolean;
   onChange: (newPathwayImage: PathwayImageType) => void;
+  /** Fires once the pathway SVG has rendered to the DOM. */
+  onRender?: () => void;
 };
 
 const Pathway = ({
   initialPathway,
   isPrint = false,
   onChange,
+  onRender,
 }: PathwayProps): JSX.Element => {
   const { isSigned } = useContext(ConfirmContext);
   const { report } = useContext(ReportContext);
@@ -96,12 +99,12 @@ const Pathway = ({
 
   let previewNode: JSX.Element;
   if (pathwayImage?.pathway && isPrint) {
-    previewNode = <SvgImage image={pathwayImage.pathway} isPrint />;
+    previewNode = <SvgImage image={pathwayImage.pathway} isPrint onLoad={onRender} />;
   } else if (pathwayImage?.pathway) {
     previewNode = (
       <PreviewBox variant="filled" scrollable>
         <div style={{ width: '100%' }}>
-          <SvgImage image={pathwayImage.pathway} />
+          <SvgImage image={pathwayImage.pathway} onLoad={onRender} fitToContainer />
         </div>
       </PreviewBox>
     );

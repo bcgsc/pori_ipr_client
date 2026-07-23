@@ -1,5 +1,5 @@
 import React, {
-  useContext, useEffect, useCallback,
+  useContext, useEffect, useCallback, useState,
 } from 'react';
 import {
   Typography,
@@ -13,7 +13,6 @@ import { queryKeys } from '@/queries/queryKeys';
 import { useReportSummaryPathwayAnalysis, useReportImageRetrieveKey } from '@/queries/get';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import PageBreak from '@/components/PageBreak';
 import PathwayImageType from './types';
 import Legend, { LEGEND_IMAGE_KEY } from './components/Legend';
 import Pathway from './components/Pathway';
@@ -26,7 +25,6 @@ type PathwayAnalysisProps = {
 } & WithLoadingInjectedProps;
 
 const PathwayAnalysis = ({
-  isLoading,
   isPrint = false,
   loadedDispatch,
   setIsLoading,
@@ -40,7 +38,7 @@ const PathwayAnalysis = ({
     isError: isPathwayError,
     error: pathwayError,
   } = useReportSummaryPathwayAnalysis<PathwayImageType>(report?.ident, {
-    enabled: !!report?.ident,
+    enabled: Boolean(report?.ident),
   });
 
   const {
@@ -49,11 +47,22 @@ const PathwayAnalysis = ({
     isError: isLegendError,
     error: legendError,
   } = useReportImageRetrieveKey<ImageType[], ImageType | null>(report?.ident, LEGEND_IMAGE_KEY, {
-    enabled: !!report?.ident,
+    enabled: Boolean(report?.ident),
     select: (data) => data?.[0] ?? null,
   });
 
   const isApiLoading = isPathwayLoading || isLegendLoading;
+
+  const [isPathwayRendered, setIsPathwayRendered] = useState(false);
+  const handlePathwayRendered = useCallback(() => {
+    setIsPathwayRendered(true);
+  }, []);
+  const hasPathwaySvg = Boolean(pathwayImage?.pathway);
+  // For print we must wait for the pathway SVG to actually render before
+  // reporting the section as loaded, otherwise paged.js snapshots it mid-load
+  // and freezes the loading bar into the printed page. On screen, and when
+  // there is no SVG to draw, readiness follows the API call alone.
+  const isPathwayReady = !isPrint || !hasPathwaySvg || isPathwayRendered;
 
   useEffect(() => {
     if (isPathwayError || isLegendError) {
@@ -62,13 +71,13 @@ const PathwayAnalysis = ({
   }, [isPathwayError, isLegendError, pathwayError, legendError]);
 
   useEffect(() => {
-    if (report && !isApiLoading) {
+    if (report && !isApiLoading && isPathwayReady) {
       setIsLoading(false);
       if (loadedDispatch) {
-        loadedDispatch({ type: 'pathway' });
+        loadedDispatch({ type: 'pathway-analysis' });
       }
     }
-  }, [report, isApiLoading, loadedDispatch, setIsLoading]);
+  }, [report, isApiLoading, isPathwayReady, loadedDispatch, setIsLoading]);
 
   const handlePathwayChange = useCallback((newPathway: PathwayImageType) => {
     if (report) {
@@ -80,30 +89,31 @@ const PathwayAnalysis = ({
   }, [queryClient, report]);
 
   return (
-    <div className={`pathway ${isPrint ? 'pathway--print' : ''}`}>
+    <div className={`pathway ${isPrint ? 'pathway--print' : 'pathway'}`}>
       <Typography variant="h3">Pathway Analysis</Typography>
       <DemoDescription>
         This section is for display of a graphical or visual summary of the sequencing results in the context of biological pathways. This enables the visualization of multiple genomic alterations affecting often diverse biological pathways.
       </DemoDescription>
-      {!isLoading && !isApiLoading && (isPrint ? (
-        <>
+      {report && !isApiLoading && (isPrint ? (
+        <div className="pathway__content">
           <Pathway
             initialPathway={pathwayImage}
             isPrint
             onChange={handlePathwayChange}
+            onRender={handlePathwayRendered}
           />
-          <PageBreak />
           <Legend
             initialLegend={legend}
             isPrint
           />
-        </>
+        </div>
       ) : (
         <div className="pathway__content">
           <div className="pathway__section">
             <Pathway
               initialPathway={pathwayImage}
               onChange={handlePathwayChange}
+              onRender={handlePathwayRendered}
             />
           </div>
           <div className="pathway__section">
