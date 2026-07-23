@@ -5,6 +5,38 @@
 
   &--print {
     padding: $print-container-padding;
+
+    // Half of a full page height for pathway image and legend
+    $print-image-max-height: calc($print-height / 2 - $header-font-size - 3rem);
+
+    .pathway__content {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .svg-image {
+      width: 100%;
+      margin: 0;
+
+      // Scale the whole image down to fit both the column width and half the page
+      // height, preserving aspect ratio — never upscaling, never clipping. Relies
+      // on the SVG having a viewBox, which SvgImage injects when the source omits it.
+      svg {
+        transform: none !important;
+        transform-origin: unset !important;
+        width: auto !important;
+        height: auto !important;
+        max-width: 100% !important;
+        max-height: $print-image-max-height !important;
+      }
+    }
+
+    // The legend prints as a raster <img>; cap it to the same half-page budget.
+    .image img {
+      max-width: 100%;
+      max-height: $print-image-max-height;
+      height: auto;
+    }
   }
 
   &__content {
@@ -18,23 +50,16 @@
   // instead of forcing the section wider than its share.
   &__section {
     min-width: 0;
-    max-width: 500px;
+
+    // Drop SvgImage's default vertical margin so the fitToContainer viewer sits
+    // flush inside the preview box instead of overflowing and scrolling.
+    .svg-image {
+      margin: 0;
+    }
   }
 
   &__button {
     float: right;
     z-index: $content-z-index;
-  }
-
-  // Large viewports: pathway and legend previews sit side by side.
-  @media (min-width: $breakpoint-lg) {
-    &__content {
-      flex-direction: row;
-      align-items: flex-start;
-    }
-
-    &__section {
-      flex: 1 1 0;
-    }
   }
 }
