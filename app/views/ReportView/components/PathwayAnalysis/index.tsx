@@ -10,11 +10,11 @@ import snackbar from '@/services/SnackbarUtils';
 import { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import { queryKeys } from '@/queries/queryKeys';
-import { useReportSummaryPathwayAnalysis, useReportImageRetrieveKey } from '@/queries/get';
+import { useReportSummaryPathwayAnalysis, useLegend } from '@/queries/get';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PathwayImageType from './types';
-import Legend, { LEGEND_IMAGE_KEY } from './components/Legend';
+import Legend from './components/Legend';
 import Pathway from './components/Pathway';
 
 import './index.scss';
@@ -46,9 +46,8 @@ const PathwayAnalysis = ({
     isLoading: isLegendLoading,
     isError: isLegendError,
     error: legendError,
-  } = useReportImageRetrieveKey<ImageType[], ImageType | null>(report?.ident, LEGEND_IMAGE_KEY, {
-    enabled: Boolean(report?.ident),
-    select: (data) => data?.[0] ?? null,
+  } = useLegend<ImageType[], ImageType | null>(String(pathwayImage?.legendId), {
+    enabled: Boolean(report?.ident) && Boolean(pathwayImage?.legendId),
   });
 
   const isApiLoading = isPathwayLoading || isLegendLoading;
