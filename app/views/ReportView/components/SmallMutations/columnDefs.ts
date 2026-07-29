@@ -181,3 +181,5 @@ export {
   columnDefs,
   setHeaderName,
 };
+
+export default columnDefs;

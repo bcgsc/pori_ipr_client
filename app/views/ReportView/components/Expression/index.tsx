@@ -4,7 +4,6 @@ import React, {
 import { Typography, Paper } from '@mui/material';
 import DataTable from '@/components/DataTable';
 import api from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';

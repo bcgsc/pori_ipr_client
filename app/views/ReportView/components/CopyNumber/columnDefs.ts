@@ -10,6 +10,18 @@ const columnDefs: ColDef[] = [{
 }, {
   headerName: 'Copy Change',
   field: 'copyChange',
+  valueFormatter: (params) => {
+    if (params.value === null || params.value === undefined) return '';
+    
+    const num = Number(params.value);
+    
+    // If the number is greater than zero, prepend the "+" sign
+    if (num > 0) {
+      return `+${num}`;
+    }
+    // Zero or negative numbers will naturally format with their own sign or nothing
+    return num.toString(); 
+  },
   hide: false,
 }, {
   headerName: 'LOH State',

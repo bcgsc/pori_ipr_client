@@ -130,4 +130,6 @@ export const setHeaderName = (header, colId) => {
   columnDefs[index].headerName = header;
 };
 
+export { createGeneRelatedValueGetter };
+
 export default columnDefs;
