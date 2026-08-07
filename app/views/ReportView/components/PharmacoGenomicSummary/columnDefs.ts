@@ -84,7 +84,7 @@ const COMMON_COL_DEFS: ColDef[] = [
 
 const ACTIONS_COL_DEF = actionsColDef;
 
-const pharmacoGenomicPrintColumnDefs = [
+const pharmacoGenomicPrintColumnDefs: ColDef[] = [
   ...COMMON_COL_DEFS,
   {
     headerName: 'Therapy',
@@ -106,7 +106,7 @@ const pharmacoGenomicPrintColumnDefs = [
   },
 ];
 
-const pharmacoGenomicColumnDefs = [
+const pharmacoGenomicColumnDefs: ColDef[] = [
   ...COMMON_COL_DEFS,
   {
     minWidth: 90,
@@ -221,27 +221,31 @@ const pharmacoGenomicColumnDefs = [
   ACTIONS_COL_DEF,
 ];
 
-const cancerPredisPrintColumnDefs = [
+const cancerPredisPrintColumnDefs: ColDef[] = [
   ...COMMON_COL_DEFS,
   {
     headerName: 'Context',
     field: 'context',
     colId: 'context',
+    valueGetter: ({ data }) => getNestedValue(data, 'kbMatchedStatements.context'),
   },
   {
     headerName: 'Source',
     field: 'externalSource',
     colId: 'externalSource',
+    valueGetter: ({ data }) => getNestedValue(data, 'kbMatchedStatements.externalSource'),
   },
 ];
-const cancerPredisColumnDefs = [
+const cancerPredisColumnDefs: ColDef[] = [
   ...COMMON_COL_DEFS,
   {
     field: 'context',
+    cellRenderer: ArrayCell('kbMatchedStatements.context'),
   },
   {
     headerName: 'Source',
     field: 'externalSource',
+    cellRenderer: ArrayCell('kbMatchedStatements.externalSource'),
     minWidth: 90,
   },
   ACTIONS_COL_DEF,
