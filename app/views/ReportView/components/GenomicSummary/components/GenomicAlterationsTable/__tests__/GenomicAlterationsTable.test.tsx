@@ -79,7 +79,6 @@ describe('GenomicAlterationsTable', () => {
 
 		expect(printHeaders).toContain('Gene');
 		expect(printHeaders).toContain('Expression Class');
-		expect(printHeaders).toContain('Copy State');
 		expect(printHeaders).toContain('Disease Perc');
 		expect(printHeaders).toContain('Disease Z-Score');
 		expect(printHeaders).not.toContain('Actions');

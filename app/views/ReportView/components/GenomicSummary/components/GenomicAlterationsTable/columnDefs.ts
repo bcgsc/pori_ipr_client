@@ -11,12 +11,12 @@ const smallMutationsColumnDefs: ColDef[] = [{
   cellRendererParams: { link: true },
 },
 {
-  headerName: 'Transcript',
-  field: 'transcript',
-},
-{
   headerName: 'Protein Change',
   field: 'proteinChange',
+},
+{
+  headerName: 'Transcript',
+  field: 'transcript',
 },
 {
   headerName: 'Location',
@@ -29,28 +29,6 @@ const smallMutationsColumnDefs: ColDef[] = [{
 {
   headerName: 'Zygosity',
   field: 'zygosity',
-},
-{
-  headerName: 'Exon',
-  field: 'exon',
-},
-{
-  headerName: 'Ref/Alt',
-  field: 'refAlt',
-  valueGetter: ({ data }) => (data.refSeq && data.altSeq) ? `${data.refSeq}>${data.altSeq}` : '',
-},
-{
-  headerName: 'LOH State',
-  field: 'gene.copyVariants.lohState',
-},
-{
-  headerName: 'Alt/Total count DNA',
-  field: 'altTotalCountDna',
-  valueGetter: ({ data }) => (
-    data.tumourDepth !== null && data.tumourAltCount !== null
-      ? `${data.tumourAltCount} / ${data.tumourDepth}`
-      : ''
-  ),
 },
 {
   headerName: 'VAF %',
@@ -103,34 +81,12 @@ const copyNumberColumnDefs: ColDef[] = [{
   },
 },
 {
-  headerName: 'LOH State',
-  field: 'lohState',
-},
-{
   headerName: 'CNV State',
   field: 'cnvState',
 },
 {
   headerName: 'Chr:band',
   field: 'chromosomeBand',
-},
-{
-  headerName: 'CNV Start',
-  field: 'start',
-},
-{
-  headerName: 'CNV End',
-  field: 'end',
-},
-{
-  headerName: 'Expression (Perc)',
-  colId: 'diseasePercentile',
-  valueGetter: 'data.gene.expressionVariants.diseasePercentile',
-},
-{
-  headerName: 'Expression (Zscore)',
-  colId: 'diseaseZScore',
-  valueGetter: 'data.gene.expressionVariants.diseaseZScore',
 },
 {
   headerName: 'Actions',
@@ -193,10 +149,6 @@ const expressionColumnDefs: Array<ColDef | ColGroupDef> = [{
 {
   headerName: 'Expression Class',
   field: 'expressionState',
-},
-{
-  headerName: 'Copy State',
-  field: 'gene.copyVariants.cnvState',
 },
 {
   headerName: 'Disease',
