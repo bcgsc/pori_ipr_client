@@ -5,6 +5,7 @@ import {
 	waitFor,
 	within,
 } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
@@ -76,23 +77,29 @@ const mockVariantsResponse = [
 ];
 
 const renderWithProviders = (props = {}) => render(
-	<ReportContext.Provider
-		value={{
-			report: mockReport as any,
-			canEdit: true,
-			reportTemplateName: '',
-			refetchReport: () => null,
-		}}
+	<QueryClientProvider
+		client={new QueryClient({
+			defaultOptions: { queries: { retry: false } },
+		})}
 	>
-		<ConfirmContext.Provider
+		<ReportContext.Provider
 			value={{
-				isSigned: false,
-				setIsSigned: () => {},
+				report: mockReport as any,
+				canEdit: true,
+				reportTemplateName: '',
+				refetchReport: () => null,
 			}}
 		>
-			<KeyAlterations {...props as any} />
-		</ConfirmContext.Provider>
-	</ReportContext.Provider>,
+			<ConfirmContext.Provider
+				value={{
+					isSigned: false,
+					setIsSigned: () => {},
+				}}
+			>
+				<KeyAlterations {...props as any} />
+			</ConfirmContext.Provider>
+		</ReportContext.Provider>
+	</QueryClientProvider>,
 );
 
 describe('KeyAlterations', () => {
