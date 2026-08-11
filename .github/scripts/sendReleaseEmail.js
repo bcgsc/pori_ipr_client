@@ -69,7 +69,7 @@ const escapeHtml = (text) =>
 
 /**
  * Minimal markdown formatter
- * - ### heading → bold, 14px
+ * - ### heading → <h2>heading</h2>
  * - **bold** → bold
  * - everything else → plain text
  */
