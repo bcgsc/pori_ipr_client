@@ -63,7 +63,6 @@ const EditDialog = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [variantType, setVariantType] = useState<string>('gene');
-  const [defaultVariantType, setDefaultVariantType] = useState<string>();
   const [defaultVariantValue, setDefaultVariantValue] = useState<string>();
   const [defaultSignatureVariantValue, setDefaultSignatureVariantValue] = useState<string>();
 
@@ -85,12 +84,11 @@ const EditDialog = ({
 
   useEffect(() => {
     if (!editData) {
-      setDefaultVariantType('gene');
+      setVariantType('gene');
     } else if (editData.signature || editData.signatureGraphkbId) {
-      setDefaultVariantType('signature');
       setVariantType('signature');
     } else {
-      setDefaultVariantType('gene');
+      setVariantType('gene');
     }
 
     let initialData = editData || {};
@@ -99,7 +97,7 @@ const EditDialog = ({
     }
 
     setNewData({ type: 'replace', payload: initialData });
-  }, [editData, tableType]);
+  }, [editData, tableType, setNewData, setVariantType]);
 
   useEffect(() => {
     let missing;
@@ -266,7 +264,7 @@ const EditDialog = ({
           <RadioGroup
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
-            defaultValue={defaultVariantType}
+            value={variantType}
             name="row-radio-buttons-group"
             onChange={handleVariantTypeChange}
           >
