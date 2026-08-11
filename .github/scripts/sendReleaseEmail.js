@@ -125,6 +125,16 @@ const sendMail = async (token) => {
  * Main
  */
 const main = async () => {
+  const missing = [
+    'AZURE_TENANT_ID',
+    'AZURE_CLIENT_ID',
+    'AZURE_CLIENT_SECRET',
+    'AZURE_SENDER_EMAIL',
+    'RECIPIENT_EMAIL',
+    'RELEASE_TITLE'
+  ].filter((k) => !process.env[k]);
+  if (missing.length) throw new Error(`Missing required env vars: ${missing.join(', ')}`);
+
   const token = await getGraphToken();
   await sendMail(token);
   console.log('Email sent successfully.');
