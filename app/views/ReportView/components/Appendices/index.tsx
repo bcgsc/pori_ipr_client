@@ -7,7 +7,8 @@ import {
 } from '@mui/material';
 
 import api, { ApiCallSet } from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError, { getStatus } from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import DataTable from '@/components/DataTable';
 
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
@@ -43,6 +44,8 @@ const Appendices = ({
   const [tcga, setTcga] = useState<TcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<{ label: string; value: string | number }[]>([]);
 
+  const { reportError } = useApiError(isPrint);
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -57,16 +60,16 @@ const Appendices = ({
           const appendixCResp = await api.get(`/appendix?templateId=${report.template.ident}&projectId=${primaryProjectId}`).request();
           setAppendixCText(appendixCResp?.text);
         } catch (getProjectAppendixErr) {
-          if (getProjectAppendixErr.message === 'Not Found') {
-            // Grab default
+          if (getStatus(getProjectAppendixErr) === 404 || getProjectAppendixErr.message === 'Not Found') {
+            // No project specific appendix C, grab the template default
             try {
               const appendixCResp = await api.get(`/appendix?templateId=${report.template.ident}`).request();
               setAppendixCText(appendixCResp?.text);
             } catch (getDefaultAppendixError) {
-              snackbar.error(`Network error getting default appendix C: ${getDefaultAppendixError}`);
+              reportError('Failed to load default appendix C', getDefaultAppendixError);
             }
           } else {
-            snackbar.error(`Network error getting project specific appendix C: ${getProjectAppendixErr}`);
+            reportError('Failed to load project specific appendix C', getProjectAppendixErr);
           }
         }
         try {
@@ -75,11 +78,23 @@ const Appendices = ({
             api.get(`/reports/${report.ident}/appendices/tcga`),
             api.get(`/reports/${report.ident}/comparators`),
           ]);
-          const [appendicesResp, tcgaResp, comparatorsResp] = await callSet.request() as [AppendicesType, TcgaType[], ComparatorType[]];
+          // Each appendix renders independently, so a failure of one must not
+          // blank the other two
+          const [appendicesResp, tcgaResp = [], comparatorsResp = []] = unwrapSettled<
+          [AppendicesType, TcgaType[], ComparatorType[]]
+          >(
+            await callSet.request(true) as PromiseSettledResult<unknown>[],
+            [
+              'Failed to load appendices',
+              'Failed to load TCGA acronyms',
+              'Failed to load comparators',
+            ],
+            reportError,
+          );
 
           // DEVSU-2848 temporary fix to handle old appendices response that doesn't have seqQC field
           // should remove after datafix
-          if (appendicesResp.seqQC && appendicesResp.seqQC.length === 0) {
+          if (appendicesResp?.seqQC && appendicesResp.seqQC.length === 0) {
             appendicesResp.seqQC = appendicesResp.seqQc;
           }
 
@@ -87,7 +102,7 @@ const Appendices = ({
           setTcga(tcgaResp);
           setComparators(comparatorsResp);
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load appendices', err);
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
@@ -98,7 +113,7 @@ const Appendices = ({
 
       getData();
     }
-  }, [loadedDispatch, report, setIsLoading]);
+  }, [loadedDispatch, report, setIsLoading, reportError]);
 
   useEffect(() => {
     if (report && comparators.length) {

@@ -5,7 +5,8 @@ import DataTable from '@/components/DataTable';
 import Image, { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { ImmuneType, HlaType } from '@/common';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
@@ -31,6 +32,8 @@ const Immune = ({
   const [images, setImages] = useState<ImageType[]>([]);
   const [hlaTypes, setHlaTypes] = useState<HlaType[]>([]);
 
+  const { reportError } = useApiError();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -43,12 +46,26 @@ const Immune = ({
             api.get(`/reports/${report.ident}/hla-types`),
           ]);
 
-          const [cellTypesResp, imagesResp, hlaTypesResp] = await apiCalls.request();
+          // Cell types, plots and HLA types are separate tables/figures; a
+          // failure of one still leaves the rest worth showing
+          const [
+            cellTypesResp = [],
+            imagesResp = [],
+            hlaTypesResp = [],
+          ] = unwrapSettled<[ImmuneType[], ImageType[], HlaType[]]>(
+            await apiCalls.request(true) as PromiseSettledResult<unknown>[],
+            [
+              'Failed to load immune cell types',
+              'Failed to load immune plots',
+              'Failed to load HLA types',
+            ],
+            reportError,
+          );
           setCellTypes(cellTypesResp);
           setImages(imagesResp);
           setHlaTypes(hlaTypesResp);
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load immune analysis', err);
         } finally {
           setIsLoading(false);
         }
@@ -56,7 +73,7 @@ const Immune = ({
 
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, reportError]);
 
   return (
     <div>

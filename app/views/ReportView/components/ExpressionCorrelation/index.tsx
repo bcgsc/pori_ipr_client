@@ -7,9 +7,10 @@ import {
   Typography,
 } from '@mui/material';
 
-import api from '@/services/api';
+import api, { ApiCallSet } from '@/services/api';
 import ReportContext from '@/context/ReportContext';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -82,6 +83,8 @@ const ExpressionCorrelation = ({
   const [subtypePlots, setSubtypePlots] = useState<ImageType[]>([]);
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
 
+  const { reportError } = useApiError();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -93,11 +96,23 @@ const ExpressionCorrelation = ({
             ...DISEASE_SPECIFIC_EXPRESSION_KEYS_TO_GET.map((group) => group.key),
           ].join(',');
 
-          const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-            api.get(`/reports/${report.ident}/image/retrieve/${allKeys}`).request(),
-            api.get(`/reports/${report.ident}/image/subtype-plots`).request(),
-            api.get(`/reports/${report.ident}/pairwise-expression-correlation`).request(),
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/image/retrieve/${allKeys}`),
+            api.get(`/reports/${report.ident}/image/subtype-plots`),
+            api.get(`/reports/${report.ident}/pairwise-expression-correlation`),
           ]);
+          // Each plot group is its own panel; keep the ones that resolved
+          const [plotData = [], subtypePlotData = [], pairwiseData = []] = unwrapSettled<
+          [ImageType[], ImageType[], Record<string, unknown>[]]
+          >(
+            await apiCalls.request(true) as PromiseSettledResult<unknown>[],
+            [
+              'Failed to load expression correlation plots',
+              'Failed to load subtype plots',
+              'Failed to load pairwise expression correlation',
+            ],
+            reportError,
+          );
 
           const [diseaseSpecificPlotData, samplePlotData] = partition(plotData, (pd) => /brca/.test(pd.key));
           setSamplePlots(samplePlotData);
@@ -105,7 +120,7 @@ const ExpressionCorrelation = ({
           setSubtypePlots(subtypePlotData);
           setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc']).slice(0, 19));
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load expression correlation', err);
         } finally {
           setIsLoading(false);
         }
@@ -113,7 +128,7 @@ const ExpressionCorrelation = ({
 
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, reportError]);
 
   // If Target exists, and pediatric does not, display target, else filter out target
   const SAMPLE_EXPRESSION_KEYS = useMemo(() => {

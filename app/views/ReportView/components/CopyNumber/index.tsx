@@ -13,7 +13,8 @@ import api, { ApiCallSet } from '@/services/api';
 import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import { CopyNumberType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import VariantEditDialog from '@/components/VariantEditDialog';
@@ -81,6 +82,8 @@ const CopyNumber = ({
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<CopyNumberType | null>();
 
+  const { reportError } = useApiError();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -91,7 +94,24 @@ const CopyNumber = ({
             api.get(`/reports/${report.ident}/image/retrieve/${CHR_LEGEND},${CHRS}`),
             api.get(`/reports/${report.ident}/image/retrieve/cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`),
           ]);
-          const [cnvsResp, [circosResp], newImagesResp, oldImagesResp] = await apiCalls.request() as [CopyNumberType[], ImageType[], ImageType[], ImageType[]];
+          // The CNV table and each image set render independently; previously a
+          // single missing image took the whole section down
+          const [
+            cnvsResp = [],
+            circosImages = [],
+            newImagesResp = [],
+            oldImagesResp = [],
+          ] = unwrapSettled<[CopyNumberType[], ImageType[], ImageType[], ImageType[]]>(
+            await apiCalls.request(true) as PromiseSettledResult<unknown>[],
+            [
+              'Failed to load copy variants',
+              'Failed to load circos plot',
+              'Failed to load copy number plots',
+              'Failed to load legacy copy number plots',
+            ],
+            reportError,
+          );
+          const [circosResp] = circosImages;
 
           if (cnvsResp?.length) {
             const nextVisible = [];
@@ -128,14 +148,14 @@ const CopyNumber = ({
           setImages(imagesResp);
           setLegend(legendResp);
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load copy number analyses', err);
         } finally {
           setIsLoading(false);
         }
       };
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, reportError]);
 
   useEffect(() => {
     if (cnvs.length) {

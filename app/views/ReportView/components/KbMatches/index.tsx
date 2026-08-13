@@ -31,6 +31,8 @@ import { useMutation } from 'react-query';
 
 import api, { ApiCallPayload, ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import DemoDescription from '@/components/DemoDescription';
 import useReport from '@/hooks/useReport';
 import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
@@ -452,6 +454,8 @@ const KbMatches = ({
 
   const templateName = report?.template.name;
 
+  const { reportError } = useApiError(isPrint);
+
   useEffect(() => {
     if (report && fetchData) {
       const getData = async () => {
@@ -463,13 +467,19 @@ const KbMatches = ({
             api.get(`${baseUri}`, {}),
           ]);
 
+          // Probe results only feed the targeted somatic genes table; the
+          // kb-matches tables must still render if that call 404s
           const [
-            targetedSomaticGenesResp,
-            allKbMatchesResp,
-          ] = await apiCalls.request() as [
+            targetedSomaticGenesResp = [],
+            allKbMatchesResp = [],
+          ] = unwrapSettled<[
             ProbeResultsType[],
             KbMatchedStatementType[],
-          ];
+          ]>(
+            await apiCalls.request(true) as PromiseSettledResult<unknown>[],
+            ['Failed to load probe results', 'Failed to load knowledgebase matches'],
+            reportError,
+          );
 
           setAllKbMatches(allKbMatchesResp);
 
@@ -532,7 +542,7 @@ const KbMatches = ({
           if (err.name === 'CoalesceEntriesError') {
             snackbar.error(err.message);
           } else {
-            snackbar.error(`Network error: ${err}`);
+            reportError('Failed to load knowledgebase matches', err);
           }
         } finally {
           setIsLoading(false);
@@ -542,7 +552,7 @@ const KbMatches = ({
 
       getData();
     }
-  }, [fetchData, report, setIsLoading]);
+  }, [fetchData, report, setIsLoading, reportError]);
 
   const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => (
     setFilterText(event.target.value)
