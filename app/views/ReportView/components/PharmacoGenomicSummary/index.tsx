@@ -15,7 +15,8 @@ import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
 import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { KbMatchType } from '@/common';
@@ -60,17 +61,19 @@ const PharmacoGenomicSummary = ({
 
   const classNamePrefix = isPrint ? 'summary--print' : 'summary';
 
+  const { reportError } = useApiError(isPrint);
+
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
         try {
-          const probeTestInfoResp = await api.get(`/reports/${report.ident}/probe-test-information`).request();
-          setTestInformation(probeTestInfoResp);
-        } catch (err) {
-          snackbar.error(`Error getting probe-test-information: ${err}`);
-        }
+          try {
+            const probeTestInfoResp = await api.get(`/reports/${report.ident}/probe-test-information`).request();
+            setTestInformation(probeTestInfoResp);
+          } catch (err) {
+            reportError('Failed to load probe test information', err);
+          }
 
-        try {
           const apiCalls = new ApiCallSet([
             api.get(`/reports/${report.ident}/signatures`),
             api.get(`/reports/${report.ident}/kb-matches?category=pharmacogenomic`),
@@ -80,21 +83,26 @@ const PharmacoGenomicSummary = ({
 
           const [
             signaturesData,
-            pharmacoGenomicResp,
-            cancerPredispositionResp,
+            pharmacoGenomicResp = [],
+            cancerPredispositionResp = [],
             signatureTypesResp,
-          ] = await apiCalls.request() as [SignatureType, KbMatchType[], KbMatchType[], SignatureUserType[]];
+          ] = unwrapSettled<[SignatureType, KbMatchType[], KbMatchType[], SignatureUserType[]]>(
+            await apiCalls.request(true) as PromiseSettledResult<unknown>[],
+            [
+              'Failed to load signatures',
+              'Failed to load pharmacogenomic kb-matches',
+              'Failed to load cancer predisposition kb-matches',
+              'Failed to load signature types',
+            ],
+            reportError,
+          );
 
           setSignatures(signaturesData);
           setPharmacoGenomic(pharmacoGenomicResp.filter(({ variant }) => variant.germline));
           // Assumed to be germline when it gets to this part, so filtering no longer necessary
           setCancerPredisposition(cancerPredispositionResp.filter(({ variant }) => variant.germline));
 
-          if (loadedDispatch) {
-            loadedDispatch({ type: 'summary-pcp' });
-          }
-
-          if (signatureTypesResp?.length === 0) {
+          if (!signatureTypesResp?.length) {
             const defaultSigatureTypes = [
               { signatureType: 'author' },
               { signatureType: 'reviewer' },
@@ -105,15 +113,20 @@ const PharmacoGenomicSummary = ({
             setSignatureTypes(signatureTypesResp);
           }
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load pharmacogenomic summary', err);
         } finally {
           setIsLoading(false);
+          // Must fire even when requests fail, otherwise PrintView never
+          // reaches its all-sections-loaded state and never calls window.print
+          if (loadedDispatch) {
+            loadedDispatch({ type: 'summary-pcp' });
+          }
         }
       };
 
       getData();
     }
-  }, [loadedDispatch, report, setIsLoading]);
+  }, [loadedDispatch, report, setIsLoading, reportError]);
 
   const handleTestInfoEditClose = useCallback<TestInformationEditDialogProps['onClose']>((data) => {
     if (data) {
