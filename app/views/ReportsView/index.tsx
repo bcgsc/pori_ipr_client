@@ -8,6 +8,7 @@ import useResource from '@/hooks/useResource';
 import { ReportsType, ReportType } from '@/common';
 import { CircularProgress } from '@mui/material';
 import { useReportsAll } from '@/queries/get';
+import useApiError from '@/hooks/useApiError';
 
 import './index.scss';
 
@@ -31,14 +32,20 @@ const ReportsView = (): JSX.Element => {
     return statesArray.join(',');
   }, [allStates, nonproductionAccess, unreviewedAccess, nonproductionStates, unreviewedStates]);
 
-  const { isLoading: isApiLoading, data: reportsData } = useReportsAll<ReportsType>({}, {
+  const { queryOnError } = useApiError();
+
+  const { isLoading: isApiLoading, data: reportsData } = useReportsAll<ReportsType>({
+    onError: queryOnError('Failed to load reports'),
+  }, {
     states,
   });
 
   useEffect(() => {
     if (!rowData) {
       const getData = async () => {
-        if (!isApiLoading) {
+        // reportsData is undefined when the request failed; the table stays
+        // empty rather than throwing
+        if (!isApiLoading && reportsData?.reports) {
           setRowData(reportsData.reports.map((report: ReportType) => {
             const [analyst] = report.users
               .filter((u) => u.role === 'analyst')
