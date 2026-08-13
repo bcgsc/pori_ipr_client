@@ -305,7 +305,6 @@ const KeyAlterations = ({
 
   const handleVariantDeleted = useCallback(async (variantIdent, type, comment?) => {
     try {
-      console.log('Deleting variant', variantIdent, type, comment);
       const req = api.del(
         `/reports/${report.ident}/summary/genomic-alterations-identified/${variantIdent}`,
         { comment },
@@ -397,7 +396,7 @@ const KeyAlterations = ({
           setIsLoading={setIsLoading}
           isPrint={isPrint}
           variantCategory={type}
-          variantData={categoryData.map((data) => ({ ...data.variant, ident: data.ident }))}
+          variantData={categoryData.map((data) => ({ ...data.variant, ident: data.ident, type: data.type }))}
           onDelete={handleTableDeleted}
         />
       );
