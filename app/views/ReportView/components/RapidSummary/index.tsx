@@ -11,7 +11,7 @@ import {
 import DemoDescription from '@/components/DemoDescription';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
-import { ErrorMixin } from '@/services/errors/errors';
+import useApiError from '@/hooks/useApiError';
 import DataTable, { DataTableImperativeHandle } from '@/components/DataTable';
 import {
   ReportType,
@@ -245,20 +245,9 @@ const RapidSummary = ({
 
   const variantQueryOptions = { enabled: !!reportIdent, refetchOnMount: 'always' as const };
 
-  // Returns an onError handler that shows a labelled snackbar, suppressed in print mode.
-  // err.message is set by ErrorMixin's constructor from the server payload message field.
-  const queryOnError = useCallback((label: string) => (
-    !isPrint
-      ? (err: Error | ErrorMixin) => snackbar.error(`${label}: ${err.message}`)
-      : undefined
-  ), [isPrint]);
-
-  // Like queryOnError but silently ignores 404s (resource simply absent for this report).
-  const queryOnErrorSkip404 = useCallback((label: string) => (
-    !isPrint
-      ? (err: Error | ErrorMixin) => { if ((err as ErrorMixin).content?.status !== 404) snackbar.error(`${label}: ${err.message}`); }
-      : undefined
-  ), [isPrint]);
+  // Labelled error handlers; snackbars are suppressed in print, and the
+  // Skip404 variant stays silent when a resource is simply absent.
+  const { queryOnError, queryOnErrorSkip404 } = useApiError(isPrint);
 
   const { data: therapeuticAssociationResults, isLoading: isTherapAssocLoading } = useReportVariants<RapidVariantType[], ProcessedTherapeuticAssociationRapidVariantType[]>(
     reportIdent,
