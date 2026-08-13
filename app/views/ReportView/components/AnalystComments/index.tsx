@@ -10,6 +10,7 @@ import sanitizeHtml from 'sanitize-html';
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import useReport from '@/hooks/useReport';
 import { DEFAULT_SIGNATURE_TYPES, useSignatureTypes } from '@/hooks/useSignatureTypes';
 import DemoDescription from '@/components/DemoDescription';
@@ -47,11 +48,13 @@ const AnalystComments = ({
   const editorRef = useRef<{ editor: Editor, isDirty: boolean | null }>();
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
+  const { reportError } = useApiError(isPrint);
+
   const {
     data: comments,
     refetch: refetchComments,
     isLoading: isCommentsLoading,
-    isError: isCommentsError,
+    error: commentsError,
   } = useReportSummaryAnalystComments<AnalystCommentType>(report.ident, {
     select: (data) => {
       if (data.comments) {
@@ -68,25 +71,24 @@ const AnalystComments = ({
     data: signatures,
     refetch: refetchSignatures,
     isLoading: isSignaturesLoading,
-    isError: isSignaturesError,
+    error: signaturesError,
   } = useReportSignatures<SignatureType>(report.ident);
 
   const {
     data: signatureTypes = DEFAULT_SIGNATURE_TYPES,
     isLoading: isSignatureTypesLoading,
-    isError: isSignatureTypesError,
+    error: signatureTypesError,
   } = useSignatureTypes(report);
 
   const isApiLoading = isCommentsLoading || isSignaturesLoading || isSignatureTypesLoading;
-  const isError = isCommentsError || isSignaturesError || isSignatureTypesError;
+  const loadError = commentsError || signaturesError || signatureTypesError;
+  const isError = Boolean(loadError);
 
   useEffect(() => {
-    if (isError) {
-      snackbar.error(`Network error: ${
-        isCommentsError || isSignaturesError || isSignatureTypesError
-      }`);
+    if (loadError) {
+      reportError('Failed to load analyst comments', loadError);
     }
-  }, [isCommentsError, isError, isSignatureTypesError, isSignaturesError]);
+  }, [loadError, reportError]);
 
   useEffect(() => {
     if (!isApiLoading) {

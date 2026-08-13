@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { when, resetAllWhenMocks } from 'jest-when';
 
@@ -8,6 +8,8 @@ import withLoading from '@/hoc/WithLoading';
 import api, { ApiCall } from '@/services/api';
 import { TemplateType, ReportType } from '@/common';
 import { SecurityContext } from '@/context/SecurityContext';
+import snackbar from '@/services/SnackbarUtils';
+import { makeApiError } from '@/test/apiErrorHelpers';
 import AnalystComments from '..';
 
 const mockTemplate = {
@@ -49,10 +51,12 @@ const mockEndpoints: Record<string, unknown> = {
 };
 
 jest.mock('@/services/api');
+jest.mock('@/services/SnackbarUtils');
 
 describe('AnalystComments', () => {
   beforeEach(() => {
     resetAllWhenMocks();
+    (snackbar.error as jest.Mock).mockClear();
     // Default fallback if no endpoint matches
     when(api.get as (endpoint: string) => Partial<ApiCall>)
       .mockImplementation(() => ({ request: async () => null }));
@@ -97,5 +101,44 @@ describe('AnalystComments', () => {
 
     expect(testElem).toBeInTheDocument();
     expect(testElem).toHaveAttribute('style', 'color:red');
+  });
+
+  const renderWithFailingComments = (isPrint: boolean) => {
+    when(api.get as (endpoint: string) => Partial<ApiCall>)
+      .calledWith(`/reports/${mockReport.ident}/summary/analyst-comments`)
+      .mockImplementation(() => ({
+        request: async () => { throw makeApiError(); },
+      }));
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const Component = withLoading(withReportContext(AnalystComments, mockReport));
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <SecurityContext.Provider value={mockSecurityContext}>
+          <Component isPrint={isPrint} />
+        </SecurityContext.Provider>
+      </QueryClientProvider>,
+    );
+  };
+
+  test('still renders the section when the comments request 404s', async () => {
+    renderWithFailingComments(false);
+
+    expect(await screen.findByText('Analyst Comments')).toBeInTheDocument();
+  });
+
+  test('names the failure in the snackbar', async () => {
+    renderWithFailingComments(false);
+
+    await screen.findByText('Analyst Comments');
+    await waitFor(() => expect(snackbar.error).toHaveBeenCalledWith(
+      expect.stringContaining('Failed to load analyst comments'),
+    ));
+  });
+
+  test('shows no snackbar in print', async () => {
+    renderWithFailingComments(true);
+
+    await screen.findByText('Analyst Comments');
+    expect(snackbar.error).not.toHaveBeenCalled();
   });
 });

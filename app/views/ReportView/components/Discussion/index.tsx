@@ -6,7 +6,7 @@ import {
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CommentCard from './components/CommentCard';
@@ -24,6 +24,8 @@ const Discussion = ({
 
   const [comments, setComments] = useState([]);
 
+  const { reportError } = useApiError();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -31,14 +33,14 @@ const Discussion = ({
           const commentsResp = await api.get(`/reports/${report.ident}/presentation/discussion`, {}).request();
           setComments(commentsResp);
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load discussion notes', err);
         } finally {
           setIsLoading(false);
         }
       };
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, reportError]);
 
   const handleCommentEdited = (newComment) => {
     setComments((prevComments) => prevComments.reduce((accumulator, current) => {

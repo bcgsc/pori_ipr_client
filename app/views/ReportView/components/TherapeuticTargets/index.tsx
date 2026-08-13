@@ -10,6 +10,7 @@ import DataTable from '@/components/DataTable';
 import useReport from '@/hooks/useReport';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -107,6 +108,8 @@ const Therapeutic = ({
   const { canEdit } = useReport();
   const { report } = useContext(ReportContext);
 
+  const { reportError } = useApiError(isPrint);
+
   const getData = useCallback(async () => {
     if (report) {
       try {
@@ -126,12 +129,12 @@ const Therapeutic = ({
           setChemoresistanceData(orderRankStartingByZero(filteredChemoresistance));
         }
       } catch (err) {
-        snackbar.error(`Network error: ${err}`);
+        reportError('Failed to load therapeutic targets', err);
       } finally {
         setIsLoading(false);
       }
     }
-  }, [report, setIsLoading, isPrint]);
+  }, [report, setIsLoading, isPrint, reportError]);
 
   useEffect(() => {
     getData();

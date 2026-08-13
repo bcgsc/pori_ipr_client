@@ -4,7 +4,7 @@ import api from '@/services/api';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import columnDefs from './columnDefs';
 
 type CancerPredispositionProps = WithLoadingInjectedProps;
@@ -17,6 +17,8 @@ const CancerPredisposition = ({
 
   const [variants, setVariants] = useState();
 
+  const { reportError } = useApiError();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -26,14 +28,14 @@ const CancerPredisposition = ({
           ).request();
           setVariants(variantsResp.filter((varObj) => varObj.variant?.germline));
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load cancer predisposition variants', err);
         } finally {
           setIsLoading(false);
         }
       };
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, reportError]);
 
   return (
     <div>

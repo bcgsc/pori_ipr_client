@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 
 import api from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import DemoDescription from '@/components/DemoDescription';
@@ -34,6 +34,8 @@ const PathwayAnalysis = ({
   const [pathwayImage, setPathwayImage] = useState<PathwayImageType>();
   const [legend, setLegend] = useState<string | ImageType>();
 
+  const { reportError } = useApiError(isPrint);
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -57,7 +59,7 @@ const PathwayAnalysis = ({
             setLegend(legendResp[0]);
           }
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load pathway analysis', err);
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
@@ -67,7 +69,7 @@ const PathwayAnalysis = ({
       };
       getData();
     }
-  }, [loadedDispatch, report, setIsLoading]);
+  }, [loadedDispatch, report, setIsLoading, reportError]);
 
   const handlePathwayChange = useCallback(async (newPathway) => {
     if (!legend) {
