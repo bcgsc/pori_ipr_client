@@ -48,19 +48,23 @@ const VariantEditDialog = ({
       let newVariant;
       switch (variantType) {
         case 'mut':
-          newVariant = `${editData?.gene.name}:${editData?.proteinChange}`;
+          const mutData = editData as SmallMutationType;
+          newVariant = `${mutData?.gene.name}:${mutData?.proteinChange}`;
           setVariant(newVariant);
           break;
         case 'cnv':
-          newVariant = `${editData?.gene.name} (${editData?.cnvState})`;
+          const cnvData = editData as CopyNumberType;
+          newVariant = `${cnvData?.gene.name} (${cnvData?.cnvState})`;
           setVariant(newVariant);
           break;
         case 'sv':
-          newVariant = `${editData?.displayName}`;
+          const svData = editData as StructuralVariantType;
+          newVariant = `${svData?.displayName}`;
           setVariant(newVariant);
           break;
         case 'exp':
-          newVariant = `${editData?.gene.name} (${editData?.expressionState})`;
+          const expData = editData as ExpOutliersType;
+          newVariant = `${expData?.gene.name} (${expData?.expressionState})`;
           setVariant(newVariant);
           break;
         default:
