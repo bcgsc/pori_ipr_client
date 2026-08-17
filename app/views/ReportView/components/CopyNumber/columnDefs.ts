@@ -11,16 +11,14 @@ const columnDefs: ColDef[] = [{
   headerName: 'Copy Change',
   field: 'copyChange',
   valueFormatter: (params) => {
+    // Adding signs to copy change values per Melissa in DEVSU-2525
     if (params.value === null || params.value === undefined) return '';
-    
-    const num = Number(params.value);
-    
-    // If the number is greater than zero, prepend the "+" sign
-    if (num > 0) {
-      return `+${num}`;
+    // Explicitly prepend a '+' for positive numbers
+    if (params.value > 0) {
+      return `+${params.value}`;
     }
-    // Zero or negative numbers will naturally format with their own sign or nothing
-    return num.toString(); 
+    // Explicitly prepend a '-' for negative numbers
+    return `${params.value}`;
   },
   hide: false,
 }, {

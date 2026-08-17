@@ -66,6 +66,7 @@ const AlertDialog = ({
         </Button>
         {Boolean(onDeny) && (
           <Button
+            color="secondary"
             onClick={() => (onDeny())}
           >
             {denyText}
@@ -73,6 +74,7 @@ const AlertDialog = ({
         )}
         {Boolean(confirmText) && (
           <Button
+            color="primary"
             disabled={commentRequired && !commentInput}
             onClick={() => (commentRequired ? onClose(true, commentInput) : onClose(true))}
           >
