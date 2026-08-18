@@ -11,6 +11,7 @@ const Users = lazy(() => import('./components/Users/index.tsx'));
 const Groups = lazy(() => import('./components/Groups/index.tsx'));
 const Projects = lazy(() => import('../ProjectsView/index.tsx'));
 const Appendices = lazy(() => import('./components/Appendices/index'));
+const PathwayLegends = lazy(() => import('./components/PathwayLegends/index'));
 const VariantText = lazy(() => import('../VariantTextView/index'));
 
 const AdminView = () => (
@@ -20,6 +21,7 @@ const AdminView = () => (
       <Route component={Groups} path="/admin/groups" />
       <Route component={Projects} path="/admin/projects" />
       <Route component={Appendices} path="/admin/appendices" />
+      <Route component={PathwayLegends} path="/admin/pathway-legends" />
       <Route component={VariantText} path="/admin/variant-text" />
     </Switch>
   </div>
