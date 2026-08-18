@@ -2,7 +2,7 @@ import React, {
   useContext, useCallback, useState, useEffect,
 } from 'react';
 import {
-  IconButton, Typography, Button, ButtonBase,
+  Box, IconButton, Typography, Button, ButtonBase,
 } from '@mui/material';
 import { useQueryClient } from 'react-query';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -135,15 +135,16 @@ const Legend = ({
       {previewNode}
 
       {canEdit && !isPrint && (
-        <Button
-          color="secondary"
-          variant="outlined"
-          startIcon={<PublishIcon />}
-          onClick={() => setIsDialogOpen(true)}
-          sx={{ mt: 2 }}
-        >
-          Upload custom legend
-        </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Button
+            color="secondary"
+            variant="outlined"
+            startIcon={<PublishIcon />}
+            onClick={() => setIsDialogOpen(true)}
+          >
+            Upload custom legend
+          </Button>
+        </Box>
       )}
 
       {isViewerOpen && legend && (

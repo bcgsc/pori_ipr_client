@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import { useSnackbar } from 'notistack';
 import {
+  Box,
   Typography,
   Button,
 } from '@mui/material';
@@ -14,7 +15,7 @@ import SvgImage from '@/components/SvgImage';
 import useReport from '@/hooks/useReport';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
-import PathwayImageType from '../../types';
+import { PathwayImageType } from '../../types';
 import PreviewBox from '../PreviewBox';
 
 type PathwayProps = {
@@ -121,28 +122,29 @@ const Pathway = ({
   }
 
   return (
-    <div>
+    <div className="pathway__image-container">
       {imageError && (
         <Typography align="center" color="error">{imageError}</Typography>
       )}
       {previewNode}
       {canEdit && !isPrint && (
-        <Button
-          component="label"
-          color="secondary"
-          variant="outlined"
-          startIcon={<PublishIcon />}
-          disabled={isPathwayLoading}
-          sx={{ mt: 2 }}
-        >
-          {isPathwayLoading ? 'Uploading…' : 'Upload Pathway Image'}
-          <input
-            accept=".svg"
-            onChange={handlePathwayUpload}
-            type="file"
-            hidden
-          />
-        </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Button
+            component="label"
+            color="secondary"
+            variant="outlined"
+            startIcon={<PublishIcon />}
+            disabled={isPathwayLoading}
+          >
+            {isPathwayLoading ? 'Uploading…' : 'Upload Pathway Image'}
+            <input
+              accept=".svg"
+              onChange={handlePathwayUpload}
+              type="file"
+              hidden
+            />
+          </Button>
+        </Box>
       )}
     </div>
   );
