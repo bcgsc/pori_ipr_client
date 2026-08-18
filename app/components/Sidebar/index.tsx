@@ -30,6 +30,7 @@ import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import NotesIcon from '@mui/icons-material/Notes';
+import LegendToggleIcon from '@mui/icons-material/LegendToggle';
 
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -71,7 +72,7 @@ const Sidebar = (): JSX.Element => {
   const { pathname } = useLocation();
   const { sidebarMaximized, setSidebarMaximized } = useContext(SidebarContext);
   const {
-    germlineAccess, reportsAccess, managerAccess, adminAccess, templateEditAccess, appendixEditAccess, variantTextEditAccess,
+    germlineAccess, reportsAccess, managerAccess, adminAccess, templateEditAccess, appendixEditAccess, pathwayLegendEditAccess, variantTextEditAccess,
   } = useResource();
   const [open, setOpen] = useState(true);
 
@@ -203,6 +204,9 @@ const Sidebar = (): JSX.Element => {
         to: '/admin/appendices', icon: FilePresentIcon, label: 'Appendices', key: 'admin/appendices',
       },
       {
+        to: '/admin/pathway-legends', icon: LegendToggleIcon, label: 'Pathway Legends', key: 'admin/pathway-legends',
+      },
+      {
         to: '/admin/variant-text', icon: NotesIcon, label: 'Variant Text', key: 'admin/variant-text',
       },
     ];
@@ -216,6 +220,9 @@ const Sidebar = (): JSX.Element => {
       },
       appendixEditAccess && {
         to: '/admin/appendices', icon: FilePresentIcon, label: 'Appendices', key: 'admin/appendices',
+      },
+      pathwayLegendEditAccess && {
+        to: '/admin/pathway-legends', icon: FilePresentIcon, label: 'Pathway Legends', key: 'admin/pathway-legends',
       },
       variantTextEditAccess && {
         to: '/variant-text', icon: NotesIcon, label: 'Variant Text', key: 'variant-text',
@@ -258,7 +265,7 @@ const Sidebar = (): JSX.Element => {
       );
     }
     return null;
-  }, [templateEditAccess, appendixEditAccess, variantTextEditAccess, managerAccess, adminAccess, reportsAccess, pathname, sidebarMaximized]);
+  }, [templateEditAccess, appendixEditAccess, pathwayLegendEditAccess, variantTextEditAccess, managerAccess, adminAccess, reportsAccess, pathname, sidebarMaximized]);
 
   const drawer = useMemo(
     () => (

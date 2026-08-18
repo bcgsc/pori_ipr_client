@@ -4,6 +4,7 @@ type ResourceContextType = {
   allStates: string[];
   allProjectsAccess: boolean;
   appendixEditAccess: boolean;
+  pathwayLegendEditAccess: boolean;
   germlineAccess: boolean;
   managerAccess: boolean;
   nonproductionAccess: boolean;
