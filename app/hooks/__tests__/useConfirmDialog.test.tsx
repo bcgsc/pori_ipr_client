@@ -175,6 +175,85 @@ describe('useConfirmDialog', () => {
     });
   });
 
+  describe('deferred function calls', () => {
+    test('does not invoke the function until the user confirms', async () => {
+      const thunk = jest.fn().mockResolvedValue({});
+
+      const { Wrapper } = wrapperFactory();
+      const { result } = renderHook(() => useConfirmDialog(), { wrapper: Wrapper });
+
+      act(() => {
+        result.current.showConfirmDialog(thunk);
+      });
+
+      await waitFor(() => expect(capturedOnClose).not.toBeNull());
+      // Showing the dialog must not start the work.
+      expect(thunk).not.toHaveBeenCalled();
+
+      await act(async () => {
+        await capturedOnClose!(true);
+      });
+
+      expect(thunk).toHaveBeenCalledTimes(1);
+      expect(reloadWindowMock).toHaveBeenCalledTimes(1);
+    });
+
+    test('never invokes the function when the user cancels', async () => {
+      const thunk = jest.fn().mockResolvedValue({});
+
+      const { Wrapper } = wrapperFactory();
+      const { result } = renderHook(() => useConfirmDialog(), { wrapper: Wrapper });
+
+      act(() => {
+        result.current.showConfirmDialog(thunk);
+      });
+
+      await waitFor(() => expect(capturedOnClose).not.toBeNull());
+
+      await act(async () => {
+        await capturedOnClose!(false);
+      });
+
+      expect(thunk).not.toHaveBeenCalled();
+      expect(reloadWindowMock).not.toHaveBeenCalled();
+    });
+
+    test('runs a dependent chain in order, passing the first response to the second call', async () => {
+      const second = jest.fn().mockResolvedValue('done');
+      const first = jest.fn().mockResolvedValue([{ legendId: 'legend-1' }]);
+      const thunk = jest.fn(async () => {
+        const [created] = await first();
+        return second(created.legendId);
+      });
+
+      const { Wrapper } = wrapperFactory();
+      const { result } = renderHook(() => useConfirmDialog(), { wrapper: Wrapper });
+
+      act(() => {
+        result.current.showConfirmDialog(thunk);
+      });
+
+      await waitFor(() => expect(capturedOnClose).not.toBeNull());
+
+      await act(async () => {
+        await capturedOnClose!(true);
+      });
+
+      expect(first).toHaveBeenCalledTimes(1);
+      expect(second).toHaveBeenCalledWith('legend-1');
+      expect(snackbar.success).toHaveBeenCalledWith('Task completed, refreshing...');
+    });
+
+    test('rejects a value that cannot be deferred, without opening the dialog', () => {
+      const { Wrapper } = wrapperFactory();
+      const { result } = renderHook(() => useConfirmDialog(), { wrapper: Wrapper });
+
+      expect(() => result.current.showConfirmDialog(Promise.resolve('already running')))
+        .toThrow(/cannot be deferred/);
+      expect(capturedOnClose).toBeNull();
+    });
+  });
+
   describe('awaitable (waitForConfirmation = true)', () => {
     test('resolves true and invalidates signatures on confirm', async () => {
       const requestMock = jest.fn().mockResolvedValue({});
@@ -280,29 +359,44 @@ describe('useConfirmDialog', () => {
       expect(r2).toHaveBeenCalledTimes(1);
     });
 
-    test('passes through raw promises that are not ApiCall instances', async () => {
+    test('rejects raw promises, which are already running and cannot be gated', () => {
       const rawResolved = Promise.resolve('done');
+
+      const { Wrapper } = wrapperFactory();
+      const { result } = renderHook(() => useConfirmDialog(), { wrapper: Wrapper });
+
+      expect(() => result.current.showConfirmDialog(
+        rawResolved as unknown as ApiCall,
+        true,
+      )).toThrow(/cannot be deferred/);
+      expect(capturedOnClose).toBeNull();
+    });
+
+    test('accepts a function alongside ApiCalls in an array', async () => {
+      const r1 = jest.fn().mockResolvedValue({});
+      const thunk = jest.fn().mockResolvedValue({});
 
       const { Wrapper } = wrapperFactory();
       const { result } = renderHook(() => useConfirmDialog(), { wrapper: Wrapper });
 
       let promise!: Promise<boolean>;
       act(() => {
-        // The hook accepts ApiCall | ApiCallSet | their arrays; raw promises
-        // are exercised here against the same parameter slot.
         promise = result.current.showConfirmDialog(
-          rawResolved as unknown as ApiCall,
+          [makeApiCall(r1), thunk],
           true,
         ) as Promise<boolean>;
       });
 
       await waitFor(() => expect(capturedOnClose).not.toBeNull());
+      expect(thunk).not.toHaveBeenCalled();
 
       await act(async () => {
         await capturedOnClose!(true);
       });
 
       await expect(promise).resolves.toBe(true);
+      expect(r1).toHaveBeenCalledTimes(1);
+      expect(thunk).toHaveBeenCalledTimes(1);
     });
   });
 });

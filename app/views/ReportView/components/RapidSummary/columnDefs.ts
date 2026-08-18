@@ -112,20 +112,35 @@ const VARIANT_TYPE_COLDEF: ColDef = {
   valueGetter: ({ data: { variantType } }) => variantType || 'N/A',
 };
 
+const getCopyChangeValue = ({ copyChange, gene, variantType }) => {
+  if (copyChange !== null && copyChange !== undefined) {
+    return copyChange;
+  }
+
+  if ((variantType === 'cnv' || variantType === 'mut') && gene?.copyVariants?.copyChange !== undefined && gene?.copyVariants?.copyChange !== null) {
+    return gene.copyVariants.copyChange;
+  }
+
+  return 'N/A';
+};
+
+const formatCopyChangeValue = (value) => {
+  // Keep empty display for truly missing values, but preserve explicit N/A text.
+  if (value === null || value === undefined) return '';
+  if (value === 'N/A') return value;
+
+  const numericValue = Number(value);
+  if (Number.isNaN(numericValue)) return `${value}`;
+  if (numericValue > 0) return `+${numericValue}`;
+
+  return `${numericValue}`;
+};
+
 const COPY_CHANGE_COLDEF: ColDef = {
   headerName: 'Copy Change',
   field: 'copyChange',
-  valueGetter: ({ data: { copyChange, gene, variantType } }) => {
-    if (copyChange) {
-      return copyChange;
-    }
-    if (variantType === 'cnv') {
-      if (gene && gene.copyVariants) {
-        return gene.copyVariants.copyChange;
-      }
-    }
-    return 'N/A';
-  },
+  valueGetter: ({ data }) => getCopyChangeValue(data),
+  valueFormatter: ({ value }) => formatCopyChangeValue(value),
 };
 
 const therapeuticAssociationColDefs: ColDef[] = [
