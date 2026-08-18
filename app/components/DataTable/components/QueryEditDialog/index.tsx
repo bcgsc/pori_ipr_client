@@ -109,8 +109,8 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
       }
       // Validate value
       if (
-        (searchParams.length < 1 && target.value.length < MIN_KEYWORD_LENGTH) ||
-        (searchParams.length > 0 && target.value.length > 0 && target.value.length < MIN_KEYWORD_LENGTH)
+        (searchParams.length < 1 && target.value.length < MIN_KEYWORD_LENGTH)
+        || (searchParams.length > 0 && target.value.length > 0 && target.value.length < MIN_KEYWORD_LENGTH)
       ) {
         setSearchErrorMessage(`Must have 1 or more terms of at least ${MIN_KEYWORD_LENGTH} characters`);
         return;
@@ -127,8 +127,8 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
       ]);
       setSearchKeyword('');
     }
-  }, [searchParams, searchCategory, searchKeyword, searchThreshold, handleSubmit]);
-  
+  }, [setSearchParams, searchParams, searchCategory, searchKeyword, searchThreshold, handleSubmit]);
+
   const handleDeleteSearchKey = useCallback((idx) => {
     setSearchParams((currData) => {
       const nextData = [...currData];
@@ -136,7 +136,7 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
       return nextData;
     });
     setSearchErrorMessage('');
-  }, []);
+  }, [setSearchParams]);
 
   return (
     <div className="query-edit-dialog-search">
@@ -295,7 +295,7 @@ const SearchBar = ({ onSuccess }: { onSuccess: (searchParams: SearchParamsType[]
   );
 };
 
-const QueryEditDialog = ({isApiLoading}) => {
+const QueryEditDialog = ({ isApiLoading }) => {
   const [showQueryEditDialog, setShowQueryEditDialog] = useState<boolean>(false);
   const history = useHistory();
   const queryClient = useQueryClient();
@@ -320,7 +320,7 @@ const QueryEditDialog = ({isApiLoading}) => {
         search: encodeURIComponent(`searchParams=${searchUrl}`),
       });
       queryClient.refetchQueries({
-        queryKey: [`/reports?searchParams=${searchUrl}`]
+        queryKey: [`/reports?searchParams=${searchUrl}`],
       });
     }
   }, [history, queryClient, closeQueryEdit]);
@@ -340,8 +340,8 @@ const QueryEditDialog = ({isApiLoading}) => {
           }}
         >
           {
-            isApiLoading 
-              ? <CircularProgress sx={{ marginRight: '4px' }} /> 
+            isApiLoading
+              ? <CircularProgress sx={{ marginRight: '4px' }} />
               : <ManageSearchIcon sx={{ marginRight: '4px' }} />
           }
           Edit Query
@@ -353,8 +353,8 @@ const QueryEditDialog = ({isApiLoading}) => {
             Edit Query
           </Typography>
         </DialogTitle>
-        <DialogContent >
-          <SearchBar onSuccess={handleQueryEdit}/>
+        <DialogContent>
+          <SearchBar onSuccess={handleQueryEdit} />
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={closeQueryEdit}>
@@ -364,6 +364,6 @@ const QueryEditDialog = ({isApiLoading}) => {
       </Dialog>
     </>
   );
-}
+};
 
 export default QueryEditDialog;

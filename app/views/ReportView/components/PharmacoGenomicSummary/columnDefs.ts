@@ -1,6 +1,7 @@
 import ArrayCell, { getNestedValue } from '@/components/DataTable/components/ArrayCellRenderer';
-import getGeneProp from '@/utils/getGeneProp';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 import { ColDef } from '@ag-grid-community/core';
+import getGeneProp from '@/utils/getGeneProp';
 import { sampleColumnDefs } from '../../common';
 
 const COMMON_COL_DEFS: ColDef[] = [
@@ -81,15 +82,7 @@ const COMMON_COL_DEFS: ColDef[] = [
   },
 ];
 
-const ACTIONS_COL_DEF: ColDef = {
-  headerName: 'Actions',
-  colId: 'Actions',
-  cellRenderer: 'ActionCellRenderer',
-  pinned: 'right',
-  hide: false,
-  sortable: false,
-  suppressMenu: true,
-};
+const ACTIONS_COL_DEF = actionsColDef;
 
 const pharmacoGenomicPrintColumnDefs: ColDef[] = [
   ...COMMON_COL_DEFS,

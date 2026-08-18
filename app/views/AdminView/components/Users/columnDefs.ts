@@ -1,4 +1,5 @@
 import { formatDate } from '@/utils/date';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 
 const columnDefs = [
   {
@@ -32,11 +33,7 @@ const columnDefs = [
     hide: false,
   },
   {
-    headerName: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    sortable: false,
-    suppressMenu: true,
+    ...actionsColDef,
   },
 ];
 

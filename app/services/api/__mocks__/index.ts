@@ -4,3 +4,8 @@ export default {
   put: jest.fn(() => ({ request: jest.fn() })),
   del: jest.fn(() => ({ request: jest.fn() })),
 };
+
+export const ApiCallSet = jest.fn().mockImplementation(() => ({
+  request: jest.fn().mockResolvedValue([]),
+  abort: jest.fn(),
+}));

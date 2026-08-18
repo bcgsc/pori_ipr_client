@@ -97,7 +97,7 @@ const ActionCellRenderer = ({
   useEffect(() => {
     if (showDetailDialog) {
       setColumnMapping(
-        columnApi.getAllColumns().reduce((accumulator, current) => {
+        columnApi.getColumns().reduce((accumulator, current) => {
           accumulator[current.getColId()] = columnApi.getDisplayNameForColumn(current, null);
           return accumulator;
         }, {}),

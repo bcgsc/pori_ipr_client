@@ -2,6 +2,7 @@ import { formatDate } from '@/utils/date';
 import { ColDef } from '@ag-grid-community/core';
 import { ProjectType } from '@/common';
 import { DisplayMode } from '@/components/DataTable/components/HTMLCellRenderer';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 
 const columnDefs: ColDef[] = [
   {
@@ -40,17 +41,12 @@ const columnDefs: ColDef[] = [
     cellRendererParams: {
       mode: DisplayMode.compact,
     },
-    cellClass: 'HTMLCellRenderer__container',
     flex: 1,
     wrapText: true,
     cellStyle: { overflow: 'auto' },
   },
   {
-    headerName: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    sortable: false,
-    suppressMenu: true,
+    ...actionsColDef,
   },
 ];
 

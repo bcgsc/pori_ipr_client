@@ -3,18 +3,21 @@ import React, {
   useCallback, useEffect, useRef, useState,
 } from 'react';
 
-import './index.scss';
-
 enum DisplayMode {
   normal, compact,
 }
 
 type HTMLCellRendererProps = ICellRendererParams & {
-  mode: DisplayMode;
+  mode?: DisplayMode;
 };
 
 const APP_TEXT_CELL_MIN_HEIGHT = 250;
 
+/**
+ * ag-grid cell renderer that renders raw HTML (`data.text`) into a cell and keeps the
+ * row height in sync with the content via a ResizeObserver. Clicking the cell toggles
+ * between a full-height `normal` view and a capped-height, scrollable `compact` view.
+ */
 const HTMLCellRenderer = (props: HTMLCellRendererProps) => {
   const {
     data: { text }, node, api, mode = DisplayMode.normal,

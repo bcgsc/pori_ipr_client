@@ -35,7 +35,7 @@ describe('ActionCellRenderer', () => {
 
   test('It shows the detail dialog when the icon is clicked', async () => {
     const mockColumnApi = {
-      getAllColumns: jest.fn(() => []),
+      getColumns: jest.fn(() => []),
     } as unknown as ColumnApi;
 
     render(

@@ -21,6 +21,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import LaunchCell from '@/components/LaunchCell';
+import { ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
 import { ColumnPicker, ColumnPickerProps } from './components/ColumnPicker';
 import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
@@ -339,8 +340,8 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       if (!columns) return;
       const names = columns
         .filter((col) => {
-          const id = col.getColId().toLowerCase();
-          return id !== 'actions' && id !== 'drag';
+          const id = col.getColId();
+          return id !== ACTIONS_COLUMN && id !== 'drag';
         })
         .map((col) => {
           const parent = col.getOriginalParent();
@@ -380,8 +381,11 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
   const onFirstDataRendered = useCallback(() => {
     hasRenderedData.current = true;
-    if (syncVisibleColumns) {
-      const columns = colApi?.getColumns();
+    // An empty visibleColumns means "no filter / show all" (matching the useEffect above
+    // and visibleColumnIds)
+    // colApi may not be set yet when this fires; the useEffect above re-applies once it is.
+    if (syncVisibleColumns && visibleColumns.length && colApi) {
+      const columns = colApi.getColumns();
       if (!columns) return;
       const hiddenColumns = columns
         .map((col) => col.getColId())
@@ -411,7 +415,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
         cellStyle: { 'white-space': 'normal' },
       }));
       gridApi.setColumnDefs(newCols);
-      colApi.setColumnVisible('Actions', false);
+      colApi.setColumnVisible(ACTIONS_COLUMN, false);
       gridApi.sizeColumnsToFit();
     }
 
@@ -437,22 +441,25 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   }, [colApi, columnDefs, gridApi, isFullLength, isPrint, rowData.length, syncVisibleColumns, visibleColumns]);
 
   const handlePopoverClose = useCallback((returnedVisibleCols) => {
-    returnedVisibleCols.push('Actions');
-    const columns = colApi?.getColumns();
+    // The Actions column must stay visible but is not user-toggleable, so it is already
+    // carried over in returnedVisibleCols from the previous sync. De-dupe (rather than
+    // unconditionally pushing) so the actions column is not re-added on every open/close cycle.
+    const nextVisibleCols = Array.from(new Set([...returnedVisibleCols, ACTIONS_COLUMN]));
+    const columns = colApi.getColumns();
     if (!columns) return;
     const returnedHiddenCols = columns
       .map((col) => col.getColId())
-      .filter((col) => !returnedVisibleCols.includes(col));
+      .filter((col) => !nextVisibleCols.includes(col));
 
     colApi.setColumnsVisible(returnedVisibleCols, true);
     colApi.setColumnsVisible(returnedHiddenCols, false);
 
-    if (returnedVisibleCols?.length) {
-      colApi.autoSizeColumns(returnedVisibleCols);
+    if (nextVisibleCols?.length) {
+      colApi.autoSizeColumns(nextVisibleCols);
     }
 
     if (syncVisibleColumns) {
-      syncVisibleColumns(returnedVisibleCols);
+      syncVisibleColumns(nextVisibleCols);
     }
     setShowPopover(false);
   }, [colApi, syncVisibleColumns]);
@@ -485,7 +492,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       columnKeys: colApi.getAllDisplayedColumns()
         .filter((col) => {
           const colD = col.getColDef();
-          return !(colD?.headerName === 'Actions' || colD?.field === 'Actions' || col.getColId() === 'Actions');
+          return !(colD?.headerName === ACTIONS_COLUMN || colD?.field === ACTIONS_COLUMN || col.getColId() === ACTIONS_COLUMN);
         })
         .map((col) => col.getColId()),
       fileName: isSearch ? searchReportsFileName : defaultFileName,
@@ -542,7 +549,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     if (visibleColumns.length > 0) {
       return visibleColumns;
     }
-    return columnWithNames.filter((col) => col.isVisible()).map((col) => col.getColId()).concat('actions');
+    return columnWithNames.filter((col) => col.isVisible()).map((col) => col.getColId()).concat(ACTIONS_COLUMN);
   }, [columnWithNames, visibleColumns]);
 
   useImperativeHandle(forwardedRef, () => {

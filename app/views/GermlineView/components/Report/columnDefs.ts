@@ -1,3 +1,5 @@
+import { actionsColDef } from '@/utils/actionsColumnDef';
+
 const columnDefs = [
   {
     headerName: '',
@@ -236,11 +238,8 @@ const columnDefs = [
     },
   },
   {
-    headerName: 'Actions',
+    ...actionsColDef,
     cellRenderer: 'actionCell',
-    pinned: 'right',
-    sortable: false,
-    suppressMenu: true,
   },
 ];
 
