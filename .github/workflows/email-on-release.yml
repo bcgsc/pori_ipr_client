@@ -33,5 +33,5 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_SENDER_EMAIL: ${{ secrets.AZURE_SENDER_EMAIL }}
           RECIPIENT_EMAIL: ${{ inputs.recipient_email || vars.OUTLOOK_TARGET_EMAIL }}
-          RELEASE_TITLE: ${{ github.event.release.title || inputs.release_title }}
+          RELEASE_TITLE: ${{ github.event.release.name || inputs.release_title }}
           RELEASE_BODY: ${{ github.event.release.body || inputs.release_body }}
