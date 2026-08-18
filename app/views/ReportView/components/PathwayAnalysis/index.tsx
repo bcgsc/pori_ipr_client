@@ -86,13 +86,12 @@ const PathwayAnalysis = ({
     }
   }, [queryClient, report]);
 
-  return (
-    <div className={`pathway ${isPrint ? 'pathway--print' : 'pathway'}`}>
-      <Typography variant="h3">Pathway Analysis</Typography>
-      <DemoDescription>
-        This section is for display of a graphical or visual summary of the sequencing results in the context of biological pathways. This enables the visualization of multiple genomic alterations affecting often diverse biological pathways.
-      </DemoDescription>
-      {report && !isApiLoading && (isPrint ? (
+  const isDoneLoading = report && !isApiLoading;
+
+  let imageSection;
+  if (isDoneLoading) {
+    if (isPrint) {
+      imageSection = (
         <div className="pathway__content">
           <Pathway
             initialPathway={pathwayImage}
@@ -105,7 +104,9 @@ const PathwayAnalysis = ({
             isPrint
           />
         </div>
-      ) : (
+      );
+    } else {
+      imageSection = (
         <div className="pathway__content">
           <div className="pathway__section">
             <Pathway
@@ -114,11 +115,25 @@ const PathwayAnalysis = ({
               onRender={handlePathwayRendered}
             />
           </div>
-          <div className="pathway__section">
-            <Legend initialLegend={legend} />
-          </div>
+          {
+            pathwayImage && (
+            <div className="pathway__section">
+              <Legend initialLegend={legend} />
+            </div>
+            )
+          }
         </div>
-      ))}
+      );
+    }
+  }
+
+  return (
+    <div className={`pathway ${isPrint ? 'pathway--print' : 'pathway'}`}>
+      <Typography variant="h3">Pathway Analysis</Typography>
+      <DemoDescription>
+        This section is for display of a graphical or visual summary of the sequencing results in the context of biological pathways. This enables the visualization of multiple genomic alterations affecting often diverse biological pathways.
+      </DemoDescription>
+      {imageSection}
     </div>
   );
 };
