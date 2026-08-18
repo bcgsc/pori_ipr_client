@@ -7,13 +7,12 @@ import {
 import { useQueryClient } from 'react-query';
 
 import snackbar from '@/services/SnackbarUtils';
-import { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import { queryKeys } from '@/queries/queryKeys';
 import { useReportSummaryPathwayAnalysis, useLegend } from '@/queries/get';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import PathwayImageType from './types';
+import { LegendImageType, PathwayImageType } from './types';
 import Legend from './components/Legend';
 import Pathway from './components/Pathway';
 
@@ -46,7 +45,7 @@ const PathwayAnalysis = ({
     isLoading: isLegendLoading,
     isError: isLegendError,
     error: legendError,
-  } = useLegend<ImageType[], ImageType | null>(String(pathwayImage?.legendId), {
+  } = useLegend<LegendImageType[], LegendImageType | null>(String(pathwayImage?.legendId), {
     enabled: Boolean(report?.ident) && Boolean(pathwayImage?.legendId),
   });
 

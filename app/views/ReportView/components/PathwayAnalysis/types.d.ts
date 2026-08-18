@@ -7,4 +7,10 @@ type PathwayImageType = {
   pathway: string | null;
 } & RecordDefaults;
 
+type LegendImageType = ImageType & {
+  name: string;
+  legendId: number;
+};
+
+export type { PathwayImageType, LegendImageType };
 export default PathwayImageType;

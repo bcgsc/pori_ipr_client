@@ -14,18 +14,14 @@ import useReport from '@/hooks/useReport';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-import Image, { ImageType } from '@/components/Image';
+import Image from '@/components/Image';
 import ImageViewer from '@/components/DataTable/components/ImageViewer';
 import { queryKeys } from '@/queries/queryKeys';
 import AddPathwayLegend, { LEGEND_IMAGE_KEY } from '../AddPathwayLegend';
 import PreviewBox from '../PreviewBox';
+import { LegendImageType } from '../../types';
 
 const DO_NOT_DELETE_LEGEND_NAMES = ['v1', 'v2', 'v3'];
-
-type LegendImageType = ImageType & {
-  name: string;
-  legendId: number;
-};
 
 type LegendProps = {
   initialLegend: LegendImageType | null;

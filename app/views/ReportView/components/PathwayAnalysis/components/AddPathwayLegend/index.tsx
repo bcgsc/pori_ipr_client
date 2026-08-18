@@ -16,7 +16,6 @@ import {
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
-import { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
