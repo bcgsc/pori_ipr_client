@@ -1,5 +1,6 @@
 import { formatDate } from '@/utils/date';
 import { ColDef } from '@ag-grid-community/core';
+import { ProjectType } from '@/common';
 import { DisplayMode } from '@/components/DataTable/components/HTMLCellRenderer';
 import { actionsColDef } from '@/utils/actionsColumnDef';
 
@@ -10,7 +11,7 @@ const columnDefs: ColDef[] = [
   },
   {
     headerName: 'Project',
-    valueGetter: ({ data }) => data.project?.name,
+    valueGetter: ({ data }) => data.projects?.map((project: ProjectType) => project.name).join(', '),
   },
   {
     headerName: 'Created',
