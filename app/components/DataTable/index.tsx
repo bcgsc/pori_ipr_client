@@ -296,7 +296,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   // Triggers when syncVisibleColumns is called, only after first data render
   useEffect(() => {
     if (colApi && visibleColumns?.length && hasRenderedData.current) {
-      const columns = colApi.getColumns();
+      const columns = colApi?.getColumns();
       if (!columns) return;
       const allCols = columns.map((col) => col.getColId());
       const hiddenColumns = allCols.filter((col) => !visibleColumns.includes(col));
@@ -336,7 +336,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
    */
   useEffect(() => {
     if (colApi) {
-      const columns = colApi.getColumns();
+      const columns = colApi?.getColumns();
       if (!columns) return;
       const names = columns
         .filter((col) => {
@@ -365,7 +365,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
    */
   useEffect(() => {
     if (colApi && isSearch) {
-      const columns = colApi.getColumns();
+      const columns = colApi?.getColumns();
       const rowsNodes = gridApi.getRenderedNodes();
       if (!columns || !rowsNodes) return;
       columns.forEach((column) => {
@@ -421,7 +421,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
 
     if (colApi && !isFullLength) {
       // Exclude columns with suppressAutoSize so they keep their initialWidth
-      const columns = colApi.getColumns();
+      const columns = colApi?.getColumns();
       if (columns) {
         const visibleColumnIds = columns
           .filter((col) => (!col.getFlex()
