@@ -166,15 +166,15 @@ const AddPathwayLegend = ({
     }
 
     if (isSigned) {
-      // Modifying a signed report drops signatures — defer to the confirm flow,
-      // which runs the calls and reloads on confirmation. The save is a dependent
-      // chain (the second call needs legendId from the first), so it is passed as
-      // a function; nothing runs unless the user confirms.
       showConfirmDialog(async () => {
         const confirmResp = await confirmCall.request();
-        return api.put(`/reports/${report.ident}/summary/pathway-analysis`, {
-          legendId: confirmResp[0].legendId,
-        }, {}).request();
+        // Only add relationship to PA if the legend was uploaded, otherwise the PUT already did it.
+        if (useFile) {
+          return api.put(`/reports/${report.ident}/summary/pathway-analysis`, {
+            legendId: confirmResp[0].legendId,
+          }, {}).request();
+        }
+        return confirmResp;
       });
       return;
     }
