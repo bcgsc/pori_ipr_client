@@ -21,7 +21,7 @@ import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/compo
 import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';
 import expressionColumnDefs from '@/views/ReportView/components/Expression/columnDefs';
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
-import { ColDef } from '@ag-grid-community/core';
+import { ColDef, FirstDataRenderedEvent } from '@ag-grid-community/core';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import { GeneViewerType } from './types';
@@ -32,6 +32,21 @@ import NoRowsOverlay from '../NoRowsOverlay';
 
 import './index.scss';
 
+const MAX_VISIBLE_ROWS = 12;
+
+const handleFirstDataRendered = ({ api: gridApi, columnApi }: FirstDataRenderedEvent) => {
+  // Exclude columns with suppressAutoSize so the wrapped columns keep their initialWidth
+  const autoSizableColumnIds = columnApi.getColumns()
+    ?.filter((col) => !col.getFlex() && col.isVisible() && !col.getColDef().suppressAutoSize)
+    .map((col) => col.getColId());
+
+  if (autoSizableColumnIds?.length) {
+    columnApi.autoSizeColumns(autoSizableColumnIds);
+    // Recalculate row heights after auto-sizing, since autoHeight rows measure based on column width
+    gridApi.resetRowHeights();
+  }
+};
+
 const defaultTableOptions: Partial<AgGridReactProps> = {
   components: {
     ActionCellRenderer,
@@ -40,11 +55,18 @@ const defaultTableOptions: Partial<AgGridReactProps> = {
   },
   noRowsOverlayComponent: 'NoRowsOverlay',
   enableCellTextSelection: true,
+  // Bounds the autoHeight grid so its horizontal scrollbar stays above the dialog fold
+  pagination: true,
+  paginationPageSize: MAX_VISIBLE_ROWS,
+  // Auto-sizing only measures rendered cells, so off-screen columns must not be virtualised
+  suppressColumnVirtualisation: true,
+  onFirstDataRendered: handleFirstDataRendered,
 };
 
 const defaultColumnDefs: ColDef = {
   sortable: true,
   filter: true,
+  resizable: true,
 };
 
 const nullGeneViewerResp: GeneViewerType = {
