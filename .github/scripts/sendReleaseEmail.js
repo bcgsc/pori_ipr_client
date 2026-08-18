@@ -108,8 +108,7 @@ const sendMail = async (token) => {
   const { status, data } = await httpsRequest({
     method: 'POST',
     hostname: 'graph.microsoft.com',
-    path: `/v1.0/users/${AZURE_SENDER_EMAIL}/sendMail`,
-    headers: {
+    path: `/v1.0/users/${encodeURIComponent(AZURE_SENDER_EMAIL)}/sendMail`,
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(payload)
