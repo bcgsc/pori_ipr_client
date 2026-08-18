@@ -29,6 +29,7 @@ type LegendRecord = {
   data: string;
   format?: string;
   filename?: string;
+  default?: boolean;
 };
 
 type AddPathwayLegendProps = {
@@ -219,6 +220,7 @@ const AddPathwayLegend = ({
           {legends.map((legend) => (
             <MenuItem key={legend.ident} value={legend.ident}>
               {legend.name}
+              {legend.default ? ' (default)' : ''}
             </MenuItem>
           ))}
         </TextField>

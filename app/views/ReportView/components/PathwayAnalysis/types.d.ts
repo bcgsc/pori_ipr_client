@@ -1,4 +1,4 @@
-import { RecordDefaults } from '@/common';
+import { ImageType, RecordDefaults } from '@/common';
 
 type PathwayImageType = {
   // legendId references a global legend record; the report view stores/reads the
