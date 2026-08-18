@@ -2,145 +2,166 @@ import React, {
   useContext, useCallback, useState, useEffect,
 } from 'react';
 import {
-  IconButton, Typography, Button, CircularProgress,
+  Box, IconButton, Typography, Button, ButtonBase,
 } from '@mui/material';
+import { useQueryClient } from 'react-query';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import PublishIcon from '@mui/icons-material/Publish';
-import { useSnackbar } from 'notistack';
-import useConfirmDialog from '@/hooks/useConfirmDialog';
 
-import api from '@/services/api';
+import api, { ApiCallSet } from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import useReport from '@/hooks/useReport';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
-import Image, { ImageType } from '@/components/Image';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
+import Image from '@/components/Image';
+import ImageViewer from '@/components/DataTable/components/ImageViewer';
+import { queryKeys } from '@/queries/queryKeys';
+import AddPathwayLegend, { LEGEND_IMAGE_KEY } from '../AddPathwayLegend';
+import PreviewBox from '../PreviewBox';
+import { LegendImageType } from '../../types';
+
+const DO_NOT_DELETE_LEGEND_NAMES = ['v1', 'v2', 'v3'];
 
 type LegendProps = {
-  initialLegend: null | string | ImageType;
-  type: string;
+  initialLegend: LegendImageType | null;
   isPrint?: boolean;
 };
 
 const Legend = ({
   initialLegend,
-  type,
   isPrint = false,
 }: LegendProps): JSX.Element => {
   const { canEdit } = useReport();
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
   const { showConfirmDialog } = useConfirmDialog();
-  const snackbar = useSnackbar();
+  const queryClient = useQueryClient();
 
-  const [imageError, setImageError] = useState('');
-  const [isLegendLoading, setIsLegendLoading] = useState(false);
-  const [legend, setLegend] = useState<string | ImageType>();
+  const [legend, setLegend] = useState<LegendImageType | null>(initialLegend);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   useEffect(() => {
-    if (initialLegend) {
-      setLegend(initialLegend);
-    }
+    setLegend(initialLegend);
   }, [initialLegend]);
 
-  const handleLegendUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      target: { files },
-    } = event;
-    const [uploadedFile] = files;
-    if (!uploadedFile.name.match(/\.(png|jpe?g)$/)) {
-      setImageError('Please select a valid image (.png, .jpg)');
-      return;
+  const handleDialogClose = useCallback((savedLegend?: boolean) => {
+    if (savedLegend) {
+      queryClient.invalidateQueries(queryKeys.reports.reportSummaryPathwayAnalysis(report.ident));
     }
-    setIsLegendLoading(true);
-    setImageError('');
-
-    try {
-      const newLegend = new FormData();
-      newLegend.append('pathwayAnalysis.legend', uploadedFile);
-
-      const imageAPICall = api.post(`/reports/${report.ident}/image`, newLegend, {}, true);
-
-      if (isSigned) {
-        showConfirmDialog(imageAPICall);
-      } else {
-        await imageAPICall.request();
-        const resp = await api.get(
-          `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
-          {},
-        ).request();
-        setLegend(resp[0]);
-        snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
-      }
-    } catch (err) {
-      snackbar.enqueueSnackbar(`Error uploading pathway image: ${err}`, { variant: 'error' });
-    } finally {
-      setIsLegendLoading(false);
-    }
-  }, [isSigned, report, snackbar, showConfirmDialog]);
+    setIsDialogOpen(false);
+  }, [queryClient, report.ident]);
 
   const handleDeleteLegend = useCallback(async () => {
-    try {
-      await api.del(`/reports/${report.ident}/image/${legend.ident}`, {}, {}).request();
-      setLegend(null);
-      snackbar.enqueueSnackbar('Legend deleted', { variant: 'success' });
-    } catch (err) {
-      snackbar.enqueueSnackbar(`Error removing legend: ${err}`, { variant: 'error' });
+    if (!legend) {
+      return;
     }
-  }, [report, legend, snackbar]);
+    let deleteCall;
+    if (DO_NOT_DELETE_LEGEND_NAMES.includes(legend.name)) {
+      deleteCall = api.put(`/reports/${report.ident}/summary/pathway-analysis`, {
+        legendId: null,
+      }, {});
+    } else {
+      deleteCall = new ApiCallSet([
+        api.del(`/legend/${legend.ident}`, {}, {}),
+        api.put(`/reports/${report.ident}/summary/pathway-analysis`, { legendId: null }, {}),
+      ]);
+    }
+    if (isSigned) {
+      showConfirmDialog(deleteCall);
+      return;
+    }
+    try {
+      await deleteCall.request();
+      setLegend(null);
+      snackbar.success('Legend deleted');
+    } catch (err) {
+      snackbar.error(`Error removing legend: ${err}`);
+    }
+  }, [report, legend, isSigned, showConfirmDialog]);
+
+  let previewNode: JSX.Element;
+  if (legend && isPrint) {
+    previewNode = <Image image={legend} />;
+  } else if (legend) {
+    previewNode = (
+      <PreviewBox variant="filled">
+        {canEdit && (
+          <IconButton
+            color="secondary"
+            onClick={handleDeleteLegend}
+            size="small"
+            sx={{
+              position: 'absolute', top: 4, right: 4, zIndex: '+1',
+            }}
+          >
+            <HighlightOffIcon />
+          </IconButton>
+        )}
+        <ButtonBase
+          onClick={() => setIsViewerOpen(true)}
+          title="Click to enlarge"
+          sx={{
+            height: '100%',
+            maxWidth: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <img
+            src={`data:image/${legend.format};base64,${legend.data}`}
+            alt="Pathway legend"
+            style={{
+              maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', cursor: 'zoom-in',
+            }}
+          />
+        </ButtonBase>
+      </PreviewBox>
+    );
+  } else if (isPrint) {
+    previewNode = <Typography align="center">No legend image</Typography>;
+  } else {
+    previewNode = (
+      <PreviewBox variant="empty">
+        <Typography align="center" color="text.secondary">No legend image</Typography>
+      </PreviewBox>
+    );
+  }
 
   return (
     <div>
-      {imageError && (
-        <Typography align="center" color="error">{imageError}</Typography>
+      {previewNode}
+
+      {canEdit && !isPrint && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Button
+            color="secondary"
+            variant="outlined"
+            startIcon={<PublishIcon />}
+            onClick={() => setIsDialogOpen(true)}
+          >
+            Upload custom legend
+          </Button>
+        </Box>
       )}
-      {/* Case where v1 or v2 or v3 legend is used */}
-      {legend && typeof legend === 'string' && (
-        <img src={legend} className="pathway__legend" alt="Pathway Legend" />
+
+      {isViewerOpen && legend && (
+        <ImageViewer
+          isOpen={isViewerOpen}
+          selectedRow={{ image: legend }}
+          onClose={() => setIsViewerOpen(false)}
+        />
       )}
-      {/* Case where a custom legend is used */}
-      {legend && typeof legend === 'object' && (
-        <>
-          {canEdit && (
-            <IconButton
-              className="pathway__button"
-              component="label"
-              color="secondary"
-              onClick={handleDeleteLegend}
-              size="large"
-            >
-              <HighlightOffIcon />
-            </IconButton>
-          )}
-          <Image className="pathway__legend-image" image={legend} />
-        </>
-      )}
-      {/* Case where a custom legend is used but hasn't been uploaded yet */}
-      {!legend && type === 'custom' && !isPrint && canEdit && (
-        <Button
-          className="pathway__legend-button"
-          component="label"
-          color="secondary"
-          variant="outlined"
-        >
-          {!isLegendLoading && (
-            <>
-              Upload Pathway Legend
-              <PublishIcon />
-              <input
-                accept=".png,.jpg,.jpeg"
-                onChange={handleLegendUpload}
-                type="file"
-                hidden
-              />
-            </>
-          )}
-          {isLegendLoading && (
-            <CircularProgress color="secondary" />
-          )}
-        </Button>
-      )}
+
+      <AddPathwayLegend
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+      />
     </div>
   );
 };
 
 export default Legend;
+export { LEGEND_IMAGE_KEY };

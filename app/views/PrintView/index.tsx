@@ -55,8 +55,8 @@ const reducer = (state, action) => {
       return { ...state, tumour: true };
     case 'analyst-comments':
       return { ...state, 'analyst-comments': true };
-    case 'pathway':
-      return { ...state, pathway: true };
+    case 'pathway-analysis':
+      return { ...state, 'pathway-analysis': true };
     case 'therapeutic':
       return { ...state, therapeutic: true };
     case 'slides':
@@ -70,7 +70,7 @@ const reducer = (state, action) => {
         patient: false,
         tumour: false,
         'analyst-comments': false,
-        pathway: false,
+        'pathway-analysis': false,
         therapeutic: false,
         slides: false,
         appendices: false,
@@ -164,7 +164,7 @@ const Print = ({
     patient: false,
     tumour: false,
     'analyst-comments': false,
-    pathway: false,
+    'pathway-analysis': false,
     therapeutic: false,
     slides: false,
     appendices: false,
