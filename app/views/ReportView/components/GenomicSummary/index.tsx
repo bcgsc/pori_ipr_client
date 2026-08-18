@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useEffect, useState,
+  useEffect, useState,
   useMemo,
 } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -7,8 +7,7 @@ import useReport from '@/hooks/useReport';
 import { Box } from '@mui/material';
 
 import DemoDescription from '@/components/DemoDescription';
-import snackbar from '@/services/SnackbarUtils';
-import { ErrorMixin } from '@/services/errors/errors';
+import useApiError from '@/hooks/useApiError';
 
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
@@ -62,17 +61,7 @@ const GenomicSummary = ({
 
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
 
-  const queryOnError = useCallback((label: string) => (
-    !isPrint
-      ? (err: Error | ErrorMixin) => snackbar.error(`${label}: ${err.message}`)
-      : undefined
-  ), [isPrint]);
-
-  const queryOnErrorSkip404 = useCallback((label: string) => (
-    !isPrint
-      ? (err: Error | ErrorMixin) => { if ((err as ErrorMixin).content?.status !== 404) snackbar.error(`${label}: ${err.message}`); }
-      : undefined
-  ), [isPrint]);
+  const { queryOnError, queryOnErrorSkip404 } = useApiError(isPrint);
 
   const { data: microbial, isLoading: isMicrobialLoading } = useReportSummaryMicrobial<MicrobialType[]>(
     report?.ident,

@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { useQueryClient } from 'react-query';
 
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import ReportContext from '@/context/ReportContext';
 import { queryKeys } from '@/queries/queryKeys';
 import { useReportSummaryPathwayAnalysis, useLegend } from '@/queries/get';
@@ -62,11 +62,13 @@ const PathwayAnalysis = ({
   // there is no SVG to draw, readiness follows the API call alone.
   const isPathwayReady = !isPrint || !hasPathwaySvg || isPathwayRendered;
 
+  const { reportError } = useApiError(isPrint);
+
   useEffect(() => {
     if (isPathwayError || isLegendError) {
-      snackbar.error(`Network error: ${pathwayError ?? legendError}`);
+      reportError('Failed to load pathway analysis', pathwayError ?? legendError);
     }
-  }, [isPathwayError, isLegendError, pathwayError, legendError]);
+  }, [isPathwayError, isLegendError, pathwayError, legendError, reportError]);
 
   useEffect(() => {
     if (report && !isApiLoading && isPathwayReady) {

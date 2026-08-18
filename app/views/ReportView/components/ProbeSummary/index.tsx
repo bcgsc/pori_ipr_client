@@ -6,7 +6,8 @@ import {
 } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import api, { ApiCallSet } from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
@@ -54,6 +55,8 @@ const ProbeSummary = ({
 
   const classNamePrefix = isPrint ? 'probe-summary--print' : 'probe-summary';
 
+  const { reportError } = useApiError(isPrint);
+
   useEffect(() => {
     if (report?.ident) {
       const getData = async () => {
@@ -68,16 +71,26 @@ const ProbeSummary = ({
           const [
             testInformationData,
             signaturesData,
-            probeResultsData,
-            smallMutationsData,
+            probeResultsData = [],
+            smallMutationsData = [],
             signatureTypesData,
-          ] = await apiCalls.request() as [
+          ] = unwrapSettled<[
             TestInformationType,
             SignatureType,
             ProbeResultsType[],
             SmallMutationType[],
             SignatureUserType[],
-          ];
+          ]>(
+            await apiCalls.request(true) as PromiseSettledResult<unknown>[],
+            [
+              'Failed to load probe test information',
+              'Failed to load signatures',
+              'Failed to load probe results',
+              'Failed to load small mutations',
+              'Failed to load signature types',
+            ],
+            reportError,
+          );
 
           setTestInformation(testInformationData);
           setSignatures(signaturesData);
@@ -99,7 +112,7 @@ const ProbeSummary = ({
             });
           });
           setProbeResults(probeResultsData);
-          if (signatureTypesData?.length === 0){
+          if (!signatureTypesData?.length){
             const defaultSigatureTypes = [
               {signatureType: 'author'},
               {signatureType: 'reviewer'},
@@ -110,7 +123,7 @@ const ProbeSummary = ({
             setSignatureTypes(signatureTypesData);
           }
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load probe summary', err);
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
@@ -121,7 +134,7 @@ const ProbeSummary = ({
 
       getData();
     }
-  }, [loadedDispatch, report, setIsLoading]);
+  }, [loadedDispatch, report, setIsLoading, reportError]);
 
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);

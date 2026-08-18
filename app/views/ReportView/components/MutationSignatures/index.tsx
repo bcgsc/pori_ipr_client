@@ -9,8 +9,9 @@ import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
-import api from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
+import api, { ApiCallSet } from '@/services/api';
+import useApiError from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import ImageType from '@/components/Image/types';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { MutationSignatureType } from '@/common';
@@ -43,20 +44,28 @@ const MutationSignatures = ({
   const [editData, setEditData] = useState<MutationSignatureType | null>();
   const queryClient = useQueryClient();
 
+  const { reportError } = useApiError();
+
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
         try {
-          const [imageData, signatureData] = await Promise.all([
-            api.get(`/reports/${report.ident}/image/retrieve/${imageKeys.join(',')}`).request(),
-            api.get(`/reports/${report.ident}/mutation-signatures`).request(),
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/image/retrieve/${imageKeys.join(',')}`),
+            api.get(`/reports/${report.ident}/mutation-signatures`),
           ]);
+          // The signature tables must still render when the plots 404
+          const [imageData = [], signatureData = []] = unwrapSettled<[ImageType[], MutationSignatureType[]]>(
+            await apiCalls.request(true) as PromiseSettledResult<unknown>[],
+            ['Failed to load mutation signature plots', 'Failed to load mutation signatures'],
+            reportError,
+          );
           setImages(imageData);
           setSbsSignatures(signatureData.filter((sig) => !(/dbs|id/).test(sig.signature.toLowerCase())));
           setDbsSignatures(signatureData.filter((sig) => (/dbs/).test(sig.signature.toLowerCase())));
           setIdSignatures(signatureData.filter((sig) => (/id/).test(sig.signature.toLowerCase())));
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load mutation signatures', err);
         } finally {
           setIsLoading(false);
         }
@@ -64,7 +73,7 @@ const MutationSignatures = ({
 
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, reportError]);
 
   const handleEditStart = (rowData: MutationSignatureType) => {
     setShowDialog(true);

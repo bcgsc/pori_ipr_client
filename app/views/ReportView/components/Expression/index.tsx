@@ -3,10 +3,12 @@ import React, {
 } from 'react';
 import { Typography, Paper } from '@mui/material';
 import DataTable from '@/components/DataTable';
-import api from '@/services/api';
+import api, { ApiCallSet } from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
+import useApiError from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { ImageType } from '@/components/Image';
 import { ExpOutliersType } from '@/common';
@@ -73,44 +75,58 @@ const Expression = ({
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<ExpOutliersType | null>();
 
+  const { reportError } = useApiError();
+
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
-        const [outliers, images] = await Promise.all([
-          api.get(`/reports/${report.ident}/expression-variants`).request(),
-          api.get(`/reports/${report.ident}/image/expression-density-graphs`).request(),
-        ]);
+        try {
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/expression-variants`),
+            api.get(`/reports/${report.ident}/image/expression-density-graphs`),
+          ]);
+          // Outliers still render without their density graphs, so the two
+          // calls are settled independently
+          const [outliers, images = []] = unwrapSettled<[ExpOutliersType[], ImageType[]]>(
+            await apiCalls.request(true) as PromiseSettledResult<unknown>[],
+            ['Failed to load expression variants', 'Failed to load expression density graphs'],
+            reportError,
+          );
 
-        if (outliers && outliers.length) {
-          for (const { rpkm } of outliers) {
-            if (rpkm !== null) {
-              setVisibleCols((prevVal) => [...prevVal, 'rpkm']);
-              break;
+          if (outliers && outliers.length) {
+            for (const { rpkm } of outliers) {
+              if (rpkm !== null) {
+                setVisibleCols((prevVal) => [...prevVal, 'rpkm']);
+                break;
+              }
             }
+
+            const processedOutliers: ProcessedExpressionOutliers = processExpression(outliers);
+            const imageAttachedOutliers = Object.entries(processedOutliers)
+              .reduce((accumulator, [key, value]) => {
+                const newValues = value.map((val) => ({
+                  ...val,
+                  image: images.filter((img: ImageType) => {
+                    const matcher = new RegExp(`expDensity.(histogram|(violin.(tcga|gtex|cser|hartwig|pediatric))).${val.gene.name}`);
+                    return matcher.test(img.key);
+                  }),
+                }));
+                accumulator[key] = newValues;
+                return accumulator;
+              }, {} as ProcessedExpressionOutliers);
+
+            setExpOutliers(imageAttachedOutliers);
           }
-
-          const processedOutliers: ProcessedExpressionOutliers = processExpression(outliers);
-          const imageAttachedOutliers = Object.entries(processedOutliers)
-            .reduce((accumulator, [key, value]) => {
-              const newValues = value.map((val) => ({
-                ...val,
-                image: images.filter((img: ImageType) => {
-                  const matcher = new RegExp(`expDensity.(histogram|(violin.(tcga|gtex|cser|hartwig|pediatric))).${val.gene.name}`);
-                  return matcher.test(img.key);
-                }),
-              }));
-              accumulator[key] = newValues;
-              return accumulator;
-            }, {} as ProcessedExpressionOutliers);
-
-          setExpOutliers(imageAttachedOutliers);
+        } catch (err) {
+          reportError('Failed to load expression analysis', err);
+        } finally {
+          setIsLoading(false);
         }
-        setIsLoading(false);
       };
 
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, reportError]);
 
   useEffect(() => {
     if (report) {
@@ -130,9 +146,16 @@ const Expression = ({
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
-        const comparatorsResp = await api.get(
-          `/reports/${report.ident}/comparators`,
-        ).request();
+        let comparatorsResp;
+        try {
+          comparatorsResp = await api.get(
+            `/reports/${report.ident}/comparators`,
+          ).request();
+        } catch (err) {
+          reportError('Failed to load comparators', err);
+          setComparators([]);
+          return;
+        }
 
         const diseaseExpression = comparatorsResp.find(({ analysisRole }) => (
           analysisRole === 'expression (disease)'
@@ -164,7 +187,7 @@ const Expression = ({
 
       getData();
     }
-  }, [report]);
+  }, [report, reportError]);
 
   const handleEditStart = (rowData: ExpOutliersType) => {
     setShowDialog(true);
@@ -195,7 +218,7 @@ const Expression = ({
           Tissue Sites
         </Typography>
         <Paper elevation={0} className="expression__box">
-          {tissueSites.map((site, index) => (
+          {(tissueSites ?? []).map((site, index) => (
             <span
               // eslint-disable-next-line react/no-array-index-key
               key={index}

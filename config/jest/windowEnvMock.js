@@ -1,14 +1,29 @@
 const { TextEncoder, TextDecoder } = require('util');
+
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
+// Injected by webpack's DefinePlugin at build time; the error classes in
+// app/services/errors read CONFIG.MISC.ENV, so tests that construct a real
+// API error need it defined here too.
+global.CONFIG = {
+  STORAGE: {
+    REFERRER: 'IPR_URI',
+    KEYCLOAK: 'BCGSC_SSO',
+    DATABASE_TYPE: 'bcgsc',
+  },
+  MISC: {
+    ENV: 'TEST',
+  },
+};
+
 window._env_ = {
-  KEYCLOAK_CLIENT_ID: process.env.KEYCLOAK_CLIENT_ID || "IPR",
-  KEYCLOAK_REALM: process.env.KEYCLOAK_REALM || "GSC",
-  KEYCLOAK_URL: process.env.KEYCLOAK_URL || "https://keycloakdev.bcgsc.ca/auth",
-  GRAPHKB_URL: process.env.GRAPHKB_URL || "https://graphkbstaging.bcgsc.ca",
-  API_BASE_URL: process.env.API_BASE_URL || "https://iprdev-api.bcgsc.ca/api",
-  CONTACT_EMAIL: process.env.CONTACT_EMAIL || "ipr@bcgsc.ca",
-  CONTACT_TICKET_URL: process.env.CONTACT_TICKET_URL || "https://www.bcgsc.ca/jira/projects/IPR",
+  KEYCLOAK_CLIENT_ID: process.env.KEYCLOAK_CLIENT_ID || 'IPR',
+  KEYCLOAK_REALM: process.env.KEYCLOAK_REALM || 'GSC',
+  KEYCLOAK_URL: process.env.KEYCLOAK_URL || 'https://keycloakdev.bcgsc.ca/auth',
+  GRAPHKB_URL: process.env.GRAPHKB_URL || 'https://graphkbstaging.bcgsc.ca',
+  API_BASE_URL: process.env.API_BASE_URL || 'https://iprdev-api.bcgsc.ca/api',
+  CONTACT_EMAIL: process.env.CONTACT_EMAIL || 'ipr@bcgsc.ca',
+  CONTACT_TICKET_URL: process.env.CONTACT_TICKET_URL || 'https://www.bcgsc.ca/jira/projects/IPR',
   IS_DEMO: process.env.IS_DEMO || false,
 };

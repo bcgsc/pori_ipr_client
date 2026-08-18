@@ -12,6 +12,7 @@ import useReport from '@/hooks/useReport';
 import { useReportTherapeuticTargets } from '@/queries/get';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
@@ -185,6 +186,8 @@ const Therapeutic = ({
     </MenuItem>
   );
 
+  const { queryOnError } = useApiError(isPrint);
+
   const {
     data: therapeuticTargets,
     isLoading: isQueryLoading,
@@ -194,9 +197,7 @@ const Therapeutic = ({
     report?.ident,
     {
       enabled: Boolean(report?.ident),
-      onError: (err) => {
-        snackbar.error(`Network error: ${err}`);
-      },
+      onError: queryOnError('Failed to load therapeutic targets'),
     },
   );
 

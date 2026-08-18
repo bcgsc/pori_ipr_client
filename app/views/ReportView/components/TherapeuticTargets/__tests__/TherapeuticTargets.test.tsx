@@ -12,6 +12,7 @@ import ReportContext from '@/context/ReportContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import { ReportType } from '@/common';
+import { makeApiError } from '@/test/apiErrorHelpers';
 import Therapeutic, {
   orderRankStartingByZero,
   removeExtraProps,
@@ -614,5 +615,44 @@ describe('TherapeuticTargets — reorder interactions', () => {
     } finally {
       spy.mockRestore();
     }
+  });
+});
+
+describe('TherapeuticTargets — 404 handling', () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    (api.get as jest.Mock).mockReturnValue({
+      request: jest.fn().mockRejectedValue(makeApiError()),
+    });
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
+  });
+
+  test('Both tables still render when the fetch 404s', async () => {
+    renderTherapeutic();
+
+    expect(await screen.findByText('Potential Therapeutic Targets')).toBeInTheDocument();
+    expect(screen.getByText('Potential Resistance and Toxicity')).toBeInTheDocument();
+  });
+
+  test('The snackbar names the request that failed', async () => {
+    renderTherapeutic();
+
+    await waitFor(() => expect(snackbar.error).toHaveBeenCalledWith(
+      expect.stringContaining('Failed to load therapeutic targets'),
+    ));
+  });
+
+  // In print the notification is captured in the printed output with nobody
+  // to dismiss it, so the failure is logged instead
+  test('No snackbar is raised in the print view', async () => {
+    renderTherapeutic(false, true);
+
+    await waitFor(() => expect(console.error).toHaveBeenCalled());
+    expect(snackbar.error).not.toHaveBeenCalled();
   });
 });
