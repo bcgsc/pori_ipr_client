@@ -126,6 +126,7 @@ export const queryKeys = {
     all: () => ['legend'] as const,
 
     legend: (legendIdent) => ['legend', legendIdent] as const,
+    legendId: (legendIdIdent) => ['legend', legendIdIdent] as const,
   },
 
   variantText: {

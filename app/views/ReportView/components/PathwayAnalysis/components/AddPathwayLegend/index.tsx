@@ -34,8 +34,7 @@ type LegendRecord = {
 
 type AddPathwayLegendProps = {
   isOpen: boolean;
-  existingLegend?: ImageType | null;
-  onClose: (savedLegend?: ImageType | null) => void;
+  onClose: (savedLegend?: boolean) => void;
 };
 
 const ACCEPTED_IMAGE_EXTS = ['png', 'jpg', 'jpeg', 'svg'] as const;
@@ -70,7 +69,6 @@ const base64ToBlob = (base64: string, mime: string): Blob => {
 
 const AddPathwayLegend = ({
   isOpen,
-  existingLegend = null,
   onClose,
 }: AddPathwayLegendProps): JSX.Element => {
   const { report } = useContext(ReportContext);
@@ -158,38 +156,51 @@ const AddPathwayLegend = ({
     const form = new FormData();
     form.append(LEGEND_IMAGE_KEY, uploadBlob, filename);
 
-    const postCall = api.post(`/reports/${report.ident}/image`, form, {}, true);
-    // Report images have no update route (posting the same key duplicates), so a
-    // replacement removes the current legend image before adding the new one.
-    const deleteCall = existingLegend
-      ? api.del(`/reports/${report.ident}/image/${existingLegend.ident}`, {}, {})
-      : null;
+    const useFile = Boolean(file);
+    let confirmCall;
+    if (useFile) {
+      confirmCall = api.post('/legend', form, {}, true);
+    } else {
+      confirmCall = api.put(`/reports/${report.ident}/summary/pathway-analysis/`, {
+        legendIdent: selectedLegend.ident,
+      }, {});
+    }
 
     if (isSigned) {
       // Modifying a signed report drops signatures — defer to the confirm flow,
-      // which runs the calls and reloads on confirmation.
-      showConfirmDialog(deleteCall ? [deleteCall, postCall] : [postCall]);
-      onClose();
+      // which runs the calls and reloads on confirmation. The save is a dependent
+      // chain (the second call needs legendId from the first), so it is passed as
+      // a function; nothing runs unless the user confirms.
+      showConfirmDialog(async () => {
+        const confirmResp = await confirmCall.request();
+        return api.put(`/reports/${report.ident}/summary/pathway-analysis`, {
+          legendId: confirmResp[0].legendId,
+        }, {}).request();
+      });
       return;
     }
 
     try {
       setIsSaving(true);
-      if (deleteCall) {
-        await deleteCall.request();
+      const confirmResp = await confirmCall.request();
+
+      if (useFile) {
+        const newLegendId = confirmResp[0].legendId;
+        await api.put(`/reports/${report.ident}/summary/pathway-analysis`, {
+          legendId: newLegendId,
+        }, {}).request();
+        snackbar.success('Pathway legend saved');
+        onClose(true);
+      } else {
+        snackbar.success('Pathway legend updated');
+        onClose(true);
       }
-      await postCall.request();
-      const refreshed = await api.get(
-        `/reports/${report.ident}/image/retrieve/${LEGEND_IMAGE_KEY}`,
-      ).request();
-      snackbar.success('Pathway legend saved');
-      onClose(refreshed?.[0] ?? null);
     } catch (err) {
       snackbar.error(`Error saving pathway legend: ${err}`);
     } finally {
       setIsSaving(false);
     }
-  }, [file, selectedLegend, report, existingLegend, isSigned, showConfirmDialog, onClose]);
+  }, [file, selectedLegend, report, isSigned, showConfirmDialog, onClose]);
 
   return (
     <Dialog open={isOpen} onClose={handleCancel} maxWidth="sm" fullWidth>

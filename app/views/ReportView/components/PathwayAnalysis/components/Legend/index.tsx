@@ -4,10 +4,11 @@ import React, {
 import {
   IconButton, Typography, Button, ButtonBase,
 } from '@mui/material';
+import { useQueryClient } from 'react-query';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import PublishIcon from '@mui/icons-material/Publish';
 
-import api from '@/services/api';
+import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import useReport from '@/hooks/useReport';
 import ReportContext from '@/context/ReportContext';
@@ -15,11 +16,19 @@ import ConfirmContext from '@/context/ConfirmContext';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import Image, { ImageType } from '@/components/Image';
 import ImageViewer from '@/components/DataTable/components/ImageViewer';
+import { queryKeys } from '@/queries/queryKeys';
 import AddPathwayLegend, { LEGEND_IMAGE_KEY } from '../AddPathwayLegend';
 import PreviewBox from '../PreviewBox';
 
+const DO_NOT_DELETE_LEGEND_NAMES = ['v1', 'v2', 'v3'];
+
+type LegendImageType = ImageType & {
+  name: string;
+  legendId: number;
+};
+
 type LegendProps = {
-  initialLegend: ImageType | null;
+  initialLegend: LegendImageType | null;
   isPrint?: boolean;
 };
 
@@ -31,8 +40,9 @@ const Legend = ({
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
   const { showConfirmDialog } = useConfirmDialog();
+  const queryClient = useQueryClient();
 
-  const [legend, setLegend] = useState<ImageType | null>(initialLegend);
+  const [legend, setLegend] = useState<LegendImageType | null>(initialLegend);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
 
@@ -40,18 +50,28 @@ const Legend = ({
     setLegend(initialLegend);
   }, [initialLegend]);
 
-  const handleDialogClose = useCallback((savedLegend?: ImageType | null) => {
-    if (savedLegend !== undefined) {
-      setLegend(savedLegend);
+  const handleDialogClose = useCallback((savedLegend?: boolean) => {
+    if (savedLegend) {
+      queryClient.invalidateQueries(queryKeys.reports.reportSummaryPathwayAnalysis(report.ident));
     }
     setIsDialogOpen(false);
-  }, []);
+  }, [queryClient, report.ident]);
 
   const handleDeleteLegend = useCallback(async () => {
     if (!legend) {
       return;
     }
-    const deleteCall = api.del(`/reports/${report.ident}/image/${legend.ident}`, {}, {});
+    let deleteCall;
+    if (DO_NOT_DELETE_LEGEND_NAMES.includes(legend.name)) {
+      deleteCall = api.put(`/reports/${report.ident}/summary/pathway-analysis`, {
+        legendId: null,
+      }, {});
+    } else {
+      deleteCall = new ApiCallSet([
+        api.del(`/legend/${legend.ident}`, {}, {}),
+        api.put(`/reports/${report.ident}/summary/pathway-analysis`, { legendId: null }, {}),
+      ]);
+    }
     if (isSigned) {
       showConfirmDialog(deleteCall);
       return;
@@ -140,7 +160,6 @@ const Legend = ({
 
       <AddPathwayLegend
         isOpen={isDialogOpen}
-        existingLegend={legend}
         onClose={handleDialogClose}
       />
     </div>
