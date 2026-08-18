@@ -9,7 +9,8 @@ import {
 } from '@mui/material';
 
 import api, { ApiCallSet } from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import DataTable from '@/components/DataTable';
 import Image from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
@@ -69,6 +70,8 @@ const StructuralVariants = ({
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<StructuralVariantType | null>();
 
+  const { reportError } = useApiError();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -77,7 +80,12 @@ const StructuralVariants = ({
             api.get(`/reports/${report.ident}/structural-variants`),
             api.get(`/reports/${report.ident}/image/retrieve/circosSv.genome,circosSv.transcriptome`),
           ]);
-          const [svsResp, imagesResp] = await apiCalls.request() as [StructuralVariantType[], ImageType[]];
+          // The variant table must still render when the circos images 404
+          const [svsResp = [], imagesResp = []] = unwrapSettled<[StructuralVariantType[], ImageType[]]>(
+            await apiCalls.request(true) as PromiseSettledResult<unknown>[],
+            ['Failed to load structural variants', 'Failed to load circos plots'],
+            reportError,
+          );
 
           if (svsResp?.length) {
             const nextVisible = [];
@@ -113,14 +121,14 @@ const StructuralVariants = ({
           setGenomeCircos(imagesResp.find((img: ImageType) => img.key === 'circosSv.genome'));
           setTranscriptomeCircos(imagesResp.find((img: ImageType) => img.key === 'circosSv.transcriptome'));
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load structural variants', err);
         } finally {
           setIsLoading(false);
         }
       };
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, reportError]);
 
   // Categorize variants
   useEffect(() => {

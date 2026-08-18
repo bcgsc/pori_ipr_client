@@ -1,3 +1,4 @@
+import { ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
 import { ColDef } from '@ag-grid-community/core';
 import NotesCellRenderer from './components/NotesCellRenderer';
 
@@ -60,8 +61,8 @@ const potentialTherapeuticTargetsColDefs: ColDef[] = [{
   hide: true,
   sort: 'asc',
 }, {
-  headerName: 'Actions',
-  colId: 'actions',
+  headerName: ACTIONS_COLUMN,
+  colId: ACTIONS_COLUMN,
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   sortable: false,

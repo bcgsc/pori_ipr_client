@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`HyperlinkCellRenderer It matches the snapshot 1`] = `
+<DocumentFragment>
+  <a
+    href="/reports/patients/POG1234"
+  >
+    POG1234
+  </a>
+</DocumentFragment>
+`;

@@ -14,7 +14,8 @@ import {
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
+import { unwrapSettled } from '@/utils/settleApiCalls';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
@@ -130,6 +131,8 @@ const MutationBurden = ({
   const [msi, setMsi] = useState<MsiType[]>([]);
   const [msiScatter, setMsiScatter] = useState<ImageType>();
 
+  const { reportError, reportErrorSkip404 } = useApiError();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -141,19 +144,31 @@ const MutationBurden = ({
             api.get(`/reports/${report.ident}/comparators`),
             api.get(`/reports/${report.ident}/mutation-burden`),
           ]);
+          // MSI, the burden plots and the burden tables are all separately
+          // rendered; one missing resource must not blank the others
           const [
-            msiResp,
-            msiScatterResp,
-            imagesResp,
-            comparatorsResp,
-            mutationBurdenResp,
-          ] = await calls.request() as [
+            msiResp = [],
+            msiScatterResp = [],
+            imagesResp = [],
+            comparatorsResp = [],
+            mutationBurdenResp = [],
+          ] = unwrapSettled<[
             MsiType[],
             ImageType[],
             ImageType[],
             ComparatorType[],
             MutationBurdenType[],
-          ];
+          ]>(
+            await calls.request(true) as PromiseSettledResult<unknown>[],
+            [
+              'Failed to load MSI',
+              'Failed to load MSI scatter plot',
+              'Failed to load mutation burden plots',
+              'Failed to load comparators',
+              'Failed to load mutation burden',
+            ],
+            reportError,
+          );
           setMsi(msiResp);
           setMsiScatter(msiScatterResp.find((img) => img.key === 'msi.scatter'));
           setImages(processImages(imagesResp));
@@ -169,11 +184,11 @@ const MutationBurden = ({
               adjustedTmb: tmburResp?.adjustedTmb ?? null,
             });
           } catch (e) {
-            // tmbur does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
-            console.error('tmbur-mutation-burden call error', e?.message);
+            // tmbur does not exist in records before this implementation, and no backfill will be done on the backend, so a 404 is expected
+            reportErrorSkip404('Failed to load TMB mutation burden', e);
           }
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load mutation burden', err);
         } finally {
           setIsLoading(false);
         }
@@ -181,7 +196,7 @@ const MutationBurden = ({
 
       getData();
     }
-  }, [report, setIsLoading, tmburMutBur?.tmbHidden]);
+  }, [report, setIsLoading, tmburMutBur?.tmbHidden, reportError, reportErrorSkip404]);
 
   const getSectionHeader = (type) => {
     if (type === 'SNV') {

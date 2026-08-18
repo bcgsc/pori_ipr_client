@@ -4,7 +4,7 @@ import api from '@/services/api';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import { KbMatchedStatementType } from '@/common';
 import columnDefs from './columnDefs';
 import { coalesceEntries } from '../KbMatches/coalesce';
@@ -19,6 +19,8 @@ const Pharmacogenomic = ({
 
   const [variants, setVariants] = useState<KbMatchedStatementType[]>();
 
+  const { reportError } = useApiError();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -29,14 +31,14 @@ const Pharmacogenomic = ({
           const variantsResp = resp.filter(({ kbData, category }) => kbData?.kbmatchTag === 'pharmacogenomic' || category === 'pharmacogenomic');
           setVariants(coalesceEntries(variantsResp));
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load pharmacogenomic variants', err);
         } finally {
           setIsLoading(false);
         }
       };
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, reportError]);
 
   return (
     <div>

@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`HTMLCellRenderer It matches the snapshot 1`] = `
+<DocumentFragment>
+  <div
+    aria-label="Click to toggle between normal and compact view"
+    class="HTMLCellRenderer__content"
+    role="button"
+    tabindex="0"
+  >
+    <div
+      class="inner-html"
+    >
+      <b>
+        bold text
+      </b>
+    </div>
+  </div>
+</DocumentFragment>
+`;

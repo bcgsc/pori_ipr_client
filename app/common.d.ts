@@ -133,10 +133,7 @@ type AppendixType = {
 
 type VariantTextType = {
   cancerType: string[];
-  project: {
-    ident: string | null;
-    name: string | null;
-  };
+  projects: ProjectType[];
   template: {
     ident: string | null;
     name: string | null;

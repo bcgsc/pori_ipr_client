@@ -55,8 +55,8 @@ const reducer = (state, action) => {
       return { ...state, tumour: true };
     case 'analyst-comments':
       return { ...state, 'analyst-comments': true };
-    case 'pathway':
-      return { ...state, pathway: true };
+    case 'pathway-analysis':
+      return { ...state, 'pathway-analysis': true };
     case 'therapeutic':
       return { ...state, therapeutic: true };
     case 'slides':
@@ -70,7 +70,7 @@ const reducer = (state, action) => {
         patient: false,
         tumour: false,
         'analyst-comments': false,
-        pathway: false,
+        'pathway-analysis': false,
         therapeutic: false,
         slides: false,
         appendices: false,
@@ -152,8 +152,22 @@ const Print = ({
     ident: string;
   }>();
   const theme = useTheme();
-  const { data: report, refetch: refetchReport } = useReport<ReportType>(params.ident);
-  const { data: templates } = useTemplatesAll<TemplateType[]>();
+  // No snackbars in print: they would be captured in the printed output and
+  // there is nobody to dismiss them. Failures are logged and surfaced as
+  // on-page text instead.
+  const { data: report, error: reportError, refetch: refetchReport } = useReport<ReportType>(
+    params.ident,
+    {
+      onError: (err) => {
+        console.error(`Unable to load report ${params.ident} for printing`, err);
+      },
+    },
+  );
+  const { data: templates, error: templatesError } = useTemplatesAll<TemplateType[]>({
+    onError: (err) => {
+      console.error('Unable to load templates for printing', err);
+    },
+  });
   const template = useMemo(
     () => templates?.find((temp) => temp.name === report?.template?.name) ?? null,
     [templates, report],
@@ -164,7 +178,7 @@ const Print = ({
     patient: false,
     tumour: false,
     'analyst-comments': false,
-    pathway: false,
+    'pathway-analysis': false,
     therapeutic: false,
     slides: false,
     appendices: false,
@@ -282,6 +296,8 @@ const Print = ({
     }
   }, [paged, report, reportSectionsLoaded, template]);
 
+  const loadError = reportError ?? templatesError;
+
   return (
     <ReportContext.Provider value={reportContextValue}>
       <div className={`${printVersion === 'condensedLayout' ? 'condensedLayout' : 'print'}`}>
@@ -300,6 +316,11 @@ const Print = ({
             />
             {renderSections}
           </>
+        ) : null}
+        {!report && loadError ? (
+          <Typography variant="h3">
+            {`This report could not be loaded for printing: ${loadError.message}`}
+          </Typography>
         ) : null}
       </div>
     </ReportContext.Provider>

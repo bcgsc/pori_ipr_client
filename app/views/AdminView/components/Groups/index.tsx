@@ -8,7 +8,9 @@ import {
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
+import { ColDef } from '@ag-grid-community/core';
 import DataTable from '@/components/DataTable';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 import { GroupType } from '@/common';
 import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
 import useResource from '@/hooks/useResource';
@@ -67,7 +69,7 @@ const Groups = (): JSX.Element => {
     getData();
   }, []);
 
-  const groupColumnDefs = useMemo(() => ([
+  const groupColumnDefs = useMemo<ColDef[]>(() => ([
     {
       headerName: 'Group Name',
       valueGetter: ({ data }) => data.name.toLowerCase(),
@@ -92,8 +94,7 @@ const Groups = (): JSX.Element => {
       wrapText: true,
     },
     {
-      headerName: 'Actions',
-      cellRenderer: 'ActionCellRenderer',
+      ...actionsColDef,
       cellRendererParams: ({ data: { name } }) => {
         let nextCanEdit = true;
         if (name === 'admin' && !adminAccess) {
@@ -106,9 +107,6 @@ const Groups = (): JSX.Element => {
           canEditRowData: nextCanEdit,
         });
       },
-      pinned: 'right',
-      sortable: false,
-      suppressMenu: true,
     },
   ]), [adminAccess, allProjectsAccess]);
 

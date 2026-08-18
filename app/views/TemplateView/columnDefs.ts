@@ -1,4 +1,5 @@
 import { ColDef } from '@ag-grid-community/core';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 
 const columnDefs: ColDef[] = [
   {
@@ -23,13 +24,7 @@ const columnDefs: ColDef[] = [
     hide: false,
   },
   {
-    headerName: 'Actions',
-    colId: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    hide: false,
-    sortable: false,
-    suppressMenu: true,
+    ...actionsColDef,
   },
 ];
 
