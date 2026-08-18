@@ -7,6 +7,7 @@ import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
+import AlertDialog from '@/components/AlertDialog';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import columnDefs from './columnDefs';
 import AddEditVariantText from './components/AddEditVariantText';
@@ -29,6 +30,7 @@ const updateVariantText = async (rowData: VariantTextType) => api.put(`/variant-
 function VariantText(): JSX.Element {
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [deletingData, setDeletingData] = useState<VariantTextType | null>(null);
   const [editingData, setEditingData] = useState(null);
   const queryClient = useQueryClient();
 
@@ -65,9 +67,16 @@ function VariantText(): JSX.Element {
     setIsAdding(true);
   }, []);
 
-  const handleOnDelete = useCallback(async (rowData: VariantTextType) => {
-    variantTextDeleteMutation.mutate(rowData);
-  }, [variantTextDeleteMutation]);
+  const handleOnDelete = useCallback((rowData: VariantTextType) => {
+    setDeletingData(rowData);
+  }, []);
+
+  const handleDeleteClose = useCallback((confirmed: boolean) => {
+    if (confirmed && deletingData) {
+      variantTextDeleteMutation.mutate(deletingData);
+    }
+    setDeletingData(null);
+  }, [deletingData, variantTextDeleteMutation]);
 
   const handleAddClose = useCallback((newData) => {
     if (newData) {
@@ -100,6 +109,14 @@ function VariantText(): JSX.Element {
         onEdit={handleOnEdit}
         canDelete
         onDelete={handleOnDelete}
+      />
+      <AlertDialog
+        isOpen={Boolean(deletingData)}
+        onClose={handleDeleteClose}
+        title="Confirm Deleting Variant Text"
+        text="Are you sure you want to delete this variant text?"
+        confirmText="Confirm"
+        cancelText="Cancel"
       />
       <AddEditVariantText
         editData={editingData}

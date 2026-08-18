@@ -258,6 +258,7 @@ const Main = (): JSX.Element => {
                     <AuthenticatedRoute component={ProjectsView} path="/projects" />
                     <AuthenticatedRoute requiredAccess="variantTextEditAccess" component={VariantTextView} path="/variant-text" />
                     <AuthenticatedRoute requiredAccess="appendixEditAccess" component={AdminView} path="/admin/appendices" />
+                    <AuthenticatedRoute requiredAccess="pathwayLegendEditAccess" component={AdminView} path="/admin/pathway-legends" />
                     <AuthenticatedRoute requiredAccess="managerAccess" component={AdminView} path="/admin" />
                     <AuthenticatedRoute requiredAccess="templateEditAccess" component={TemplateView} path="/template" />
                   </Switch>
