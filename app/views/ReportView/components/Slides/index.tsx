@@ -13,6 +13,7 @@ import {
 import api from '@/services/api';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import DemoDescription from '@/components/DemoDescription';
@@ -43,6 +44,8 @@ const Slides = ({
   const [tabValue, setTabValue] = useState(0);
   const [direction, setDirection] = useState<'left' | 'right' | 'up' | 'down'>('right');
 
+  const { reportError } = useApiError(isPrint);
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -50,7 +53,7 @@ const Slides = ({
           const slidesResp = await api.get(`/reports/${report.ident}/presentation/slide`).request();
           setSlides(slidesResp);
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load slides', err);
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
@@ -60,7 +63,7 @@ const Slides = ({
       };
       getData();
     }
-  }, [loadedDispatch, report, setIsLoading]);
+  }, [loadedDispatch, report, setIsLoading, reportError]);
 
   const handleTabChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: number) => {
     setTabValue(newValue);

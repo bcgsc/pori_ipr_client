@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef } from '@ag-grid-community/core';
+import { actionsColDef } from '@/utils/actionsColumnDef';
+
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 const columnDefs: ColDef[] = [{
@@ -29,6 +31,10 @@ const columnDefs: ColDef[] = [{
   field: 'zygosity',
   hide: false,
 }, {
+  headerName: 'Exon',
+  field: 'exon',
+  hide: false,
+}, {
   headerName: 'Ref/Alt',
   field: 'refAlt',
   valueGetter: ({ data }) => `${data.refSeq}>${data.altSeq}`,
@@ -36,6 +42,16 @@ const columnDefs: ColDef[] = [{
 }, {
   headerName: 'Copy Change',
   field: 'gene.copyVariants.copyChange',
+  valueFormatter: (params) => {
+    // Adding signs to copy change values per Melissa in DEVSU-2525
+    if (params.value === null || params.value === undefined) return '';
+    // Explicitly prepend a '+' for positive numbers
+    if (params.value > 0) {
+      return `+${params.value}`;
+    }
+    // Explicitly prepend a '-' for negative numbers
+    return `${params.value}`;
+  },
   hide: false,
 }, {
   headerName: 'LOH State',
@@ -129,12 +145,7 @@ const columnDefs: ColDef[] = [{
   valueGetter: 'data.gene.expressionVariants.diseaseZScore',
   hide: false,
 }, {
-  headerName: 'Actions',
-  colId: 'actions',
-  cellRenderer: 'ActionCellRenderer',
-  pinned: 'right',
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',

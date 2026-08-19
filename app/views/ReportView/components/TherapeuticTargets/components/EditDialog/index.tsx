@@ -9,6 +9,7 @@ import {
   DialogTitle,
   FormControl,
   TextField,
+  MenuItem,
   Radio,
   RadioGroup,
   FormLabel,
@@ -62,7 +63,6 @@ const EditDialog = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [variantType, setVariantType] = useState<string>('gene');
-  const [defaultVariantType, setDefaultVariantType] = useState<string>();
   const [defaultVariantValue, setDefaultVariantValue] = useState<string>();
   const [defaultSignatureVariantValue, setDefaultSignatureVariantValue] = useState<string>();
 
@@ -84,15 +84,20 @@ const EditDialog = ({
 
   useEffect(() => {
     if (!editData) {
-      setDefaultVariantType('gene');
+      setVariantType('gene');
     } else if (editData.signature || editData.signatureGraphkbId) {
-      setDefaultVariantType('signature');
       setVariantType('signature');
     } else {
-      setDefaultVariantType('gene');
+      setVariantType('gene');
     }
-    setNewData({ type: 'replace', payload: editData || {} });
-  }, [editData]);
+
+    let initialData = editData || {};
+    if (!editData?.ident && tableType === 'therapeutic') {
+      initialData = { context: 'sensitivity', ...(editData || {}) };
+    }
+
+    setNewData({ type: 'replace', payload: initialData });
+  }, [editData, tableType, setNewData, setVariantType]);
 
   useEffect(() => {
     let missing;
@@ -237,6 +242,19 @@ const EditDialog = ({
     setVariantType(event.target.value);
   };
 
+  const handleChemoresistanceContextChange = useCallback((
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setIsDirty(true);
+    setNewData({
+      payload: {
+        context: event.target.value,
+      },
+    });
+  }, []);
+
+  const isAddChemoresistanceRow = tableType === 'chemoresistance' && !newData.ident;
+
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
@@ -246,7 +264,7 @@ const EditDialog = ({
           <RadioGroup
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
-            defaultValue={defaultVariantType}
+            value={variantType}
             name="row-radio-buttons-group"
             onChange={handleVariantTypeChange}
           >
@@ -292,15 +310,30 @@ const EditDialog = ({
           />
         </FormControl>
         <FormControl fullWidth>
-          <AutocompleteHandler
-            defaultValue={newData.context}
-            type="context"
-            label="Context"
-            onChange={handleAutocompleteValueSelected}
-            required
-            minCharacters={3}
-            error={errors && isDirty && errors.context}
-          />
+          {isAddChemoresistanceRow ? (
+            <TextField
+              select
+              required
+              label="Context"
+              value={newData.context || ''}
+              onChange={handleChemoresistanceContextChange}
+              error={Boolean(errors && isDirty && errors.context)}
+              helperText={errors && isDirty && errors.context ? errors.context : ''}
+            >
+              <MenuItem value="toxicity">toxicity</MenuItem>
+              <MenuItem value="resistance">resistance</MenuItem>
+            </TextField>
+          ) : (
+            <AutocompleteHandler
+              defaultValue={newData.context}
+              type="context"
+              label="Context"
+              onChange={handleAutocompleteValueSelected}
+              required
+              minCharacters={3}
+              error={errors && isDirty && errors.context}
+            />
+          )}
         </FormControl>
         <FormControl fullWidth>
           <AutocompleteHandler

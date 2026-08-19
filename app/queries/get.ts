@@ -940,6 +940,32 @@ const useGraphkbEvidenceLevels = <TQueryFnData = unknown, TData = TQueryFnData>(
     { ...queryOptions, queryParams },
   );
 
+const useLegendAll = <TQueryFnData = unknown, TData = TQueryFnData>(
+  queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
+  queryParams?: QueryParams,
+) => useAuthedQuery<TQueryFnData, TData>(
+    queryKeys.legend.all(),
+    { ...queryOptions, queryParams },
+  );
+
+const useLegend = <TQueryFnData = unknown, TData = TQueryFnData>(
+  legendIdent: string,
+  queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
+  queryParams?: QueryParams,
+) => useAuthedQuery<TQueryFnData, TData>(
+    queryKeys.legend.legend(legendIdent),
+    { ...queryOptions, queryParams },
+  );
+
+const useLegendId = <TQueryFnData = unknown, TData = TQueryFnData>(
+  legendIdIdent: string,
+  queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
+  queryParams?: QueryParams,
+) => useAuthedQuery<TQueryFnData, TData>(
+    queryKeys.legend.legendId(legendIdIdent),
+    { ...queryOptions, queryParams },
+  );
+
 const useVariantTextAll = <TQueryFnData = unknown, TData = TQueryFnData>(
   queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
   queryParams?: QueryParams,
@@ -1106,6 +1132,9 @@ export {
   useGraphkbAll,
   useGraphkbTargetType,
   useGraphkbEvidenceLevels,
+  useLegendAll,
+  useLegend,
+  useLegendId,
   useVariantTextAll,
   useVariantText,
   useTemplatesAll,

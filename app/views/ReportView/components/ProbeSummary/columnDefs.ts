@@ -1,3 +1,4 @@
+import { actionsColDef } from '@/utils/actionsColumnDef';
 import { sampleColumnDefs } from '../../common';
 
 const eventsColumnDefs = [
@@ -43,13 +44,7 @@ const eventsColumnDefs = [
     hide: false,
   },
   {
-    headerName: 'Actions',
-    colId: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    hide: false,
-    sortable: false,
-    suppressMenu: true,
+    ...actionsColDef,
   },
 ];
 

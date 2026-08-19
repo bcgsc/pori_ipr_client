@@ -2,6 +2,7 @@ import React, {
   useLayoutEffect, useMemo, useRef, useState,
 } from 'react';
 import { ColDef } from '@ag-grid-community/core';
+import { ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
 import { TherapeuticDataTableType } from '../../types';
 
 const getCellValue = (row, col) => {
@@ -68,7 +69,7 @@ const mergeCells = (sortedData: unknown[], colDefs: ColDef[], coalesce: string[]
   return spanMap;
 };
 
-const COLUMNDEFS_TO_IGNORE = ['drag', 'actions'];
+const COLUMNDEFS_TO_IGNORE = ['drag', ACTIONS_COLUMN];
 type TherapeuticTargetPrintTableProps = {
   data: TherapeuticDataTableType;
   columnDefs: ColDef[];

@@ -4,7 +4,7 @@ import React, {
 import { Typography } from '@mui/material';
 
 import api from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
@@ -57,6 +57,8 @@ const SmallMutations = ({
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<SmallMutationType | null>();
 
+  const { reportError } = useApiError();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
@@ -93,14 +95,14 @@ const SmallMutations = ({
           }
           setSmallMutations(filteredSmallMutResp);
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          reportError('Failed to load small mutations', err);
         } finally {
           setIsLoading(false);
         }
       };
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, reportError]);
 
   // Categorize small mutations
   useEffect(() => {
@@ -176,7 +178,7 @@ const SmallMutations = ({
           {showDialog && (
             <VariantEditDialog
               editData={editData}
-              variantType="snv"
+              variantType="mut"
               isOpen={showDialog}
               onClose={handleEditClose}
             />

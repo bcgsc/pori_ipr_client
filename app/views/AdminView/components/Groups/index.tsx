@@ -8,7 +8,9 @@ import {
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
+import { ColDef } from '@ag-grid-community/core';
 import DataTable from '@/components/DataTable';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 import { GroupType } from '@/common';
 import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
 import useResource from '@/hooks/useResource';
@@ -26,6 +28,7 @@ const descriptions = {
   'germline access': 'can view germline reports',
   'report assignment access': 'can assign users to reports; bioinformatician',
   'create report access': 'can load new reports',
+  'create project access': 'can create new projects',
   'variant-text edit access': 'can create/edit/delete specific variant-text',
   manager: 'can create/edit/delete nonadmin users; all other permissions within assigned projects',
 };
@@ -42,6 +45,7 @@ const ALL_ACCESS = [
   'template edit access',
   'appendix edit access',
   'variant-text edit access',
+  'create project access',
 ];
 
 const Groups = (): JSX.Element => {
@@ -65,7 +69,7 @@ const Groups = (): JSX.Element => {
     getData();
   }, []);
 
-  const groupColumnDefs = useMemo(() => ([
+  const groupColumnDefs = useMemo<ColDef[]>(() => ([
     {
       headerName: 'Group Name',
       valueGetter: ({ data }) => data.name.toLowerCase(),
@@ -90,8 +94,7 @@ const Groups = (): JSX.Element => {
       wrapText: true,
     },
     {
-      headerName: 'Actions',
-      cellRenderer: 'ActionCellRenderer',
+      ...actionsColDef,
       cellRendererParams: ({ data: { name } }) => {
         let nextCanEdit = true;
         if (name === 'admin' && !adminAccess) {
@@ -104,9 +107,6 @@ const Groups = (): JSX.Element => {
           canEditRowData: nextCanEdit,
         });
       },
-      pinned: 'right',
-      sortable: false,
-      suppressMenu: true,
     },
   ]), [adminAccess, allProjectsAccess]);
 

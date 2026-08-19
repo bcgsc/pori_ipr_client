@@ -10,6 +10,7 @@ import sanitizeHtml from 'sanitize-html';
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import useReport from '@/hooks/useReport';
 import { DEFAULT_SIGNATURE_TYPES, useSignatureTypes } from '@/hooks/useSignatureTypes';
 import DemoDescription from '@/components/DemoDescription';
@@ -47,11 +48,13 @@ const AnalystComments = ({
   const editorRef = useRef<{ editor: Editor, isDirty: boolean | null }>();
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
+  const { reportError } = useApiError(isPrint);
+
   const {
     data: comments,
     refetch: refetchComments,
     isLoading: isCommentsLoading,
-    isError: isCommentsError,
+    error: commentsError,
   } = useReportSummaryAnalystComments<AnalystCommentType>(report.ident, {
     select: (data) => {
       if (data.comments) {
@@ -68,25 +71,24 @@ const AnalystComments = ({
     data: signatures,
     refetch: refetchSignatures,
     isLoading: isSignaturesLoading,
-    isError: isSignaturesError,
+    error: signaturesError,
   } = useReportSignatures<SignatureType>(report.ident);
 
   const {
     data: signatureTypes = DEFAULT_SIGNATURE_TYPES,
     isLoading: isSignatureTypesLoading,
-    isError: isSignatureTypesError,
+    error: signatureTypesError,
   } = useSignatureTypes(report);
 
   const isApiLoading = isCommentsLoading || isSignaturesLoading || isSignatureTypesLoading;
-  const isError = isCommentsError || isSignaturesError || isSignatureTypesError;
+  const loadError = commentsError || signaturesError || signatureTypesError;
+  const isError = Boolean(loadError);
 
   useEffect(() => {
-    if (isError) {
-      snackbar.error(`Network error: ${
-        isCommentsError || isSignaturesError || isSignatureTypesError
-      }`);
+    if (loadError) {
+      reportError('Failed to load analyst comments', loadError);
     }
-  }, [isCommentsError, isError, isSignatureTypesError, isSignaturesError]);
+  }, [loadError, reportError]);
 
   useEffect(() => {
     if (!isApiLoading) {
@@ -162,10 +164,14 @@ const AnalystComments = ({
         );
 
         if (isSigned) {
-          const isResolved = await showConfirmDialog(commentCall, true);
+          // The hook emits the success snackbar and resets signature state;
+          // we only refresh the comments in place (no page reload anymore).
+          const isResolved = await showConfirmDialog(commentCall, true, 'Comment updated');
           if (isResolved) {
             await refetchComments();
-            snackbar.success('Comment updated');
+            if (shouldCloseEditor) {
+              setIsEditorOpen(false);
+            }
           }
         } else {
           await commentCall.request();
@@ -232,36 +238,37 @@ const AnalystComments = ({
       {!(isComponentLoading || isApiLoading) && (
         <>
           {!isPrint && canEdit && (
-            <>
+            <IPRWYSIWYGEditor
+              ref={editorRef}
+              alertLeave
+              isOpen={isEditorOpen}
+              text={comments.comments}
+              title="Edit Comments"
+              onClose={handleEditorClose}
+              onSave={handleEditorSave}
+            />
+          )}
+          <div className="analyst-comments__body">
+            {!isPrint && canEdit && (
               <Fab
                 className="analyst-comments__fab"
                 color="secondary"
                 onClick={handleEditorStart}
                 size="small"
-                style={{ right: 295, position: 'fixed' }}
               >
                 <EditIcon />
               </Fab>
-              <IPRWYSIWYGEditor
-                ref={editorRef}
-                alertLeave
-                isOpen={isEditorOpen}
-                text={comments.comments}
-                title="Edit Comments"
-                onClose={handleEditorClose}
-                onSave={handleEditorSave}
+            )}
+            {comments ? (
+              <div
+                className="analyst-comments__user-text inner-html"
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{ __html: comments.comments }}
               />
-            </>
-          )}
-          {comments ? (
-            <div
-              className="analyst-comments__user-text inner-html"
-              // eslint-disable-next-line react/no-danger
-              dangerouslySetInnerHTML={{ __html: comments.comments }}
-            />
-          ) : (
-            <Typography align="center" variant="h5">No comments yet</Typography>
-          )}
+            ) : (
+              <Typography className="analyst-comments__user-text" align="center" variant="h5">No comments yet</Typography>
+            )}
+          </div>
           <div className="analyst-comments__signatures">
             {!isPrint && (
               <Typography variant="h5">Signed By</Typography>

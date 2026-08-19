@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { when, resetAllWhenMocks } from 'jest-when';
 import {
   screen, render, waitFor, fireEvent, act,
 } from '@testing-library/react';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import ReportContext, { ReportType } from '@/context/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import api, { ApiCall } from '@/services/api';
+import { ReportType } from '@/common';
 import GeneViewer from '..';
 
 const mockGene = 'TP53';
@@ -28,9 +29,15 @@ const mockReport = {
 } as ReportType;
 
 const withReportContext = (Component) => function ReportContextHOC(props) {
+  const reportContextVal = useMemo(() => ({
+    report: mockReport,
+    canEdit: true,
+    reportTemplateName: '',
+    refetchReport: async () => null,
+  }), []);
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <ReportContext.Provider value={{ report: mockReport, setReport: () => {}, canEdit: true }}>
+    <ReportContext.Provider value={reportContextVal}>
       <Component {...props} />
     </ReportContext.Provider>
   );

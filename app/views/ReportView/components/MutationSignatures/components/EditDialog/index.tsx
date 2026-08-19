@@ -22,16 +22,16 @@ import AsyncButton from '@/components/AsyncButton';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReportContext from '@/context/ReportContext';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-import SignatureType from '../../types';
+import { MutationSignatureType } from '@/common';
 
 import './index.scss';
 import { useQueryClient } from 'react-query';
 import { queryKeys } from '@/queries/queryKeys';
 
 type EditDialogProps = {
-  editData: SignatureType;
+  editData: MutationSignatureType;
   isOpen: boolean;
-  onClose: (newData?: SignatureType) => void;
+  onClose: (newData?: MutationSignatureType) => void;
 };
 
 const EditDialog = ({
@@ -89,15 +89,27 @@ const EditDialog = ({
     } else {
       onClose();
     }
-  }, [checkboxSelected, editData, selectValue, report, isSigned, onClose, showConfirmDialog]);
+  }, [checkboxSelected, editData, selectValue, report, isSigned, onClose, showConfirmDialog, queryClient]);
 
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>Edit Signature</DialogTitle>
-      <DialogContent>
-        <FormControl className="dialog__form-control">
-          <InputLabel>kbCategory</InputLabel>
-          <Select value={selectValue} onChange={handleSelectChange}>
+      {/* https://github.com/mui/material-ui/issues/31185 */}
+      <DialogContent sx={{ overflow: 'visible' }}>
+        <FormControl className="dialog__form-control" variant="outlined" margin="normal">
+          <InputLabel
+            id="kbCategory-label"
+            htmlFor="kbCategory-select"
+          >
+            kbCategory
+          </InputLabel>
+          <Select
+            labelId="kbCategory-label"
+            label="kbCategory"
+            id="kbCategory-select"
+            value={selectValue}
+            onChange={handleSelectChange}
+          >
             <MenuItem value="none">None</MenuItem>
             <MenuItem value="slight">Slight</MenuItem>
             <MenuItem value="moderate">Moderate</MenuItem>
@@ -112,15 +124,15 @@ const EditDialog = ({
             }
           />
         </div>
-        <DialogActions className="edit-dialog__actions">
-          <Button onClick={handleSubmit}>
-            Cancel
-          </Button>
-          <AsyncButton isLoading={isApiCalling} color="secondary" onClick={handleSubmit}>
-            Save
-          </AsyncButton>
-        </DialogActions>
       </DialogContent>
+      <DialogActions className="edit-dialog__actions">
+        <Button onClick={() => onClose(null)}>
+          Cancel
+        </Button>
+        <AsyncButton isLoading={isApiCalling} color="secondary" onClick={handleSubmit}>
+          Save
+        </AsyncButton>
+      </DialogActions>
     </Dialog>
   );
 };

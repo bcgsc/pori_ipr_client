@@ -10,7 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
 import PatientEdit from '@/components/PatientEdit';
-import snackbar from '@/services/SnackbarUtils';
+import useApiError from '@/hooks/useApiError';
 import SummaryPrintTable from '@/components/SummaryPrintTable';
 import './index.scss';
 import { PatientInformationType, ReportType } from '@/common';
@@ -37,6 +37,8 @@ const PatientInformation = ({
   }[] | null>();
 
   const classNamePrefix = isPrint ? 'patient-information--print' : 'patient-information';
+
+  const { reportError } = useApiError(isPrint);
 
   useEffect(() => {
     if (report?.ident) {
@@ -85,7 +87,7 @@ const PatientInformation = ({
             },
           ]);
         } catch (err) {
-          snackbar.error(`Unknown error: ${err}`);
+          reportError('Failed to load patient information', err);
         } finally {
           if (loadedDispatch) {
             loadedDispatch({ type: 'patient' });
@@ -95,7 +97,7 @@ const PatientInformation = ({
 
       getData();
     }
-  }, [loadedDispatch, report, isPrint]);
+  }, [loadedDispatch, report, isPrint, reportError]);
 
   const handlePatientEditClose = useCallback((
     newPatientData: PatientInformationType,

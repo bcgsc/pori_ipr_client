@@ -1,5 +1,54 @@
 import { ColDef } from '@ag-grid-community/core';
+import { actionsColDef, ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
+import { resolveCellValue } from '@/components/PrintTable/utils';
 import { sampleColumnDefs } from '../../common';
+
+const COLLAPSEABLE_COLS = ['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth'];
+
+/**
+ * Hierarchical (lexicographic) sort over the values of `COLLAPSEABLE_COLS`,
+ * resolved against `colDefs` via each colDef's valueGetter (or raw row field
+ * when no valueGetter is set) through `resolveCellValue`.
+ *
+ * Sort precedence follows the order of `COLLAPSEABLE_COLS`:
+ *  1. Rows are first ordered by the 1st key.
+ *  2. Rows tying on the 1st key are then ordered by the 2nd key.
+ *  3. Rows tying on the 1st and 2nd keys are then ordered by the 3rd key.
+ *  ...and so on for any further keys.
+ * Rows whose entire key tuple is equal are returned as equal — JS's stable
+ * sort preserves their original relative order in that case.
+ *
+ * Example with COLLAPSEABLE_COLS = ['a', 'b', 'c']:
+ *   first bucket by `a`; within each `a`-bucket sub-bucket by `b`; within
+ *   each `(a,b)`-bucket sub-bucket by `c`.
+ *
+ * Comparison uses raw `>` (default JS string/number compare). It is NOT
+ * locale-aware and NOT numeric-natural — e.g. "10" sorts before "2". If a
+ * key needs natural-numeric ordering, swap in a collator for that key.
+ *
+ * Purpose: place rows sharing identical collapseable-key tuples adjacent so
+ * PrintTable's rowSpan-based cell merging engages, and so the web DataTable
+ * renders rows in the same order as the print view.
+ */
+const sortByCollapseableCols = <T extends Record<string, unknown>>(
+  data: T[],
+  colDefs: ColDef[],
+): T[] => {
+  const relevantDefs = COLLAPSEABLE_COLS
+    .map((id) => colDefs.find((c) => c.colId === id || c.field === id))
+    .filter((c): c is ColDef => Boolean(c));
+
+  return [...data].sort((a, b) => {
+    for (let i = 0; i < relevantDefs.length; i += 1) {
+      const aVal = resolveCellValue(a, relevantDefs[i]);
+      const bVal = resolveCellValue(b, relevantDefs[i]);
+      if (aVal !== bVal) {
+        return aVal > bVal ? 1 : -1;
+      }
+    }
+    return 0;
+  });
+};
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
@@ -46,39 +95,47 @@ const getGenomicEvent = ({ data }) => {
 };
 
 const ACTIONS_COLDEF: ColDef = {
-  headerName: 'Actions',
-  colId: 'Actions',
-  field: 'Actions',
-  cellRenderer: 'ActionCellRenderer',
-  pinned: 'right',
-  hide: false,
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
+  field: ACTIONS_COLUMN,
   minWidth: 132,
 };
 
 const VARIANT_TYPE_COLDEF: ColDef = {
   headerName: 'Variant Type',
   field: 'variantType',
-  rowGroup: true,
   hide: true,
   valueGetter: ({ data: { variantType } }) => variantType || 'N/A',
+};
+
+const getCopyChangeValue = ({ copyChange, gene, variantType }) => {
+  if (copyChange !== null && copyChange !== undefined) {
+    return copyChange;
+  }
+
+  if ((variantType === 'cnv' || variantType === 'mut') && gene?.copyVariants?.copyChange !== undefined && gene?.copyVariants?.copyChange !== null) {
+    return gene.copyVariants.copyChange;
+  }
+
+  return 'N/A';
+};
+
+const formatCopyChangeValue = (value) => {
+  // Keep empty display for truly missing values, but preserve explicit N/A text.
+  if (value === null || value === undefined) return '';
+  if (value === 'N/A') return value;
+
+  const numericValue = Number(value);
+  if (Number.isNaN(numericValue)) return `${value}`;
+  if (numericValue > 0) return `+${numericValue}`;
+
+  return `${numericValue}`;
 };
 
 const COPY_CHANGE_COLDEF: ColDef = {
   headerName: 'Copy Change',
   field: 'copyChange',
-  valueGetter: ({ data: { copyChange, gene, variantType } }) => {
-    if (copyChange) {
-      return copyChange;
-    }
-    if (variantType === 'cnv') {
-      if (gene && gene.copyVariants) {
-        return gene.copyVariants.copyChange;
-      }
-    }
-    return 'N/A';
-  },
+  valueGetter: ({ data }) => getCopyChangeValue(data),
+  valueFormatter: ({ value }) => formatCopyChangeValue(value),
 };
 
 const therapeuticAssociationColDefs: ColDef[] = [
@@ -198,9 +255,6 @@ const cancerRelevanceColDefs: ColDef[] = [
     hide: false,
   },
   {
-    ...VARIANT_TYPE_COLDEF,
-  },
-  {
     ...COPY_CHANGE_COLDEF,
   },
   {
@@ -213,9 +267,16 @@ const cancerRelevanceColDefs: ColDef[] = [
   },
 ];
 
+const cancerRelevancePrintColDefs = cancerRelevanceColDefs.filter((col) => col.headerName !== 'Actions');
+const therapeuticAssociationPrintColDefs = therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions');
+
 export {
   sampleColumnDefs,
   therapeuticAssociationColDefs,
   cancerRelevanceColDefs,
+  cancerRelevancePrintColDefs,
+  therapeuticAssociationPrintColDefs,
   getGenomicEvent,
+  COLLAPSEABLE_COLS,
+  sortByCollapseableCols,
 };

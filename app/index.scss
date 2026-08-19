@@ -178,6 +178,7 @@ $print-cell-padding-right: 8px;
       padding: 3px $print-cell-padding-right 3px 0;
       page-break-inside: avoid;
       overflow-wrap: break-word;
+      white-space: pre-line;
       break-inside: avoid;
 
       &:last-child {

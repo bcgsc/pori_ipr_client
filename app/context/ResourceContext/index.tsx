@@ -10,6 +10,7 @@ const UNREVIEWED_ACCESS = ['admin', 'manager', 'unreviewed access'];
 const NONPRODUCTION_ACCESS = ['admin', 'manager', 'non-production access'];
 const TEMPLATE_EDIT_ACCESS = ['admin', 'manager', 'template edit access'];
 const APPENDIX_EDIT_ACCESS = ['admin', 'manager', 'appendix edit access'];
+const PATHWAY_LEGEND_EDIT_ACCESS = ['admin', 'manager', 'pathway legend edit access'];
 const REPORT_ASSIGNMENT_ACCESS = ['admin', 'manager', 'report assignment access'];
 const CREATE_PROJECT_ACCESS = ['admin', 'manager', 'create project access'];
 
@@ -46,6 +47,7 @@ const useResources = (): ResourceContextType => {
       managerAccess,
       nonproductionAccess: checkAccess(userGroups, NONPRODUCTION_ACCESS, NONPRODUCTION_ACCESS_BLOCK),
       nonproductionStates: NONPRODUCTION_STATES,
+      pathwayLegendEditAccess: checkAccess(groups, [...PATHWAY_LEGEND_EDIT_ACCESS], GERMLINE_BLOCK),
       reportAssignmentAccess: checkAccess(userGroups, [...REPORT_ASSIGNMENT_ACCESS], ADMIN_BLOCK),
       // Manager (or admin) can both edit reports and see the settings page
       reportEditAccess: managerAccess,
@@ -61,9 +63,11 @@ const useResources = (): ResourceContextType => {
 
 const ResourceContext = createContext<ResourceContextType>({
   adminAccess: false,
+  createProjectAccess: false,
   allProjectsAccess: false,
   allStates: ALL_STATES,
   appendixEditAccess: false,
+  pathwayLegendEditAccess: false,
   germlineAccess: false,
   managerAccess: false,
   nonproductionAccess: false,
@@ -85,9 +89,11 @@ type ResourceContextProviderProps = {
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
     adminAccess,
+    createProjectAccess,
     allProjectsAccess,
     allStates,
     appendixEditAccess,
+    pathwayLegendEditAccess,
     germlineAccess,
     managerAccess,
     nonproductionAccess,
@@ -104,9 +110,11 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
 
   const providerValue = useMemo(() => ({
     adminAccess,
+    createProjectAccess,
     allProjectsAccess,
     allStates,
     appendixEditAccess,
+    pathwayLegendEditAccess,
     germlineAccess,
     managerAccess,
     nonproductionAccess,
@@ -121,9 +129,11 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     variantTextEditAccess,
   }), [
     adminAccess,
+    createProjectAccess,
     allProjectsAccess,
     allStates,
     appendixEditAccess,
+    pathwayLegendEditAccess,
     germlineAccess,
     managerAccess,
     nonproductionAccess,

@@ -1,4 +1,5 @@
 import { formatDate } from '@/utils/date';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 
 const readOnlyColDefs = [
   {
@@ -27,11 +28,7 @@ const readOnlyColDefs = [
 const adminColDefs = [
   ...readOnlyColDefs,
   {
-    headerName: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    sortable: false,
-    suppressMenu: true,
+    ...actionsColDef,
   },
 ];
 
