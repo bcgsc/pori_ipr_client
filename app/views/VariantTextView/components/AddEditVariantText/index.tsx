@@ -8,7 +8,7 @@ import {
   DialogTitle,
   Button,
   MenuItem,
-  Select, 
+  Select,
   FormControl,
   InputLabel,
   Divider,
@@ -167,7 +167,7 @@ const AddEditVariantText = ({
   const { mutate: mutateVariant } = useMutation({
     mutationFn: savingVariant,
     onSuccess: (res, { template, projects }) => {
-      snackbar.success(editData ? 'Variant text modified successfully' : 'Variant text created successfully');
+      snackbar.success(editData ? 'Variant text updated successfully' : 'Variant text created successfully');
 
       const returnedData = {
         ...res,
@@ -322,7 +322,6 @@ const AddEditVariantText = ({
               className="add-item__select-field"
               multiple
               options={projectOptions || []}
-              disabled={Boolean(editData)}
               value={value}
               getOptionLabel={(option) => option.name}
               isOptionEqualToValue={(option, selected) => option.ident === selected.ident}
