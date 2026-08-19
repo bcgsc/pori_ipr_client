@@ -52,7 +52,6 @@ function VariantText(): JSX.Element {
   const variantTextUpdateMutation = useMutation({
     mutationFn: updateVariantText,
     onSuccess: () => {
-      snackbar.success('Variant text updated');
       queryClient.invalidateQueries(['variantText']);
     },
     onError: (err) => snackbar.error(`Error deleting variant text: ${err}`),
