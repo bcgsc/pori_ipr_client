@@ -19,10 +19,14 @@
     
     &-title {
       margin: 0 0 8px;
+      break-after: avoid-page;
+      page-break-after: avoid;
     }
 
     &-content {
-      padding: 0 16px;
+      padding: 0;
+      break-before: avoid-page;
+      page-break-before: avoid;
     }
   }
 
@@ -30,11 +34,31 @@
 
     &-content {
       margin-top: 8px;
+      break-before: avoid-page;
+      page-break-before: avoid;
     }
+  }
+
+  &__print-title {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+    break-after: avoid-page;
+    page-break-after: avoid;
   }
 
   &__render {
     break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  &__printSection {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+
+  &__printKeepWithFirstTable {
+    break-inside: avoid-page;
     page-break-inside: avoid;
   }
 }

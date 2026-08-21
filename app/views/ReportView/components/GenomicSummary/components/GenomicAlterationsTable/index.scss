@@ -1,0 +1,146 @@
+@use '@/styles/variables' as *;
+
+.small-mutations {
+  padding: 0;
+  .data-table__header {
+    font-size: 1.2rem;
+  }
+
+  &--print {
+    padding: 0;
+    margin-bottom: 32px;
+
+    .data-table__header {
+      padding: 0;
+      font-size: 1rem;
+    }
+
+    .data-table,
+    .data-table__header-container,
+    .data-table__container {
+      margin-left: 0;
+      padding-left: 0;
+    }
+
+    .data-table__container {
+      .ag-header-cell-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .data-table__container {
+      margin: 0;
+    }
+  }
+}
+
+.copy-number {
+  padding: 0;
+  .data-table__header {
+    font-size: 1.2rem;
+  }
+
+  &--print {
+    padding: 0;
+    margin-bottom: 32px;
+
+    .data-table__header {
+      padding: 0;
+      font-size: 1rem;
+    }
+
+    .data-table,
+    .data-table__header-container,
+    .data-table__container {
+      margin-left: 0;
+      padding-left: 0;
+    }
+
+    .data-table__container {
+      .ag-header-cell-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .data-table__container {
+      margin: 0;
+    }
+  }
+}
+
+.structural-variants {
+  padding: 0;
+  .data-table__header {
+    font-size: 1.2rem;
+  }
+
+  &--print {
+    padding: 0;
+    margin-bottom: 32px;
+
+    .data-table__header {
+      padding: 0;
+      font-size: 1rem;
+    }
+
+    .data-table,
+    .data-table__header-container,
+    .data-table__container {
+      margin-left: 0;
+      padding-left: 0;
+    }
+
+    .data-table__container {
+      .ag-header-cell-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .data-table__container {
+      margin: 0;
+    }
+  }
+}
+
+.expression-variants {
+  padding: 0;
+  .data-table__header {
+    font-size: 1.2rem;
+  }
+
+  &--print {
+    padding: 0;
+    margin-bottom: 32px;
+
+    .data-table__header {
+      padding: 0;
+      font-size: 1rem;
+    }
+
+    .data-table,
+    .data-table__header-container,
+    .data-table__container {
+      margin-left: 0;
+      padding-left: 0;
+    }
+
+    .data-table__container {
+      .ag-header-cell-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .data-table__container {
+      margin: 0;
+    }
+  }
+}
+

@@ -155,6 +155,7 @@ type GeneType = {
   kbStatementRelated: boolean;
   drugTargetable: boolean;
   expressionVariants?: ExpOutliersType;
+  copyVariants?: CopyNumberType;
   knownFusionPartner: boolean;
   knownSmallMutation: boolean;
   name: string;
