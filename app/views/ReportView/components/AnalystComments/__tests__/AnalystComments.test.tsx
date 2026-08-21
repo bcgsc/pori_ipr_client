@@ -1,4 +1,6 @@
 import React from 'react';
+import { readFileSync } from 'fs';
+import path from 'path';
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { when, resetAllWhenMocks } from 'jest-when';
@@ -101,6 +103,12 @@ describe('AnalystComments', () => {
 
     expect(testElem).toBeInTheDocument();
     expect(testElem).toHaveAttribute('style', 'color:red');
+  });
+
+  test('avoids breaking list items inside in print', () => {
+    const styles = readFileSync(path.resolve(__dirname, '../index.scss'), 'utf8');
+
+    expect(styles).toMatch(/\.analyst-comments__body\s*\{[\s\S]*?li\s*\{\s*break-inside:\s*avoid;\s*\}/);
   });
 
   const renderWithFailingComments = (isPrint: boolean) => {
