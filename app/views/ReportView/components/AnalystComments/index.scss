@@ -32,6 +32,10 @@
     .analyst-comments__body {
       max-width: unset;
       margin: 0;
+
+      li {
+          break-inside: avoid;
+      }
     }
 
     .analyst-comments__user-text {
