@@ -240,7 +240,7 @@ const StructuralVariants = ({
           {Object.entries(groupedSvs).map(([key, value]) => (
             <DataTable
               key={key}
-              columnDefs={columnDefs as any}
+              columnDefs={columnDefs}
               rowData={value}
               titleText={TITLE_MAP[key]}
               visibleColumns={visibleCols}

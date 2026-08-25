@@ -1,5 +1,4 @@
-import { RecordDefaults } from '@/common';
-import { VariantType } from '@/common';
+import { VariantType, RecordDefaults } from '@/common';
 
 type GeneVariantType = {
   geneVariant: string;

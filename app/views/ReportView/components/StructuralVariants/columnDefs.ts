@@ -1,4 +1,5 @@
 import { actionsColDef } from '@/utils/actionsColumnDef';
+import type { ColDef } from '@ag-grid-community/core';
 
 const createGeneRelatedValueGetter = (field, delimiter = ' / ', subfield = '') => ({ data }) => {
   try {
@@ -19,7 +20,7 @@ const createGeneRelatedValueGetter = (field, delimiter = ' / ', subfield = '') =
   }
 };
 
-const columnDefs = [{
+const columnDefs: ColDef[] = [{
   headerName: 'Genes 5`::3`',
   colId: 'genes',
   cellRenderer: 'GeneCellRenderer',
