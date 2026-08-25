@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef, ColGroupDef } from '@ag-grid-community/core';
 import { createGeneRelatedValueGetter } from '@/views/ReportView/components/StructuralVariants/columnDefs';
+import { actionsColDef } from '@/utils/actionsColumnDef';
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
@@ -50,12 +51,7 @@ const smallMutationsColumnDefs: ColDef[] = [{
   comparator: collator.compare,
 },
 {
-  headerName: 'Actions',
-  colId: 'actions',
-  cellRenderer: 'ActionCellRenderer',
-  pinned: 'right',
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
 }];
 
 const copyNumberColumnDefs: ColDef[] = [{
@@ -69,15 +65,15 @@ const copyNumberColumnDefs: ColDef[] = [{
   field: 'copyChange',
   valueFormatter: (params) => {
     if (params.value === null || params.value === undefined) return '';
-    
+
     const num = Number(params.value);
-    
+
     // If the number is greater than zero, prepend the "+" sign
     if (num > 0) {
       return `+${num}`;
     }
     // Zero or negative numbers will naturally format with their own sign or nothing
-    return num.toString(); 
+    return num.toString();
   },
 },
 {
@@ -89,15 +85,10 @@ const copyNumberColumnDefs: ColDef[] = [{
   field: 'chromosomeBand',
 },
 {
-  headerName: 'Actions',
-  colId: 'actions',
-  cellRenderer: 'ActionCellRenderer',
-  pinned: 'right',
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
 }];
 
-const structuralVariantsColumnDefs = [{
+const structuralVariantsColumnDefs: ColDef[] = [{
   headerName: 'Genes 5`::3`',
   colId: 'genes',
   cellRenderer: 'GeneCellRenderer',
@@ -132,12 +123,7 @@ const structuralVariantsColumnDefs = [{
   field: 'conventionalName',
 },
 {
-  headerName: 'Actions',
-  cellRenderer: 'ActionCellRenderer',
-  colId: 'actions',
-  pinned: 'right',
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
 }];
 
 const expressionColumnDefs: Array<ColDef | ColGroupDef> = [{
@@ -158,12 +144,7 @@ const expressionColumnDefs: Array<ColDef | ColGroupDef> = [{
   ],
 },
 {
-  headerName: 'Actions',
-  cellRenderer: 'ActionCellRenderer',
-  pinned: 'right',
-  colId: 'actions',
-  sortable: false,
-  suppressMenu: true,
+  ...actionsColDef,
 }];
 
 export {

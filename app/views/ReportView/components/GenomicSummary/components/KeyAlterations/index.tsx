@@ -112,7 +112,7 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
         tumourRefCount: null,
         variantType: 'mut',
         zygosity: null,
-      } as any;
+      };
       break;
     }
     case 'cnv': {
@@ -133,7 +133,7 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
         size: null,
         start: null,
         variantType: 'cnv',
-      } as any;
+      };
       break;
     }
     case 'structuralVariant': {
@@ -170,7 +170,7 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
         svg: null,
         svgTitle: null,
         variantType: 'sv',
-      } as any;
+      };
       break;
     }
     case 'expression': {
@@ -201,7 +201,7 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
         selected: false,
         tpm: null,
         variantType: 'exp',
-      } as any;
+      };
       break;
     }
     default:
@@ -437,8 +437,8 @@ const KeyAlterations = ({
       titleSection = (
         <Typography
           className={`${classNamePrefix}__print-title`}
-          variant="h5" 
-          fontWeight="bold" 
+          variant="h5"
+          fontWeight="bold"
           display="block"
         >
           Genomic and Transcriptomic Alterations Identified

@@ -6,9 +6,13 @@ import { ColDef, ColGroupDef } from '@ag-grid-community/core';
 
 import PrintTable from '@/components/PrintTable';
 import DataTable from '@/components/DataTable';
-import { SmallMutationType, CopyNumberType, StructuralVariantType, ExpOutliersType } from '@/common';
+import {
+  SmallMutationType, CopyNumberType, StructuralVariantType, ExpOutliersType,
+} from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import { smallMutationsColumnDefs, copyNumberColumnDefs, structuralVariantsColumnDefs, expressionColumnDefs } from './columnDefs';
+import {
+  smallMutationsColumnDefs, copyNumberColumnDefs, structuralVariantsColumnDefs, expressionColumnDefs,
+} from './columnDefs';
 
 import './index.scss';
 
@@ -115,28 +119,6 @@ const renderPrintTable = (titleText: string, columnDefs: ColDef[], data: Record<
   </>
 );
 
-const GenomicAlterationsTable = ({
-  isLoading,
-  setIsLoading,
-  onDelete,
-  variantCategory,
-  variantData,
-  isPrint = false,
-}: GenomicAlterationsTableProps): JSX.Element => {
-  switch (variantCategory) {
-    case 'smallMutation':
-      return <SmallMutations isLoading={isLoading} setIsLoading={setIsLoading} onDelete={onDelete} variantData={variantData as SmallMutationType[]} isPrint={isPrint} />;
-    case 'cnv':
-      return <CopyNumber isLoading={isLoading} setIsLoading={setIsLoading} onDelete={onDelete} variantData={variantData as CopyNumberType[]} isPrint={isPrint} />;
-    case 'structuralVariant':
-      return <StructuralVariants isLoading={isLoading} setIsLoading={setIsLoading} onDelete={onDelete} variantData={variantData as StructuralVariantType[]} isPrint={isPrint} />;
-    case 'expression':
-      return <Expression isLoading={isLoading} setIsLoading={setIsLoading} onDelete={onDelete} variantData={variantData as ExpOutliersType[]} isPrint={isPrint} />;
-    default:
-      return <></>;
-  }
-};
-
 const SmallMutations = ({
   isLoading,
   setIsLoading,
@@ -144,7 +126,6 @@ const SmallMutations = ({
   variantData,
   isPrint = false,
 }: SmallMutationsProps): JSX.Element => {
-
   useEffect(() => {
     if (variantData) {
       setIsLoading(false);
@@ -179,7 +160,6 @@ const CopyNumber = ({
   variantData,
   isPrint = false,
 }: CopyNumberProps): JSX.Element => {
-
   useEffect(() => {
     if (variantData) {
       setIsLoading(false);
@@ -214,7 +194,6 @@ const StructuralVariants = ({
   variantData,
   isPrint = false,
 }: StructuralVariantsProps): JSX.Element => {
-
   useEffect(() => {
     if (variantData) {
       setIsLoading(false);
@@ -227,7 +206,7 @@ const StructuralVariants = ({
         isPrint ? renderPrintTable('Structural Variants', structuralVariantsColumnDefs as ColDef[], variantData as Record<string, unknown>[]) : (
           <DataTable
             titleText="Structural Variants"
-            columnDefs={getColumnDefsForLayout(structuralVariantsColumnDefs as any, isPrint)}
+            columnDefs={getColumnDefsForLayout(structuralVariantsColumnDefs, isPrint)}
             rowData={variantData}
             canDelete={!isPrint}
             onDelete={onDelete}
@@ -249,7 +228,6 @@ const Expression = ({
   variantData,
   isPrint = false,
 }: ExpressionProps): JSX.Element => {
-
   useEffect(() => {
     if (variantData) {
       setIsLoading(false);
@@ -275,6 +253,28 @@ const Expression = ({
       )}
     </div>
   );
+};
+
+const GenomicAlterationsTable = ({
+  isLoading,
+  setIsLoading,
+  onDelete,
+  variantCategory,
+  variantData,
+  isPrint = false,
+}: GenomicAlterationsTableProps): JSX.Element => {
+  switch (variantCategory) {
+    case 'smallMutation':
+      return <SmallMutations isLoading={isLoading} setIsLoading={setIsLoading} onDelete={onDelete} variantData={variantData as SmallMutationType[]} isPrint={isPrint} />;
+    case 'cnv':
+      return <CopyNumber isLoading={isLoading} setIsLoading={setIsLoading} onDelete={onDelete} variantData={variantData as CopyNumberType[]} isPrint={isPrint} />;
+    case 'structuralVariant':
+      return <StructuralVariants isLoading={isLoading} setIsLoading={setIsLoading} onDelete={onDelete} variantData={variantData as StructuralVariantType[]} isPrint={isPrint} />;
+    case 'expression':
+      return <Expression isLoading={isLoading} setIsLoading={setIsLoading} onDelete={onDelete} variantData={variantData as ExpOutliersType[]} isPrint={isPrint} />;
+    default:
+      return null;
+  }
 };
 
 export default withLoading(GenomicAlterationsTable);
