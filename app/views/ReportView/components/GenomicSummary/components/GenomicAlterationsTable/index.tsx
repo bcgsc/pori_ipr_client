@@ -10,6 +10,7 @@ import {
   SmallMutationType, CopyNumberType, StructuralVariantType, ExpOutliersType,
 } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
 import {
   smallMutationsColumnDefs, copyNumberColumnDefs, structuralVariantsColumnDefs, expressionColumnDefs,
 } from './columnDefs';
@@ -85,7 +86,7 @@ const getPrintColumnDefs = (columnDefs: Array<ColDef | ColGroupDef>, parentHeade
     field?: string;
   };
 
-  if (printColDef.colId === 'actions' || printColDef.field === 'actions') {
+  if (printColDef.colId === ACTIONS_COLUMN || printColDef.field === ACTIONS_COLUMN) {
     return [];
   }
 

@@ -1,9 +1,11 @@
 import React from 'react';
 import {
-	render,
-	screen,
-	waitFor,
+  render,
+  screen,
+  waitFor,
 } from '@testing-library/react';
+import { ACTIONS_COLUMN } from '@/utils/actionsColumnDef';
+import { SmallMutationType, ExpOutliersType } from '@/common';
 
 import GenomicAlterationsTable from '..';
 
@@ -11,94 +13,94 @@ const mockDataTable = jest.fn();
 const mockPrintTable = jest.fn();
 
 jest.mock('@/components/DataTable', () => (props) => {
-	mockDataTable(props);
-	return <div data-testid="data-table">{props.titleText || 'data-table'}</div>;
+  mockDataTable(props);
+  return <div data-testid="data-table">{props.titleText || 'data-table'}</div>;
 });
 
 jest.mock('@/components/PrintTable', () => (props) => {
-	mockPrintTable(props);
-	return <div data-testid="print-table">print-table</div>;
+  mockPrintTable(props);
+  return <div data-testid="print-table">print-table</div>;
 });
 
 describe('GenomicAlterationsTable', () => {
-	beforeEach(() => {
-		mockDataTable.mockClear();
-		mockPrintTable.mockClear();
-	});
+  beforeEach(() => {
+    mockDataTable.mockClear();
+    mockPrintTable.mockClear();
+  });
 
-	test('renders DataTable for smallMutation in non-print mode', async () => {
-		render(
-			<GenomicAlterationsTable
-				variantCategory="smallMutation"
-				variantData={[{ ident: 'v1', gene: { name: 'TP53' } } as any]}
-				isPrint={false}
-			/>,
-		);
+  test('renders DataTable for smallMutation in non-print mode', async () => {
+    render(
+      <GenomicAlterationsTable
+        variantCategory="smallMutation"
+        variantData={[{ ident: 'v1', gene: { name: 'TP53' } } as SmallMutationType]}
+        isPrint={false}
+      />,
+    );
 
-		expect(await screen.findByTestId('data-table')).toBeInTheDocument();
-		expect(screen.getByText('Small Mutations')).toBeInTheDocument();
+    expect(await screen.findByTestId('data-table')).toBeInTheDocument();
+    expect(screen.getByText('Small Mutations')).toBeInTheDocument();
 
-		expect(mockDataTable).toHaveBeenCalled();
-		const dataTableProps = mockDataTable.mock.calls[0][0];
-		expect(dataTableProps.isPrint).toBe(false);
-		expect(dataTableProps.canExport).toBe(true);
-		expect(dataTableProps.titleText).toBe('Small Mutations');
+    expect(mockDataTable).toHaveBeenCalled();
+    const dataTableProps = mockDataTable.mock.calls[0][0];
+    expect(dataTableProps.isPrint).toBe(false);
+    expect(dataTableProps.canExport).toBe(true);
+    expect(dataTableProps.titleText).toBe('Small Mutations');
 
-		expect(mockPrintTable).not.toHaveBeenCalled();
-	});
+    expect(mockPrintTable).not.toHaveBeenCalled();
+  });
 
-	test('renders PrintTable for smallMutation in print mode', async () => {
-		render(
-			<GenomicAlterationsTable
-				variantCategory="smallMutation"
-				variantData={[{ ident: 'v1', gene: { name: 'TP53' } } as any]}
-				isPrint
-			/>,
-		);
+  test('renders PrintTable for smallMutation in print mode', async () => {
+    render(
+      <GenomicAlterationsTable
+        variantCategory="smallMutation"
+        variantData={[{ ident: 'v1', gene: { name: 'TP53' } } as SmallMutationType]}
+        isPrint
+      />,
+    );
 
-		expect(await screen.findByTestId('print-table')).toBeInTheDocument();
-		expect(screen.getByText('Small Mutations')).toBeInTheDocument();
+    expect(await screen.findByTestId('print-table')).toBeInTheDocument();
+    expect(screen.getByText('Small Mutations')).toBeInTheDocument();
 
-		expect(mockPrintTable).toHaveBeenCalled();
-		expect(mockDataTable).not.toHaveBeenCalled();
-	});
+    expect(mockPrintTable).toHaveBeenCalled();
+    expect(mockDataTable).not.toHaveBeenCalled();
+  });
 
-	test('uses flattened expression print columns and excludes Actions', async () => {
-		render(
-			<GenomicAlterationsTable
-				variantCategory="expression"
-				variantData={[{ ident: 'v1', gene: { name: 'EGFR', copyVariants: { cnvState: 'gain' } } } as any]}
-				isPrint
-			/>,
-		);
+  test('uses flattened expression print columns and excludes Actions', async () => {
+    render(
+      <GenomicAlterationsTable
+        variantCategory="expression"
+        variantData={[{ ident: 'v1', gene: { name: 'EGFR', copyVariants: { cnvState: 'gain' } } } as ExpOutliersType]}
+        isPrint
+      />,
+    );
 
-		await screen.findByTestId('print-table');
+    await screen.findByTestId('print-table');
 
-		const printTableProps = mockPrintTable.mock.calls[0][0];
-		const printHeaders = printTableProps.columnDefs.map((col) => col.headerName);
+    const printTableProps = mockPrintTable.mock.calls[0][0];
+    const printHeaders = printTableProps.columnDefs.map((col) => col.headerName);
 
-		expect(printHeaders).toContain('Gene');
-		expect(printHeaders).toContain('Expression Class');
-		expect(printHeaders).toContain('Disease Perc');
-		expect(printHeaders).toContain('Disease Z-Score');
-		expect(printHeaders).not.toContain('Actions');
-		expect(printTableProps.fullWidth).toBe(true);
-	});
+    expect(printHeaders).toContain('Gene');
+    expect(printHeaders).toContain('Expression Class');
+    expect(printHeaders).toContain('Disease Perc');
+    expect(printHeaders).toContain('Disease Z-Score');
+    expect(printHeaders).not.toContain(ACTIONS_COLUMN);
+    expect(printTableProps.fullWidth).toBe(true);
+  });
 
-	test('shows loader and no tables for unknown variantCategory', async () => {
-		render(
-			<GenomicAlterationsTable
-				variantCategory="unknown"
-				variantData={[] as any}
-				isPrint={false}
-			/>,
-		);
+  test('shows loader and no tables for unknown variantCategory', async () => {
+    render(
+      <GenomicAlterationsTable
+        variantCategory="unknown"
+        variantData={[]}
+        isPrint={false}
+      />,
+    );
 
-		await waitFor(() => {
-			expect(screen.getByRole('progressbar')).toBeInTheDocument();
-		});
+    await waitFor(() => {
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
 
-		expect(mockDataTable).not.toHaveBeenCalled();
-		expect(mockPrintTable).not.toHaveBeenCalled();
-	});
+    expect(mockDataTable).not.toHaveBeenCalled();
+    expect(mockPrintTable).not.toHaveBeenCalled();
+  });
 });
