@@ -63,7 +63,6 @@ const KB_MATCHES_TITLE_MAP = {
 };
 
 const RAPID_TABLE_TITLE_MAP = {
-  // Should be therapeuticAssociation, but the tag in backend is looking for 'therapeutic'
   therapeuticAssociation: 'Variants with Clinical Evidence for Treatment in This Tumour Type',
   cancerRelevance: 'Variants with Cancer Relevance',
   unknownSignificance: 'Variants of Uncertain Significance',
@@ -202,6 +201,7 @@ const KbMatchesMoveDialog = (props: KbMatchesMoveDialogType) => {
       const results = await Promise.allSettled(
         uniqueVariants.map(async ({ variant: { ident: variantIdent }, variantType }) => {
           try {
+            console.log(destTable);
             const saveVariant = api.post(`/reports/${reportId}/variants/set-summary-table`, {
               variantIdent,
               variantType,
