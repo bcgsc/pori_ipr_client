@@ -126,9 +126,8 @@ const Pathway = ({
       {imageError && (
         <Typography align="center" color="error">{imageError}</Typography>
       )}
-      {previewNode}
       {canEdit && !isPrint && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
           <Button
             component="label"
             color="secondary"
@@ -146,6 +145,7 @@ const Pathway = ({
           </Button>
         </Box>
       )}
+      {previewNode}
     </div>
   );
 };
