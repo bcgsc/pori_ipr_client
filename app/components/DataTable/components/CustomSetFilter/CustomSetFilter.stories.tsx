@@ -1,7 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import '@ag-grid-community/styles/ag-grid.css';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import '@ag-grid-community/styles/ag-theme-material.css';
 import React from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
