@@ -167,6 +167,10 @@ type DataTableCustomProps = {
   columnDefs: ColDef[];
   /* Column fields to collapse, this will build the key that will combine these column values to be collapsed */
   collapseColumnFields?: string[];
+  /* When collapsing, DataTable forces an ascending sort on the collapse columns.
+     Set this to keep the incoming rowData order instead — the caller must have
+     already ordered rows so collapse keys are adjacent. */
+  suppressCollapseSort?: boolean;
   /* Text to render in an info bubble below the table header and above the table itself */
   demoDescription?: string;
   /* Filter text for table rows */
@@ -219,6 +223,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   canToggleColumns = true,
   canViewDetails = true,
   collapseColumnFields = null,
+  suppressCollapseSort = false,
   columnDefs: colDefs,
   demoDescription = '',
   filterText,
@@ -269,8 +274,12 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       nextColDefs.forEach((cd) => {
         if (collapseColumnFields.includes(cd.field)) {
         // If collapse rows are to be had, no filter or sort will be allowed
-          // eslint-disable-next-line no-param-reassign
-          cd.sort = 'asc';
+          // Force an ascending sort so equal collapse keys sit adjacent, unless
+          // the caller pre-sorted the rows and asked to keep that order.
+          if (!suppressCollapseSort) {
+            // eslint-disable-next-line no-param-reassign
+            cd.sort = 'asc';
+          }
           // eslint-disable-next-line no-param-reassign
           cd.sortable = false;
           // eslint-disable-next-line no-param-reassign
@@ -285,7 +294,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       });
     }
     return nextColDefs;
-  }, [colDefs, collapseColumnFields]);
+  }, [colDefs, collapseColumnFields, suppressCollapseSort]);
 
   useEffect(() => {
     if (gridApi) {

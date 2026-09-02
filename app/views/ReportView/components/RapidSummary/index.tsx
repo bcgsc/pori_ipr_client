@@ -652,6 +652,7 @@ const RapidSummary = ({
             canDelete={canEdit}
             onDelete={handleVariantDelete(RapidSummaryTable.THERAPEUTIC_ASSOCIATION)}
             collapseColumnFields={[...COLLAPSEABLE_COLS, 'Actions']}
+            suppressCollapseSort
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
@@ -695,6 +696,7 @@ const RapidSummary = ({
           columnDefs={cancerRelevanceColDefs}
           rowData={sortedCancerRelevance}
           collapseColumnFields={COLLAPSEABLE_COLS}
+          suppressCollapseSort
           isPrint={isPrint}
           isPaginated={!isPrint}
         />
