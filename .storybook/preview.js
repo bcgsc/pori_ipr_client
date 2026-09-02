@@ -2,11 +2,11 @@ import React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../app/appTheme';
 
-// Loaded globally so any story rendering an ag-grid is styled the same way the
-// app styles it (see app/App.tsx), without each story importing these itself.
+import '../app/index.scss';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-material.css';
 import '../app/styles/ag-grid.scss';
+import './preview.css';
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },

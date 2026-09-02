@@ -17,8 +17,6 @@ jest.mock('pagedjs', () => ({
   Handler: class {},
 }));
 
-// Mirrors the SortedByAlterationType Storybook story: same fixtures, same sort,
-// same print table + column defs. The story shows it; this test asserts it.
 const sorted = sortRapidVariants(MOCK_RAPID_VARIANTS, therapeuticAssociationColDefs);
 
 describe('Rapid summary variant ordering (DEVSU-2995)', () => {
@@ -38,7 +36,6 @@ describe('Rapid summary variant ordering (DEVSU-2995)', () => {
     );
 
     const expected = new Set(EXPECTED_GENOMIC_EVENT_ORDER);
-    // getAllByText returns matches in DOM order; restrict to genomic-event cells.
     const renderedOrder = screen
       .getAllByText(
         (_content, element) => element?.tagName === 'TD'

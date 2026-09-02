@@ -8,6 +8,8 @@
  * defs read (see getGenomicEvent / getCopyChangeValue).
  */
 
+import { sortRapidVariants, therapeuticAssociationColDefs } from './columnDefs';
+
 type DemoRow = Record<string, unknown>;
 
 // Intentionally out of order — the sort is what puts these right.
@@ -63,4 +65,27 @@ const EXPECTED_GENOMIC_EVENT_ORDER: string[] = [
   'TMB-High',
 ];
 
-export { MOCK_RAPID_VARIANTS, EXPECTED_GENOMIC_EVENT_ORDER };
+// Repeated variants (the same variant across several clinical associations) so
+// the collapseable columns actually span in the collapsed-rows stories. Kept
+// out of MOCK_RAPID_VARIANTS so the jest expected-order fixture stays one row
+// per genomic event.
+const REPEATED_ASSOCIATION_ROWS: DemoRow[] = [
+  {
+    ident: 'snv-braf-resistance', variantType: 'mut', gene: { name: 'BRAF' }, proteinChange: 'V600E', tumourAltCount: 55, tumourDepth: 110, potentialClinicalAssociation: 'resistance to panitumumab (IPR-B)',
+  },
+  {
+    ident: 'amp-erbb2-lapatinib', variantType: 'cnv', gene: { name: 'ERBB2' }, cnvState: 'Amp', copyChange: 6, potentialClinicalAssociation: 'sensitivity to lapatinib (IPR-A)',
+  },
+];
+
+const SORTED_WITH_REPEATS = sortRapidVariants(
+  [...MOCK_RAPID_VARIANTS, ...REPEATED_ASSOCIATION_ROWS],
+  therapeuticAssociationColDefs,
+);
+
+export {
+  MOCK_RAPID_VARIANTS,
+  EXPECTED_GENOMIC_EVENT_ORDER,
+  REPEATED_ASSOCIATION_ROWS,
+  SORTED_WITH_REPEATS,
+};
