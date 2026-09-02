@@ -132,10 +132,8 @@ const Legend = ({
 
   return (
     <div>
-      {previewNode}
-
       {canEdit && !isPrint && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
           <Button
             color="secondary"
             variant="outlined"
@@ -146,7 +144,7 @@ const Legend = ({
           </Button>
         </Box>
       )}
-
+      {previewNode}
       {isViewerOpen && legend && (
         <ImageViewer
           isOpen={isViewerOpen}
@@ -154,7 +152,6 @@ const Legend = ({
           onClose={() => setIsViewerOpen(false)}
         />
       )}
-
       <AddPathwayLegend
         isOpen={isDialogOpen}
         onClose={handleDialogClose}
