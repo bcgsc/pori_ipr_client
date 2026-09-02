@@ -2,6 +2,8 @@
 
 .pathway {
   padding: 16px;
+  // DEVSU-3006 Adding white space so user can have more room to scroll down instead of zooming in/out in the image viewer
+  padding-right: 128px;
 
   &--print {
     padding: $print-container-padding;
