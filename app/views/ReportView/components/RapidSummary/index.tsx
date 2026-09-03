@@ -55,7 +55,7 @@ import { queryKeys } from '@/queries/queryKeys';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
   therapeuticAssociationPrintColDefs, cancerRelevancePrintColDefs,
-  COLLAPSEABLE_COLS, sortByCollapseableCols,
+  COLLAPSEABLE_COLS, sortRapidVariants,
 } from './columnDefs';
 import { RapidVariantEditDialog, FIELDS } from './components/RapidVariantEditDialog';
 import { RapidVariantType } from './types';
@@ -622,7 +622,7 @@ const RapidSummary = ({
 
     // Piggy-back added-in attributes to filter out relevance rows where empty
     // Only shown variants where there's at least one treatment
-    const printData = sortByCollapseableCols(
+    const printData = sortRapidVariants(
       filteredOutEmpty.filter(({ relevanceKey, potentialClinicalAssociation }) => relevanceKey.length !== potentialClinicalAssociation.length),
       therapeuticAssociationColDefs,
     );
@@ -630,7 +630,7 @@ const RapidSummary = ({
     // Show valid variants first, then the variants that are disabled
     const webData = [
       ...printData,
-      ...sortByCollapseableCols(crossedOutVariants, therapeuticAssociationColDefs),
+      ...sortRapidVariants(crossedOutVariants, therapeuticAssociationColDefs),
     ];
     if (isPrint) {
       therapeuticAssociationSection = (
@@ -652,6 +652,7 @@ const RapidSummary = ({
             canDelete={canEdit}
             onDelete={handleVariantDelete(RapidSummaryTable.THERAPEUTIC_ASSOCIATION)}
             collapseColumnFields={[...COLLAPSEABLE_COLS, 'Actions']}
+            suppressCollapseSort
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
@@ -676,7 +677,7 @@ const RapidSummary = ({
 
   let cancerRelevanceSection;
   if (cancerRelevanceResults?.length > 0) {
-    const sortedCancerRelevance = sortByCollapseableCols(cancerRelevanceResults, cancerRelevanceColDefs);
+    const sortedCancerRelevance = sortRapidVariants(cancerRelevanceResults, cancerRelevanceColDefs);
     if (isPrint) {
       cancerRelevanceSection = (
         <PrintTable
@@ -695,6 +696,7 @@ const RapidSummary = ({
           columnDefs={cancerRelevanceColDefs}
           rowData={sortedCancerRelevance}
           collapseColumnFields={COLLAPSEABLE_COLS}
+          suppressCollapseSort
           isPrint={isPrint}
           isPaginated={!isPrint}
         />
