@@ -27,6 +27,7 @@ export const queryKeys = {
     report: (reportIdent) => ['reports', reportIdent] as const,
     reportUser: (reportIdent) => ['reports', reportIdent, 'user'] as const,
     reportUserBinding: (reportIdent, bindingIdent) => ['reports', reportIdent, 'user', bindingIdent] as const,
+    reportUserHistory: (reportIdent) => ['reports', reportIdent, 'user', 'history'] as const,
     reportSummaryMicrobial: (reportIdent) => ['reports', reportIdent, 'summary', 'microbial'] as const,
     reportTherapeuticTargets: (reportIdent) => ['reports', reportIdent, 'therapeutic-targets'] as const,
     reportTherapeuticTargetsTherapeuticTarget: (reportIdent, therapeuticTargetIdent) => ['reports', reportIdent, 'therapeutic-targets', therapeuticTargetIdent] as const,
@@ -65,6 +66,7 @@ export const queryKeys = {
     reportProbeResultsTarget: (reportIdent, targetIdent) => ['reports', reportIdent, 'probe-results', targetIdent] as const,
     reportProbeTestInformation: (reportIdent) => ['reports', reportIdent, 'probe-test-information'] as const,
     reportSignatures: (reportIdent) => ['reports', reportIdent, 'signatures'] as const,
+    reportSignaturesHistory: (reportIdent) => ['reports', reportIdent, 'signatures', 'history'] as const,
     reportSignaturesSignRole: (reportIdent, roleIdent) => ['reports', reportIdent, 'signatures', 'sign', roleIdent] as const,
     reportSignaturesRevokeRole: (reportIdent, roleIdent) => ['reports', reportIdent, 'signatures', 'revoke', roleIdent] as const,
     reportSignaturesEarliestSignoff: (reportIdent) => ['reports', reportIdent, 'signatures', 'earliest-signoff'] as const,
@@ -101,6 +103,11 @@ export const queryKeys = {
 
     projectReports: (projectIdent) => ['project', projectIdent, 'reports'] as const,
     projectTherapeuticTargets: (projectIdent) => ['project', projectIdent, 'therapeutic-targets'] as const,
+  },
+
+  therapeuticTargets: {
+    all: () => ['therapeutic-targets'] as const,
+
   },
 
   germlineSmallMutationReports: {
