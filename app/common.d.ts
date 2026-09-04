@@ -488,6 +488,16 @@ type UserRoleType = {
   user: UserType;
 } & RecordDefaults;
 
+type ReportStateHistoryType = {
+  ident: string;
+  state: string;
+  updatedAt: string | null;
+};
+
+type ReportUserHistoryType = {
+  addedBy?: UserType | null;
+} & UserRoleType;
+
 type ComparatorType = {
   analysisRole: string;
   createdAt: string;
@@ -535,5 +545,7 @@ export {
   ReportType,
   PatientInformationType,
   UserRoleType,
+  ReportUserHistoryType,
+  ReportStateHistoryType,
   ComparatorType,
 };
