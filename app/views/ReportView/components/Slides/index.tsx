@@ -17,6 +17,7 @@ import useApiError from '@/hooks/useApiError';
 import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import DemoDescription from '@/components/DemoDescription';
+import PageBreak from '@/components/PageBreak';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import Slide from './components/Slide';
 
@@ -90,86 +91,91 @@ const Slides = ({
     }
   };
 
-  return (
-    <div className="slides">
-      <Typography className="slides__title" variant="h3">Additional Information</Typography>
-      <DemoDescription>
-        This section allows a genome analyst to upload any supplementary images which may support interpretation of the sequencing results.
-      </DemoDescription>
-      {!isLoading && (
-        <>
-          {Boolean(slides.length) && (
-            <>
-              {!isPrint && (
-                <Paper elevation={0} variant="outlined">
-                  <Tabs
-                    value={tabValue}
-                    onChange={handleTabChange}
-                    indicatorColor="secondary"
-                    textColor="secondary"
-                  >
-                    {slides.map((slide, index) => (
-                      <Tab key={slide.name} value={index} label={slide.name} />
-                    ))}
-                  </Tabs>
-                </Paper>
-              )}
-              {slides.map((slide, index) => (
-                <React.Fragment key={slide.name}>
-                  {!isPrint ? (
-                    <>
-                      <SlideTransition
-                        appear={false}
-                        in={index === tabValue}
-                        direction={direction}
-                        mountOnEnter
-                        unmountOnExit
-                        onEntering={() => setDirection('left')}
-                        onExiting={() => setDirection('right')}
-                      >
-                        <div>
-                          <Slide
-                            slide={slide}
-                            onDelete={() => setShowAlert(true)}
-                          />
-                        </div>
-                      </SlideTransition>
-                      <AlertDialog
-                        isOpen={showAlert}
-                        onClose={(confirmed: boolean) => handleAlertClose(confirmed, slide.ident)}
-                        text="Are you sure you want to delete this slide?"
-                        title="Confirm"
-                      />
-                    </>
-                  ) : (
-                    <Slide
-                      isPrint
-                      slide={slide}
-                    />
-                  )}
-                </React.Fragment>
-              ))}
-            </>
-          )}
-        </>
-      )}
-      {!slides.length && !isLoading && (
-        <div className="slides__none">
-          <Typography align="center">No slides available</Typography>
-        </div>
-      )}
-      {canEdit && !isPrint && (
-        <>
-          <Divider />
-          <div className="slides__upload">
-            <Typography variant="h4" className="slides__upload-title">Add New Slide</Typography>
-            <UploadSlide
-              onUpload={handleSlideUpload}
+  // Printed reports omit the section entirely when empty, rather than devoting a
+  // page to an 'Additional Information' heading and a 'No slides available' notice
+  if (isPrint && !isLoading && !slides.length) {
+    return null;
+  }
+
+  const slideList = slides.map((slide, index) => {
+    if (isPrint) {
+      return (
+        <Slide
+          key={slide.name}
+          isPrint
+          slide={slide}
+        />
+      );
+    }
+    return (
+      <React.Fragment key={slide.name}>
+        <SlideTransition
+          appear={false}
+          in={index === tabValue}
+          direction={direction}
+          mountOnEnter
+          unmountOnExit
+          onEntering={() => setDirection('left')}
+          onExiting={() => setDirection('right')}
+        >
+          <div>
+            <Slide
+              slide={slide}
+              onDelete={() => setShowAlert(true)}
             />
           </div>
-        </>
-      )}
-    </div>
+        </SlideTransition>
+        <AlertDialog
+          isOpen={showAlert}
+          onClose={(confirmed: boolean) => handleAlertClose(confirmed, slide.ident)}
+          text="Are you sure you want to delete this slide?"
+          title="Confirm"
+        />
+      </React.Fragment>
+    );
+  });
+
+  return (
+    <>
+      <div className="slides">
+        <Typography className="slides__title" variant="h3">Additional Information</Typography>
+        <DemoDescription>
+          This section allows a genome analyst to upload any supplementary images which may support interpretation of the sequencing results.
+        </DemoDescription>
+        {!isLoading && !isPrint && Boolean(slides.length) && (
+          <Paper elevation={0} variant="outlined">
+            <Tabs
+              value={tabValue}
+              onChange={handleTabChange}
+              indicatorColor="secondary"
+              textColor="secondary"
+            >
+              {slides.map((slide, index) => (
+                <Tab key={slide.name} value={index} label={slide.name} />
+              ))}
+            </Tabs>
+          </Paper>
+        )}
+        {!isLoading && slideList}
+        {!slides.length && !isLoading && (
+          <div className="slides__none">
+            <Typography align="center">No slides available</Typography>
+          </div>
+        )}
+        {canEdit && !isPrint && (
+          <>
+            <Divider />
+            <div className="slides__upload">
+              <Typography variant="h4" className="slides__upload-title">Add New Slide</Typography>
+              <UploadSlide
+                onUpload={handleSlideUpload}
+              />
+            </div>
+          </>
+        )}
+      </div>
+      {isPrint && <PageBreak />}
+    </>
   );
 };
 

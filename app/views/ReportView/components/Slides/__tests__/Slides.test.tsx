@@ -7,12 +7,20 @@ import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import { makeApiError } from '@/test/apiErrorHelpers';
 import Slides from '..';
+import SlideType from '../types';
 
 jest.mock('@/services/api');
 jest.mock('@/services/SnackbarUtils');
 jest.mock('@/hooks/useReport');
 
 type RenderOptions = { isPrint?: boolean; outcome?: unknown; loadedDispatch?: jest.Mock };
+
+const mockSlide = {
+  ident: 'slide-1',
+  name: 'Mock Slide',
+  object: 'aW1hZ2U=',
+  object_type: 'image/png',
+} as unknown as SlideType;
 
 const renderSection = ({
   isPrint = false,
@@ -29,12 +37,12 @@ const renderSection = ({
     report: { ident: 'report-1' },
     canEdit: false,
   } as unknown as React.ContextType<typeof ReportContext>;
-  render(
+  const { container } = render(
     <ReportContext.Provider value={reportValue}>
       <Slides isPrint={isPrint} loadedDispatch={loadedDispatch} />
     </ReportContext.Provider>,
   );
-  return { loadedDispatch };
+  return { container, loadedDispatch };
 };
 
 describe('Slides', () => {
@@ -71,7 +79,6 @@ describe('Slides', () => {
   test('shows no snackbar in print', async () => {
     renderSection({ isPrint: true, outcome: makeApiError() });
 
-    await screen.findByText('Additional Information');
     await waitFor(() => expect(console.error).toHaveBeenCalled());
     expect(snackbar.error).not.toHaveBeenCalled();
   });
@@ -80,5 +87,36 @@ describe('Slides', () => {
     const { loadedDispatch } = renderSection({ isPrint: true, outcome: makeApiError() });
 
     await waitFor(() => expect(loadedDispatch).toHaveBeenCalledWith({ type: 'slides' }));
+  });
+
+  test('keeps the empty section in the report view', async () => {
+    renderSection();
+
+    expect(await screen.findByText('No slides available')).toBeInTheDocument();
+  });
+
+  test('omits the empty section in print', async () => {
+    const { container, loadedDispatch } = renderSection({ isPrint: true });
+
+    await waitFor(() => expect(loadedDispatch).toHaveBeenCalledWith({ type: 'slides' }));
+    expect(screen.queryByText('Additional Information')).not.toBeInTheDocument();
+    expect(screen.queryByText('No slides available')).not.toBeInTheDocument();
+    // An orphaned break would open a blank page in the printed report
+    expect(container.querySelector('.page-break')).not.toBeInTheDocument();
+  });
+
+  test('renders the section and its page break in print when the report has slides', async () => {
+    const { container } = renderSection({ isPrint: true, outcome: [mockSlide] });
+
+    expect(await screen.findByText('Additional Information')).toBeInTheDocument();
+    expect(screen.getByAltText(mockSlide.name)).toBeInTheDocument();
+    expect(container.querySelector('.page-break')).toBeInTheDocument();
+  });
+
+  test('adds no page break outside of print', async () => {
+    const { container } = renderSection({ outcome: [mockSlide] });
+
+    expect(await screen.findByAltText(mockSlide.name)).toBeInTheDocument();
+    expect(container.querySelector('.page-break')).not.toBeInTheDocument();
   });
 });
