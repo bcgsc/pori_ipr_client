@@ -202,3 +202,15 @@ $print-cell-padding-right: 8px;
   }
 }
 // [END] Print Tables common styling
+
+// paged.js gives every rendered page `break-after: page` (its own base stylesheet),
+// including the last one. That trailing forced break is what makes browsers emit an
+// extra blank sheet at the end of the print preview. This has to live here rather
+// than in index.css: paged.js polishes index.css and strips break-* declarations out
+// of it, so the rule would never reach the browser.
+@media print {
+  .pagedjs_pages > .pagedjs_page:last-of-type {
+    page-break-after: auto;
+    break-after: auto;
+  }
+}

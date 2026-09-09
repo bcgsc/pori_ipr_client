@@ -18,6 +18,18 @@
     break-before: page;
   }
 
+  /* A break before the last element in the flow has nothing to lead into, but
+     paged.js still opens a page for it and leaves a blank final sheet. Which
+     section ends the report varies by template (and, for slides, by whether the
+     report has any), so neutralise the break wherever it lands rather than
+     chasing the section that emitted it. Must stay after the rule above: the
+     Breaks module keys declarations by selector in source order, so this is what
+     overwrites data-break-before to "auto". */
+  .print > .page-break:last-child,
+  .condensedLayout > .page-break:last-child {
+    break-before: auto;
+  }
+
   table[data-split-from] thead,
   table[data-split-from] thead :is(th, tr) {
     visibility: unset !important;
