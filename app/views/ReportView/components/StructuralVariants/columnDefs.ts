@@ -1,5 +1,4 @@
 import { actionsColDef } from '@/utils/actionsColumnDef';
-import type { ColDef } from '@ag-grid-community/core';
 
 const createGeneRelatedValueGetter = (field, delimiter = ' / ', subfield = '') => ({ data }) => {
   try {
@@ -20,7 +19,7 @@ const createGeneRelatedValueGetter = (field, delimiter = ' / ', subfield = '') =
   }
 };
 
-const columnDefs: ColDef[] = [{
+const columnDefs = [{
   headerName: 'Genes 5`::3`',
   colId: 'genes',
   cellRenderer: 'GeneCellRenderer',
@@ -127,7 +126,5 @@ export const setHeaderName = (header, colId) => {
   const index = columnDefs.findIndex((obj) => obj.colId === colId);
   columnDefs[index].headerName = header;
 };
-
-export { createGeneRelatedValueGetter };
 
 export default columnDefs;

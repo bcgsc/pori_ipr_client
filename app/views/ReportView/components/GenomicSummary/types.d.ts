@@ -1,10 +1,8 @@
-import { VariantType, RecordDefaults } from '@/common';
+import { RecordDefaults } from '@/common';
 
 type GeneVariantType = {
   geneVariant: string;
   type?: string;
-  variantType?: string;
-  variant?: VariantType;
 } & RecordDefaults;
 
 export {
