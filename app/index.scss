@@ -75,11 +75,10 @@ html body {
 
 .search-view {
   margin: auto;
-  left: 16px;
   max-width: 1100px;
-  min-width: 1100px;
+  width: 100%;
+  padding: 0 16px;
   position: relative;
-  right: 16px;
   top: 35vh;
 
   &__component {
@@ -99,20 +98,22 @@ html body {
   &__keyword-input {
     -webkit-tap-highlight-color: transparent;
     height: inherit;
-    width: 850px;
     display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
-  &__category-input {
+  &__category-select {
     height: inherit;
-    width: 200px;
     display: flex;
+    flex: 0 0 auto;
   }
 
   &__threshold-input {
     height: inherit;
     width: 70px;
     display: flex;
+    flex: 0 0 auto;
 
     // Removes arrows in number input
     input::-webkit-outer-spin-button,
@@ -127,7 +128,7 @@ html body {
 
   .error-dialog {
     max-width: 1100px;
-    min-width: 1100px;
+    width: 100%;
     margin-top: 8px;
     height: auto;
     padding-left: 48px;
