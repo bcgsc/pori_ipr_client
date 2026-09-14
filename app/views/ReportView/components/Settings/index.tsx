@@ -80,6 +80,7 @@ const Settings = ({
           }
           : prev),
       );
+      queryClient.invalidateQueries(queryKeys.reports.reportUserHistory(report.ident));
       setIsLoading(false);
       snackbar.success('User removed');
     },
