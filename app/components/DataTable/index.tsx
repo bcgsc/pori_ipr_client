@@ -41,6 +41,30 @@ import QueryEditDialog from './components/QueryEditDialog';
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
 
+/*
+ * getRowId must stay stable for the grid's whole life; a scheme that changes
+ * mid-life orphans old nodes and renders rows twice. Keys by `ident`, else a
+ * stable generated id so `ident`-less rows don't collide. WeakMap over Map so
+ * old rows GC instead of leaking at module scope; counter keeps ids unique.
+ */
+const generatedRowIds = new WeakMap<object, string>();
+let nextGeneratedRowId = 0;
+
+const getRowId = ({ data }: GetRowIdParams): string => {
+  const ident = (data as { ident?: string })?.ident;
+  if (ident !== undefined && ident !== null) {
+    return String(ident);
+  }
+  if (!data || typeof data !== 'object') {
+    return String(data);
+  }
+  if (!generatedRowIds.has(data)) {
+    nextGeneratedRowId += 1;
+    generatedRowIds.set(data, `row-${nextGeneratedRowId}`);
+  }
+  return generatedRowIds.get(data);
+};
+
 /**
  * Given colDefs, calculates rowSpan for each columnDef based on the current displayedRows on the table
  */
@@ -577,11 +601,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       getColumnApi: () => colApi,
     };
   }, [gridApi, colApi]);
-
-  const getRowId = useMemo(() => {
-    const hasIdent = rowData.some((row) => row?.ident !== undefined);
-    return hasIdent ? (params: GetRowIdParams) => params.data.ident as string : undefined;
-  }, [rowData]);
 
   // Hiding the auto group column that ag-grid creates when using row grouping
   const autoGroupColumnDef = useMemo(() => ({

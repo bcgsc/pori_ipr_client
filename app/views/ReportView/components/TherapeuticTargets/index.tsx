@@ -253,9 +253,10 @@ const Therapeutic = ({
           tableData = chemoresistanceData;
           setter = setChemoresistanceData;
         }
-        const tableIndex = tableData.findIndex((row) => row.ident === newData.ident);
+
+        const newTable = orderBy(tableData, ['rank'], ['asc']);
+        const tableIndex = newTable.findIndex((row) => row.ident === newData.ident);
         if (tableIndex !== -1) {
-          const newTable = [...orderBy(tableData, ['rank'], ['asc'])];
           newTable[tableIndex] = newData;
           setter(newTable);
         } else {
