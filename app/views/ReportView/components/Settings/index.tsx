@@ -68,7 +68,7 @@ const Settings = ({
   const { mutate: deleteUser } = useMutation({
     mutationFn: (userIdent: string) => api.del(`/reports/${report.ident}/user/${userIdent}`, {}).request(),
     onMutate: () => { setIsLoading(true); },
-    onSuccess: (_, userIdent) => {
+    onSuccess: async (_, userIdent) => {
       queryClient.setQueryData<ReportType>(
         queryKeys.reports.report(report.ident),
         (prev) => (prev
@@ -80,8 +80,14 @@ const Settings = ({
           }
           : prev),
       );
-      queryClient.invalidateQueries(queryKeys.reports.reportUserHistory(report.ident));
-      setIsLoading(false);
+      /*
+        isLoading unmounts the history query, and refetchOnMount is false app-wide,
+        so a plain invalidate would only mark it stale and never refetch.
+      */
+      await queryClient.invalidateQueries(
+        queryKeys.reports.reportUserHistory(report.ident),
+        { refetchInactive: true },
+      );
       snackbar.success('User removed');
     },
     onSettled: () => { setIsLoading(false); },
