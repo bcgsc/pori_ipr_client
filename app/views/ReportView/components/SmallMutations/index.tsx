@@ -10,6 +10,7 @@ import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import { SmallMutationType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { getDefaultVisibleColIds } from '@/utils/visibleColumns';
 import VariantEditDialog from '@/components/VariantEditDialog';
 import { columnDefs } from './columnDefs';
 
@@ -47,11 +48,7 @@ const SmallMutations = ({
     unknown: [],
   });
   const [visibleCols, setVisibleCols] = useState<string[]>(
-    columnDefs.reduce((accumulator: string[], current) => {
-      if (current.hide === false || !current.hide) {
-        accumulator.push(current.field ?? current.colId);
-      } return accumulator;
-    }, []),
+    getDefaultVisibleColIds(columnDefs),
   );
 
   const [showDialog, setShowDialog] = useState(false);

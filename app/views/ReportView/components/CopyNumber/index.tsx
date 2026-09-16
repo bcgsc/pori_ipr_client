@@ -17,6 +17,7 @@ import useApiError from '@/hooks/useApiError';
 import { unwrapSettled } from '@/utils/settleApiCalls';
 import { CopyNumberType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { getDefaultVisibleColIds } from '@/utils/visibleColumns';
 import VariantEditDialog from '@/components/VariantEditDialog';
 import columnDefs from './columnDefs';
 
@@ -73,11 +74,7 @@ const CopyNumber = ({
     lowExp: [],
   });
   const [visibleCols, setVisibleCols] = useState<string[]>(
-    columnDefs.reduce((accumulator: string[], current) => {
-      if (current.hide === false || !current.hide) {
-        accumulator.push(current.field ?? current.colId);
-      } return accumulator;
-    }, []),
+    getDefaultVisibleColIds(columnDefs),
   );
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<CopyNumberType | null>();
