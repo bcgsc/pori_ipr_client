@@ -198,7 +198,7 @@ const columnDefs: ColDef[] = [
     cellRenderer: 'KbMatchesActionCellRenderer',
   }];
 
-const targetedColumnDefs = [{
+const targetedColumnDefs: ColDef[] = [{
   headerName: 'Gene',
   field: 'gene.name',
   cellRenderer: 'GeneCellRenderer',
