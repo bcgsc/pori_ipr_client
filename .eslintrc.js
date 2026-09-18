@@ -38,6 +38,16 @@ module.exports = {
   },
   overrides: [
     {
+      // Stories are dev-only artifacts that webpack never bundles into the app,
+      // so importing Storybook's devDependencies is correct here. The rule stays
+      // enabled (rather than disabled) so a package missing from package.json
+      // entirely is still reported.
+      files: ['**/*.stories.{ts,tsx}'],
+      rules: {
+        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+      },
+    },
+    {
       // Build/test tooling that tsconfig.json deliberately does not include.
       // Type-aware linting needs the file to be in the project, so these are
       // linted with the type-checked rules (and parserOptions.project) off.
