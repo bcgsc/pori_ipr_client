@@ -93,7 +93,7 @@ const renderWithProviders = (props = {}) => render(
 			<ConfirmContext.Provider
 				value={{
 					isSigned: false,
-					setIsSigned: () => {},
+					setIsSigned: () => { },
 				}}
 			>
 				<KeyAlterations {...props as any} />
@@ -116,7 +116,7 @@ describe('KeyAlterations', () => {
 	test('renders title and tables in non-print mode', async () => {
 		renderWithProviders({ isPrint: false });
 
-		expect(await screen.findByText('Genomic and Transcriptomic Alterations Identified')).toBeInTheDocument();
+		expect(await screen.findByText('Reported Genomic and Transcriptomic Alterations')).toBeInTheDocument();
 		expect(screen.getByRole('button', { name: 'Add New Alteration' })).toBeInTheDocument();
 
 		expect(screen.getByTestId('genomic-table-smallMutation')).toBeInTheDocument();
@@ -128,20 +128,20 @@ describe('KeyAlterations', () => {
 	test('hides add button in print mode', async () => {
 		renderWithProviders({ isPrint: true, printVersion: 'standardLayout' });
 
-		expect(await screen.findByText('Genomic and Transcriptomic Alterations Identified')).toBeInTheDocument();
+		expect(await screen.findByText('Reported Genomic and Transcriptomic Alterations')).toBeInTheDocument();
 		expect(screen.queryByRole('button', { name: 'Add New Alteration' })).toBeNull();
 	});
 
 	test('keeps title with first table in standard print layout wrapper', async () => {
 		const { container } = renderWithProviders({ isPrint: true, printVersion: 'standardLayout' });
 
-		await screen.findByText('Genomic and Transcriptomic Alterations Identified');
+		await screen.findByText('Reported Genomic and Transcriptomic Alterations');
 
 		const keepWrapper = container.querySelector('.key-alterations-print__printKeepWithFirstTable');
 		expect(keepWrapper).toBeTruthy();
 
 		const inKeepWrapper = within(keepWrapper as HTMLElement);
-		expect(inKeepWrapper.getByText('Genomic and Transcriptomic Alterations Identified')).toBeInTheDocument();
+		expect(inKeepWrapper.getByText('Reported Genomic and Transcriptomic Alterations')).toBeInTheDocument();
 		expect(inKeepWrapper.getByTestId('genomic-table-smallMutation')).toBeInTheDocument();
 	});
 
@@ -149,7 +149,7 @@ describe('KeyAlterations', () => {
 		const { container } = renderWithProviders({ isPrint: true, printVersion: 'condensedLayout' });
 
 		await waitFor(() => {
-			expect(screen.getByText('Genomic and Transcriptomic Alterations Identified')).toBeInTheDocument();
+			expect(screen.getByText('Reported Genomic and Transcriptomic Alterations')).toBeInTheDocument();
 		});
 
 		const keepWrapper = container.querySelector('.key-alterations-print__printKeepWithFirstTable');

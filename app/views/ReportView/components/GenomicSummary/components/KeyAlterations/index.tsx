@@ -31,7 +31,7 @@ import './index.scss';
 
 const variantCategory = (variant: GeneVariantType) => {
   // small mutations
-  if (/[:(][gcp]\./.exec(variant.geneVariant)) {
+  if ((/[:(][gcp]\./.exec(variant.geneVariant)) || variant.geneVariant.toLowerCase().includes('germline')) {
     variant.type = 'smallMutation';
     return variant;
   }
@@ -42,8 +42,8 @@ const variantCategory = (variant: GeneVariantType) => {
   }
   // Expression Outliers
   if (variant.geneVariant.toLowerCase().includes('express')
-      || variant.geneVariant.toLowerCase().includes('outlier')
-      || variant.geneVariant.toLowerCase().includes('percentile')
+    || variant.geneVariant.toLowerCase().includes('outlier')
+    || variant.geneVariant.toLowerCase().includes('percentile')
   ) {
     variant.type = 'expression';
     return variant;
@@ -79,7 +79,13 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
 
   switch (categorizedVariant.type) {
     case 'smallMutation': {
-      const geneName = leftPart || (parenMatch?.[1] ?? categorizedVariant.geneVariant);
+      let leftPartGermlineAdjusted = leftPart;
+      let germlineStatus = false;
+      if (leftPart.includes('germline')) {
+        leftPartGermlineAdjusted = leftPart.replace(/germline/i, '').trim();
+        germlineStatus = true;
+      }
+      const geneName = leftPartGermlineAdjusted || (parenMatch?.[1] ?? categorizedVariant.geneVariant);
       const proteinChange = rightPart || categorizedVariant.geneVariant;
       categorizedVariant.variant = {
         altSeq: null,
@@ -89,6 +95,7 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
         endPosition: null,
         exon: null,
         gene: createBaseGene(geneName.trim()),
+        germline: germlineStatus,
         hgvsCds: null,
         hgvsGenomic: null,
         hgvsProtein: proteinChange,
@@ -413,7 +420,7 @@ const KeyAlterations = ({
         }}
       >
         <Typography variant="h3">
-          Genomic and Transcriptomic Alterations Identified
+          Reported Genomic and Transcriptomic Alterations
         </Typography>
         {!isPrint && (
           <Button
@@ -441,7 +448,7 @@ const KeyAlterations = ({
           fontWeight="bold"
           display="block"
         >
-          Genomic and Transcriptomic Alterations Identified
+          Reported Genomic and Transcriptomic Alterations
         </Typography>
       );
 

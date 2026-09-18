@@ -151,6 +151,8 @@ type DataTableCustomProps = {
   /* Text shown next to the add row button */
   addText?: string;
   additionalTableMenuItems?: (gridApi: GridApi, closeMenu: () => void) => JSX.Element | JSX.Element[];
+  /* Custom content to render when there is no rowData and the grid is not shown */
+  noDataDisplay?: React.ReactNode;
   /* Can rows be added to the table? */
   canAdd?: boolean;
   /* Can rows be deleted? */
@@ -221,6 +223,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
   collapseColumnFields = null,
   columnDefs: colDefs,
   demoDescription = '',
+  noDataDisplay,
   filterText,
   Header,
   highlightRow = null,
@@ -268,7 +271,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       nextColDefs = cloneDeep(colDefs);
       nextColDefs.forEach((cd) => {
         if (collapseColumnFields.includes(cd.field)) {
-        // If collapse rows are to be had, no filter or sort will be allowed
+          // If collapse rows are to be had, no filter or sort will be allowed
           // eslint-disable-next-line no-param-reassign
           cd.sort = 'asc';
           // eslint-disable-next-line no-param-reassign
@@ -610,7 +613,7 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
                   <IconButton
                     onClick={(event) => setMenuAnchor(event.currentTarget)}
                     className="data-table__icon-button"
-                    size="large"
+                    size="small"
                   >
                     <MoreHorizIcon />
                   </IconButton>
@@ -620,19 +623,19 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
                     onClose={() => setMenuAnchor(null)}
                   >
                     {canAdd && (
-                    <MenuItem onClick={() => handleMenuItemClick('add')}>
-                      {addText || 'Add row'}
-                    </MenuItem>
+                      <MenuItem onClick={() => handleMenuItemClick('add')}>
+                        {addText || 'Add row'}
+                      </MenuItem>
                     )}
                     {canToggleColumns && (
-                    <MenuItem onClick={() => handleMenuItemClick('toggle')}>
-                      Toggle Columns
-                    </MenuItem>
+                      <MenuItem onClick={() => handleMenuItemClick('toggle')}>
+                        Toggle Columns
+                      </MenuItem>
                     )}
                     {canExport && (
-                    <MenuItem onClick={() => handleMenuItemClick('export')}>
-                      Export to TSV
-                    </MenuItem>
+                      <MenuItem onClick={() => handleMenuItemClick('export')}>
+                        Export to TSV
+                      </MenuItem>
                     )}
                     {additionalTableMenuItems && additionalTableMenuItems(gridApi, () => setMenuAnchor(null))}
                   </Menu>
@@ -717,9 +720,11 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       ) : (
         <>
           <div className="data-table__header-container">
-            <Typography variant="h3" className="data-table__header">
-              {titleText}
-            </Typography>
+            {titleText && (
+              <Typography variant="h3" className="data-table__header">
+                {titleText}
+              </Typography>
+            )}
           </div>
           {Boolean(demoDescription) && (
             <DemoDescription>
@@ -727,9 +732,11 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
             </DemoDescription>
           )}
           <div className="data-table__container">
-            <Typography variant="body1" align="center">
-              No data to display
-            </Typography>
+            {noDataDisplay || (
+              <Typography variant="body1" align="center">
+                No data to display
+              </Typography>
+            )}
           </div>
         </>
       )}

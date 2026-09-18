@@ -1,5 +1,6 @@
 import React, {
   useEffect,
+  useMemo,
 } from 'react';
 import { Typography } from '@mui/material';
 import { ColDef, ColGroupDef } from '@ag-grid-community/core';
@@ -120,6 +121,12 @@ const renderPrintTable = (titleText: string, columnDefs: ColDef[], data: Record<
   </>
 );
 
+const noDataDisplayRender = (message: string) => (
+  <Typography variant="body1" align="center">
+    {message}
+  </Typography>
+);
+
 const SmallMutations = ({
   isLoading,
   setIsLoading,
@@ -133,21 +140,60 @@ const SmallMutations = ({
     }
   }, [variantData, setIsLoading]);
 
+  const [germlineMutations, nonGermlineMutations] = useMemo(() => {
+    const germline: SmallMutationType[] = [];
+    const nonGermline: SmallMutationType[] = [];
+
+    (variantData ?? []).forEach((variant) => {
+      if (variant?.germline === true || String(variant?.germline) === 'true') {
+        germline.push(variant);
+      } else {
+        nonGermline.push(variant);
+      }
+    });
+
+    return [germline, nonGermline];
+  }, [variantData]);
+
+  const columnDefs = useMemo(
+    () => getColumnDefsForLayout(smallMutationsColumnDefs, isPrint),
+    [isPrint],
+  );
+
   return (
     <div className={`small-mutations ${isPrint ? 'small-mutations--print' : ''}`}>
       {!isLoading && (
-        isPrint ? renderPrintTable('Small Mutations', smallMutationsColumnDefs, variantData as Record<string, unknown>[]) : (
-          <DataTable
-            titleText="Small Mutations"
-            columnDefs={getColumnDefsForLayout(smallMutationsColumnDefs, isPrint)}
-            rowData={variantData}
-            canDelete={!isPrint}
-            onDelete={onDelete}
-            canToggleColumns={false}
-            canExport={!isPrint}
-            isPaginated={!isPrint}
-            isPrint={isPrint}
-          />
+        isPrint ? (
+          <>
+            {renderPrintTable('Germline Small Mutations', smallMutationsColumnDefs, germlineMutations as Record<string, unknown>[])}
+            {renderPrintTable('Small Mutations', smallMutationsColumnDefs, nonGermlineMutations as Record<string, unknown>[])}
+          </>
+        ) : (
+          <div>
+            <DataTable
+              titleText="Germline Small Mutations"
+              columnDefs={columnDefs}
+              rowData={germlineMutations}
+              noDataDisplay={noDataDisplayRender('No variants reported')}
+              canDelete={!isPrint}
+              onDelete={onDelete}
+              canToggleColumns={false}
+              canExport={!isPrint}
+              isPaginated={false}
+              isPrint={isPrint}
+            />
+            <DataTable
+              titleText="Small Mutations"
+              columnDefs={columnDefs}
+              rowData={nonGermlineMutations}
+              canDelete={!isPrint}
+              onDelete={onDelete}
+              canToggleColumns={false}
+              canExport={!isPrint}
+              isPaginated={false}
+              isPrint={isPrint}
+            />
+          </div>
         )
       )}
     </div>
@@ -179,7 +225,7 @@ const CopyNumber = ({
             onDelete={onDelete}
             canToggleColumns={false}
             canExport={!isPrint}
-            isPaginated={!isPrint}
+            isPaginated={false}
             isPrint={isPrint}
           />
         )
@@ -213,7 +259,7 @@ const StructuralVariants = ({
             onDelete={onDelete}
             canToggleColumns={false}
             canExport={!isPrint}
-            isPaginated={!isPrint}
+            isPaginated={false}
             isPrint={isPrint}
           />
         )
@@ -247,7 +293,7 @@ const Expression = ({
             onDelete={onDelete}
             canToggleColumns={false}
             canExport={!isPrint}
-            isPaginated={!isPrint}
+            isPaginated={false}
             isPrint={isPrint}
           />
         )
