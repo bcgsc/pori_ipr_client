@@ -225,6 +225,15 @@ const useReportUserBinding = <TQueryFnData = unknown, TData = TQueryFnData>(
     { ...queryOptions, queryParams },
   );
 
+const useReportUserHistory = <TQueryFnData = unknown, TData = TQueryFnData>(
+  reportIdent: string,
+  queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
+  queryParams?: QueryParams,
+) => useAuthedQuery<TQueryFnData, TData>(
+    queryKeys.reports.reportUserHistory(reportIdent),
+    { ...queryOptions, queryParams },
+  );
+
 const useReportSummaryMicrobial = <TQueryFnData = unknown, TData = TQueryFnData>(
   reportIdent: string,
   queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
@@ -582,6 +591,15 @@ const useReportSignatures = <TQueryFnData = unknown, TData = TQueryFnData>(
     { ...queryOptions, queryParams },
   );
 
+const useReportSignaturesHistory = <TQueryFnData = unknown, TData = TQueryFnData>(
+  reportIdent: string,
+  queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
+  queryParams?: QueryParams,
+) => useAuthedQuery<TQueryFnData, TData>(
+    queryKeys.reports.reportSignaturesHistory(reportIdent),
+    { ...queryOptions, queryParams },
+  );
+
 const useReportSignaturesSignRole = <TQueryFnData = unknown, TData = TQueryFnData>(
   reportIdent: string,
   roleIdent: string,
@@ -841,6 +859,14 @@ const useProjectTherapeuticTargets = <TQueryFnData = unknown, TData = TQueryFnDa
     { ...queryOptions, queryParams },
   );
 
+const useTherapeuticTargetsAll = <TQueryFnData = unknown, TData = TQueryFnData>(
+  queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
+  queryParams?: QueryParams,
+) => useAuthedQuery<TQueryFnData, TData>(
+    queryKeys.therapeuticTargets.all(),
+    { ...queryOptions, queryParams },
+  );
+
 const useGermlineSmallMutationReportsAll = <TQueryFnData = unknown, TData = TQueryFnData>(
   queryOptions?: AuthedQueryOptions<TQueryFnData, TData>,
   queryParams?: QueryParams,
@@ -1055,6 +1081,7 @@ export {
   useReport,
   useReportUser,
   useReportUserBinding,
+  useReportUserHistory,
   useReportSummaryMicrobial,
   useReportTherapeuticTargets,
   useReportTherapeuticTargetsTherapeuticTarget,
@@ -1093,6 +1120,7 @@ export {
   useReportProbeResultsTarget,
   useReportProbeTestInformation,
   useReportSignatures,
+  useReportSignaturesHistory,
   useReportSignaturesSignRole,
   useReportSignaturesRevokeRole,
   useReportSignaturesEarliestSignoff,
@@ -1121,6 +1149,7 @@ export {
   useProjectAll,
   useProjectReports,
   useProjectTherapeuticTargets,
+  useTherapeuticTargetsAll,
   useGermlineSmallMutationReportsAll,
   useGermlineSmallMutationReportsGermline,
   useGermlineSmallMutationReportsGermlineReviews,
