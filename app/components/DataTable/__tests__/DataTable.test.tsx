@@ -313,6 +313,41 @@ describe('DataTable', () => {
     exportSpy.mockRestore();
   });
 
+  test('Adding the first row to an empty table does not duplicate it', async () => {
+    const [firstRow] = mockRowData;
+
+    const { rerender } = render(
+      <DataTable
+        rowData={[]}
+        columnDefs={mockColumnDefs}
+        canEdit
+      />,
+    );
+
+    // The row the edit dialog hands back is appended to local state...
+    rerender(
+      <DataTable
+        rowData={[firstRow]}
+        columnDefs={mockColumnDefs}
+        canEdit
+      />,
+    );
+    await screen.findByText(firstRow.username);
+
+    // ...then the refetch replaces it with an equivalent object from the server.
+    rerender(
+      <DataTable
+        rowData={[{ ...firstRow }]}
+        columnDefs={mockColumnDefs}
+        canEdit
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getAllByText(firstRow.username)).toHaveLength(1);
+    });
+  });
+
   test('Clicking the view-details action opens the detail dialog', async () => {
     render(
       <DataTable
