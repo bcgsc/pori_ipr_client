@@ -88,12 +88,12 @@ const columnDefs: ColDef[] = [{
   headerName: 'Oncogene',
   colId: 'oncogene',
   valueGetter: (params) => (params.data.gene1.oncogene || params.data.gene2.oncogene || false),
-  hide: true,
+  hide: false,
 }, {
   headerName: 'Tumour Suppressor Gene',
   colId: 'tumourSuppressor',
   valueGetter: (params) => (params.data.gene1.tumourSuppressor || params.data.gene2.tumourSuppressor || false),
-  hide: true,
+  hide: false,
 }, {
   headerName: 'In Knowledgebase Gene',
   colId: 'kbStatementRelated',

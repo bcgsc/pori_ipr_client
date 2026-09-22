@@ -157,6 +157,45 @@ describe('DataTable', () => {
     expect(lastSynced.filter((col: string) => col === ACTIONS_COLUMN)).toHaveLength(1);
   });
 
+  test('A grid with no rows still applies visibleColumns changes', async () => {
+    /*
+      An empty grid never fires onFirstDataRendered. Visibility must not depend on
+      that event, or tables rendered empty (via canEdit) ignore the column picker.
+    */
+    const colDefs = [
+      ...mockColumnDefs,
+      {
+        headerName: 'Oncogene', colId: 'oncogene', valueGetter: () => 'yes', hide: true,
+      },
+      { ...actionsColDef },
+    ];
+    const visibleColumns = ['username', 'oncogene', ACTIONS_COLUMN];
+
+    const { rerender } = render(
+      <DataTable
+        rowData={[]}
+        columnDefs={colDefs}
+        visibleColumns={['username', ACTIONS_COLUMN]}
+        syncVisibleColumns={() => {}}
+        canEdit
+      />,
+    );
+
+    await waitFor(() => expect(screen.queryByText('Oncogene')).toBeNull());
+
+    rerender(
+      <DataTable
+        rowData={[]}
+        columnDefs={colDefs}
+        visibleColumns={visibleColumns}
+        syncVisibleColumns={() => {}}
+        canEdit
+      />,
+    );
+
+    expect(await screen.findByText('Oncogene')).toBeInTheDocument();
+  });
+
   test('Does not throw when visibleColumns is undefined', () => {
     expect(() => {
       render(
