@@ -41,6 +41,30 @@ import QueryEditDialog from './components/QueryEditDialog';
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
 
+/*
+ * getRowId must stay stable for the grid's whole life; a scheme that changes
+ * mid-life orphans old nodes and renders rows twice. Keys by `ident`, else a
+ * stable generated id so `ident`-less rows don't collide. WeakMap over Map so
+ * old rows GC instead of leaking at module scope; counter keeps ids unique.
+ */
+const generatedRowIds = new WeakMap<object, string>();
+let nextGeneratedRowId = 0;
+
+const getRowId = ({ data }: GetRowIdParams): string => {
+  const ident = (data as { ident?: string })?.ident;
+  if (ident !== undefined && ident !== null) {
+    return String(ident);
+  }
+  if (!data || typeof data !== 'object') {
+    return String(data);
+  }
+  if (!generatedRowIds.has(data)) {
+    nextGeneratedRowId += 1;
+    generatedRowIds.set(data, `row-${nextGeneratedRowId}`);
+  }
+  return generatedRowIds.get(data);
+};
+
 /**
  * Given colDefs, calculates rowSpan for each columnDef based on the current displayedRows on the table
  */
@@ -293,18 +317,51 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     }
   }, [filterText, gridApi]);
 
-  // Triggers when syncVisibleColumns is called, only after first data render
+  /*
+    ag-grid can only measure columns it has already rendered - AutoWidthCalculator
+    returns -1 for a column whose header cell is not in the DOM, and ColumnModel then
+    narrows only the columns it could measure. Auto-sizing in the same tick as a
+    visibility change therefore lays the grid out as though the column just switched
+    on were not there, which is what made a newly toggled column flash up and vanish
+    until the picker was opened a second time. Deferring a tick lets the grid paint
+    the new column first, so it is measured with everything else.
+  */
+  const autoSizeTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const deferredAutoSize = useCallback((colIds: string[]) => {
+    if (!colApi || !colIds?.length) { return; }
+    clearTimeout(autoSizeTimeout.current);
+    autoSizeTimeout.current = setTimeout(() => {
+      /* the grid may be gone by the time this fires */
+      try {
+        colApi.autoSizeColumns(colIds);
+      } catch (err) {
+        /* a destroyed grid throws on any api call; nothing to size in that case */
+      }
+    }, 0);
+  }, [colApi]);
+
+  useEffect(() => () => clearTimeout(autoSizeTimeout.current), []);
+
+  // Triggers when syncVisibleColumns is called
   useEffect(() => {
-    if (colApi && visibleColumns?.length && hasRenderedData.current) {
+    if (colApi && visibleColumns?.length) {
       const columns = colApi?.getColumns();
       if (!columns) return;
       const allCols = columns.map((col) => col.getColId());
       const hiddenColumns = allCols.filter((col) => !visibleColumns.includes(col));
       colApi.setColumnsVisible(visibleColumns, true);
       colApi.setColumnsVisible(hiddenColumns, false);
-      colApi.autoSizeColumns(visibleColumns);
+      /*
+        Only autoSize gates on first data render - it measures rendered cells, so it
+        is meaningless before then. Visibility itself must not be gated: a grid with
+        no rows never fires onFirstDataRendered, which left empty tables stuck on
+        their initial columns forever.
+      */
+      if (hasRenderedData.current) {
+        deferredAutoSize(visibleColumns);
+      }
     }
-  }, [colApi, visibleColumns]);
+  }, [colApi, deferredAutoSize, visibleColumns]);
 
   /**
    * Currently only used by Expression Correlation
@@ -454,15 +511,13 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
     colApi.setColumnsVisible(returnedVisibleCols, true);
     colApi.setColumnsVisible(returnedHiddenCols, false);
 
-    if (nextVisibleCols?.length) {
-      colApi.autoSizeColumns(nextVisibleCols);
-    }
+    deferredAutoSize(nextVisibleCols);
 
     if (syncVisibleColumns) {
       syncVisibleColumns(nextVisibleCols);
     }
     setShowPopover(false);
-  }, [colApi, syncVisibleColumns]);
+  }, [colApi, deferredAutoSize, syncVisibleColumns]);
 
   const RowActionCellRenderer = useCallback((row) => (
     <ActionCellRenderer
@@ -577,11 +632,6 @@ const DataTable = forwardRef<DataTableImperativeHandle, DataTableProps>(({
       getColumnApi: () => colApi,
     };
   }, [gridApi, colApi]);
-
-  const getRowId = useMemo(() => {
-    const hasIdent = rowData.some((row) => row?.ident !== undefined);
-    return hasIdent ? (params: GetRowIdParams) => params.data.ident as string : undefined;
-  }, [rowData]);
 
   // Hiding the auto group column that ag-grid creates when using row grouping
   const autoGroupColumnDef = useMemo(() => ({
