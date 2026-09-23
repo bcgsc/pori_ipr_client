@@ -1,5 +1,5 @@
 import React, {
-  useState, useCallback, useEffect,
+  useState, useCallback, useEffect, useMemo,
 } from 'react';
 import {
   Dialog,
@@ -16,7 +16,9 @@ import {
   TextField,
   Chip,
   Autocomplete,
+  CircularProgress,
 } from '@mui/material';
+import { debounce } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import snackbar from '@/services/SnackbarUtils';
 
@@ -55,6 +57,14 @@ type VariantTextPayload = {
   text: string;
 };
 
+type GraphkbDisease = {
+  '@rid': string;
+  displayName: string;
+};
+
+const DISEASE_SEARCH_MIN_CHARACTERS = 3;
+const DISEASE_SEARCH_DEBOUNCE = 300;
+
 const extensions = [
   StarterKit,
   Underline,
@@ -69,10 +79,18 @@ const AddEditVariantText = ({
   onClose,
 }: AddEditVariantTextProps): JSX.Element => {
   const [isEditorDirty, setIsEditorDirty] = useState(false);
+  const [diseaseOptions, setDiseaseOptions] = useState<GraphkbDisease[]>([]);
+  const [diseaseSearch, setDiseaseSearch] = useState('');
+  const [isDiseaseLoading, setIsDiseaseLoading] = useState(false);
   const queryClient = useQueryClient();
 
+  const debouncedDiseaseSearch = useMemo(() => debounce(
+    (nextSearch: string) => setDiseaseSearch(nextSearch),
+    DISEASE_SEARCH_DEBOUNCE,
+  ), []);
+
   const {
-    register, handleSubmit, formState: { dirtyFields }, setValue, getValues, reset, control,
+    register, handleSubmit, formState: { dirtyFields }, reset, control,
   } = useForm<AddEditVariantFormProps>({
     mode: 'onChange',
     defaultValues: {
@@ -95,6 +113,48 @@ const AddEditVariantText = ({
   const { data: templateOptions, isLoading: isTemplatesLoading } = useTemplatesAll<TemplateType[]>({
     onError: handleTemplateError,
   });
+
+  useEffect(() => () => debouncedDiseaseSearch.cancel(), [debouncedDiseaseSearch]);
+
+  useEffect(() => {
+    let isCurrentSearch = true;
+    const query = diseaseSearch
+      .split(' ')
+      .filter((term) => term.length >= DISEASE_SEARCH_MIN_CHARACTERS)
+      .join(' ');
+
+    if (diseaseSearch.length < DISEASE_SEARCH_MIN_CHARACTERS || !query) {
+      setDiseaseOptions([]);
+      setIsDiseaseLoading(false);
+      return () => {
+        isCurrentSearch = false;
+      };
+    }
+
+    const fetchDiseaseOptions = async () => {
+      setIsDiseaseLoading(true);
+      try {
+        const { result } = await api.get(`/graphkb/disease?search=${query}`).request();
+        if (isCurrentSearch) {
+          setDiseaseOptions(result ?? []);
+        }
+      } catch (err) {
+        if (isCurrentSearch) {
+          setDiseaseOptions([]);
+          snackbar.error(`Error getting disease options: ${err}`);
+        }
+      } finally {
+        if (isCurrentSearch) {
+          setIsDiseaseLoading(false);
+        }
+      }
+    };
+
+    fetchDiseaseOptions();
+    return () => {
+      isCurrentSearch = false;
+    };
+  }, [diseaseSearch]);
 
   const savingVariant = async ({
     template, projects, variantName, cancerType, text,
@@ -129,40 +189,6 @@ const AddEditVariantText = ({
       editor.commands.setContent(editData.text);
     }
   }, [editor, reset, editData]);
-
-  const handlecancerTypesFieldKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-    const { code } = event;
-    const { value } = event.target as HTMLInputElement;
-
-    if (code === 'Backspace' && !value) {
-      // Delete the last entry
-      const currData = getValues('cancerType');
-      setValue('cancerType', currData.slice(0, -1), {
-        shouldDirty: true,
-        shouldTouch: true,
-      });
-    }
-    if (code === 'Enter') {
-      const nextEntry = value.trim();
-      if (nextEntry) {
-        const currData = getValues('cancerType');
-        setValue('cancerType', [...currData, nextEntry], {
-          shouldDirty: true,
-          shouldTouch: true,
-        });
-      }
-    }
-  }, [getValues, setValue]);
-
-  const handlecancerTypesDelete = useCallback((idx) => {
-    const currData = getValues('cancerType');
-    const nextData = [...currData];
-    nextData.splice(idx, 1);
-    setValue('cancerType', nextData, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-  }, [getValues, setValue]);
 
   const { mutate: mutateVariant } = useMutation({
     mutationFn: savingVariant,
@@ -249,23 +275,36 @@ const AddEditVariantText = ({
             control={control}
             name="cancerType"
             render={({
-              field: { value, ref },
+              field: { onChange, value, ref },
             }) => (
-              <Autocomplete
+              <Autocomplete<GraphkbDisease, true, true, true>
                 className="text-field"
                 fullWidth
                 multiple
-                options={[]}
+                options={diseaseOptions}
                 freeSolo
                 disableClearable
                 value={value}
-                renderTags={(values) => values.map((cT, idx) => (
+                loading={isDiseaseLoading}
+                filterSelectedOptions
+                getOptionLabel={(option) => (typeof option === 'string' ? option : option.displayName)}
+                isOptionEqualToValue={(option, selected) => (
+                  typeof selected !== 'string' && option['@rid'] === selected['@rid']
+                )}
+                onInputChange={(_event, inputValue, reason) => {
+                  if (reason === 'input') {
+                    debouncedDiseaseSearch(inputValue);
+                  }
+                }}
+                onChange={(_event, selectedDiseases) => onChange(selectedDiseases.map((disease) => (
+                  typeof disease === 'string' ? disease : disease.displayName
+                )))}
+                renderTags={(values, getTagProps) => values.map((cT, idx) => (
                   <Chip
-                      // eslint-disable-next-line react/no-array-index-key
+                    // eslint-disable-next-line react/no-array-index-key
                     key={`${cT}-${idx}`}
-                    tabIndex={-1}
-                    label={`${cT}`}
-                    onDelete={() => handlecancerTypesDelete(idx)}
+                    label={typeof cT === 'string' ? cT : cT.displayName}
+                    {...getTagProps({ index: idx })}
                   />
                 ))}
                 renderInput={(params) => (
@@ -273,8 +312,16 @@ const AddEditVariantText = ({
                     {...params}
                     inputRef={ref}
                     label="Cancer Types"
-                    helperText="Press enter to confirm new entry"
-                    onKeyDown={handlecancerTypesFieldKeyDown}
+                    helperText={`Type ${DISEASE_SEARCH_MIN_CHARACTERS} characters for GraphKB suggestions, or press enter to add a custom entry`}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {isDiseaseLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
                   />
                 )}
               />
