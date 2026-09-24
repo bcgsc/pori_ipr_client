@@ -226,10 +226,7 @@ const Print = ({
             </>
           )}
           {template?.sections.includes('slides') && (
-            <>
-              <Slides report={report} isPrint loadedDispatch={dispatch} theme={theme} />
-              <PageBreak />
-            </>
+            <Slides report={report} isPrint loadedDispatch={dispatch} theme={theme} />
           )}
           {template?.sections.includes('appendices') && (
             <Appendices report={report} isPrint isProbe={report.template.name === 'probe'} loadedDispatch={dispatch} />
