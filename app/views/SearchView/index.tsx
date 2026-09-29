@@ -30,7 +30,6 @@ import {
   BACKSPACE_KEY,
 } from '@/constants';
 import { useQueryClient } from 'react-query';
-import { set } from 'lodash';
 
 const SearchView = () => {
   const { searchParams, setSearchParams } = useSearchParams();
@@ -162,7 +161,7 @@ const SearchView = () => {
     });
     setSearchErrorMessage('');
   }, []);
-  
+
   return (
     <div className="search-view">
       <div className="search-view__bar">

@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
-import KeyAlterations from '..';
+import KeyAlterations, { transformManualVariantToData } from '..';
 import api, { ApiCallSet } from '@/services/api';
 
 jest.mock('@/services/api', () => {
@@ -123,6 +123,20 @@ describe('KeyAlterations', () => {
 		expect(screen.getByTestId('genomic-table-cnv')).toBeInTheDocument();
 		expect(screen.getByTestId('genomic-table-structuralVariant')).toBeInTheDocument();
 		expect(screen.getByTestId('genomic-table-expression')).toBeInTheDocument();
+	});
+
+	test('parses bracketed fusion notation for manual structural variants', () => {
+		const transformed = transformManualVariantToData({
+			ident: 'manual-sv',
+			geneVariant: '(BRAF,KIAA1549):fusion(e.9,e.16)',
+			variantType: null,
+		} as any);
+
+		expect(transformed.type).toBe('structuralVariant');
+		expect(transformed.variant.gene1.name).toBe('BRAF');
+		expect(transformed.variant.gene2.name).toBe('KIAA1549');
+		expect(transformed.variant.exon1).toBe('9');
+		expect(transformed.variant.exon2).toBe('16');
 	});
 
 	test('hides add button in print mode', async () => {

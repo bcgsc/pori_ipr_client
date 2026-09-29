@@ -160,19 +160,24 @@ const SmallMutations = ({
     [isPrint],
   );
 
+  const germlineColumnDefs = useMemo(
+    () => columnDefs.filter((colDef: ColDef) => colDef.headerName !== 'Alt/Total (Tumour)'),
+    [columnDefs],
+  );
+
   return (
     <div className={`small-mutations ${isPrint ? 'small-mutations--print' : ''}`}>
       {!isLoading && (
         isPrint ? (
           <>
-            {renderPrintTable('Germline Small Mutations', smallMutationsColumnDefs, germlineMutations as Record<string, unknown>[])}
-            {renderPrintTable('Small Mutations', smallMutationsColumnDefs, nonGermlineMutations as Record<string, unknown>[])}
+            {renderPrintTable('Germline Small Mutations', germlineColumnDefs, germlineMutations as Record<string, unknown>[])}
+            {renderPrintTable('Small Mutations', columnDefs, nonGermlineMutations as Record<string, unknown>[])}
           </>
         ) : (
           <div>
             <DataTable
               titleText="Germline Small Mutations"
-              columnDefs={columnDefs}
+              columnDefs={germlineColumnDefs}
               rowData={germlineMutations}
               noDataDisplay={noDataDisplayRender('No variants reported')}
               canDelete={!isPrint}

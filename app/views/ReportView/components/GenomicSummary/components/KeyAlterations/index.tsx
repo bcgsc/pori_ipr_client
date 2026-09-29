@@ -72,7 +72,45 @@ const createBaseGene = (name = '') => ({
   tumourSuppressor: false,
 });
 
-const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType => {
+const parseStructuralVariantNames = (geneVariant: string) => {
+  const normalized = geneVariant.trim();
+
+  const legacyGenes = normalized
+    .replace(/fusion/ig, '')
+    .split('::')
+    .map((val) => val.trim())
+    .filter(Boolean);
+
+  if (legacyGenes.length >= 2) {
+    return {
+      gene1Name: legacyGenes[0],
+      gene2Name: legacyGenes[1],
+      exon1: null,
+      exon2: null,
+    };
+  }
+
+  const fusionMatch = normalized.match(/^\s*\(\s*(.*?)\s*,\s*(.*?)\s*\)\s*:\s*fusion\s*\(\s*e\.\s*([^,]+)\s*,\s*e\.\s*([^\)]+)\s*\)\s*$/i);
+
+  if (fusionMatch) {
+    const [, gene1Name = '', gene2Name = '', exon1 = '', exon2 = ''] = fusionMatch;
+    return {
+      gene1Name: gene1Name.trim(),
+      gene2Name: gene2Name.trim(),
+      exon1: exon1.trim() || null,
+      exon2: exon2.trim() || null,
+    };
+  }
+
+  return {
+    gene1Name: normalized,
+    gene2Name: '',
+    exon1: null,
+    exon2: null,
+  };
+};
+
+export const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType => {
   const categorizedVariant = variantCategory(variant);
   const [leftPart = '', rightPart = ''] = categorizedVariant.geneVariant.split(':');
   const parenMatch = categorizedVariant.geneVariant.match(/^(.*?)\s*\((.*?)\)\s*$/);
@@ -144,14 +182,12 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
       break;
     }
     case 'structuralVariant': {
-      const genes = categorizedVariant.geneVariant
-        .replace(/fusion/ig, '')
-        .split('::')
-        .map((val) => val.trim())
-        .filter(Boolean);
-
-      const gene1Name = genes[0] ?? categorizedVariant.geneVariant;
-      const gene2Name = genes[1] ?? '';
+      const {
+        gene1Name,
+        gene2Name,
+        exon1,
+        exon2,
+      } = parseStructuralVariantNames(categorizedVariant.geneVariant);
 
       categorizedVariant.variant = {
         breakpoint: null,
@@ -162,8 +198,8 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
         detectedIn: null,
         displayName: categorizedVariant.geneVariant,
         eventType: null,
-        exon1: null,
-        exon2: null,
+        exon1,
+        exon2,
         frame: null,
         gene1: createBaseGene(gene1Name),
         gene2: createBaseGene(gene2Name),
@@ -247,6 +283,35 @@ const KeyAlterations = ({
   const [isAddingVariant, setIsAddingVariant] = useState(false);
 
   const classNamePrefix = printVersion ? 'key-alterations-print' : 'key-alterations';
+
+  const addNewVariantHelperText = useMemo(() =>
+    <>
+      <Typography variant="subtitle1" color="inherit">
+        When adding a new genomic alteration, please follow the notation conventions below:
+      </Typography>
+      <br />
+      <Typography variant="subtitle1" color="inherit">
+        <b>Germline Small Mutations:</b> 'germline &lt;GENENAME&gt;:p.&lt;PROTEIN_CHANGE&gt;'.
+      </Typography>
+      <br />
+      <Typography variant="subtitle1" color="inherit">
+        <b>Small Mutations:</b> '&lt;GENE&gt;:p.&lt;PROTEIN_CHANGE&gt;'.
+      </Typography>
+      <br />
+      <Typography variant="subtitle1" color="inherit">
+        <b>Copy Number Variants:</b> '&lt;GENE&gt; (&lt;CNV_STATE&gt;)'.
+      </Typography>
+      <br />
+      <Typography variant="subtitle1" color="inherit">
+        <b>Structural Variants:</b> '(&lt;GENE_1&gt;,&lt;GENE_2&gt;):fusion(e.&lt;EXON_1&gt;,e.&lt;EXON_2&gt;)'.
+      </Typography>
+      <br />
+      <Typography variant="subtitle1" color="inherit">
+        <b>Expression Variants:</b> '&lt;GENE&gt; (&lt;EXPRESSION_CLASS&gt;)'.
+      </Typography>
+      <br />
+    </>
+    , []);
 
   useEffect(() => {
     if (report) {
@@ -540,6 +605,7 @@ const KeyAlterations = ({
                 value={newGeneVariant}
                 onChange={(event) => setNewGeneVariant(event.target.value)}
                 fullWidth
+                helperText={addNewVariantHelperText}
               />
             </DialogContent>
             <DialogActions>
