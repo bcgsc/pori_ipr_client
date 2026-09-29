@@ -434,6 +434,8 @@ const KbMatches = ({
   });
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedRows, setSelectedRows] = useState(null);
+  /* Text of the cell the context menu was opened on, used as a fallback when nothing is highlighted */
+  const contextCellTextRef = useRef('');
   const [destinationType, setDestinationType] = useState<KbMatchesMoveDialogContextType['destinationType']>('kbMatches');
   const [moveKbMatchesDialogOpen, setMoveKbMatchesDialogOpen] = useState(false);
   const [moveKbMatchesTableName, setMoveKbMatchesTableName] = useState('');
@@ -597,6 +599,11 @@ const KbMatches = ({
   const onCellContextMenu = useCallback((tableName) => (params) => {
     const { event, node, api: gridApi } = params;
     event.preventDefault(); // Disable browser's context menu for cells
+    /**
+     * Grab selected cell text, should not thing be selected, this will be used as a fallback for copying text to clipboard
+     */
+    const cellEl = (event.target as HTMLElement)?.closest?.('.ag-cell');
+    contextCellTextRef.current = cellEl?.textContent?.trim() ?? '';
     setMenuAnchor({
       mouseX: event.clientX + 2,
       mouseY: event.clientY - 6,
@@ -765,7 +772,40 @@ const KbMatches = ({
     tryGoToEntry();
   }, [isLoading, hash]);
 
-  const copyIdentToClipboard = useCallback(async () => {
+  const copyToClipboard = useCallback(async (text: string, message: string) => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        /*
+          Clipboard API is absent outside a secure context (e.g. the HTTP dev host).
+          Append the textarea to the focused element rather than document.body so the
+          open Menu's focus trap can't steal focus off it before the copy runs.
+        */
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        const host = (document.activeElement as HTMLElement) ?? document.body;
+        host.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        const successful = document.execCommand('copy');
+        host.removeChild(textArea);
+        if (!successful) throw new Error('execCommand copy failed');
+      }
+      snackbar.info(message);
+    } catch (err) {
+      snackbar.error('Failed to copy to clipboard');
+    }
+  }, []);
+
+  /**
+   * Copies the link to the selected row to the clipboard.
+   * If either the ident or category is null, an error snackbar is displayed.
+   */
+  const handleCopyIdent = useCallback(() => {
     const { ident, category } = selectedRows[0] ?? [];
 
     if (!ident || !category) {
@@ -774,30 +814,21 @@ const KbMatches = ({
     }
 
     const fullLink = `${window.location.origin}${pathname}#${category}:${ident}`;
+    copyToClipboard(fullLink, `Copied to clipboard: ${ident}`);
+  }, [selectedRows, pathname, copyToClipboard]);
 
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(fullLink);
-      } else {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = fullLink;
-        textArea.style.position = 'fixed'; // prevent scroll jump
-        textArea.style.left = '-9999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textArea);
-
-        if (!successful) throw new Error('Fallback: Copy command failed');
-      }
-      snackbar.info(`Copied to clipboard: ${ident}`);
-    } catch (err) {
-      snackbar.error('Failed to copy to clipboard');
+  /**
+   * Copies the highlighted text to the clipboard, or the whole right-clicked
+   * cell's text when nothing is highlighted.
+   */
+  const handleCopyText = useCallback(() => {
+    const text = window.getSelection()?.toString().trim() || contextCellTextRef.current;
+    if (!text) {
+      snackbar.warning('No text to copy');
+      return;
     }
-  }, [selectedRows, pathname]);
+    copyToClipboard(text, `Copied to clipboard: ${text}`);
+  }, [copyToClipboard]);
 
   return (
     <KbMatchesMoveDialogContext.Provider value={moveKbMatchesContextValue}>
@@ -836,6 +867,7 @@ const KbMatches = ({
               <Menu
                 open={Boolean(menuAnchor)}
                 onClose={handleMenuClose}
+                onClick={handleMenuClose}
                 anchorReference="anchorPosition"
                 anchorPosition={
                   menuAnchor
@@ -846,10 +878,11 @@ const KbMatches = ({
                 <MenuItem onClick={handleMoveToAnotherKbTable}>Move to another KbMatches Table</MenuItem>
                 <MenuItem
                   disabled={selectedRows?.length > 1}
-                  onClick={copyIdentToClipboard}
+                  onClick={handleCopyIdent}
                 >
                   Copy Row Link
                 </MenuItem>
+                <MenuItem onClick={handleCopyText}>Copy Text</MenuItem>
                 {
                   templateName === 'rapid'
                   && <MenuItem onClick={handleMoveToRapidSummary}>Add Variant to Rapid Summary Table</MenuItem>

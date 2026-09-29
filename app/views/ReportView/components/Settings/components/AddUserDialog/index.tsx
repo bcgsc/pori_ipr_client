@@ -1,6 +1,7 @@
 import React, {
   useState, useCallback, useEffect,
 } from 'react';
+import { useQueryClient } from 'react-query';
 import {
   Button,
   Dialog,
@@ -17,6 +18,7 @@ import api from '@/services/api';
 import UserAutocomplete from '@/components/UserAutocomplete';
 import snackbar from '@/services/SnackbarUtils';
 import { UserType } from '@/common';
+import { queryKeys } from '@/queries/queryKeys';
 
 import './index.scss';
 import useReport from '@/hooks/useReport';
@@ -31,6 +33,7 @@ const AddUserDialog = ({
   onAdd,
 }: AddUserDialogProps): JSX.Element => {
   const { report, refetchReport } = useReport();
+  const queryClient = useQueryClient();
 
   const [user, setUser] = useState<UserType>();
   const [role, setRole] = useState('');
@@ -50,12 +53,13 @@ const AddUserDialog = ({
         {},
       ).request();
       await refetchReport();
+      queryClient.invalidateQueries(queryKeys.reports.reportUserHistory(report.ident));
       snackbar.success('User added!');
       onAdd();
     } catch (err) {
       snackbar.error(`Error adding user: ${err}`);
     }
-  }, [report, user, role, refetchReport, onAdd]);
+  }, [report, user, role, refetchReport, onAdd, queryClient]);
 
   const handleUserChange = (newUser: UserType) => {
     setUser(newUser);

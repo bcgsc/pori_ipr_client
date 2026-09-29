@@ -1,5 +1,6 @@
 import React, {
   useState, useEffect, useContext, useMemo,
+  useCallback,
 } from 'react';
 import {
   Typography,
@@ -18,6 +19,7 @@ import useReport from '@/hooks/useReport';
 import ImageType from '@/components/Image/types';
 import { StructuralVariantType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { getDefaultVisibleColIds } from '@/utils/visibleColumns';
 import VariantEditDialog from '@/components/VariantEditDialog';
 import columnDefs from './columnDefs';
 
@@ -60,11 +62,7 @@ const StructuralVariants = ({
   const [transcriptomeCircos, setTranscriptomeCircos] = useState<ImageType>();
   const [tabIndex, setTabIndex] = useState(0);
   const [visibleCols, setVisibleCols] = useState<string[]>(
-    columnDefs.reduce((accumulator: string[], current) => {
-      if (current.hide === false || !current.hide) {
-        accumulator.push(current.field ?? current.colId);
-      } return accumulator;
-    }, []),
+    getDefaultVisibleColIds(columnDefs),
   );
 
   const [showDialog, setShowDialog] = useState(false);
@@ -185,7 +183,7 @@ const StructuralVariants = ({
     setEditData(null);
   };
 
-  const handleVisibleColsChange = (change) => setVisibleCols(change);
+  const handleVisibleColsChange = useCallback((change) => { setVisibleCols(change); }, [setVisibleCols]);
 
   return (
     <div className="structural-variants">

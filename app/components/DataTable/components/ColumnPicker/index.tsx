@@ -57,9 +57,13 @@ const ColumnPicker = ({
     }
   }, []);
 
+  const handleOnClose = useCallback(() => {
+    onClose(visibleCols);
+  }, [onClose, visibleCols]);
+
   return (
     <Dialog
-      onClose={() => onClose(visibleCols)}
+      onClose={handleOnClose}
       open={isOpen}
     >
       <MenuList className={`options-menu ${className || ''}`}>

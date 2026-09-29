@@ -10,6 +10,7 @@ import useReport from '@/hooks/useReport';
 import useApiError from '@/hooks/useApiError';
 import { unwrapSettled } from '@/utils/settleApiCalls';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { getDefaultVisibleColIds } from '@/utils/visibleColumns';
 import { ImageType } from '@/components/Image';
 import { ExpOutliersType } from '@/common';
 import VariantEditDialog from '@/components/VariantEditDialog';
@@ -44,19 +45,6 @@ const INFO_BUBBLES = {
   downreg_tsg: 'Low expression level outliers in known tumour suppressor genes.',
 };
 
-/**
- * @returns initial visible column ids based on column definitions
- */
-const getVisibleColsFromColDefReducer = (accumulated, current): string[] => {
-  if ('children' in current) {
-    return accumulated.concat(current.children.reduce(getVisibleColsFromColDefReducer, []));
-  }
-  if (current.hide !== true) {
-    return accumulated.concat(current.field ?? current.colId);
-  }
-  return accumulated;
-};
-
 type ExpressionProps = WithLoadingInjectedProps;
 
 const Expression = ({
@@ -69,7 +57,7 @@ const Expression = ({
   const [comparators, setComparators] = useState<ComparatorsType>();
   const [expOutliers, setExpOutliers] = useState<ProcessedExpressionOutliers>();
   const [visibleCols, setVisibleCols] = useState<string[]>(
-    columnDefs.reduce(getVisibleColsFromColDefReducer, []),
+    getDefaultVisibleColIds(columnDefs),
   );
 
   const [showDialog, setShowDialog] = useState(false);
