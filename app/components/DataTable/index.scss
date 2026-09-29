@@ -14,17 +14,18 @@
 
   &__container {
     margin: 8px 0;
+
     .ag-row:last-child {
       border-bottom: none;
     }
-    
-    .cell-span, .cell-span--last {
+
+    .cell-span,
+    .cell-span--last {
       display: flex;
       align-items: center;
       background-color: white;
       // Importants are to override default behavior of the grid
-      border-bottom: 1px solid
-        var(--ag-row-border-color, var(--ag-secondary-border-color, var(--ag-border-color, #e2e2e2))) !important;
+      border-bottom: 1px solid var(--ag-row-border-color, var(--ag-secondary-border-color, var(--ag-border-color, #e2e2e2))) !important;
     }
 
     .cell-span--last {
@@ -37,12 +38,12 @@
     display: flex;
     justify-content: space-between;
   }
-  
+
   &__action {
     margin: 0 8px;
   }
 
-  .strikeout > .ag-cell {
+  .strikeout>.ag-cell {
     text-decoration: line-through;
   }
 }

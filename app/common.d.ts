@@ -276,7 +276,7 @@ type SmallMutationType = {
   displayName: string | null;
   endPosition: number | null;
   gene: GeneType;
-  germline?: string | null;
+  germline?: string | boolean | null;
   hgvsCds: string | null;
   hgvsGenomic: string | null;
   hgvsProtein: string | null;
