@@ -293,21 +293,36 @@ const KeyAlterations = ({
       <Typography variant="subtitle1" color="inherit">
         <b>Germline Small Mutations:</b> 'germline &lt;GENENAME&gt;:p.&lt;PROTEIN_CHANGE&gt;'.
       </Typography>
+      <Typography variant="subtitle1" color="inherit">
+        Example: <b>germline MUTYH:c.934-2A&gt;G</b>
+      </Typography>
       <br />
       <Typography variant="subtitle1" color="inherit">
         <b>Small Mutations:</b> '&lt;GENE&gt;:p.&lt;PROTEIN_CHANGE&gt;'.
+      </Typography>
+      <Typography variant="subtitle1" color="inherit">
+        Example: <b>TP53:p.V143fs</b>
       </Typography>
       <br />
       <Typography variant="subtitle1" color="inherit">
         <b>Copy Number Variants:</b> '&lt;GENE&gt; (&lt;CNV_STATE&gt;)'.
       </Typography>
+      <Typography variant="subtitle1" color="inherit">
+        Example: <b>FGFR1 (amplification)</b>
+      </Typography>
       <br />
       <Typography variant="subtitle1" color="inherit">
         <b>Structural Variants:</b> '(&lt;GENE_1&gt;,&lt;GENE_2&gt;):fusion(e.&lt;EXON_1&gt;,e.&lt;EXON_2&gt;)'.
       </Typography>
+      <Typography variant="subtitle1" color="inherit">
+        Example: <b>(YAP1,AHNAK):fusion(e.5,e.6)</b>
+      </Typography>
       <br />
       <Typography variant="subtitle1" color="inherit">
         <b>Expression Variants:</b> '&lt;GENE&gt; (&lt;EXPRESSION_CLASS&gt;)'.
+      </Typography>
+      <Typography variant="subtitle1" color="inherit">
+        Example: <b>ERCC1 (decreased rna expression)</b>
       </Typography>
       <br />
     </>
