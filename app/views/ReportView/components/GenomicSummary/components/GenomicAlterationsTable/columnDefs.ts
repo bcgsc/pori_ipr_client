@@ -25,11 +25,29 @@ const smallMutationsColumnDefs: ColDef[] = [{
   valueGetter: ({ data }) => data.chromosome && `${data.chromosome}:${data.startPosition}${data.endPosition && data.startPosition !== data.endPosition
     ? `-${data.endPosition}`
     : ''
-  }`,
+    }`,
 },
 {
   headerName: 'Zygosity',
   field: 'zygosity',
+},
+{
+  headerName: 'Alt/Total (Tumour)',
+  colId: 'Alt/Total (Tumour)',
+  field: 'Alt/Total (Tumour)',
+  valueGetter: ({
+    data: {
+      tumourAltCount, tumourDepth, rnaAltCount, rnaDepth,
+    },
+  }) => {
+    if ((tumourAltCount && tumourDepth) || (tumourAltCount === 0 || tumourDepth === 0)) {
+      return `${tumourAltCount}/${tumourDepth}`;
+    }
+    if ((rnaAltCount && rnaDepth) || (rnaAltCount === 0 || rnaDepth === 0)) {
+      return `${rnaAltCount}/${rnaDepth}`;
+    }
+    return '';
+  },
 },
 {
   headerName: 'VAF %',
