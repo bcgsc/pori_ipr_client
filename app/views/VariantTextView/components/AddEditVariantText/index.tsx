@@ -1,6 +1,7 @@
 import React, {
   useState, useCallback, useEffect,
 } from 'react';
+import { debounce as debounceFn } from 'lodash';
 import {
   Dialog,
   DialogActions,
@@ -16,6 +17,8 @@ import {
   TextField,
   Chip,
   Autocomplete,
+  CircularProgress,
+  Box,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import snackbar from '@/services/SnackbarUtils';
@@ -62,6 +65,10 @@ const extensions = [
 
 const handleProjectsError = (err: ErrorMixin) => snackbar.error(`Error getting projects options: ${err.message}`);
 const handleTemplateError = (err: ErrorMixin) => snackbar.error(`Error getting template options: ${err.message}`);
+const cancerTypeMinCharacters = 3;
+const cancerTypeHelperText = `Type ${cancerTypeMinCharacters} or more characters to search GraphKB diseases. Queried diseases will use OncoTree as source.`;
+const gscLogoPath = new URL('@/statics/images/gsclogo.svg', import.meta.url).toString(); // Placeholder image for non-OncoTree sourced diseases.
+const oncoTreeLogoPath = new URL('@/statics/images/oncotree.png', import.meta.url).toString();
 
 const AddEditVariantText = ({
   editData = null,
@@ -69,6 +76,9 @@ const AddEditVariantText = ({
   onClose,
 }: AddEditVariantTextProps): JSX.Element => {
   const [isEditorDirty, setIsEditorDirty] = useState(false);
+  const [diseaseLoading, setDiseaseLoading] = useState(false);
+  const [diseaseOptions, setDiseaseOptions] = useState([]);
+  const [diseaseInputValue, setDiseaseInputValue] = useState('');
   const queryClient = useQueryClient();
 
   const {
@@ -130,6 +140,55 @@ const AddEditVariantText = ({
     }
   }, [editor, reset, editData]);
 
+  const handleCancerTypeDisplay = useCallback((value: string | { displayName?: string; name?: string }) => {
+    if (typeof value === 'string') {
+      return value;
+    }
+    return value?.displayName || value?.name || '';
+  }, []);
+
+  const getDiseaseOptionMeta = useCallback((option?: { source?: { name?: string } }) => {
+    const sourceName = option?.source?.name || 'Unknown';
+    return {
+      isOncoTree: sourceName.toLowerCase() === 'oncotree',
+      sourceName,
+    };
+  }, []);
+
+  const debouncedDiseaseSearch = useCallback(
+    debounceFn(async (nextValue: string) => {
+      const trimmedValue = nextValue.trim();
+      if (trimmedValue.length < cancerTypeMinCharacters) {
+        setDiseaseOptions([]);
+        setDiseaseLoading(false);
+        return;
+      }
+
+      setDiseaseLoading(true);
+
+      try {
+        const { result } = await api.get(`/graphkb/disease?search=${encodeURIComponent(trimmedValue)}`).request();
+        // DEVSU-2859 Prioritize OncoTree sourced diseases by sorting them to the top of the list
+        const nextOptions = (Array.isArray(result) ? result : [])
+          .filter((option) => Boolean(handleCancerTypeDisplay(option)))
+          .sort((left, right) => Number(getDiseaseOptionMeta(right).isOncoTree) - Number(getDiseaseOptionMeta(left).isOncoTree));
+
+        // TO-DO: sort 'All Solid Tumor' disease to the top once it is added to GKB
+        setDiseaseOptions(nextOptions);
+      } catch (err) {
+        setDiseaseOptions([]);
+      } finally {
+        setDiseaseLoading(false);
+      }
+    }, 300),
+    [getDiseaseOptionMeta, handleCancerTypeDisplay],
+  );
+
+  useEffect(() => {
+    debouncedDiseaseSearch(diseaseInputValue);
+    return () => debouncedDiseaseSearch.cancel();
+  }, [debouncedDiseaseSearch, diseaseInputValue]);
+
   const handlecancerTypesFieldKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
     const { code } = event;
     const { value } = event.target as HTMLInputElement;
@@ -142,17 +201,19 @@ const AddEditVariantText = ({
         shouldTouch: true,
       });
     }
-    if (code === 'Enter') {
-      const nextEntry = value.trim();
-      if (nextEntry) {
-        const currData = getValues('cancerType');
-        setValue('cancerType', [...currData, nextEntry], {
-          shouldDirty: true,
-          shouldTouch: true,
-        });
-      }
-    }
   }, [getValues, setValue]);
+
+  const handleCancerTypeChange = useCallback((_event, selectedValues) => {
+    const nextValues = (Array.isArray(selectedValues) ? selectedValues : [selectedValues])
+      .map((selectedValue) => handleCancerTypeDisplay(selectedValue))
+      .filter(Boolean);
+
+    setValue('cancerType', nextValues, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    setDiseaseInputValue('');
+  }, [handleCancerTypeDisplay, setValue]);
 
   const handlecancerTypesDelete = useCallback((idx) => {
     const currData = getValues('cancerType');
@@ -255,26 +316,72 @@ const AddEditVariantText = ({
                 className="text-field"
                 fullWidth
                 multiple
-                options={[]}
+                options={diseaseOptions}
                 freeSolo
                 disableClearable
-                value={value}
+                value={value || []}
+                inputValue={diseaseInputValue}
+                onInputChange={(_event, newInputValue) => setDiseaseInputValue(newInputValue)}
+                onChange={handleCancerTypeChange}
+                filterOptions={(options) => options}
+                isOptionEqualToValue={(option, selectedValue) => handleCancerTypeDisplay(option) === handleCancerTypeDisplay(selectedValue)}
+                getOptionLabel={(option) => handleCancerTypeDisplay(option)}
                 renderTags={(values) => values.map((cT, idx) => (
                   <Chip
-                      // eslint-disable-next-line react/no-array-index-key
+                    // eslint-disable-next-line react/no-array-index-key
                     key={`${cT}-${idx}`}
                     tabIndex={-1}
                     label={`${cT}`}
                     onDelete={() => handlecancerTypesDelete(idx)}
                   />
                 ))}
+                autoHighlight
+                renderOption={(props, option) => {
+                  const optionLabel = handleCancerTypeDisplay(option);
+                  const { isOncoTree, sourceName } = getDiseaseOptionMeta(option);
+                  const sourceLogo = isOncoTree ? oncoTreeLogoPath : gscLogoPath;
+                  const { key, ...optionProps } = props as typeof props & { key: React.Key };
+                  return (
+                    <Box
+                      key={key}
+                      component="li"
+                      sx={{
+                        alignItems: 'center',
+                        display: 'flex',
+                        gap: 1,
+                        '& > img': { flexShrink: 0 },
+                      }}
+                      {...optionProps}
+                    >
+                      <img
+                        loading="lazy"
+                        width="20"
+                        height="20"
+                        src={sourceLogo}
+                        alt={sourceName}
+                      />
+                      <Box component="span">
+                        {optionLabel}
+                        <Typography component="span" variant="body2" color="text.secondary">
+                          {` (${sourceName})`}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  );
+                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     inputRef={ref}
                     label="Cancer Types"
-                    helperText="Press enter to confirm new entry"
+                    helperText={cancerTypeHelperText}
                     onKeyDown={handlecancerTypesFieldKeyDown}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        diseaseLoading ? <CircularProgress color="inherit" size={20} /> : null
+                      ),
+                    }}
                   />
                 )}
               />
