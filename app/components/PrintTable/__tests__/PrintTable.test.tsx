@@ -58,6 +58,20 @@ describe('PrintTable', () => {
     expect(screen.getByText('1-2')).toBeInTheDocument();
   });
 
+  test('applies valueFormatter to displayed cell values', () => {
+    const colDefs: ColDef[] = [
+      {
+        headerName: 'Copy Change',
+        field: 'copyChange',
+        valueFormatter: ({ value }) => (value > 0 ? `+${value}` : `${value}`),
+      },
+    ];
+    render(<PrintTable columnDefs={colDefs} data={[{ copyChange: 27 }, { copyChange: -2 }]} />);
+
+    expect(screen.getByText('+27')).toBeInTheDocument();
+    expect(screen.getByText('-2')).toBeInTheDocument();
+  });
+
   test('orders columns by the explicit order prop', () => {
     render(<PrintTable columnDefs={columnDefs} data={data} order={['Variant', 'Gene']} />);
 
