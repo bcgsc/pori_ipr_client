@@ -67,8 +67,8 @@ const handleProjectsError = (err: ErrorMixin) => snackbar.error(`Error getting p
 const handleTemplateError = (err: ErrorMixin) => snackbar.error(`Error getting template options: ${err.message}`);
 const cancerTypeMinCharacters = 3;
 const cancerTypeHelperText = `Type ${cancerTypeMinCharacters} or more characters to search GraphKB diseases. Queried diseases will use OncoTree as source.`;
-const gscLogoPath = new URL('@/statics/images/gsclogo.svg', import.meta.url).toString(); // Placeholder image for non-OncoTree sourced diseases.
-const oncoTreeLogoPath = new URL('@/statics/images/oncotree.png', import.meta.url).toString();
+const gscLogoPath = 'img/gsclogo.svg'; // Placeholder image for non-OncoTree sourced diseases.
+const oncoTreeLogoPath = 'img/oncotree.png';
 
 const AddEditVariantText = ({
   editData = null,
@@ -147,9 +147,11 @@ const AddEditVariantText = ({
     return value?.displayName || value?.name || '';
   }, []);
 
-  const getDiseaseOptionMeta = useCallback((option?: { source?: { name?: string } }) => {
+  const getDiseaseOptionMeta = useCallback((option?: { displayName?: string, source?: { name?: string } }) => {
+    const diseaseDisplayName = option?.displayName || 'Unknown';
     const sourceName = option?.source?.name || 'Unknown';
     return {
+      isAllSolidTumor: diseaseDisplayName.toLowerCase() === 'all solid tumor',
       isOncoTree: sourceName.toLowerCase() === 'oncotree',
       sourceName,
     };
@@ -167,13 +169,18 @@ const AddEditVariantText = ({
       setDiseaseLoading(true);
 
       try {
-        const { result } = await api.get(`/graphkb/disease?search=${encodeURIComponent(trimmedValue)}`).request();
-        // DEVSU-2859 Prioritize OncoTree sourced diseases by sorting them to the top of the list
+        const { result } = await api.get(`/graphkb/oncotree?search=${encodeURIComponent(trimmedValue)}`).request();
+        // DEVSU-2859 Prioritize 'All Solid Tumor' term, then OncoTree sourced diseases
         const nextOptions = (Array.isArray(result) ? result : [])
           .filter((option) => Boolean(handleCancerTypeDisplay(option)))
-          .sort((left, right) => Number(getDiseaseOptionMeta(right).isOncoTree) - Number(getDiseaseOptionMeta(left).isOncoTree));
+          .sort((left, right) => {
+            const leftMeta = getDiseaseOptionMeta(left);
+            const rightMeta = getDiseaseOptionMeta(right);
 
-        // TO-DO: sort 'All Solid Tumor' disease to the top once it is added to GKB
+            return Number(rightMeta.isAllSolidTumor) - Number(leftMeta.isAllSolidTumor)
+              || Number(rightMeta.isOncoTree) - Number(leftMeta.isOncoTree);
+          });
+
         setDiseaseOptions(nextOptions);
       } catch (err) {
         setDiseaseOptions([]);
@@ -292,7 +299,7 @@ const AddEditVariantText = ({
       className="variant-text__edit-dialog"
       onClose={handleCancel}
     >
-      <DialogTitle>Create Custom Variant Text</DialogTitle>
+      <DialogTitle>{editData ? 'Edit Variant Text' : 'Create Custom Variant Text'}</DialogTitle>
       <DialogContent>
         <Divider><Typography variant="caption">Add variant name and cancer type</Typography></Divider>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
