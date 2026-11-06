@@ -29,7 +29,7 @@ const prodConfig = (env) => ({
         STORAGE: {
           REFERRER: 'IPR_URI',
           KEYCLOAK: 'PORI_SSO',
-          DATABASE_TYPE: 'bcgsc',
+          DATABASE_TYPE: 'docker',
         },
         MISC: {
           ENV: 'PRODUCTION',
