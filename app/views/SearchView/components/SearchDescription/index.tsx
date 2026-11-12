@@ -5,8 +5,8 @@ const searchFeaturesDescription = () => {
   return (
     <>
       <Typography variant="subtitle1" color="inherit">
-        The search feature allows users to retrieve reports containing information within the categories described below. 
-        The components of a search chip include <b><em>Category</em></b>, <b><em>Keyword</em></b>, and <b><em>Matching Threshold</em></b>. 
+        The search feature allows users to retrieve reports containing information within the categories described below.
+        The components of a search chip include <b><em>Category</em></b>, <b><em>Keyword</em></b>, and <b><em>Matching Threshold</em></b>.
         Users could stack search chips to create a more comprehensive search.
       </Typography>
       <br />
@@ -23,7 +23,7 @@ const searchFeaturesDescription = () => {
       </Typography>
       <br />
       <Typography variant="subtitle1" color="inherit">
-        <b>Category - Key Variant:</b> Search for reports with at least 1 matching key genomic alteration. Query column 'geneVariant' in 'Genomic and Transcriptomic Alterations Identified' table.
+        <b>Category - Key Variant:</b> Search for reports with at least 1 matching key genomic alteration. Query column 'geneVariant' in 'Reported Genomic and Transcriptomic Alterations' table.
       </Typography>
       <br />
       <Typography variant="subtitle1" color="inherit">
@@ -52,7 +52,7 @@ const searchFeaturesDescription = () => {
       </Typography>
       <br /> */}
       <Typography variant="subtitle1" color="inherit">
-        <b>Matching Threshold:</b> The matching threshold defines how closely a search keyword must match a value, using a scale from 0 to 1. 
+        <b>Matching Threshold:</b> The matching threshold defines how closely a search keyword must match a value, using a scale from 0 to 1.
         A threshold of 1 requires an exact match, while lower values allow for partial similarity. If no threshold is set, the default is 0.8. (1.0 for mutation signature category)
       </Typography>
     </>
