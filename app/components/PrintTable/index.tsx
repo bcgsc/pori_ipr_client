@@ -8,7 +8,7 @@ import { ColDef } from '@ag-grid-community/core';
 import { v7 as createUuid } from 'uuid';
 import { registerHandlers, Handler } from 'pagedjs';
 
-import { resolveCellValue } from './utils';
+import { resolveCellValue, applyValueFormatter } from './utils';
 
 export type PrintTableProps = {
   data: Record<string, unknown>[];
@@ -151,8 +151,11 @@ function PrintTable({
         currRowKey = '';
 
         sortedColDefs.forEach((colD, cellIdx) => {
-          // Data section
+          /* Raw value drives collapse grouping; the formatted value is what
+          gets displayed, so valueFormatter-only formatting (e.g. the '+' on
+          positive copy changes) matches the AgGrid view. */
           const cellValue = resolveCellValue(dataRow, colD);
+          const displayValue = applyValueFormatter(cellValue, dataRow, colD);
 
           // Collapseable column check section
           const { field } = colD;
@@ -163,7 +166,7 @@ function PrintTable({
             }
           }
 
-          rowData.push(cellValue);
+          rowData.push(displayValue);
         });
 
         // Check which rows & cols to collapse into each other
