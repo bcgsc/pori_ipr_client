@@ -280,7 +280,7 @@ const AddEditUserDialog = ({
       console.error('Failed user projects load: \n', error);
     },
   });
-  const { data: groups, isLoading: isGroupsLoading } = useUserGroup({
+  const { data: groups, isLoading: isGroupsLoading }: { data: GroupType[]; isLoading: boolean } = useUserGroup({
     onError: (e: Error) => {
       snackbar.error('Cannot load user groups');
       let error = e;
@@ -462,7 +462,7 @@ const AddEditUserDialog = ({
         color="red"
         variant="caption"
       >
-        User must also be added to Keycloak with the roles IPR and GraphKB.
+        User must also be added to Keycloak.
         If you are at the BCGSC, make a Systems ticket to request that this user be added, specifying their email address.
       </Typography>
       <Divider><Typography variant="caption">User Information</Typography></Divider>
