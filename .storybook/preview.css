@@ -1,0 +1,12 @@
+/*
+ * Storybook-only overrides. Loaded after the app's global styles so it wins.
+ *
+ * The app sets `html body { overflow: hidden; height: 100% }` because it manages
+ * its own inner scroll containers. A standalone story has none, so tall stories
+ * (e.g. print tables with many rows) would clip with no scrollbar. Restore
+ * scrolling on the canvas without touching any component styling.
+ */
+html body {
+  overflow: auto !important;
+  height: auto !important;
+}
