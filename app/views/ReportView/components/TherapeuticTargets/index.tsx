@@ -323,13 +323,20 @@ const Therapeutic = ({
   const handleDeleteTherapeuticTarget = useCallback(async (rowNodeData: TherapeuticDataTableType[number]) => {
     const { ident: therapeuticIdent } = rowNodeData;
     try {
-      await api.del(`/reports/${report.ident}/therapeutic-targets/${therapeuticIdent}`, {}).request();
-      snackbar.success(`Successfully deleted ${therapeuticIdent}`);
-      refetchTherapeuticTargets();
+      const deleteCall = api.del(`/reports/${report.ident}/therapeutic-targets/${therapeuticIdent}`, {});
+      const successMessage = `Successfully deleted ${therapeuticIdent}`;
+      if (isSigned) {
+        const confirmed = await showConfirmDialog(deleteCall, true, successMessage);
+        if (!confirmed) { return; }
+      } else {
+        await deleteCall.request();
+        snackbar.success(successMessage);
+      }
+      await refetchTherapeuticTargets();
     } catch (e) {
       snackbar.error('Failed to delete therapeutic option: ', e);
     }
-  }, [report.ident, refetchTherapeuticTargets]);
+  }, [report.ident, isSigned, showConfirmDialog, refetchTherapeuticTargets]);
 
   if (isPrint && printVersion === 'standardLayout') {
     return (

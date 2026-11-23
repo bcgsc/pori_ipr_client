@@ -9,6 +9,8 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 
 import ReportContext from '@/context/ReportContext';
+import ConfirmContext from '@/context/ConfirmContext';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import { ReportType } from '@/common';
@@ -23,6 +25,9 @@ import { TherapeuticType } from '../types';
 
 jest.mock('@/services/api');
 jest.mock('@/services/SnackbarUtils');
+jest.mock('@/hooks/useConfirmDialog');
+
+const mockShowConfirmDialog = jest.fn();
 
 type EditDialogMockProps = {
   isOpen: boolean;
@@ -80,6 +85,7 @@ const renderTherapeutic = (
   canEdit = true,
   isPrint = false,
   printVersion: 'standardLayout' | 'condensedLayout' | null = null,
+  isSigned = false,
 ) => {
   // Fresh client per render so react-query cache never leaks between tests.
   const queryClient = new QueryClient({
@@ -95,7 +101,9 @@ const renderTherapeutic = (
           refetchReport: () => null,
         }}
       >
-        <Therapeutic isPrint={isPrint} printVersion={printVersion} />
+        <ConfirmContext.Provider value={{ isSigned, setIsSigned: jest.fn() }}>
+          <Therapeutic isPrint={isPrint} printVersion={printVersion} />
+        </ConfirmContext.Provider>
       </ReportContext.Provider>
     </QueryClientProvider>,
   );
@@ -150,6 +158,8 @@ beforeAll(() => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockShowConfirmDialog.mockReset();
+  (useConfirmDialog as jest.Mock).mockReturnValue({ showConfirmDialog: mockShowConfirmDialog });
   mockEditDialogProps = null;
   (api.get as jest.Mock).mockReturnValue({
     request: jest.fn().mockResolvedValue(mockTherapeuticTargets),
@@ -399,7 +409,61 @@ describe('TherapeuticTargets — delete flow', () => {
     await waitFor(() => {
       expect(api.del).toHaveBeenCalledWith('/reports/report-1/therapeutic-targets/t1', {});
     });
+    expect(mockShowConfirmDialog).not.toHaveBeenCalled();
+    expect((api.del as jest.Mock).mock.results[0].value.request).toHaveBeenCalledTimes(1);
     await flushPromises();
+  });
+
+  test.each([
+    ['Potential Therapeutic Targets', 'TP53', 't1'],
+    ['Potential Resistance and Toxicity', 'KRAS', 'c1'],
+  ])('Signed report deletion in %s waits for confirmation', async (title, gene, ident) => {
+    let confirmDelete!: () => Promise<void>;
+    mockShowConfirmDialog.mockImplementation((call) => new Promise((resolve) => {
+      confirmDelete = async () => {
+        await call.request();
+        resolve(true);
+      };
+    }));
+    renderTherapeutic(true, false, null, true);
+    const container = await tableContainerFor(title);
+    await within(container).findByText(gene);
+    const getCallsBefore = (api.get as jest.Mock).mock.calls.length;
+
+    fireEvent.click(actionButtonInRow(container, gene, 'delete') as Element);
+
+    const deleteCall = (api.del as jest.Mock).mock.results[0].value;
+    expect(api.del).toHaveBeenCalledWith(`/reports/report-1/therapeutic-targets/${ident}`, {});
+    expect(mockShowConfirmDialog).toHaveBeenCalledWith(deleteCall, true, `Successfully deleted ${ident}`);
+    expect(deleteCall.request).not.toHaveBeenCalled();
+    expect((api.get as jest.Mock).mock.calls.length).toBe(getCallsBefore);
+
+    await act(async () => { await confirmDelete(); });
+
+    expect(deleteCall.request).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect((api.get as jest.Mock).mock.calls.length).toBeGreaterThan(getCallsBefore);
+    });
+    // The confirmation hook owns the success notification for signed reports.
+    expect(snackbar.success).not.toHaveBeenCalled();
+    await flushPromises();
+  });
+
+  test('Cancelling signed report deletion does not delete or refetch', async () => {
+    mockShowConfirmDialog.mockResolvedValue(false);
+    renderTherapeutic(true, false, null, true);
+    const container = await tableContainerFor('Potential Therapeutic Targets');
+    await within(container).findByText('TP53');
+    const getCallsBefore = (api.get as jest.Mock).mock.calls.length;
+
+    fireEvent.click(actionButtonInRow(container, 'TP53', 'delete') as Element);
+    await flushPromises();
+
+    expect(mockShowConfirmDialog).toHaveBeenCalledTimes(1);
+    expect((api.del as jest.Mock).mock.results[0].value.request).not.toHaveBeenCalled();
+    expect((api.get as jest.Mock).mock.calls.length).toBe(getCallsBefore);
+    expect(snackbar.success).not.toHaveBeenCalled();
+    expect(within(container).getByText('TP53')).toBeInTheDocument();
   });
 
   test('A successful delete shows a success snackbar and refetches', async () => {
