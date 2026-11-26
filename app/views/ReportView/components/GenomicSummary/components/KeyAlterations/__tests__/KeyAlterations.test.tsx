@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+	fireEvent,
 	render,
 	screen,
 	waitFor,
@@ -9,7 +10,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
-import KeyAlterations from '..';
+import KeyAlterations, { isValidNewGeneVariant, transformManualVariantToData } from '..';
 import api, { ApiCallSet } from '@/services/api';
 
 jest.mock('@/services/api', () => {
@@ -93,7 +94,7 @@ const renderWithProviders = (props = {}) => render(
 			<ConfirmContext.Provider
 				value={{
 					isSigned: false,
-					setIsSigned: () => {},
+					setIsSigned: () => { },
 				}}
 			>
 				<KeyAlterations {...props as any} />
@@ -104,6 +105,7 @@ const renderWithProviders = (props = {}) => render(
 
 describe('KeyAlterations', () => {
 	beforeEach(() => {
+		jest.clearAllMocks();
 		(api.get as jest.Mock).mockImplementation(() => ({
 			request: async () => mockVariantsResponse,
 		}));
@@ -113,10 +115,76 @@ describe('KeyAlterations', () => {
 		}));
 	});
 
+	test.each([
+		'germline MUTYH:c.934-2A>G',
+		'germline TP53:p.V143fs',
+		'germline TP53:g.123A>G',
+		'TP53:p.V143fs',
+		'FGFR1 (amplification)',
+		'(YAP1,AHNAK):fusion(e.5,e.6)',
+		'ERCC1 (decreased rna expression)',
+		'  TP53:p.V143fs  ',
+	])('accepts permitted notation: %s', (value) => {
+		expect(isValidNewGeneVariant(value)).toBe(true);
+	});
+
+	test.each([
+		'',
+		'   ',
+		'TP53',
+		'TP53:p.',
+		'TP53:V143fs',
+		'germline :c.934-2A>G',
+		'FGFR1 amplification',
+		'FGFR1 ()',
+		'FGFR1 (amplification',
+		'EML4::ALK fusion',
+		'(YAP1,):fusion(e.5,e.6)',
+		'(YAP1,AHNAK):fusion(e.,e.6)',
+		'(YAP1,AHNAK):fusion(e.5,e.6) extra',
+		'TP53:p.V143fs\nFGFR1 (amplification)',
+	])('rejects invalid notation: %s', (value) => {
+		expect(isValidNewGeneVariant(value)).toBe(false);
+	});
+
+	test('blocks invalid submissions and clears the error after correcting the value', async () => {
+		renderWithProviders({ isPrint: false });
+		fireEvent.click(await screen.findByRole('button', { name: 'Add New Alteration' }));
+		const input = screen.getByRole('textbox', { name: 'Gene Variant' });
+		const addButton = screen.getByRole('button', { name: /^Add$/ });
+
+		expect(addButton).toBeDisabled();
+		fireEvent.change(input, { target: { value: 'TP53' } });
+		expect(input).toHaveAttribute('aria-invalid', 'true');
+		expect(screen.getByRole('alert')).toHaveTextContent('Enter an alteration using one of the patterns below.');
+		fireEvent.click(addButton);
+		expect(api.post).not.toHaveBeenCalled();
+
+		(api.post as jest.Mock).mockReturnValue({
+			request: async () => ({
+				ident: 'new-variant',
+				variantType: null,
+				geneVariant: 'TP53:p.V143fs',
+			}),
+		});
+		fireEvent.change(input, { target: { value: '  TP53:p.V143fs  ' } });
+		expect(input).toHaveAttribute('aria-invalid', 'false');
+		expect(screen.queryByRole('alert')).toBeNull();
+		expect(addButton).toBeEnabled();
+		fireEvent.click(addButton);
+		await waitFor(() => {
+			expect(api.post).toHaveBeenCalledWith(
+				'/reports/report-123/summary/genomic-alterations-identified',
+				{ geneVariant: 'TP53:p.V143fs' },
+			);
+			expect(screen.queryByRole('dialog')).toBeNull();
+		});
+	});
+
 	test('renders title and tables in non-print mode', async () => {
 		renderWithProviders({ isPrint: false });
 
-		expect(await screen.findByText('Genomic and Transcriptomic Alterations Identified')).toBeInTheDocument();
+		expect(await screen.findByText('Reported Genomic and Transcriptomic Alterations')).toBeInTheDocument();
 		expect(screen.getByRole('button', { name: 'Add New Alteration' })).toBeInTheDocument();
 
 		expect(screen.getByTestId('genomic-table-smallMutation')).toBeInTheDocument();
@@ -125,23 +193,37 @@ describe('KeyAlterations', () => {
 		expect(screen.getByTestId('genomic-table-expression')).toBeInTheDocument();
 	});
 
+	test('parses bracketed fusion notation for manual structural variants', () => {
+		const transformed = transformManualVariantToData({
+			ident: 'manual-sv',
+			geneVariant: '(BRAF,KIAA1549):fusion(e.9,e.16)',
+			variantType: null,
+		} as any);
+
+		expect(transformed.type).toBe('structuralVariant');
+		expect(transformed.variant.gene1.name).toBe('BRAF');
+		expect(transformed.variant.gene2.name).toBe('KIAA1549');
+		expect(transformed.variant.exon1).toBe('9');
+		expect(transformed.variant.exon2).toBe('16');
+	});
+
 	test('hides add button in print mode', async () => {
 		renderWithProviders({ isPrint: true, printVersion: 'standardLayout' });
 
-		expect(await screen.findByText('Genomic and Transcriptomic Alterations Identified')).toBeInTheDocument();
+		expect(await screen.findByText('Reported Genomic and Transcriptomic Alterations')).toBeInTheDocument();
 		expect(screen.queryByRole('button', { name: 'Add New Alteration' })).toBeNull();
 	});
 
 	test('keeps title with first table in standard print layout wrapper', async () => {
 		const { container } = renderWithProviders({ isPrint: true, printVersion: 'standardLayout' });
 
-		await screen.findByText('Genomic and Transcriptomic Alterations Identified');
+		await screen.findByText('Reported Genomic and Transcriptomic Alterations');
 
 		const keepWrapper = container.querySelector('.key-alterations-print__printKeepWithFirstTable');
 		expect(keepWrapper).toBeTruthy();
 
 		const inKeepWrapper = within(keepWrapper as HTMLElement);
-		expect(inKeepWrapper.getByText('Genomic and Transcriptomic Alterations Identified')).toBeInTheDocument();
+		expect(inKeepWrapper.getByText('Reported Genomic and Transcriptomic Alterations')).toBeInTheDocument();
 		expect(inKeepWrapper.getByTestId('genomic-table-smallMutation')).toBeInTheDocument();
 	});
 
@@ -149,7 +231,7 @@ describe('KeyAlterations', () => {
 		const { container } = renderWithProviders({ isPrint: true, printVersion: 'condensedLayout' });
 
 		await waitFor(() => {
-			expect(screen.getByText('Genomic and Transcriptomic Alterations Identified')).toBeInTheDocument();
+			expect(screen.getByText('Reported Genomic and Transcriptomic Alterations')).toBeInTheDocument();
 		});
 
 		const keepWrapper = container.querySelector('.key-alterations-print__printKeepWithFirstTable');

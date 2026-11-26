@@ -37,11 +37,13 @@ describe('GenomicAlterationsTable', () => {
       />,
     );
 
-    expect(await screen.findByTestId('data-table')).toBeInTheDocument();
-    expect(screen.getByText('Small Mutations')).toBeInTheDocument();
+    expect(await screen.findByText('Small Mutations')).toBeInTheDocument();
 
     expect(mockDataTable).toHaveBeenCalled();
-    const dataTableProps = mockDataTable.mock.calls[0][0];
+    const dataTableProps = mockDataTable.mock.calls
+      .map(([props]) => props)
+      .find((props) => props.titleText === 'Small Mutations');
+    expect(dataTableProps).toBeDefined();
     expect(dataTableProps.isPrint).toBe(false);
     expect(dataTableProps.canExport).toBe(true);
     expect(dataTableProps.titleText).toBe('Small Mutations');
@@ -58,7 +60,6 @@ describe('GenomicAlterationsTable', () => {
       />,
     );
 
-    expect(await screen.findByTestId('print-table')).toBeInTheDocument();
     expect(screen.getByText('Small Mutations')).toBeInTheDocument();
 
     expect(mockPrintTable).toHaveBeenCalled();

@@ -13,7 +13,7 @@ exports[`DataTable It matches the snapshot 1`] = `
           class="data-table__action"
         >
           <button
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge data-table__icon-button css-mf1cb5-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall data-table__icon-button css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root"
             tabindex="0"
             type="button"
           >

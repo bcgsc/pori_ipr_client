@@ -29,9 +29,23 @@ import {
 
 import './index.scss';
 
+// DEVSU-3042 Validate notation, not the biological validity of genes, changes, or states.
+const newAlterationPatterns = [
+  /^germline [A-Z][A-Z0-9-]*:[A-Za-z]\.[A-Za-z0-9_*+?>=().-]+$/,
+  /^[A-Z][A-Z0-9-]*:[A-Za-z]\.[A-Za-z0-9_*+?>=().-]+$/,
+  /^[A-Z][A-Z0-9-]* \([A-Za-z][A-Za-z0-9 -]*\)$/,
+  /^\([A-Z][A-Z0-9-]*,[A-Z][A-Z0-9-]*\):fusion\(e\.\d+,e\.\d+\)$/,
+];
+
+export const isValidNewGeneVariant = (value: string): boolean => {
+  const trimmedValue = value.trim();
+  return !/[\r\n]/.test(trimmedValue)
+    && newAlterationPatterns.some((pattern) => pattern.test(trimmedValue));
+};
+
 const variantCategory = (variant: GeneVariantType) => {
   // small mutations
-  if (/[:(][gcp]\./.exec(variant.geneVariant)) {
+  if ((/[:(][gcp]\./.exec(variant.geneVariant)) || variant.geneVariant.toLowerCase().includes('germline')) {
     variant.type = 'smallMutation';
     return variant;
   }
@@ -42,8 +56,8 @@ const variantCategory = (variant: GeneVariantType) => {
   }
   // Expression Outliers
   if (variant.geneVariant.toLowerCase().includes('express')
-      || variant.geneVariant.toLowerCase().includes('outlier')
-      || variant.geneVariant.toLowerCase().includes('percentile')
+    || variant.geneVariant.toLowerCase().includes('outlier')
+    || variant.geneVariant.toLowerCase().includes('percentile')
   ) {
     variant.type = 'expression';
     return variant;
@@ -72,14 +86,58 @@ const createBaseGene = (name = '') => ({
   tumourSuppressor: false,
 });
 
-const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType => {
+const parseStructuralVariantNames = (geneVariant: string) => {
+  const normalized = geneVariant.trim();
+
+  const legacyGenes = normalized
+    .replace(/fusion/ig, '')
+    .split('::')
+    .map((val) => val.trim())
+    .filter(Boolean);
+
+  if (legacyGenes.length >= 2) {
+    return {
+      gene1Name: legacyGenes[0],
+      gene2Name: legacyGenes[1],
+      exon1: null,
+      exon2: null,
+    };
+  }
+
+  const fusionMatch = normalized.match(/^\s*\(\s*(.*?)\s*,\s*(.*?)\s*\)\s*:\s*fusion\s*\(\s*e\.\s*([^,]+)\s*,\s*e\.\s*([^)]+)\s*\)\s*$/i);
+
+  if (fusionMatch) {
+    const [, gene1Name = '', gene2Name = '', exon1 = '', exon2 = ''] = fusionMatch;
+    return {
+      gene1Name: gene1Name.trim(),
+      gene2Name: gene2Name.trim(),
+      exon1: exon1.trim() || null,
+      exon2: exon2.trim() || null,
+    };
+  }
+
+  return {
+    gene1Name: normalized,
+    gene2Name: '',
+    exon1: null,
+    exon2: null,
+  };
+};
+
+export const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType => {
   const categorizedVariant = variantCategory(variant);
   const [leftPart = '', rightPart = ''] = categorizedVariant.geneVariant.split(':');
   const parenMatch = categorizedVariant.geneVariant.match(/^(.*?)\s*\((.*?)\)\s*$/);
 
   switch (categorizedVariant.type) {
     case 'smallMutation': {
-      const geneName = leftPart || (parenMatch?.[1] ?? categorizedVariant.geneVariant);
+      let leftPartGermlineAdjusted = leftPart;
+      let germlineStatus = false;
+      if (leftPart.includes('germline')) {
+        leftPartGermlineAdjusted = leftPart.replace(/germline/i, '').trim();
+        germlineStatus = true;
+      }
+      const geneName = leftPartGermlineAdjusted || (parenMatch?.[1] ?? categorizedVariant.geneVariant);
       const proteinChange = rightPart || categorizedVariant.geneVariant;
       categorizedVariant.variant = {
         altSeq: null,
@@ -89,6 +147,7 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
         endPosition: null,
         exon: null,
         gene: createBaseGene(geneName.trim()),
+        germline: germlineStatus,
         hgvsCds: null,
         hgvsGenomic: null,
         hgvsProtein: proteinChange,
@@ -137,14 +196,12 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
       break;
     }
     case 'structuralVariant': {
-      const genes = categorizedVariant.geneVariant
-        .replace(/fusion/ig, '')
-        .split('::')
-        .map((val) => val.trim())
-        .filter(Boolean);
-
-      const gene1Name = genes[0] ?? categorizedVariant.geneVariant;
-      const gene2Name = genes[1] ?? '';
+      const {
+        gene1Name,
+        gene2Name,
+        exon1,
+        exon2,
+      } = parseStructuralVariantNames(categorizedVariant.geneVariant);
 
       categorizedVariant.variant = {
         breakpoint: null,
@@ -155,8 +212,8 @@ const transformManualVariantToData = (variant: GeneVariantType): GeneVariantType
         detectedIn: null,
         displayName: categorizedVariant.geneVariant,
         eventType: null,
-        exon1: null,
-        exon2: null,
+        exon1,
+        exon2,
         frame: null,
         gene1: createBaseGene(gene1Name),
         gene2: createBaseGene(gene2Name),
@@ -238,8 +295,73 @@ const KeyAlterations = ({
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newGeneVariant, setNewGeneVariant] = useState('');
   const [isAddingVariant, setIsAddingVariant] = useState(false);
+  const isNewGeneVariantValid = isValidNewGeneVariant(newGeneVariant);
+  const hasNewGeneVariantError = Boolean(newGeneVariant.trim()) && !isNewGeneVariantValid;
 
   const classNamePrefix = printVersion ? 'key-alterations-print' : 'key-alterations';
+
+  const addNewVariantHelperText = useMemo(() => (
+    <>
+      <br />
+      <Typography variant="subtitle1" color="inherit">
+        <b>Germline Small Mutations:</b>
+        {' '}
+        &apos;germline &lt;GENENAME&gt;:p.&lt;PROTEIN_CHANGE&gt;&apos;.
+        {' '}
+        Use c. or g. instead of p. for coding DNA or genomic changes.
+      </Typography>
+      <Typography variant="subtitle1" color="inherit">
+        Example:
+        {' '}
+        <b>germline MUTYH:c.934-2A&gt;G</b>
+      </Typography>
+      <br />
+      <Typography variant="subtitle1" color="inherit">
+        <b>Small Mutations:</b>
+        {' '}
+        &apos;&lt;GENE&gt;:p.&lt;PROTEIN_CHANGE&gt;&apos;.
+      </Typography>
+      <Typography variant="subtitle1" color="inherit">
+        Example:
+        {' '}
+        <b>TP53:p.V143fs</b>
+      </Typography>
+      <br />
+      <Typography variant="subtitle1" color="inherit">
+        <b>Copy Number Variants:</b>
+        {' '}
+        &apos;&lt;GENE&gt; (&lt;CNV_STATE&gt;)&apos;.
+      </Typography>
+      <Typography variant="subtitle1" color="inherit">
+        Example:
+        {' '}
+        <b>FGFR1 (amplification)</b>
+      </Typography>
+      <br />
+      <Typography variant="subtitle1" color="inherit">
+        <b>Structural Variants:</b>
+        {' '}
+        &apos;(&lt;GENE_1&gt;,&lt;GENE_2&gt;):fusion(e.&lt;EXON_1&gt;,e.&lt;EXON_2&gt;)&apos;.
+      </Typography>
+      <Typography variant="subtitle1" color="inherit">
+        Example:
+        {' '}
+        <b>(YAP1,AHNAK):fusion(e.5,e.6)</b>
+      </Typography>
+      <br />
+      <Typography variant="subtitle1" color="inherit">
+        <b>Expression Variants:</b>
+        {' '}
+        &apos;&lt;GENE&gt; (&lt;EXPRESSION_CLASS&gt;)&apos;.
+      </Typography>
+      <Typography variant="subtitle1" color="inherit">
+        Example:
+        {' '}
+        <b>ERCC1 (decreased rna expression)</b>
+      </Typography>
+      <br />
+    </>
+  ), []);
 
   useEffect(() => {
     if (report) {
@@ -350,7 +472,7 @@ const KeyAlterations = ({
 
   const handleVariantAdded = useCallback(async () => {
     const geneVariant = newGeneVariant.trim();
-    if (!geneVariant) {
+    if (isAddingVariant || !isValidNewGeneVariant(geneVariant)) {
       return;
     }
 
@@ -379,7 +501,7 @@ const KeyAlterations = ({
     } finally {
       setIsAddingVariant(false);
     }
-  }, [newGeneVariant, report]);
+  }, [isAddingVariant, newGeneVariant, report]);
 
   const alterationsSection = useMemo(() => {
     const variantTypes = ['smallMutation', 'cnv', 'structuralVariant', 'expression'];
@@ -413,7 +535,7 @@ const KeyAlterations = ({
         }}
       >
         <Typography variant="h3">
-          Genomic and Transcriptomic Alterations Identified
+          Reported Genomic and Transcriptomic Alterations
         </Typography>
         {!isPrint && (
           <Button
@@ -441,7 +563,7 @@ const KeyAlterations = ({
           fontWeight="bold"
           display="block"
         >
-          Genomic and Transcriptomic Alterations Identified
+          Reported Genomic and Transcriptomic Alterations
         </Typography>
       );
 
@@ -533,13 +655,26 @@ const KeyAlterations = ({
                 value={newGeneVariant}
                 onChange={(event) => setNewGeneVariant(event.target.value)}
                 fullWidth
+                disabled={isAddingVariant}
+                error={hasNewGeneVariantError}
+                FormHelperTextProps={{ component: 'div' }}
+                helperText={(
+                  <>
+                    {hasNewGeneVariantError && (
+                      <Typography component="div" color="error" role="alert">
+                        Enter an alteration using one of the patterns below.
+                      </Typography>
+                    )}
+                    {addNewVariantHelperText}
+                  </>
+                )}
               />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleAddDialogClose} disabled={isAddingVariant}>Cancel</Button>
               <Button
                 onClick={handleVariantAdded}
-                disabled={isAddingVariant || !newGeneVariant.trim()}
+                disabled={isAddingVariant || !isNewGeneVariantValid}
                 variant="contained"
                 color="primary"
               >
@@ -551,14 +686,17 @@ const KeyAlterations = ({
       </div>
     );
   }, [
+    addNewVariantHelperText,
     classNamePrefix,
     handleAddDialogClose,
     handleAddDialogOpen,
     handleTableDeleted,
     handleVariantAdded,
+    hasNewGeneVariantError,
     isAddDialogOpen,
     isAddingVariant,
     isLoading,
+    isNewGeneVariantValid,
     isPrint,
     newGeneVariant,
     printVersion,
