@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+	fireEvent,
 	render,
 	screen,
 	waitFor,
@@ -9,7 +10,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
-import KeyAlterations, { transformManualVariantToData } from '..';
+import KeyAlterations, { isValidNewGeneVariant, transformManualVariantToData } from '..';
 import api, { ApiCallSet } from '@/services/api';
 
 jest.mock('@/services/api', () => {
@@ -104,6 +105,7 @@ const renderWithProviders = (props = {}) => render(
 
 describe('KeyAlterations', () => {
 	beforeEach(() => {
+		jest.clearAllMocks();
 		(api.get as jest.Mock).mockImplementation(() => ({
 			request: async () => mockVariantsResponse,
 		}));
@@ -111,6 +113,72 @@ describe('KeyAlterations', () => {
 		(ApiCallSet as unknown as jest.Mock).mockImplementation((calls) => ({
 			request: async () => Promise.all(calls.map((call) => call.request())),
 		}));
+	});
+
+	test.each([
+		'germline MUTYH:c.934-2A>G',
+		'germline TP53:p.V143fs',
+		'germline TP53:g.123A>G',
+		'TP53:p.V143fs',
+		'FGFR1 (amplification)',
+		'(YAP1,AHNAK):fusion(e.5,e.6)',
+		'ERCC1 (decreased rna expression)',
+		'  TP53:p.V143fs  ',
+	])('accepts permitted notation: %s', (value) => {
+		expect(isValidNewGeneVariant(value)).toBe(true);
+	});
+
+	test.each([
+		'',
+		'   ',
+		'TP53',
+		'TP53:p.',
+		'TP53:V143fs',
+		'germline :c.934-2A>G',
+		'FGFR1 amplification',
+		'FGFR1 ()',
+		'FGFR1 (amplification',
+		'EML4::ALK fusion',
+		'(YAP1,):fusion(e.5,e.6)',
+		'(YAP1,AHNAK):fusion(e.,e.6)',
+		'(YAP1,AHNAK):fusion(e.5,e.6) extra',
+		'TP53:p.V143fs\nFGFR1 (amplification)',
+	])('rejects invalid notation: %s', (value) => {
+		expect(isValidNewGeneVariant(value)).toBe(false);
+	});
+
+	test('blocks invalid submissions and clears the error after correcting the value', async () => {
+		renderWithProviders({ isPrint: false });
+		fireEvent.click(await screen.findByRole('button', { name: 'Add New Alteration' }));
+		const input = screen.getByRole('textbox', { name: 'Gene Variant' });
+		const addButton = screen.getByRole('button', { name: /^Add$/ });
+
+		expect(addButton).toBeDisabled();
+		fireEvent.change(input, { target: { value: 'TP53' } });
+		expect(input).toHaveAttribute('aria-invalid', 'true');
+		expect(screen.getByRole('alert')).toHaveTextContent('Enter an alteration using one of the patterns below.');
+		fireEvent.click(addButton);
+		expect(api.post).not.toHaveBeenCalled();
+
+		(api.post as jest.Mock).mockReturnValue({
+			request: async () => ({
+				ident: 'new-variant',
+				variantType: null,
+				geneVariant: 'TP53:p.V143fs',
+			}),
+		});
+		fireEvent.change(input, { target: { value: '  TP53:p.V143fs  ' } });
+		expect(input).toHaveAttribute('aria-invalid', 'false');
+		expect(screen.queryByRole('alert')).toBeNull();
+		expect(addButton).toBeEnabled();
+		fireEvent.click(addButton);
+		await waitFor(() => {
+			expect(api.post).toHaveBeenCalledWith(
+				'/reports/report-123/summary/genomic-alterations-identified',
+				{ geneVariant: 'TP53:p.V143fs' },
+			);
+			expect(screen.queryByRole('dialog')).toBeNull();
+		});
 	});
 
 	test('renders title and tables in non-print mode', async () => {
